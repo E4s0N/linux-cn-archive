@@ -10,7 +10,6 @@ concurrency:
   group: "hugo"
   cancel-in-progress: false
 
-# Default to bash
 defaults:
   run:
     shell: bash
@@ -21,47 +20,58 @@ jobs:
     env:
       HUGO_VERSION: 0.122.0
     steps:
-      # - name: Clean up disk space (before build)
-      #   run: |
-      #     echo "清理缓存文件..."
-      #     sudo rm -rf /home/runner/actions-runner/cached/_diag/* || true
-      #     df -h
-
-      - name: Install Hugo CLI
+      - name: 🧹 Clean up diag logs and check disk space
         run: |
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
-          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+          echo "::group::清理 diag 日志缓存"
+          sudo rm -rf /home/runner/actions-runner/cached/_diag/* || true
+          echo "清理完成"
+          echo "::endgroup::"
 
-      - name: Checkout
+          echo "::group::检查当前磁盘空间"
+          df -h
+          echo "::endgroup::"
+
+      - name: 📦 Install Hugo CLI
+        run: |
+          echo "::group::安装 Hugo CLI"
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
+          sudo dpkg -i ${{ runner.temp }}/hugo.deb
+          echo "Hugo 安装完成"
+          echo "::endgroup::"
+
+      - name: 🔧 Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          silent: true
 
-      - name: Build with Hugo
+      - name: 🏗️ Build Hugo site
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
         run: |
-          echo "开始构建 Hugo..."
-          hugo \
-            --gc \
-            --minify \
-            --baseURL "/"
+          echo "::group::开始构建 Hugo 站点"
+          hugo --gc --minify --baseURL "/"
+          echo "构建完成"
+          echo "::endgroup::"
 
-      - name: Check build artifacts size
+      - name: 📏 Check build artifacts size
         run: |
-          echo "检查构建产物大小..."
+          echo "::group::检查构建产物大小"
           du -sh ./public
+          echo "::endgroup::"
 
-      - name: Deploy to GitHub Pages
+      - name: 📦 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           publish_branch: gh-pages
 
-      - name: Clean up after deployment
+      - name: 🧹 Clean up after deployment
         if: always()
         run: |
-          echo "清理构建产物..."
+          echo "::group::清理构建产物"
           rm -rf ./public
+          echo "清理完成"
+          echo "::endgroup::"
