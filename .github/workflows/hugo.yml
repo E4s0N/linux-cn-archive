@@ -23,7 +23,7 @@ jobs:
       - name: 🧹 Clean up diag logs and check disk space
         run: |
           echo "::group::清理 diag 日志缓存"
-          sudo rm -rf /home/runner/actions-runner/cached/_diag/* || true
+          # sudo rm -rf /home/runner/actions-runner/cached/_diag/* || true
           echo "清理完成"
           echo "::endgroup::"
 
