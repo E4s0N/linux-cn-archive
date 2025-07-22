@@ -21,25 +21,37 @@ jobs:
     env:
       HUGO_VERSION: 0.122.0
     steps:
+      - name: Clean up disk space (before build)
+        run: |
+          echo "清理缓存文件..."
+          sudo rm -rf /home/runner/actions-runner/cached/_diag/* || true
+          df -h
+
       - name: Install Hugo CLI
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
-          
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
         run: |
+          echo "开始构建 Hugo..."
           hugo \
             --gc \
             --minify \
             --baseURL "/"
+
+      - name: Check build artifacts size
+        run: |
+          echo "检查构建产物大小..."
+          du -sh ./public
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -47,3 +59,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           publish_branch: gh-pages
+
+      - name: Clean up after deployment
+        if: always()
+        run: |
+          echo "清理构建产物..."
+          rm -rf ./public
