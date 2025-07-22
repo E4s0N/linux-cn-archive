@@ -1,0 +1,114 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Python 和 GNU Octave 绘制数据 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Python 和 GNU Octave 绘制数据"><meta property="og:description" content="了解如何使用 Python 和 GNU Octave 完成一项常见的数据科学任务。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11943-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-02-29T11:48:00+00:00"><meta property="article:modified_time" content="2020-02-29T11:48:00+00:00"><meta itemprop=name content="使用 Python 和 GNU Octave 绘制数据"><meta itemprop=description content="了解如何使用 Python 和 GNU Octave 完成一项常见的数据科学任务。"><meta itemprop=datePublished content="2020-02-29T11:48:00+00:00"><meta itemprop=dateModified content="2020-02-29T11:48:00+00:00"><meta itemprop=wordCount content="697"><meta itemprop=keywords content="数据科学,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Python 和 GNU Octave 绘制数据</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-02-29T11:48:00Z>February 29, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>了解如何使用 Python 和 GNU Octave 完成一项常见的数据科学任务。</p></blockquote><p><img src=/data/attachment/album/202002/29/115004x09dgvckgwphsgrw.jpg alt></p><p>数据科学是跨越编程语言的知识领域。有些语言以解决这一领域的问题而闻名，而另一些则鲜为人知。这篇文章将帮助你熟悉用一些流行的语言完成数据科学的工作。</p><h3 id=选择-python-和-gnu-octave-做数据科学工作>选择 Python 和 GNU Octave 做数据科学工作</h3><p>我经常尝试学习一种新的编程语言。为什么？这既有对旧方式的厌倦，也有对新方式的好奇。当我开始学习编程时，我唯一知道的语言是 C 语言。那些年的编程生涯既艰难又危险，因为我必须手动分配内存、管理指针、并记得释放内存。</p><p>后来一个朋友建议我试试 Python，现在我的编程生活变得轻松多了。虽然程序运行变得慢多了，但我不必通过编写分析软件来受苦了。然而，我很快就意识到每种语言都有比其它语言更适合自己的应用场景。后来我学习了一些其它语言，每种语言都给我带来了一些新的启发。发现新的编程风格让我可以将一些解决方案移植到其他语言中，这样一切都变得有趣多了。</p><p>为了对一种新的编程语言（及其文档）有所了解，我总是从编写一些执行我熟悉的任务的示例程序开始。为此，我将解释如何用 Python 和 GNU Octave 编写一个程序来完成一个你可以归类为数据科学的特殊任务。如果你已经熟悉其中一种语言，从它开始，然后通过其他语言寻找相似之处和不同之处。这篇文章并不是对编程语言的详尽比较，只是一个小小的展示。</p><p>所有的程序都应该在<a href=https://en.wikipedia.org/wiki/Command-line_interface>命令行</a>上运行，而不是用<a href=https://en.wikipedia.org/wiki/Graphical_user_interface>图形用户界面</a>（GUI）。完整的例子可以在 <a href=https://gitlab.com/cristiano.fontana/polyglot_fit>polyglot_fit 存储库</a>中找到。</p><h3 id=编程任务>编程任务</h3><p>你将在本系列中编写的程序:</p><ul><li>从 <a href=https://en.wikipedia.org/wiki/Comma-separated_values>CSV 文件</a>中读取数据</li><li>用直线插入数据（例如 <code>f(x)=m ⋅ x + q</code>）</li><li>将结果生成图像文件</li></ul><p>这是许多数据科学家遇到的常见情况。示例数据是 <a href=https://en.wikipedia.org/wiki/Anscombe%27s_quartet>Anscombe 的四重奏</a>的第一组，如下表所示。这是一组人工构建的数据，当用直线拟合时会给出相同的结果，但是它们的曲线非常不同。数据文件是一个文本文件，以制表符作为列分隔符，开头几行作为标题。此任务将仅使用第一组（即前两列）。</p><p><img src=/data/attachment/album/202002/29/122805h3yrs1dkrgysssxk.png alt></p><h3 id=python-方式>Python 方式</h3><p><a href=https://www.python.org/>Python</a> 是一种通用编程语言，是当今最流行的语言之一（依据 <a href=https://www.tiobe.com/tiobe-index/>TIOBE 指数</a>、<a href=https://redmonk.com/sogrady/2019/07/18/language-rankings-6-19/>RedMonk 编程语言排名</a>、<a href=http://pypl.github.io/PYPL.html>编程语言流行指数</a>、<a href=https://octoverse.github.com/>GitHub Octoverse 状态</a>和其他来源的调查结果）。它是一种<a href=https://en.wikipedia.org/wiki/Interpreted_language>解释型语言</a>；因此，源代码由执行该指令的程序读取和评估。它有一个全面的<a href=https://docs.python.org/3/library/>标准库</a>并且总体上非常好用（我对这最后一句话没有证据；这只是我的拙见）。</p><h4 id=安装>安装</h4><p>要使用 Python 开发，你需要解释器和一些库。最低要求是：</p><ul><li><a href=https://numpy.org/>NumPy</a> 用于简化数组和矩阵的操作</li><li><a href=https://www.scipy.org/>SciPy</a> 用于数据科学</li><li><a href=https://matplotlib.org/>Matplotlib</a> 用于绘图</li></ul><p>在 <a href=https://getfedora.org/>Fedora</a> 安装它们是很容易的：</p><pre tabindex=0><code>sudo dnf install python3 python3-numpy python3-scipy python3-matplotlib
+</code></pre><h4 id=代码注释>代码注释</h4><p>在 Python中，<a href=https://en.wikipedia.org/wiki/Comment_(computer_programming)>注释</a>是通过在行首添加一个 <code>#</code> 来实现的，该行的其余部分将被解释器丢弃：</p><pre tabindex=0><code># 这是被解释器忽略的注释。
+</code></pre><p><a href=https://gitlab.com/cristiano.fontana/polyglot_fit/-/blob/master/fitting_python.py>fitting_python.py</a> 示例使用注释在源代码中插入许可证信息，第一行是<a href=https://en.wikipedia.org/wiki/Shebang_(Unix)>特殊注释</a>，它允许该脚本在命令行上执行:</p><pre tabindex=0><code>#!/usr/bin/env python3
+</code></pre><p>这一行通知命令行解释器，该脚本需要由程序 <code>python3</code> 执行。</p><h4 id=需要的库>需要的库</h4><p>在 Python 中，库和模块可以作为一个对象导入（如示例中的第一行），其中包含库的所有函数和成员。可以通过使用 <code>as</code> 方式用自定义标签重命名它们：</p><pre tabindex=0><code>import numpy as np
+from scipy import stats
+import matplotlib.pyplot as plt
+</code></pre><p>你也可以决定只导入一个子模块（如第二行和第三行）。语法有两个（基本上）等效的方式：<code>import module.submodule</code> 和 <code>from module import submodule</code>。</p><h4 id=定义变量>定义变量</h4><p>Python 的变量是在第一次赋值时被声明的：</p><pre tabindex=0><code>input_file_name = &#34;anscombe.csv&#34;
+delimiter = &#34;\t&#34;
+skip_header = 3
+column_x = 0
+column_y = 1
+</code></pre><p>变量类型由分配给变量的值推断。没有具有常量值的变量，除非它们在模块中声明并且只能被读取。习惯上，不应被修改的变量应该用大写字母命名。</p><h4 id=打印输出>打印输出</h4><p>通过命令行运行程序意味着输出只能打印在终端上。Python 有 <a href=https://docs.python.org/3/library/functions.html#print>print()</a> 函数，默认情况下，该函数打印其参数，并在输出的末尾添加一个换行符：</p><pre tabindex=0><code>print(&#34;#### Anscombe&#39;s first set with Python ####&#34;)
+</code></pre><p>在 Python 中，可以将 <code>print()</code> 函数与<a href=https://docs.python.org/3/library/string.html>字符串类</a>的<a href=https://docs.python.org/3/library/string.html#string-formatting>格式化能力</a>相结合。字符串具有<code>format</code> 方法，可用于向字符串本身添加一些格式化文本。例如，可以添加格式化的浮点数，例如:</p><pre tabindex=0><code>print(&#34;Slope: {:f}&#34;.format(slope))
+</code></pre><h4 id=读取数据>读取数据</h4><p>使用 NumPy 和函数 <a href=https://docs.scipy.org/doc/numpy/reference/generated/numpy.genfromtxt.html>genfromtxt()</a> 读取 CSV 文件非常容易，该函数生成 <a href=https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html>NumPy 数组</a>：</p><pre tabindex=0><code>data = np.genfromtxt(input_file_name, delimiter = delimiter, skip_header = skip_header)
+</code></pre><p>在 Python 中，一个函数可以有数量可变的参数，你可以通过指定所需的参数来传递一个参数的子集。数组是非常强大的矩阵状对象，可以很容易地分割成更小的数组：</p><pre tabindex=0><code>x = data[:, column_x]
+y = data[:, column_y]
+</code></pre><p>冒号选择整个范围，也可以用来选择子范围。例如，要选择数组的前两行，可以使用：</p><pre tabindex=0><code>first_two_rows = data[0:1, :]
+</code></pre><h4 id=拟合数据>拟合数据</h4><p>SciPy 提供了方便的数据拟合功能，例如 <a href=https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html>linregress()</a> 功能。该函数提供了一些与拟合相关的重要值，如斜率、截距和两个数据集的相关系数:</p><pre tabindex=0><code>slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+
+print(&#34;Slope: {:f}&#34;.format(slope))
+print(&#34;Intercept: {:f}&#34;.format(intercept))
+print(&#34;Correlation coefficient: {:f}&#34;.format(r_value))
+</code></pre><p>因为 <code>linregress()</code> 提供了几条信息，所以结果可以同时保存到几个变量中。</p><h4 id=绘图>绘图</h4><p>Matplotlib 库仅仅绘制数据点，因此，你应该定义要绘制的点的坐标。已经定义了 <code>x</code> 和 <code>y</code> 数组，所以你可以直接绘制它们，但是你还需要代表直线的数据点。</p><pre tabindex=0><code>fit_x = np.linspace(x.min() - 1, x.max() + 1, 100)
+</code></pre><p><a href=https://docs.scipy.org/doc/numpy/reference/generated/numpy.linspace.html>linspace()</a> 函数可以方便地在两个值之间生成一组等距值。利用强大的 NumPy 数组可以轻松计算纵坐标，该数组可以像普通数值变量一样在公式中使用：</p><pre tabindex=0><code>fit_y = slope * fit_x + intercept
+</code></pre><p>该公式在数组中逐元素应用；因此，结果在初始数组中具有相同数量的条目。</p><p>要绘图，首先，定义一个包含所有图形的<a href=https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure>图形对象</a>：</p><pre tabindex=0><code>fig_width = 7 #inch
+fig_height = fig_width / 16 * 9 #inch
+fig_dpi = 100
+
+fig = plt.figure(figsize = (fig_width, fig_height), dpi = fig_dpi)
+</code></pre><p>一个图形可以画几个图；在 Matplotlib 中，这些图被称为<a href=https://matplotlib.org/api/axes_api.html#matplotlib.axes.Axes>轴</a>。本示例定义一个单轴对象来绘制数据点：</p><pre tabindex=0><code>ax = fig.add_subplot(111)
+
+ax.plot(fit_x, fit_y, label = &#34;Fit&#34;, linestyle = &#39;-&#39;)
+ax.plot(x, y, label = &#34;Data&#34;, marker = &#39;.&#39;, linestyle = &#39;&#39;)
+
+ax.legend()
+ax.set_xlim(min(x) - 1, max(x) + 1)
+ax.set_ylim(min(y) - 1, max(y) + 1)
+ax.set_xlabel(&#39;x&#39;)
+ax.set_ylabel(&#39;y&#39;)
+</code></pre><p>将该图保存到 <a href=https://en.wikipedia.org/wiki/Portable_Network_Graphics>PNG 图形文件</a>中，有:</p><pre tabindex=0><code>fig.savefig(&#39;fit_python.png&#39;)
+</code></pre><p>如果要显示（而不是保存）该绘图，请调用：</p><pre tabindex=0><code>plt.show()
+</code></pre><p>此示例引用了绘图部分中使用的所有对象：它定义了对象 <code>fig</code> 和对象 <code>ax</code>。这在技术上是不必要的，因为 <code>plt</code> 对象可以直接用于绘制数据集。《<a href=https://matplotlib.org/tutorials/introductory/pyplot.html#sphx-glr-tutorials-introductory-pyplot-py>Matplotlib 教程</a>》展示了这样一个接口：</p><pre tabindex=0><code>plt.plot(fit_x, fit_y)
+</code></pre><p>坦率地说，我不喜欢这种方法，因为它隐藏了各种对象之间发生的重要交互。不幸的是，有时<a href=https://matplotlib.org/gallery/index.html>官方的例子</a>有点令人困惑，因为他们倾向于使用不同的方法。在这个简单的例子中，引用图形对象是不必要的，但是在更复杂的例子中（例如在图形用户界面中嵌入图形时），引用图形对象就变得很重要了。</p><h4 id=结果>结果</h4><p>命令行输入：</p><pre tabindex=0><code>#### Anscombe&#39;s first set with Python ####
+Slope: 0.500091
+Intercept: 3.000091
+Correlation coefficient: 0.816421
+</code></pre><p>这是 Matplotlib 产生的图像：</p><p><img src=/data/attachment/album/202002/29/114814z7mefpy1np1ppy4n.png alt="Plot and fit of the dataset obtained with Python" title="Plot and fit of the dataset obtained with Python"></p><h3 id=gnu-octave-方式>GNU Octave 方式</h3><p><a href=https://www.gnu.org/software/octave/>GNU Octave</a> 语言主要用于数值计算。它提供了一个简单的操作向量和矩阵的语法，并且有一些强大的绘图工具。这是一种像 Python 一样的解释语言。由于 Octave 的语法<a href=https://wiki.octave.org/FAQ#Differences_between_Octave_and_Matlab>几乎兼容</a> <a href=https://en.wikipedia.org/wiki/MATLAB>MATLAB</a>，它经常被描述为一个替代 MATLAB 的免费方案。Octave 没有被列为最流行的编程语言，而 MATLAB 则是，所以 Octave 在某种意义上是相当流行的。MATLAB 早于 NumPy，我觉得它是受到了前者的启发。当你看这个例子时，你会看到相似之处。</p><h4 id=安装-1>安装</h4><p><a href=https://gitlab.com/cristiano.fontana/polyglot_fit/-/blob/master/fitting_octave.m>fitting_octave.m</a> 的例子只需要基本的 Octave 包，在 Fedora 中安装相当简单：</p><pre tabindex=0><code>sudo dnf install octave
+</code></pre><h4 id=代码注释-1>代码注释</h4><p>在 Octave 中，你可以用百分比符号（<code>%</code>）为代码添加注释，如果不需要与 MATLAB 兼容，你也可以使用 <code>#</code>。使用 <code>#</code> 的选项允许你编写像 Python 示例一样的特殊注释行，以便直接在命令行上执行脚本。</p><h4 id=必要的库>必要的库</h4><p>本例中使用的所有内容都包含在基本包中，因此你不需要加载任何新的库。如果你需要一个库，<a href=https://octave.org/doc/v5.1.0/Using-Packages.html#Using-Packages>语法</a>是 <code>pkg load module</code>。该命令将模块的功能添加到可用功能列表中。在这方面，Python 具有更大的灵活性。</p><h4 id=定义变量-1>定义变量</h4><p>变量的定义与 Python 的语法基本相同：</p><pre tabindex=0><code>input_file_name = &#34;anscombe.csv&#34;;
+delimiter = &#34;\t&#34;;
+skip_header = 3;
+column_x = 1;
+column_y = 2;
+</code></pre><p>请注意，行尾有一个分号；这不是必需的，但是它会抑制该行结果的输出。如果没有分号，解释器将打印表达式的结果：</p><pre tabindex=0><code>octave:1&gt; input_file_name = &#34;anscombe.csv&#34;
+input_file_name = anscombe.csv
+octave:2&gt; sqrt(2)
+ans =  1.4142
+</code></pre><h4 id=打印输出结果>打印输出结果</h4><p>强大的函数 <a href=https://octave.org/doc/v5.1.0/Formatted-Output.html#XREFprintf>printf()</a> 是用来在终端上打印的。与 Python 不同，<code>printf()</code> 函数不会自动在打印字符串的末尾添加换行，因此你必须添加它。第一个参数是一个字符串，可以包含要传递给函数的其他参数的格式信息，例如：</p><pre tabindex=0><code>printf(&#34;Slope: %f\n&#34;, slope);
+</code></pre><p>在 Python 中，格式是内置在字符串本身中的，但是在 Octave 中，它是特定于 <code>printf()</code> 函数。</p><h4 id=读取数据-1>读取数据</h4><p><a href=https://octave.org/doc/v5.1.0/Simple-File-I_002fO.html#XREFdlmread>dlmread()</a> 函数可以读取类似 CSV 文件的文本内容：</p><pre tabindex=0><code>data = dlmread(input_file_name, delimiter, skip_header, 0);
+</code></pre><p>结果是一个<a href=https://octave.org/doc/v5.1.0/Matrices.html>矩阵</a>对象，这是 Octave 中的基本数据类型之一。矩阵可以用类似于 Python 的语法进行切片：</p><pre tabindex=0><code>x = data(:, column_x);
+y = data(:, column_y);
+</code></pre><p>根本的区别是索引从 1 开始，而不是从 0 开始。因此，在该示例中，<code>x</code> 列是第一列。</p><h4 id=拟合数据-1>拟合数据</h4><p>要用直线拟合数据，可以使用 <a href=https://octave.org/doc/v5.1.0/Polynomial-Interpolation.html>polyfit()</a> 函数。它用一个多项式拟合输入数据，所以你只需要使用一阶多项式：</p><pre tabindex=0><code>p = polyfit(x, y, 1);
+
+slope = p(1);
+intercept = p(2);
+</code></pre><p>结果是具有多项式系数的矩阵；因此，它选择前两个索引。要确定相关系数，请使用 <a href=https://octave.org/doc/v5.1.0/Correlation-and-Regression-Analysis.html#XREFcorr>corr()</a> 函数：</p><pre tabindex=0><code>r_value = corr(x, y);
+</code></pre><p>最后，使用 <code>printf()</code> 函数打印结果：</p><pre tabindex=0><code>printf(&#34;Slope: %f\n&#34;, slope);
+printf(&#34;Intercept: %f\n&#34;, intercept);
+printf(&#34;Correlation coefficient: %f\n&#34;, r_value);
+</code></pre><h4 id=绘图-1>绘图</h4><p>与 Matplotlib 示例一样，首先需要创建一个表示拟合直线的数据集:</p><pre tabindex=0><code>fit_x = linspace(min(x) - 1, max(x) + 1, 100);
+fit_y = slope * fit_x + intercept;
+</code></pre><p>与 NumPy 的相似性也很明显，因为它使用了 <a href=https://octave.sourceforge.io/octave/function/linspace.html>linspace()</a> 函数，其行为就像 Python 的等效版本一样。</p><p>同样，与 Matplotlib 一样，首先创建一个<a href=https://octave.org/doc/v5.1.0/Multiple-Plot-Windows.html>图</a>对象，然后创建一个<a href=https://octave.org/doc/v5.1.0/Graphics-Objects.html#XREFaxes>轴</a>对象来保存这些图：</p><pre tabindex=0><code>fig_width = 7; %inch
+fig_height = fig_width / 16 * 9; %inch
+fig_dpi = 100;
+
+fig = figure(&#34;units&#34;, &#34;inches&#34;,
+             &#34;position&#34;, [1, 1, fig_width, fig_height]);
+
+ax = axes(&#34;parent&#34;, fig);
+
+set(ax, &#34;fontsize&#34;, 14);
+set(ax, &#34;linewidth&#34;, 2);
+</code></pre><p>要设置轴对象的属性，请使用 <a href=https://octave.org/doc/v5.1.0/Graphics-Objects.html#XREFset>set()</a> 函数。然而，该接口相当混乱，因为该函数需要一个逗号分隔的属性和值对列表。这些对只是代表属性名的一个字符串和代表该属性值的第二个对象的连续。还有其他设置各种属性的函数：</p><pre tabindex=0><code>xlim(ax, [min(x) - 1, max(x) + 1]);
+ylim(ax, [min(y) - 1, max(y) + 1]);
+xlabel(ax, &#39;x&#39;);
+ylabel(ax, &#39;y&#39;);
+</code></pre><p>绘图是用 <a href=https://octave.org/doc/v5.1.0/Two_002dDimensional-Plots.html#XREFplot>plot()</a> 功能实现的。默认行为是每次调用都会重置坐标轴，因此需要使用函数 <a href=https://octave.org/doc/v5.1.0/Manipulation-of-Plot-Windows.html#XREFhold>hold()</a>。</p><pre tabindex=0><code>hold(ax, &#34;on&#34;);
+
+plot(ax, fit_x, fit_y,
+     &#34;marker&#34;, &#34;none&#34;,
+     &#34;linestyle&#34;, &#34;-&#34;,
+     &#34;linewidth&#34;, 2);
+plot(ax, x, y,
+     &#34;marker&#34;, &#34;.&#34;,
+     &#34;markersize&#34;, 20,
+     &#34;linestyle&#34;, &#34;none&#34;);
+
+hold(ax, &#34;off&#34;);
+</code></pre><p>此外，还可以在 <code>plot()</code> 函数中添加属性和值对。<a href=https://octave.org/doc/v5.1.0/Plot-Annotations.html#XREFlegend>legend</a> 必须单独创建，标签应手动声明：</p><pre tabindex=0><code>lg = legend(ax, &#34;Fit&#34;, &#34;Data&#34;);
+set(lg, &#34;location&#34;, &#34;northwest&#34;);
+</code></pre><p>最后，将输出保存到 PNG 图像：</p><pre tabindex=0><code>image_size = sprintf(&#34;-S%f,%f&#34;, fig_width * fig_dpi, fig_height * fig_dpi);
+image_resolution = sprintf(&#34;-r%f,%f&#34;, fig_dpi);
+
+print(fig, &#39;fit_octave.png&#39;,
+      &#39;-dpng&#39;,
+      image_size,
+      image_resolution);
+</code></pre><p>令人困惑的是，在这种情况下，选项被作为一个字符串传递，带有属性名和值。因为在 Octave 字符串中没有 Python 的格式化工具，所以必须使用 <a href=https://octave.org/doc/v5.1.0/Formatted-Output.html#XREFsprintf>sprintf()</a> 函数。它的行为就像 <code>printf()</code> 函数，但是它的结果不是打印出来的，而是作为字符串返回的。</p><p>在这个例子中，就像在 Python 中一样，图形对象很明显被引用以保持它们之间的交互。如果说 Python 在这方面的文档有点混乱，那么 <a href=https://octave.org/doc/v5.1.0/Two_002dDimensional-Plots.html#Two_002dDimensional-Plots>Octave 的文档</a>就更糟糕了。我发现的大多数例子都不关心引用对象；相反，它们依赖于绘图命令作用于当前活动图形。全局<a href=https://octave.org/doc/v5.1.0/Graphics-Objects.html#XREFgroot>根图形对象</a>跟踪现有的图形和轴。</p><h4 id=结果-1>结果</h4><p>命令行上的结果输出是：</p><pre tabindex=0><code>#### Anscombe&#39;s first set with Octave ####
+Slope: 0.500091
+Intercept: 3.000091
+Correlation coefficient: 0.816421
+</code></pre><p>它显示了用 Octave 生成的结果图像。</p><p><img src=/data/attachment/album/202002/29/114815do6fh2xfac6w2r2g.png alt="Plot and fit of the dataset obtained with Octave" title="Plot and fit of the dataset obtained with Octave"></p><h3 id=接下来>接下来</h3><p>Python 和 GNU Octave 都可以绘制出相同的信息，尽管它们的实现方式不同。如果你想探索其他语言来完成类似的任务，我强烈建议你看看 <a href=http://www.rosettacode.org/>Rosetta Code</a>。这是一个了不起的资源，可以看到如何用多种语言解决同样的问题。</p><p>你喜欢用什么语言绘制数据？在评论中分享你的想法。</p><hr><p>via: <a href=https://opensource.com/article/20/2/python-gnu-octave-data-science>https://opensource.com/article/20/2/python-gnu-octave-data-science</a></p><p>作者：<a href=https://opensource.com/users/cristianofontana>Cristiano L. Fontana</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/heguangzhi>heguangzhi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6/ rel=tag>数据科学</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

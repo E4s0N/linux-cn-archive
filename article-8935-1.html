@@ -1,0 +1,423 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>论 HTTP 性能，Go 与 .NET Core 一争雌雄 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="论 HTTP 性能，Go 与 .NET Core 一争雌雄"><meta property="og:description" content="如前面所提的，我们会比较它们相同的东西，比如应用程序、预期响应及运行时的稳定性，所以我们不会把像对 JSON 或者 XML 的编码、解码这些烦多的事情加入比较游戏中来，仅仅只会使用简单的文本消息。为了公平起见，我们会分别使用 Go 和 .NET Core 的 MVC 架构模式。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8935-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-10-06T11:13:00+00:00"><meta property="article:modified_time" content="2017-10-06T11:13:00+00:00"><meta itemprop=name content="论 HTTP 性能，Go 与 .NET Core 一争雌雄"><meta itemprop=description content="如前面所提的，我们会比较它们相同的东西，比如应用程序、预期响应及运行时的稳定性，所以我们不会把像对 JSON 或者 XML 的编码、解码这些烦多的事情加入比较游戏中来，仅仅只会使用简单的文本消息。为了公平起见，我们会分别使用 Go 和 .NET Core 的 MVC 架构模式。"><meta itemprop=datePublished content="2017-10-06T11:13:00+00:00"><meta itemprop=dateModified content="2017-10-06T11:13:00+00:00"><meta itemprop=wordCount content="1515"><meta itemprop=keywords content="Golang,.NET,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>论 HTTP 性能，Go 与 .NET Core 一争雌雄</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-10-06T11:13:00Z>October 06, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201710/06/111305ltswozo3cmicl3z6.png alt></p><p>朋友们，你们好！</p><p>近来，我听到了大量的关于新出的 .NET Core 和其性能的讨论，尤其在 Web 服务方面的讨论更甚。</p><p>因为是新出的，我不想立马就比较两个不同的东西，所以我耐心等待，想等发布更稳定的版本后再进行。</p><p>本周一（8 月 14 日），微软<a href=https://blogs.msdn.microsoft.com/dotnet/2017/08/14/announcing-net-core-2-0/>发布 .NET Core 2.0 版本</a>，因此，我准备开始。您们认为呢？</p><p>如前面所提的，我们会比较它们相同的东西，比如应用程序、预期响应及运行时的稳定性，所以我们不会把像对 JSON 或者 XML 的编码、解码这些烦多的事情加入比较游戏中来，仅仅只会使用简单的文本消息。为了公平起见，我们会分别使用 Go 和 .NET Core 的 <a href=https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>MVC 架构模式</a>。</p><h3 id=参赛选手>参赛选手</h3><p><a href=https://golang.org/>Go</a> （或称 Golang）： 是一种<a href=http://www.tiobe.com/tiobe-index/>快速增长</a>的开源编程语言，旨在构建出简单、快捷和稳定可靠的应用软件。</p><p>用于支持 Go 语言的 MVC web 框架并不多，还好我们找到了 Iris ，可胜任此工作。</p><p><a href=http://iris-go.com/>Iris</a>： 支持 Go 语言的快速、简单和高效的微型 Web 框架。它为您的下一代网站、API 或分布式应用程序奠定了精美的表现方式和易于使用的基础。</p><p><a href=https://en.wikipedia.org/wiki/C_Sharp_%28programming_language%29>C#</a>： 是一种通用的、面向对象的编程语言。其开发团队由 <a href=https://twitter.com/ahejlsberg>Anders Hejlsberg</a> 领导。</p><p><a href=https://www.microsoft.com/net/>.NET Core</a>： 跨平台，可以在极少时间内开发出高性能的应用程序。</p><p>可从 <a href=https://golang.org/dl>https://golang.org/dl</a> 下载 Go ，从 <a href=https://www.microsoft.com/net/core>https://www.microsoft.com/net/core</a> 下载 .NET Core。</p><p>在下载和安装好这些软件后，还需要为 Go 安装 Iris。安装很简单，仅仅只需要打开终端，然后执行如下语句：</p><pre tabindex=0><code>go get -u github.com/kataras/iris
+</code></pre><h3 id=基准>基准</h3><h4 id=硬件>硬件</h4><ul><li>处理器： Intel(R) Core(TM) i7–4710HQ CPU @ 2.50GHz 2.50GHz</li><li>内存： 8.00 GB</li></ul><h4 id=软件>软件</h4><ul><li>操作系统： 微软 Windows [10.0.15063 版本]， 电源计划设置为“高性能”</li><li>HTTP 基准工具： <a href=https://github.com/codesenberg/bombardier>https://github.com/codesenberg/bombardier</a>， 使用最新的 1.1 版本。</li><li>.NET Core： <a href=https://www.microsoft.com/net/core>https://www.microsoft.com/net/core</a>， 使用最新的 2.0 版本。</li><li>Iris： <a href=https://github.com/kataras/iris>https://github.com/kataras/iris</a>， 使用基于 <a href=https://golang.org/>Go 1.8.3</a> 构建的最新 8.3 版本。</li></ul><p>两个应用程序都通过请求路径 “api/values/{id}” 返回文本“值”。</p><h5 id=net-core-mvc>.NET Core MVC</h5><p><img src=https://img.linux.net.cn/data/attachment/album/201710/06/111305kfvhsvvawf2o1sc5.png alt></p><p>Logo 由 <a href=https://github.com/campusMVP/dotnetCoreLogoPack>Pablo Iglesias</a> 设计。</p><p>可以使用 <code>dotnet new webapi</code> 命令创建项目，其 <code>webapi</code> 模板会为您生成代码，代码包含 <code>GET</code> 请求方法的 <code>返回“值”</code>。</p><p>源代码：</p><pre tabindex=0><code>using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+
+namespace netcore_mvc
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            BuildWebHost(args).Run();
+        }
+
+        public static IWebHost BuildWebHost(string[] args) =&gt;
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup&lt;Startup&gt;()
+                .Build();
+    }
+}
+</code></pre><pre tabindex=0><code>using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+namespace netcore_mvc
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvcCore();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            app.UseMvc();
+        }
+    }
+}
+</code></pre><pre tabindex=0><code>using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+
+namespace netcore_mvc.Controllers
+{
+    // ValuesController is the equivalent
+    // `ValuesController` of the Iris 8.3 mvc application.
+    [Route(&#34;api/[controller]&#34;)]
+    public class ValuesController : Controller
+    {
+        // Get handles &#34;GET&#34; requests to &#34;api/values/{id}&#34;.
+        [HttpGet(&#34;{id}&#34;)]
+        public string Get(int id)
+        {
+            return &#34;value&#34;;
+        }
+
+        // Put handles &#34;PUT&#34; requests to &#34;api/values/{id}&#34;.
+        [HttpPut(&#34;{id}&#34;)]
+        public void Put(int id, [FromBody]string value)
+        {
+        }
+
+        // Delete handles &#34;DELETE&#34; requests to &#34;api/values/{id}&#34;.
+        [HttpDelete(&#34;{id}&#34;)]
+        public void Delete(int id)
+        {
+        }
+    }
+}
+</code></pre><p>运行 .NET Core web 服务项目：</p><pre tabindex=0><code>$ cd netcore-mvc
+$ dotnet run -c Release
+Hosting environment: Production
+Content root path: C:\mygopath\src\github.com\kataras\iris\_benchmarks\netcore-mvc
+Now listening on: http://localhost:5000
+Application started. Press Ctrl+C to shut down.
+</code></pre><p>运行和定位 HTTP 基准工具：</p><pre tabindex=0><code>$ bombardier -c 125 -n 5000000 http://localhost:5000/api/values/5
+Bombarding http://localhost:5000/api/values/5 with 5000000 requests using 125 connections
+ 5000000 / 5000000 [=====================================================] 100.00% 2m3s
+Done!
+Statistics        Avg      Stdev        Max
+  Reqs/sec     40226.03    8724.30     161919
+  Latency        3.09ms     1.40ms   169.12ms
+  HTTP codes:
+    1xx - 0, 2xx - 5000000, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:     8.91MB/s
+</code></pre><h5 id=iris-mvc>Iris MVC</h5><p><img src=https://img.linux.net.cn/data/attachment/album/201710/06/111305gx85k8pcgchtz8gc.png alt></p><p>Logo 由 <a href=https://github.com/santoshanand>Santosh Anand</a> 设计。</p><p>源代码：</p><pre tabindex=0><code>package main
+
+import (
+    &#34;github.com/kataras/iris&#34;
+    &#34;github.com/kataras/iris/_benchmarks/iris-mvc/controllers&#34;
+)
+
+func main() {
+    app := iris.New()
+    app.Controller(&#34;/api/values/{id}&#34;, new(controllers.ValuesController))
+    app.Run(iris.Addr(&#34;:5000&#34;), iris.WithoutVersionChecker)
+}
+</code></pre><pre tabindex=0><code>package controllers
+
+import &#34;github.com/kataras/iris/mvc&#34;
+
+// ValuesController is the equivalent
+// `ValuesController` of the .net core 2.0 mvc application.
+type ValuesController struct {
+    mvc.Controller
+}
+
+// Get handles &#34;GET&#34; requests to &#34;api/values/{id}&#34;.
+func (vc *ValuesController) Get() {
+    // id,_ := vc.Params.GetInt(&#34;id&#34;)
+    vc.Ctx.WriteString(&#34;value&#34;)
+}
+
+// Put handles &#34;PUT&#34; requests to &#34;api/values/{id}&#34;.
+func (vc *ValuesController) Put() {}
+
+// Delete handles &#34;DELETE&#34; requests to &#34;api/values/{id}&#34;.
+func (vc *ValuesController) Delete() {}
+</code></pre><p>运行 Go web 服务项目：</p><pre tabindex=0><code>$ cd iris-mvc
+$ go run main.go
+Now listening on: http://localhost:5000
+Application started. Press CTRL+C to shut down.
+</code></pre><p>运行和定位 HTTP 基准工具：</p><pre tabindex=0><code>$ bombardier -c 125 -n 5000000 http://localhost:5000/api/values/5
+Bombarding http://localhost:5000/api/values/5 with 5000000 requests using 125 connections
+ 5000000 / 5000000 [======================================================] 100.00% 47s
+Done!
+Statistics        Avg      Stdev        Max
+  Reqs/sec    105643.81    7687.79     122564
+  Latency        1.18ms   366.55us    22.01ms
+  HTTP codes:
+    1xx - 0, 2xx - 5000000, 3xx - 0, 4xx - 0, 5xx - 0
+    others - 0
+  Throughput:    19.65MB/s
+</code></pre><p>想通过图片来理解的人，我也把我的屏幕截屏出来了！</p><p>请点击<a href=https://github.com/kataras/iris/tree/master/_benchmarks/screens>这儿</a>可以看到这些屏幕快照。</p><h4 id=总结>总结</h4><ul><li>完成 <code>5000000 个请求</code>的时间 - 越短越好。</li><li>请求次数/每秒 - 越大越好。</li><li>等待时间 — 越短越好。</li><li>吞吐量 — 越大越好。</li><li>内存使用 — 越小越好。</li><li>LOC (代码行数) — 越少越好。</li></ul><p>.NET Core MVC 应用程序，使用 86 行代码，运行 2 分钟 8 秒，每秒接纳 39311.56 个请求，平均 3.19ms 等待，最大时到 229.73ms，内存使用大约为 126MB（不包括 dotnet 框架）。</p><p>Iris MVC 应用程序，使用 27 行代码，运行 47 秒，每秒接纳 105643.71 个请求，平均 1.18ms 等待，最大时到 22.01ms，内存使用大约为 12MB。</p><blockquote><p>还有另外一个模板的基准，滚动到底部。</p></blockquote><p><strong>2017 年 8 月 20 号更新</strong></p><p><a href=https://twitter.com/clarkis117>Josh Clark</a> 和 <a href=https://twitter.com/shanselman>Scott Hanselman</a>在此 <a href=https://twitter.com/shanselman/status/899005786826788865>tweet 评论</a>上指出，.NET Core <code>Startup.cs</code> 文件中 <code>services.AddMvc();</code> 这行可以替换为 <code>services.AddMvcCore();</code>。我听从他们的意见，修改代码，重新运行基准，该文章的 .NET Core 应用程序的基准输出已经修改。</p><p>@topdawgevh @shanselman 他们也在使用 <code>AddMvc()</code> 而不是 <code>AddMvcCore()</code> &mldr;，难道都不包含中间件？</p><p> —  @clarkis117</p><p>@clarkis117 @topdawgevh Cool @MakisMaropoulos @ben<em>a</em>adams @davidfowl 我们来看看。认真学习下怎么使用更简单的性能默认值。</p><p> —  @shanselman</p><p>@shanselman @clarkis117 @topdawgevh @ben<em>a</em>adams @davidfowl @shanselman @ben<em>a</em>adams @davidfowl 谢谢您们的反馈意见。我已经修改，更新了结果，没什么不同。对其它的建议，我非常欢迎。</p><p> —  @MakisMaropoulos</p><blockquote><p>它有点稍微的不同但相差不大（从 8.61MB/s 到 8.91MB/s）</p></blockquote><p>想要了解跟 <code>services.AddMvc()</code> 标准比较结果的，可以点击<a href=https://github.com/kataras/iris/blob/master/_benchmarks/screens/5m_requests_netcore-mvc.png>这儿</a>。</p><h3 id=想再多了解点儿吗>想再多了解点儿吗?</h3><p>我们再制定一个基准，产生 <code>1000000 次请求</code>，这次会通过视图引擎由模板生成 <code>HTML</code> 页面。</p><h4 id=net-core-mvc-使用的模板>.NET Core MVC 使用的模板</h4><pre tabindex=0><code>using System;
+
+namespace netcore_mvc_templates.Models
+{
+    public class ErrorViewModel
+    {
+        public string Title { get; set; }
+        public int Code { get; set; }
+    }
+}
+</code></pre><pre tabindex=0><code> using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using netcore_mvc_templates.Models;
+
+namespace netcore_mvc_templates.Controllers
+{
+    public class HomeController : Controller
+    {
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult About()
+        {
+            ViewData[&#34;Message&#34;] = &#34;Your application description page.&#34;;
+
+            return View();
+        }
+
+        public IActionResult Contact()
+        {
+            ViewData[&#34;Message&#34;] = &#34;Your contact page.&#34;;
+
+            return View();
+        }
+
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { Title = &#34;Error&#34;, Code = 500});
+        }
+    }
+}
+</code></pre><pre tabindex=0><code>using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+
+namespace netcore_mvc_templates
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            BuildWebHost(args).Run();
+        }
+
+        public static IWebHost BuildWebHost(string[] args) =&gt;
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup&lt;Startup&gt;()
+                .Build();
+    }
+}
+</code></pre><pre tabindex=0><code>using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace netcore_mvc_templates
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            /*  An unhandled exception was thrown by the application.
+                System.InvalidOperationException: No service for type
+                &#39;Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory&#39; has been registered.
+                Solution: Use AddMvc() instead of AddMvcCore() in Startup.cs and it will work.
+            */
+            // services.AddMvcCore();
+            services.AddMvc();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            app.UseStaticFiles();
+
+            app.UseMvc(routes =&gt;
+            {
+                routes.MapRoute(
+                    name: &#34;default&#34;,
+                    template: &#34;{controller=Home}/{action=Index}/{id?}&#34;);
+            });
+        }
+    }
+}
+</code></pre><pre tabindex=0><code>/*
+wwwroot/css
+wwwroot/images
+wwwroot/js
+wwwroot/lib
+wwwroot/favicon.ico
+
+
+Views/Shared/_Layout.cshtml
+Views/Shared/Error.cshtml
+
+Views/Home/About.cshtml
+Views/Home/Contact.cshtml
+Views/Home/Index.cshtml
+
+These files are quite long to be shown in this article but you can view them at: 
+https://github.com/kataras/iris/tree/master/_benchmarks/netcore-mvc-templates
+</code></pre><p>运行 .NET Core 服务项目：</p><pre tabindex=0><code>$ cd netcore-mvc-templates
+$ dotnet run -c Release
+Hosting environment: Production
+Content root path: C:\mygopath\src\github.com\kataras\iris\_benchmarks\netcore-mvc-templates
+Now listening on: http://localhost:5000
+Application started. Press Ctrl+C to shut down.
+</code></pre><p>运行 HTTP 基准工具：</p><pre tabindex=0><code>Bombarding http://localhost:5000 with 1000000 requests using 125 connections
+ 1000000 / 1000000 [====================================================] 100.00% 1m20s
+Done!
+Statistics Avg Stdev Max
+ Reqs/sec 11738.60 7741.36 125887
+ Latency 10.10ms 22.10ms 1.97s
+ HTTP codes:
+ 1xx — 0, 2xx — 1000000, 3xx — 0, 4xx — 0, 5xx — 0
+ others — 0
+ Throughput: 89.03MB/s
+</code></pre><h4 id=iris-mvc-使用的模板>Iris MVC 使用的模板</h4><pre tabindex=0><code>package controllers
+
+import &#34;github.com/kataras/iris/mvc&#34;
+
+type AboutController struct{ mvc.Controller }
+
+func (c *AboutController) Get() {
+    c.Data[&#34;Title&#34;] = &#34;About&#34;
+    c.Data[&#34;Message&#34;] = &#34;Your application description page.&#34;
+    c.Tmpl = &#34;about.html&#34;
+}
+</code></pre><pre tabindex=0><code>package controllers
+
+import &#34;github.com/kataras/iris/mvc&#34;
+
+type ContactController struct{ mvc.Controller }
+
+func (c *ContactController) Get() {
+    c.Data[&#34;Title&#34;] = &#34;Contact&#34;
+    c.Data[&#34;Message&#34;] = &#34;Your contact page.&#34;
+    c.Tmpl = &#34;contact.html&#34;
+}
+</code></pre><pre tabindex=0><code>package models
+
+// HTTPError a silly structure to keep our error page data.
+type HTTPError struct {
+    Title string
+    Code  int
+}
+</code></pre><pre tabindex=0><code>package controllers
+
+import &#34;github.com/kataras/iris/mvc&#34;
+
+type IndexController struct{ mvc.Controller }
+
+func (c *IndexController) Get() {
+    c.Data[&#34;Title&#34;] = &#34;Home Page&#34;
+    c.Tmpl = &#34;index.html&#34;
+}
+</code></pre><pre tabindex=0><code>package main
+
+import (
+    &#34;github.com/kataras/iris/_benchmarks/iris-mvc-templates/controllers&#34;
+
+    &#34;github.com/kataras/iris&#34;
+    &#34;github.com/kataras/iris/context&#34;
+)
+
+const (
+    // templatesDir is the exactly the same path that .NET Core is using for its templates,
+    // in order to reduce the size in the repository.
+    // Change the &#34;C\\mygopath&#34; to your own GOPATH.
+    templatesDir = &#34;C:\\mygopath\\src\\github.com\\kataras\\iris\\_benchmarks\\netcore-mvc-templates\\wwwroot&#34;
+)
+
+func main() {
+    app := iris.New()
+    app.Configure(configure)
+
+    app.Controller(&#34;/&#34;, new(controllers.IndexController))
+    app.Controller(&#34;/about&#34;, new(controllers.AboutController))
+    app.Controller(&#34;/contact&#34;, new(controllers.ContactController))
+
+    app.Run(iris.Addr(&#34;:5000&#34;), iris.WithoutVersionChecker)
+}
+
+func configure(app *iris.Application) {
+    app.RegisterView(iris.HTML(&#34;./views&#34;, &#34;.html&#34;).Layout(&#34;shared/layout.html&#34;))
+    app.StaticWeb(&#34;/public&#34;, templatesDir)
+    app.OnAnyErrorCode(onError)
+}
+
+type err struct {
+    Title string
+    Code  int
+}
+
+func onError(ctx context.Context) {
+    ctx.ViewData(&#34;&#34;, err{&#34;Error&#34;, ctx.GetStatusCode()})
+    ctx.View(&#34;shared/error.html&#34;)
+}
+</code></pre><pre tabindex=0><code>/*
+../netcore-mvc-templates/wwwroot/css
+../netcore-mvc-templates/wwwroot/images
+../netcore-mvc-templates/wwwroot/js
+../netcore-mvc-templates/wwwroot/lib
+../netcore-mvc-templates/wwwroot/favicon.ico
+views/shared/layout.html
+views/shared/error.html
+views/about.html
+views/contact.html
+views/index.html
+These files are quite long to be shown in this article but you can view them at: 
+https://github.com/kataras/iris/tree/master/_benchmarks/iris-mvc-templates
+*/
+</code></pre><p>运行 Go 服务项目：</p><pre tabindex=0><code>$ cd iris-mvc-templates
+$ go run main.go
+Now listening on: http://localhost:5000
+Application started. Press CTRL+C to shut down.
+</code></pre><p>运行 HTTP 基准工具：</p><pre tabindex=0><code>Bombarding http://localhost:5000 with 1000000 requests using 125 connections
+ 1000000 / 1000000 [======================================================] 100.00% 37s
+Done!
+Statistics Avg Stdev Max
+ Reqs/sec 26656.76 1944.73 31188
+ Latency 4.69ms 1.20ms 22.52ms
+ HTTP codes:
+ 1xx — 0, 2xx — 1000000, 3xx — 0, 4xx — 0, 5xx — 0
+ others — 0
+ Throughput: 192.51MB/s
+</code></pre><h4 id=总结-1>总结</h4><ul><li>完成 <code>1000000 个请求</code>的时间 - 越短越好。</li><li>请求次数/每秒 - 越大越好。</li><li>等待时间 — 越短越好。</li><li>内存使用 — 越小越好。</li><li>吞吐量 — 越大越好。</li></ul><p>.NET Core MVC 模板应用程序，运行 1 分钟 20 秒，每秒接纳 11738.60 个请求，同时每秒生成 89.03M 页面，平均 10.10ms 等待，最大时到 1.97s，内存使用大约为 193MB（不包括 dotnet 框架）。</p><p>Iris MVC 模板应用程序，运行 37 秒，每秒接纳 26656.76 个请求，同时每秒生成 192.51M 页面，平均 1.18ms 等待，最大时到 22.52ms，内存使用大约为 17MB。</p><h3 id=接下来呢>接下来呢？</h3><p><a href=https://github.com/kataras/iris/tree/master/_benchmarks>这里</a>有上面所示的源代码，请下载下来，在您本地以同样的基准运行，然后把运行结果在这儿给大家分享。</p><p>想添加 Go 或 C# .net core WEB 服务框架到列表的朋友请向<a href=https://github.com/kataras/iris>这个仓库</a>的 <code>_benchmarks</code> 目录推送 PR。</p><p>我也需要亲自感谢下 <a href=https://dev.to/kataras/go-vsnet-core-in-terms-of-http-performance>dev.to</a> 团队，感谢把我的这篇文章分享到他们的 Twitter 账户。</p><p>感谢大家真心反馈，玩得开心！</p><h4 id=更新--2017-年-8-月-21-周一>更新 : 2017 年 8 月 21 ，周一</h4><p>很多人联系我，希望看到一个基于 .NET Core 的较低级别 Kestrel 的基准测试文章。</p><p>因此我完成了，请点击下面的<a href=https://medium.com/@kataras/iris-go-vs-net-core-kestrel-in-terms-of-http-performance-806195dc93d5>链接</a>来了解 Kestrel 和 Iris 之间的性能差异，它还包含一个会话存储管理基准！</p><hr><p>via: <a href=https://hackernoon.com/go-vs-net-core-in-terms-of-http-performance-7535a61b67b8>https://hackernoon.com/go-vs-net-core-in-terms-of-http-performance-7535a61b67b8</a></p><p>作者：<a href="https://hackernoon.com/@kataras?source=post_header_lockup">Gerasimos Maropoulos</a> 译者：<a href=https://github.com/runningwater>runningwater</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/golang/ rel=tag>Golang</a></li><li class=tags__item><a class="tags__link btn" href=/tags/.net/ rel=tag>.NET</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

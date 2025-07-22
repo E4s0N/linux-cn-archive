@@ -1,0 +1,167 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Java 中使用外部库 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Java 中使用外部库"><meta property="og:description" content="外部库填补了 Java 核心库中的一些功能空白。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13769-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-09-10T07:57:59+00:00"><meta property="article:modified_time" content="2021-09-10T07:57:59+00:00"><meta itemprop=name content="在 Java 中使用外部库"><meta itemprop=description content="外部库填补了 Java 核心库中的一些功能空白。"><meta itemprop=datePublished content="2021-09-10T07:57:59+00:00"><meta itemprop=dateModified content="2021-09-10T07:57:59+00:00"><meta itemprop=wordCount content="700"><meta itemprop=keywords content="Java,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Java 中使用外部库</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-09-10T07:57:59Z>September 10, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>外部库填补了 Java 核心库中的一些功能空白。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202109/10/075749s65x89uzxj8x5kq9.jpg alt title="books in a library, stacks"></p><p>Java 自带有一组核心库，其中包含了定义常用数据类型和相关行为的库（例如 <code>String</code> 和 <code>Date</code>）、与主机操作系统交互的实用程序（例如 <code>System</code> 和 <code>File</code>），以及一些用来管理安全性、处理网络通信、创建或解析 XML的有用的子系统。鉴于核心库的丰富性，程序员通常很容易在其中找到有用的组件，以减少需要编写的代码量。</p><p>即便如此，核心库仍有一些功能上的不足，因此发现这些不足的程序员们还额外创建了很多有趣的 Java 库。例如，<a href=https://commons.apache.org/>Apache Commons</a>“是一个专注于可重用 Java 组件所有方面的 Apache 项目”，提供了大约 43 个开源库的集合（截至撰写本文时），涵盖了 Java 核心库之外的一系列功能 （例如 <a href=https://commons.apache.org/proper/commons-geometry/>geometry</a> 或 <a href=https://commons.apache.org/proper/commons-statistics/>statistics</a>），并增强或替换了 Java 核心库中的原有功能（例如 <a href=https://commons.apache.org/proper/commons-math/>math</a> 或 <a href=https://commons.apache.org/proper/commons-numbers/>numbers</a>）。</p><p>另一种常见的 Java 库类型是系统组件的接口（例如数据库系统接口），本文会着眼于使用此类接口连接到 <a href=https://opensource.com/article/19/11/getting-started-postgresql>PostgreSQL</a> 数据库，并得到一些有趣的信息。首先，我们来回顾一下库的重要部分。</p><h3 id=什么是库>什么是库？</h3><p>库 library 里自然包含的是一些有用的代码。但为了发挥用处，代码需要以特定方式进行组织，特定的方式使 Java 程序员可以访问其中组件来解决手头问题。</p><p>可以说，一个库最重要的部分是它的应用程序编程接口（API）文档。这种文档很多人都熟悉，通常是由 <a href=https://en.wikipedia.org/wiki/Javadoc>Javadoc</a> 生成的。Javadoc 读取代码中的结构化注释并以 HTML 格式输出文档，通常 API 的 包 package 在页面左上角的面板中显示， 类 class 在左下角显示，同时右侧会有库、包或类级别的详细文档（具体取决于在主面板中选择的内容）。例如，<a href=https://commons.apache.org/proper/commons-math/apidocs/index.html>Apache Commons Math 的顶级 API 文档</a> 如下所示：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202109/10/075802g5nlrmmlxgwcb325.png alt="API documentation for Apache Commons Math" title="API documentation for Apache Commons Math"></p><p>单击主面板中的包会显示该包中定义的 Java 类和接口。例如，<a href=https://commons.apache.org/proper/commons-math/apidocs/org/apache/commons/math4/analysis/solvers/package-summary.html>org.apache.commons.math4.analysis.solvers</a> 显示了诸如 <code>BisectionSolver</code> 这样的类，该类用于使用二分算法查找单变量实函数的零点。单击 <a href=https://commons.apache.org/proper/commons-math/apidocs/org/apache/commons/math4/analysis/solvers/BisectionSolver.html>BisectionSolver</a> 链接会列出 <code>BisectionSolver</code> 类的所有方法。</p><p>这类文档可用作参考文档，不适合作为学习如何使用库的教程。比如，如果你知道什么是单变量实函数并查看包 <code>org.apache.commons.math4.analysis.function</code>，就可以试着使用该包来组合函数定义，然后使用 <code>org.apache.commons.math4.analysis.solvers</code> 包来查找刚刚创建的函数的零点。但如果你不知道，就可能需要更多学习向的文档，也许甚至是一个实际例子，来读懂参考文档。</p><p>这种文档结构还有助于阐明 包 package （相关 Java 类和接口定义的集合）的含义，并显示特定库中捆绑了哪些包。</p><p>这种库的代码通常是在 <a href=https://en.wikipedia.org/wiki/JAR_(file_format)>.jar 文件</a> 中，它基本上是由 Java 的 <code>jar</code> 命令创建的 .zip 文件，其中还包含一些其他有用的信息。.jar 文件通常被创建为构建过程的端点，该构建过程编译了所定义包中的所有 .java 文件。</p><p>要访问外部库提供的功能，有两个主要步骤：</p><ol><li>确保通过类路径（或者命令行中的 <code>-cp</code> 参数或者 <code>CLASSPATH</code> 环境变量），库可用于 Java 编译步骤（<a href=https://en.wikipedia.org/wiki/Javac>javac</a>）和执行步骤（<code>java</code>）。</li><li>使用恰当的 <code>import</code> 语句访问程序源代码中的包和类。</li></ol><p>其余的步骤就与使用 <code>String</code> 等 Java核心类相同，使用库提供的类和接口定义来编写代码。很简单对吧？不过也没那么简单。首先，你需要了解库组件的预期使用模式，然后才能编写代码。</p><h3 id=示例连接-postgresql-数据库>示例：连接 PostgreSQL 数据库</h3><p>在数据库系统中访问数据的典型使用步骤是：</p><ol><li>访问正在使用的特定数据库软件代码。</li><li>连接到数据库服务器。</li><li>构建查询字符串。</li><li>执行查询字符串。</li><li>针对返回的结果，做需要的处理。</li><li>断开与数据库服务器的连接。</li></ol><p>所有这些面向程序员的部分由接口包 <a href=https://docs.oracle.com/javase/8/docs/api/java/sql/package-summary.html>java.sql</a> 提供，它独立于数据库，定义了核心客户端 Java 数据库连接（JDBC）API。<code>java.sql</code> 包是 Java 核心库的一部分，因此无需提供 .jar 文件即可编译。但每个数据库提供者都会创建自己的 <code>java.sql</code> 接口实现（例如 <code>Connection</code> 接口），并且必须在运行步骤中提供这些实现。</p><p>接下来我们使用 PostgreSQL，看看这一过程是如何进行的。</p><h4 id=访问特定数据库的代码>访问特定数据库的代码</h4><p>以下代码使用 <a href=https://en.wikipedia.org/wiki/Java_Classloader>Java 类加载器</a>（<code>Class.forName()</code> 调用）将 PostgreSQL 驱动程序代码加载到正在执行的虚拟机中：</p><pre tabindex=0><code>import java.sql.*;
+
+public class Test1 {
+
+    public static void main(String args[]) {
+
+        // Load the driver (jar file must be on class path) [1]
+
+        try {
+            Class.forName(&#34;org.postgresql.Driver&#34;);
+            System.out.println(&#34;driver loaded&#34;);
+        } catch (Exception e1) {
+            System.err.println(&#34;couldn&#39;t find driver&#34;);
+            System.err.println(e1);
+            System.exit(1);
+        }
+
+        // If we get here all is OK
+
+        System.out.println(&#34;done.&#34;);
+    }
+}
+</code></pre><p>因为类加载器可能失败，失败时会抛出异常，所以将对 <code>Class.forName()</code> 的调用放在 <code>try-catch</code> 代码块中。</p><p>如果你使用 <code>javac</code> 编译上面的代码，然后用 <code>java</code> 运行，会报异常：</p><pre tabindex=0><code>me@mymachine:~/Test$ javac Test1.java
+me@mymachine:~/Test$ java Test1
+couldn&#39;t find driver
+java.lang.ClassNotFoundException: org.postgresql.Driver
+me@mymachine:~/Test$
+</code></pre><p>类加载器要求类路径中有包含 PostgreSQL JDBC 驱动程序实现的 .jar 文件：</p><pre tabindex=0><code>me@mymachine:~/Test$ java -cp ~/src/postgresql-42.2.5.jar:. Test1
+driver loaded
+done.
+me@mymachine:~/Test$
+</code></pre><h4 id=连接到数据库服务器>连接到数据库服务器</h4><p>以下代码实现了加载 JDBC 驱动程序和创建到 PostgreSQL 数据库的连接：</p><pre tabindex=0><code>import java.sql.*;
+
+public class Test2 {
+
+        public static void main(String args[]) {
+
+                // Load the driver (jar file must be on class path) [1]
+
+                try {
+                        Class.forName(&#34;org.postgresql.Driver&#34;);
+                        System.out.println(&#34;driver loaded&#34;);
+                } catch (Exception e1) {
+                        System.err.println(&#34;couldn&#39;t find driver&#34;);
+                        System.err.println(e1);
+                        System.exit(1);
+                }
+
+                // Set up connection properties [2]
+
+                java.util.Properties props = new java.util.Properties();
+                props.setProperty(&#34;user&#34;,&#34;me&#34;);
+                props.setProperty(&#34;password&#34;,&#34;mypassword&#34;);
+                String database = &#34;jdbc:postgresql://myhost.org:5432/test&#34;;
+
+                // Open the connection to the database [3]
+
+                try (Connection conn = DriverManager.getConnection(database, props)) {
+                        System.out.println(&#34;connection created&#34;);
+                } catch (Exception e2) {
+                        System.err.println(&#34;sql operations failed&#34;);
+                        System.err.println(e2);
+                        System.exit(2);
+                }
+                System.out.println(&#34;connection closed&#34;);
+
+                // If we get here all is OK
+
+                System.out.println(&#34;done.&#34;);
+        }
+}
+</code></pre><p>编译并运行上述代码:</p><pre tabindex=0><code>me@mymachine:~/Test$ javac Test2.java
+me@mymachine:~/Test$ java -cp ~/src/postgresql-42.2.5.jar:. Test2
+driver loaded
+connection created
+connection closed
+done.
+me@mymachine:~/Test$
+</code></pre><p>关于上述的一些注意事项：</p><ul><li>注释 <code>[2]</code> 后面的代码使用系统属性来设置连接参数（在本例中参数为 PostgreSQL 用户名和密码）。代码也可以从 Java 命令行获取这些参数并将所有参数作为参数包传递，同时还有一些其他 <code>Driver.getConnection()</code> 选项可用于单独传递参数。</li><li>JDBC 需要一个用于定义数据库的 URL，它在上述代码中被声明为 <code>String database</code> 并与连接参数一起传递给 <code>Driver.getConnection()</code> 方法。</li><li>代码使用 <code>try-with-resources</code> 语句，它会在 <code>try-catch</code> 块中的代码完成后自动关闭连接。<a href=https://stackoverflow.com/questions/8066501/how-should-i-use-try-with-resources-with-jdbc>Stack Overflow</a> 上对这种方法进行了长期的讨论。</li><li><code>try-with-resources</code> 语句提供对 <code>Connection</code> 实例的访问，并可以在其中执行 SQL 语句；所有错误都会被同一个 <code>catch</code> 语句捕获。</li></ul><h4 id=用数据库的连接处理一些有趣的事情>用数据库的连接处理一些有趣的事情</h4><p>日常工作中，我经常需要知道为给定的数据库服务器实例定义了哪些用户，这里我使用这个 <a href=https://www.postgresql.org/message-id/1121195544.8208.242.camel@state.g2switchworks.com>简便的 SQL</a> 来获取所有用户的列表：</p><pre tabindex=0><code>import java.sql.*;
+
+public class Test3 {
+
+        public static void main(String args[]) {
+
+                // Load the driver (jar file must be on class path) [1]
+
+                try {
+                        Class.forName(&#34;org.postgresql.Driver&#34;);
+                        System.out.println(&#34;driver loaded&#34;);
+                } catch (Exception e1) {
+                        System.err.println(&#34;couldn&#39;t find driver&#34;);
+                        System.err.println(e1);
+                        System.exit(1);
+                }
+
+                // Set up connection properties [2]
+
+                java.util.Properties props = new java.util.Properties();
+                props.setProperty(&#34;user&#34;,&#34;me&#34;);
+                props.setProperty(&#34;password&#34;,&#34;mypassword&#34;);
+                String database = &#34;jdbc:postgresql://myhost.org:5432/test&#34;;
+
+                // Open the connection to the database [3]
+
+                try (Connection conn = DriverManager.getConnection(database, props)) {
+                        System.out.println(&#34;connection created&#34;);
+
+                        // Create the SQL command string [4]
+
+                        String qs = &#34;SELECT &#34; +
+                                &#34;       u.usename AS \&#34;User name\&#34;, &#34; +
+                                &#34;       u.usesysid AS \&#34;User ID\&#34;, &#34; +
+                                &#34;       CASE &#34; +
+                                &#34;       WHEN u.usesuper AND u.usecreatedb THEN &#34; +
+                                &#34;               CAST(&#39;superuser, create database&#39; AS pg_catalog.text) &#34; +
+                        &#34;       WHEN u.usesuper THEN &#34; +
+                                &#34;               CAST(&#39;superuser&#39; AS pg_catalog.text) &#34; +
+                                &#34;       WHEN u.usecreatedb THEN &#34; +
+                                &#34;               CAST(&#39;create database&#39; AS pg_catalog.text) &#34; +
+                                &#34;       ELSE &#34; +
+                                &#34;               CAST(&#39;&#39; AS pg_catalog.text) &#34; +
+                                &#34;       END AS \&#34;Attributes\&#34; &#34; +
+                                &#34;FROM pg_catalog.pg_user u &#34; +
+                                &#34;ORDER BY 1&#34;;
+
+                        // Use the connection to create a statement, execute it,
+                        // analyze the results and close the result set [5]
+
+                        Statement stat = conn.createStatement();
+                        ResultSet rs = stat.executeQuery(qs);
+                        System.out.println(&#34;User name;User ID;Attributes&#34;);
+                        while (rs.next()) {
+                                System.out.println(rs.getString(&#34;User name&#34;) + &#34;;&#34; +
+                                                rs.getLong(&#34;User ID&#34;) + &#34;;&#34; +
+                                                rs.getString(&#34;Attributes&#34;));
+                        }
+                        rs.close();
+                        stat.close();
+               
+                } catch (Exception e2) {
+                        System.err.println(&#34;connecting failed&#34;);
+                        System.err.println(e2);
+                        System.exit(1);
+                }
+                System.out.println(&#34;connection closed&#34;);
+
+                // If we get here all is OK
+
+                System.out.println(&#34;done.&#34;);
+        }
+}
+</code></pre><p>在上述代码中，一旦有了 <code>Connection</code> 实例，它就会定义一个查询字符串（上面的注释 <code>[4]</code>），创建一个 <code>Statement</code> 实例并用其来执行查询字符串，然后将其结果放入一个 <code>ResultSet</code> 实例。程序可以遍历该 <code>ResultSet</code> 实例来分析返回的结果，并以关闭 <code>ResultSet</code> 和 <code>Statement</code> 实例结束（上面的注释 <code>[5]</code>）。</p><p>编译和执行程序会产生以下输出：</p><pre tabindex=0><code>me@mymachine:~/Test$ javac Test3.java
+me@mymachine:~/Test$ java -cp ~/src/postgresql-42.2.5.jar:. Test3
+driver loaded
+connection created
+User name;User ID;Attributes
+fwa;16395;superuser
+vax;197772;
+mbe;290995;
+aca;169248;
+connection closed
+done.
+me@mymachine:~/Test$
+</code></pre><p>这是在一个简单的 Java 应用程序中使用 PostgreSQL JDBC 库的（非常简单的）示例。要注意的是，由于 <code>java.sql</code> 库的设计方式，它不需要在代码中使用像 <code>import org.postgresql.jdbc.*;</code> 这样的 Java 导入语句，而是使用 Java 类加载器在运行时引入 PostgreSQL 代码的方式，也正因此无需在代码编译时指定类路径。</p><hr><p>via: <a href=https://opensource.com/article/20/2/external-libraries-java>https://opensource.com/article/20/2/external-libraries-java</a></p><p>作者：<a href=https://opensource.com/users/clhermansen>Chris Hermansen</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/unigeorge>unigeorge</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/java/ rel=tag>Java</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

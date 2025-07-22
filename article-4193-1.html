@@ -1,0 +1,57 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>SUSE Linux – Zypper 命令示例 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="SUSE Linux – Zypper 命令示例"><meta property="og:description" content="Zypper是SUSE Linux中用于安装，升级，卸载，管理仓库、进行各种包查询的命令行接口。本篇将会讨论zypper的几个不同命令的例子。  语法： # zypper  command    中括号中的部分可以不需要。执行zypper最简单的方法是输入 zypper 及 。 例子1：列出可用的全局选项和命令 打开终端，输入zypper并按回车，它会显示所有可用的全局选项和命令。 linux-xa3t:~ # zypper  例子2：获得zypper的某个命令的帮助 语法： zypper help  linux-xa3t:~ # zypper help remove remove (rm)  capability &mldr; Remove packages with specified capabilities. A"><meta property="og:type" content="article"><meta property="og:url" content="/article-4193-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-11-10T10:23:00+00:00"><meta property="article:modified_time" content="2014-11-10T10:23:00+00:00"><meta itemprop=name content="SUSE Linux – Zypper 命令示例"><meta itemprop=description content="Zypper是SUSE Linux中用于安装，升级，卸载，管理仓库、进行各种包查询的命令行接口。本篇将会讨论zypper的几个不同命令的例子。  语法： # zypper  command    中括号中的部分可以不需要。执行zypper最简单的方法是输入 zypper 及 。 例子1：列出可用的全局选项和命令 打开终端，输入zypper并按回车，它会显示所有可用的全局选项和命令。 linux-xa3t:~ # zypper  例子2：获得zypper的某个命令的帮助 语法： zypper help  linux-xa3t:~ # zypper help remove remove (rm)  capability &mldr; Remove packages with specified capabilities. A"><meta itemprop=datePublished content="2014-11-10T10:23:00+00:00"><meta itemprop=dateModified content="2014-11-10T10:23:00+00:00"><meta itemprop=wordCount content="409"><meta itemprop=keywords content="SUSE,Zypper,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>SUSE Linux – Zypper 命令示例</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-11-10T10:23:00Z>November 10, 2014</time></div></div></header><div class="content post__content clearfix"><p>Zypper是SUSE Linux中用于安装，升级，卸载，管理仓库、进行各种包查询的命令行接口。本篇将会讨论zypper的几个不同命令的例子。</p><p><img src=/data/attachment/album/201411/10/002955t5x2xz82y802mo2o.png alt></p><p>语法：</p><pre tabindex=0><code># zypper [--global-opts] &lt;command&gt; [--command-opts] [command-arguments]
+</code></pre><p>中括号中的部分可以不需要。执行zypper最简单的方法是输入 zypper 及 。</p><h3 id=例子1列出可用的全局选项和命令>例子1：列出可用的全局选项和命令</h3><p>打开终端，输入zypper并按回车，它会显示所有可用的全局选项和命令。</p><pre tabindex=0><code>linux-xa3t:~ # zypper
+</code></pre><h3 id=例子2获得zypper的某个命令的帮助>例子2：获得zypper的某个命令的帮助</h3><p>语法： zypper help [command]</p><pre tabindex=0><code>linux-xa3t:~ # zypper help remove
+remove (rm) [options] &lt;capability&gt; ...
+
+Remove packages with specified capabilities.
+A capability is NAME[.ARCH][OP&lt;VERSION&gt;], where OP is one of &lt;, &lt;=, =, &gt;=, &gt;.
+
+Command options:
+-r, --repo &lt;alias|#|URI&gt; Load only the specified repository.
+-t, --type &lt;type&gt; Type of package (package, patch, pattern, product).
+
+ Default: package.
+-n, --name Select packages by plain name, not by capability.
+-C, --capability Select packages by capability.
+--debug-solver Create solver test case for debugging.
+-R, --no-force-resolution Do not force the solver to find solution,let it ask.
+--force-resolution Force the solver to find a solution (even an aggressive one).
+-u, --clean-deps Automatically remove unneeded dependencies.
+-U, --no-clean-deps No automatic removal of unneeded dependencies.
+-D, --dry-run Test the removal, do not actually remove.
+</code></pre><h3 id=例子3打开zypper-shell会话>例子3：打开zypper shell/会话</h3><pre tabindex=0><code>linux-xa3t:~ # zypper sh
+zypper&gt;
+</code></pre><p>或</p><pre tabindex=0><code>linux-xa3t:~ # zypper shell
+zypper&gt;
+</code></pre><h3 id=例子4列出已定义的仓库>例子4：列出已定义的仓库</h3><pre tabindex=0><code>linux-xa3t:~ # zypper repos
+</code></pre><p><img src=/data/attachment/album/201411/10/002958xzbbsh9xrbijrtda.png alt></p><p>或</p><pre tabindex=0><code>linux-xa3t:~ # zypper lr
+</code></pre><h4 id=41-以表格的形式列出仓库的uri>4.1) 以表格的形式列出仓库的URI</h4><p><img src=/data/attachment/album/201411/10/002959cexnmqfpmcfhhpt9.png alt></p><h4 id=42-以优先级列出仓库>4.2) 以优先级列出仓库</h4><pre tabindex=0><code>linux-xa3t:~ # zypper lr -p
+</code></pre><p><img src=/data/attachment/album/201411/10/003001o89tuy8mjg8f86df.png alt></p><h3 id=例子5刷新仓库>例子5：刷新仓库</h3><pre tabindex=0><code>linux-xa3t:~ # zypper ref
+Repository &#39;openSUSE-13.1-Non-Oss&#39; is up to date.
+Repository &#39;openSUSE-13.1-Oss&#39; is up to date.
+Repository &#39;openSUSE-13.1-Update&#39; is up to date.
+Repository &#39;openSUSE-13.1-Update-Non-Oss&#39; is up to date.
+All repositories have been refreshed.
+</code></pre><h3 id=例子6修改zypper仓库>例子6：修改zypper仓库</h3><p>zypper仓库可以通过别名、数字或者URI或者通过‘–all、 –remote、 –local、 –medium-type’这些选项修改。</p><p>linux-xa3t:~ # zypper mr -d 6 #禁用6号仓库 linux-xa3t:~ # zypper mr -rk -p 70 upd #启用自动书信并为‘upd’仓库设置rpm文件‘缓存’，且设置它的优先级为70 linux-xa3t:~ # zypper mr -Ka #为所有的仓库禁用rpm文件缓存 linux-xa3t:~ # zypper mr -kt #为远程仓库设置rpm文件缓存</p><h3 id=例子7添加仓库>例子7：添加仓库</h3><p>语法： zypper addrepo 或者 zypper ar &lt;仓库的URL或者别名></p><pre tabindex=0><code>linux-xa3t:~ # zypper ar http://download.opensuse.org/update/13.1/ update
+Adding repository &#39;update&#39; .............................................[done]
+Repository &#39;update&#39; successfully added
+Enabled: Yes
+Autorefresh: No
+GPG check: Yes
+URI: http://download.opensuse.org/update/13.1/
+</code></pre><h3 id=例子8移除仓库>例子8：移除仓库</h3><p>语法： zypper removerepo &lt;仓库名> &lt;别名></p><p>或者</p><p>zypper rr &lt;仓库名> &lt;别名></p><pre tabindex=0><code>linux-xa3t:~ # zypper rr openSUSE-13.1-1.10 openSUSE-13.1-1.10
+Removing repository &#39;openSUSE-13.1-1.10&#39; ............................[done]
+Repository &#39;openSUSE-13.1-1.10&#39; has been removed.
+</code></pre><h3 id=例子9安装软件包>例子9：安装软件包</h3><p>语法： zypper install &lt;包名> 或者 zypper in &lt;包名></p><pre tabindex=0><code>linux-xa3t:~ # zypper install vlc
+</code></pre><h3 id=例子10卸载软件包>例子10：卸载软件包</h3><p>语法： zypper remove &lt;包名> 或者 zypper rm &lt;包名></p><pre tabindex=0><code>linux-xa3t:~ # zypper remove sqlite
+</code></pre><h3 id=例子11导出和导入仓库>例子11：导出和导入仓库</h3><p>导出仓库的语法 : zypper repos –export 或者 zypper lr -e</p><pre tabindex=0><code>linux-xa3t:~ # zypper lr --export repo-backup/back.repo
+Repositories have been successfully exported to repo-backup/back.repo.
+</code></pre><p>导入仓库的语法 :</p><pre tabindex=0><code>linux-xa3t:~ # zypper ar repo-backup/back.repo
+</code></pre><h3 id=例子12更新一个软件包>例子12：更新一个软件包</h3><p>语法： zypper update &lt;包名> 或者 zypper up &lt;包名></p><pre tabindex=0><code>linux-xa3t:~ # zypper update bash
+</code></pre><h3 id=例子13安装源码包>例子13：安装源码包</h3><p>语法： zypper source-install &lt;源码包> 或 zypper si &lt;源码包></p><pre tabindex=0><code>linux-xa3t:~ # zypper source-install zypper
+</code></pre><h3 id=例子14只安装依赖包>例子14：只安装依赖包</h3><p>例子13中的命令会安装和构建特定包的依赖。如果你想要安装源码包就用-D选项</p><pre tabindex=0><code># zypper source-install -D package_name
+</code></pre><p>只安装依赖就使用-d</p><pre tabindex=0><code># zypper source-install -d package_name
+</code></pre><hr><p>via: <a href=http://www.linuxtechi.com/suse-linux-zypper-command-examples/>http://www.linuxtechi.com/suse-linux-zypper-command-examples/</a></p><p>作者：<a href=http://www.linuxtechi.com/author/pradeep/>Pradeep Kumar</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/suse/ rel=tag>SUSE</a></li><li class=tags__item><a class="tags__link btn" href=/tags/zypper/ rel=tag>Zypper</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

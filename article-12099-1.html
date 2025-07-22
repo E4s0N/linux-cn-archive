@@ -1,0 +1,40 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Python 读取电子表格中的数据 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Python 读取电子表格中的数据"><meta property="og:description" content="Python 可用于多种任务，其中包括处理逗号分隔值（CSV）数据。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12099-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-04-12T09:35:35+00:00"><meta property="article:modified_time" content="2020-04-12T09:35:35+00:00"><meta itemprop=name content="使用 Python 读取电子表格中的数据"><meta itemprop=description content="Python 可用于多种任务，其中包括处理逗号分隔值（CSV）数据。"><meta itemprop=datePublished content="2020-04-12T09:35:35+00:00"><meta itemprop=dateModified content="2020-04-12T09:35:35+00:00"><meta itemprop=wordCount content="188"><meta itemprop=keywords content="CSV,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Python 读取电子表格中的数据</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-04-12T09:35:35Z>April 12, 2020</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202004/12/093539jz81k1wgeh85akoe.jpg alt></p><p><a href=https://python.org>Python</a> 是最流行、功能最强大的编程语言之一。由于它是自由开源的，因此每个人都可以使用。大多数 Fedora 系统都已安装了该语言。Python 可用于多种任务，其中包括处理逗号分隔值（CSV）数据。CSV文件一开始往往是以表格或电子表格的形式出现。本文介绍了如何在 Python 3 中处理 CSV 数据。</p><p>CSV 数据正如其名。CSV 文件按行放置数据，数值之间用逗号分隔。每行由相同的<em>字段</em>定义。简短的 CSV 文件通常易于阅读和理解。但是较长的数据文件或具有更多字段的数据文件可能很难用肉眼解析，因此在这种情况下计算机做得更好。</p><p>这是一个简单的示例，其中的字段是 <code>Name</code>、<code>Email</code> 和 <code>Country</code>。在此例中，CSV 数据将字段定义作为第一行，尽管并非总是如此。</p><pre tabindex=0><code>Name,Email,Country
+John Q. Smith,jqsmith@example.com,USA
+Petr Novak,pnovak@example.com,CZ
+Bernard Jones,bjones@example.com,UK
+</code></pre><h3 id=从电子表格读取-csv>从电子表格读取 CSV</h3><p>Python 包含了一个 <code>csv</code> 模块，它可读取和写入 CSV 数据。大多数电子表格应用，无论是原生（例如 Excel 或 Numbers）还是基于 Web 的（例如 Google Sheet），都可以导出 CSV 数据。实际上，许多其他可发布表格报告的服务也可以导出为 CSV（例如，PayPal）。</p><p>Python <code>csv</code> 模块有一个名为 <code>DictReader</code> 的内置读取器方法，它可以将每个数据行作为有序字典 （<code>OrderedDict</code>） 处理。它需要一个文件对象访问 CSV 数据。因此，如果上面的文件在当前目录中为 <code>example.csv</code>，那么以下代码段是获取此数据的一种方法：</p><pre tabindex=0><code>f = open(&#39;example.csv&#39;, &#39;r&#39;)
+from csv import DictReader
+d = DictReader(f)
+data = []
+for row in d:
+    data.append(row)
+</code></pre><p>现在，内存中的 <code>data</code> 对象是 <code>OrderedDict</code> 对象的列表：</p><pre tabindex=0><code>[OrderedDict([(&#39;Name&#39;, &#39;John Q. Smith&#39;),
+               (&#39;Email&#39;, &#39;jqsmith@example.com&#39;),
+               (&#39;Country&#39;, &#39;USA&#39;)]),
+  OrderedDict([(&#39;Name&#39;, &#39;Petr Novak&#39;),
+               (&#39;Email&#39;, &#39;pnovak@example.com&#39;),
+               (&#39;Country&#39;, &#39;CZ&#39;)]),
+  OrderedDict([(&#39;Name&#39;, &#39;Bernard Jones&#39;),
+               (&#39;Email&#39;, &#39;bjones@example.com&#39;),
+               (&#39;Country&#39;, &#39;UK&#39;)])]
+</code></pre><p>引用这些对象很容易：</p><pre tabindex=0><code>&gt;&gt;&gt; print(data[0][&#39;Country&#39;])
+USA
+&gt;&gt;&gt; print(data[2][&#39;Email&#39;])
+bjones@example.com
+</code></pre><p>顺便说一句，如果你需要处理没有字段名标题行的 CSV 文件，那么 <code>DictReader</code> 类可以让你定义它们。在上面的示例中，添加 <code>fieldnames</code> 参数并传递一系列名称：</p><pre tabindex=0><code>d = DictReader(f, fieldnames=[&#39;Name&#39;, &#39;Email&#39;, &#39;Country&#39;])
+</code></pre><h3 id=真实例子>真实例子</h3><p>我最近想从一长串人员名单中随机选择一个中奖者。我从电子表格中提取的 CSV 数据是一个简单的名字和邮件地址列表。</p><p>幸运的是，Python 有一个有用的 <code>random</code> 模块，可以很好地生成随机值。该模块 <code>Random</code> 类中的 <code>randrange</code> 函数正是我需要的。你可以给它一个常规的数字范围（例如整数），以及它们之间的步长值。然后，该函数会生成一个随机结果，这意味着我可以在数据的总行数范围内获得一个随机整数（或者说是行号）。</p><p>这个小程序运行良好：</p><pre tabindex=0><code>from csv import DictReader
+from random import Random
+
+d = DictReader(open(&#39;mydata.csv&#39;))
+data = []
+for row in d:
+    data.append(row)
+
+r = Random()
+winner = data[r.randrange(0, len(data), 1)]
+print(&#39;The winner is:&#39;, winner[&#39;Name&#39;])
+print(&#39;Email address:&#39;, winner[&#39;Email&#39;])
+</code></pre><p>显然，这个例子非常简单。电子表格本身包含了复杂的分析数据的方法。但是，如果你想在电子表格应用之外做某事，Python 或许是一种技巧！</p><p>题图由 <a href="https://unsplash.com/@isaacmsmith?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Isaac Smith</a> 拍摄，发表于 <a href="https://unsplash.com/s/photos/spreadsheets?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">U​​nsplash</a>。</p><hr><p>via: <a href=https://fedoramagazine.org/using-data-from-spreadsheets-in-fedora-with-python/>https://fedoramagazine.org/using-data-from-spreadsheets-in-fedora-with-python/</a></p><p>作者：<a href=https://fedoramagazine.org/author/pfrields/>Paul W. Frields</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/csv/ rel=tag>CSV</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

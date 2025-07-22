@@ -1,0 +1,50 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Mac 上配置 Kubernetes - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Mac 上配置 Kubernetes"><meta property="og:description" content="Mac 用户可使用 MicroK8s 运行 Kubernetes 环境，进而开发、测试应用。通过下面的步骤可轻松搭建此环境。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11088-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-07-11T23:21:22+00:00"><meta property="article:modified_time" content="2019-07-11T23:21:22+00:00"><meta itemprop=name content="如何在 Mac 上配置 Kubernetes"><meta itemprop=description content="Mac 用户可使用 MicroK8s 运行 Kubernetes 环境，进而开发、测试应用。通过下面的步骤可轻松搭建此环境。"><meta itemprop=datePublished content="2019-07-11T23:21:22+00:00"><meta itemprop=dateModified content="2019-07-11T23:21:22+00:00"><meta itemprop=wordCount content="373"><meta itemprop=keywords content="MicroK8s,Kubernetes,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Mac 上配置 Kubernetes</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-07-11T23:21:22Z>July 11, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201907/11/232103nkj6zwgp4jl4n47z.jpg alt></p><p>Mac 用户可使用 MicroK8s 运行 Kubernetes 环境，进而开发、测试应用。通过下面的步骤可轻松搭建此环境。</p><p><a href=https://microk8s.io/>MicroK8s</a> 是一个 Ubuntu 推出的一个本地的 Kubernetes 版本。它是一个轻量级的 snap 应用，可安装到 PC 上作为一个单节点集群使用。尽管 MicroK8s 仅针对 Linux 构建，但是也可以在 Mac 上启动 Ubuntu VM 来实现。</p><p>MicroK8s 可在 Ubuntu 和任意支持 snap 的 OS 上运行全部<a href=https://ubuntu.com/blog/how-to-deploy-production-ready-kubernetes>原生的 K8s 服务</a>。这对于开发应用，创建简单的 K8s 集群和本地微服务开发非常有帮助，所有的开发工作最终都还是需要部署的。</p><p>MicroK8s 提供另一个级别的可靠性因为它提供了与当前 Kubernetes（以下简称 Kubernetes 为 K8s）版本一致的开发环境。 在<a href=https://ubuntu.com/kubernetes/install>最新的上游 K8s</a> 发布后的一周内，在 Ubuntu 上即可使用。</p><h3 id=在-mac-上配置-kubernetes>在 Mac 上配置 Kubernetes</h3><p>K8s 和 MicroK8s 都需要一个 Linux 内核来工作，因此二者都需要 Ubuntu 环境。Mac 用户可使用 Multipass，此工具被设计为方便用户在 Mac、Windows、Linux 上开启 Ubuntu VM（虚拟）环境。</p><p>下面的教程将介绍在 Mac 上配置 Multipass 和运行 K8s。</p><h4 id=步骤1使用-multipass-为-mac-安装一个-vm>步骤1：使用 Multipass 为 Mac 安装一个 VM</h4><p>最新的 <a href=https://github.com/CanonicalLtd/multipass/releases>Multipass 的程序包可在 GitHub 上</a>找到，双击 .pkg 即可安装。用 MicroK8s 来启动一个 VM：</p><pre tabindex=0><code>multipass launch --name microk8s-vm --mem 4G --disk 40G  
+multipass exec microk8s-vm -- sudo snap install microk8s --classic       
+multipass exec microk8s-vm -- sudo iptables -P FORWARD ACCEPT       
+</code></pre><p>确保为主机保留足够的资源。上述命令表示我们创建了一个名字为 microk8s-vm 的 VM，分配了 4GB 内存和 40GB 硬盘。</p><p>使用以下命令来查看 VM 分配的 IP 地址：（记一下下面的 IP，我们将从此开始）</p><pre tabindex=0><code>multipass list  
+Name         State     IPv4            Release     
+microk8s-vm  RUNNING   192.168.64.1   Ubuntu 18.04 LTS                                                              
+</code></pre><h4 id=步骤2在-vm-上与-microk8s-互动>步骤2：在 VM 上与 MicroK8s 互动</h4><p>可使用以下 3 种方式：</p><p>命令行，用 Multipass 的 shell 提示符：</p><pre tabindex=0><code>multipass shell microk8s-vm                                                                                     
+</code></pre><p>用 <code>multipass exec</code> 来执行一个命令（输入后无提示）：</p><pre tabindex=0><code>multipass exec microk8s-vm -- /snap/bin/microk8s.status                             
+</code></pre><p>调用运行在 VM 的 K8s API 服务器，这里使用 MicroK8s 的 kubeconfig 文件和一个<a href=https://kubernetes.io/docs/tasks/tools/install-kubectl/>本地的安装的 kubectl</a> 来访问 VM 内的 K8s，运行以下命令：</p><pre tabindex=0><code>multipass exec microk8s-vm -- /snap/bin/microk8s.config &gt; kubeconfig     
+</code></pre><p>下一步，在本地主机安装 kubectl，然后使用 kubeconfig：</p><pre tabindex=0><code>kubectl --kubeconfig=kubeconfig get all --all-namespaces            
+</code></pre><pre tabindex=0><code>NAMESPACE  NAME  TYPE  CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE          
+Default service/kubernetes ClusterIP 10.152.183.1 &lt;none&gt; 443/TCP 3m12s
+</code></pre><h4 id=步骤-3用-mutlpass-服务访问-vm-并开启-microk8s-组件>步骤 3：用 Mutlpass 服务访问 VM 并开启 MicroK8s 组件</h4><p>配置基础的 MicroK8s 组件是开启 Grafana 仪表，下面我们将展示一步开启 Grafana，监视和分析一个 MicroK8s 实例。可执行以下命令：</p><pre tabindex=0><code>multipass exec microk8s-vm -- /snap/bin/microk8s.enable dns dashboard  
+Enabling DNS  
+Applying manifest  
+service/kube-dns created  
+serviceaccount/kube-dns created  
+configmap/kube-dns created  
+deployment.extensions/kube-dns created  
+Restarting kubelet  
+DNS is enabled  
+Enabling dashboard  
+secret/kubernetes-dashboard-certs created  
+serviceaccount/kubernetes-dashboard created  
+deployment.apps/kubernetes-dashboard created  
+service/kubernetes-dashboard created  
+service/monitoring-grafana created  
+service/monitoring-influxdb created  
+service/heapster created  
+deployment.extensions/monitoring-influxdb-grafana-v4 created  
+serviceaccount/heapster created  
+configmap/heapster-config created  
+configmap/eventer-config created  
+deployment.extesions/heapster-v1.5.2 created  
+dashboard enabled
+</code></pre><p>接下来，用下面命令检查部署进程：</p><pre tabindex=0><code>multipass exec microk8s-vm -- /snap/bin/microk8s.kubectl get all --all-namespaces                                                                                                                        
+</code></pre><p>返回信息如下：</p><p><img src=/data/attachment/album/201907/11/232126fd957yz19zjeuyfy.png alt></p><p>一旦所有的必要服务已开启，接下来使用以下的链接访问仪表。命令如下：</p><pre tabindex=0><code>multipass exec microk8s-vm -- /snap/bin/microk8s.kubectl cluster-info    
+Kubernetes master is running at https://127.0.0.1:16443  
+Heapster is running at https://127.0.0.1:16443/api/v1/namespaces/kube-system/services/heapster/proxy  
+KubeDNS is running at https://127.0.0.1:16443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy  
+Grafana is running at https://127.0.0.1:16443/api/v1/namespaces/kube-system/services/monitoring-grafana/proxy  
+InfluxDB is running at https://127.0.0.1:16443/api/v1/namespaces/kube-system/services/monitoring-influxdb:http/proxy  
+  
+To further debug and diagnose cluster problems, use &#39;kubectl cluster-info dump&#39;.
+</code></pre><p>如果我们在 VM 内，可以用此链接来访问 Grafana 仪表。不过，我们可以通过代理在主机上访问。</p><pre tabindex=0><code>multipass exec microk8s-vm -- /snap/bin/microk8s.kubectl proxy --address=&#39;0.0.0.0&#39; --accept-hosts=&#39;.*&#39;   
+Starting to serve on [::][::]:8001
+</code></pre><p>保持终端运行状态，记一下端口号（8001），我们在下一步需要用到。要访问 Grafana 仪表，我们需要修改 VM 内仪表的链接：</p><ul><li>使用 VM 的 IP 替换 127.0.0.1（<code>multipass info microk8s-vm</code>）</li><li>将端口（16443）替换为代理端口 8001。</li><li>在浏览器内输入这个链接地址：<code>https://127.0.0.1:8001/api/v1/namespaces/kube-system/services/monitoring-grafana/proxy</code>，你将看到 Grafana 仪表，如下图：</li></ul><p><img src=/data/attachment/album/201907/11/232127jgd0o9oodtdr5ado.png alt></p><h3 id=总结>总结</h3><p>使用 MicroK8s 在本地开发和测试应用，将使得团队在部署上更快，这对于开发者和 DevOp 团队来说是非常有价值和意义的。</p><p><img src=/data/attachment/album/201907/11/232127l52rrqvzntxqpprq.png alt></p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/microk8s/ rel=tag>MicroK8s</a></li><li class=tags__item><a class="tags__link btn" href=/tags/kubernetes/ rel=tag>Kubernetes</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

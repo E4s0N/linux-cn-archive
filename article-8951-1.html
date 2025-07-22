@@ -1,0 +1,209 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 C 语言对 Gtk+ 应用进行功能测试 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 C 语言对 Gtk+ 应用进行功能测试"><meta property="og:description" content="这个简单教程教你如何测试你应用的功能。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8951-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-10-12T13:25:38+00:00"><meta property="article:modified_time" content="2017-10-12T13:25:38+00:00"><meta itemprop=name content="用 C 语言对 Gtk+ 应用进行功能测试"><meta itemprop=description content="这个简单教程教你如何测试你应用的功能。"><meta itemprop=datePublished content="2017-10-12T13:25:38+00:00"><meta itemprop=dateModified content="2017-10-12T13:25:38+00:00"><meta itemprop=wordCount content="370"><meta itemprop=keywords content="GTK,测试,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 C 语言对 Gtk+ 应用进行功能测试</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-10-12T13:25:38Z>October 12, 2017</time></div></div></header><div class="content post__content clearfix"><blockquote><p>这个简单教程教你如何测试你应用的功能。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/201710/12/132540ni4mi77xmr2m27x2.png alt="Functional testing Gtk+ applications in C" title="Functional testing Gtk+ applications in C "></p><p>自动化测试用来保证你程序的质量以及让它以预想的运行。单元测试只是检测你算法的某一部分，而并不注重各组件间的适应性。这就是为什么会有功能测试，它有时也称为集成测试。</p><p>功能测试简单地与你的用户界面进行交互，无论它是网站还是桌面应用。为了展示功能测试如何工作，我们以测试一个 Gtk+ 应用为例。为了简单起见，这个教程里，我们使用 Gtk+ 2.0 教程的示例。</p><h3 id=基础设置>基础设置</h3><p>对于每一个功能测试，你通常需要定义一些全局变量，比如 “用户交互时延” 或者 “失败的超时时间”（也就是说，如果在指定的时间内一个事件没有发生，程序就要中断）。</p><pre tabindex=0><code>#define TTT_FUNCTIONAL_TEST_UTIL_IDLE_CONDITION(f) ((TttFunctionalTestUtilIdleCondition)(f))
+#define TTT_FUNCTIONAL_TEST_UTIL_REACTION_TIME (125000)
+#define TTT_FUNCTIONAL_TEST_UTIL_REACTION_TIME_LONG (500000)
+typedef gboolean (*TttFunctionalTestUtilIdleCondition)(gpointer data);
+struct timespec ttt_functional_test_util_default_timeout = {
+  20,
+  0,
+};
+</code></pre><p>现在我们可以实现我们自己的超时函数。这里，为了能够得到期望的延迟，我们采用 <code>usleep</code> 函数。</p><pre tabindex=0><code>void
+ttt_functional_test_util_reaction_time()
+{
+  usleep(TTT_FUNCTIONAL_TEST_UTIL_REACTION_TIME);
+}
+
+void
+ttt_functional_test_util_reaction_time_long()
+{
+  usleep(TTT_FUNCTIONAL_TEST_UTIL_REACTION_TIME_LONG);
+}
+</code></pre><p>直到获得控制状态，超时函数才会推迟执行。这对于一个异步执行的动作很有帮助，这也是为什么采用这么长的时延。</p><pre tabindex=0><code>void
+ttt_functional_test_util_idle_condition_and_timeout(
+     TttFunctionalTestUtilIdleCondition idle_condition,
+     struct timespec *timeout,
+     pointer data)
+{
+  struct timespec start_time, current_time;
+
+  clock_gettime(CLOCK_MONOTONIC,
+                &amp;start_time);
+
+  while(TTT_FUNCTIONAL_TEST_UTIL_IDLE_CONDITION(idle_condition)(data)){
+    ttt_functional_test_util_reaction_time();
+
+    clock_gettime(CLOCK_MONOTONIC,
+                  &amp;current_time);
+
+    if(start_time.tv_sec + timeout-&gt;tv_sec &lt; current_time.tv_sec){
+      break;
+    }
+  }
+
+  ttt_functional_test_util_reaction_time();
+}
+</code></pre><h3 id=与图形化用户界面交互>与图形化用户界面交互</h3><p>为了模拟用户交互的操作， <a href=https://developer.gnome.org/gdk3/stable/>Gdk 库</a> 为我们提供了一些需要的函数。要完成我们的工作，我们只需要如下 3 个函数：</p><ul><li><code>gdk_display_warp_pointer()</code></li><li><code>gdk_test_simulate_button()</code></li><li><code>gdk_test_simulate_key()</code></li></ul><p>举个例子，为了测试按钮点击，我们可以这么做：</p><pre tabindex=0><code>gboolean
+ttt_functional_test_util_button_click(GtkButton *button)
+{
+  GtkWidget *widget;
+
+  GdkWindow *window;
+
+  gint x, y;
+  gint origin_x, origin_y;
+
+  if(button == NULL ||
+     !GTK_IS_BUTTON(button)){
+    return(FALSE);
+  }
+
+  widget = button;
+
+  if(!GTK_WIDGET_REALIZED(widget)){
+    ttt_functional_test_util_reaction_time_long();
+  }
+
+  /* retrieve window and pointer position */
+  gdk_threads_enter();
+
+  window = gtk_widget_get_window(widget);
+
+  x = widget-&gt;allocation.x + widget-&gt;allocation.width / 2.0;
+  y = widget-&gt;allocation.y + widget-&gt;allocation.height / 2.0;
+
+  gdk_window_get_origin(window, &amp;origin_x, &amp;origin_y);
+
+  gdk_display_warp_pointer(gtk_widget_get_display(widget),
+                           gtk_widget_get_screen(widget),
+                           origin_x + x, origin_y + y);
+
+  gdk_threads_leave();
+
+  /* click the button */
+  ttt_functional_test_util_reaction_time();
+
+  gdk_test_simulate_button(window,
+                           x,
+                           y,
+                           1,
+                           GDK_BUTTON1_MASK,
+                           GDK_BUTTON_PRESS);
+
+  ttt_functional_test_util_reaction_time();
+
+  gdk_test_simulate_button(window,
+                           x,
+                           y,
+                           1,
+                           GDK_BUTTON1_MASK,
+                           GDK_BUTTON_RELEASE);
+
+  ttt_functional_test_util_reaction_time();
+
+  ttt_functional_test_util_reaction_time_long();
+
+  return(TRUE);
+}
+</code></pre><p>我们想要保证按钮处于激活状态，因此我们提供一个空闲条件函数：</p><pre tabindex=0><code>gboolean
+ttt_functional_test_util_idle_test_toggle_active(
+     GtkToggleButton **toggle_button)
+{
+  gboolean do_idle;
+
+  do_idle = TRUE;
+
+  gdk_threads_enter();
+
+  if(*toggle_button != NULL &amp;&amp;
+     GTK_IS_TOGGLE_BUTTON(*toggle_button) &amp;&amp;
+     gtk_toggle_button_get_active(*toggle_button)){
+    do_idle = FALSE;
+  }
+
+  gdk_threads_leave();
+
+  return(do_idle);
+}
+</code></pre><h3 id=测试场景>测试场景</h3><p>因为这个 Tictactoe 程序非常简单，我们只需要确保点击了一个 <a href=https://developer.gnome.org/gtk3/stable/GtkToggleButton.html><strong>GtkToggleButton</strong></a> 按钮即可。一旦该按钮肯定进入了激活状态，功能测试就可以执行。为了点击按钮，我们使用上面提到的很方便的 <code>util</code> 函数。</p><p>如图所示，我们假设，填满第一行，玩家 A 就赢，因为玩家 B 没有注意，只填充了第二行。</p><pre tabindex=0><code>GtkWindow *window;
+Tictactoe *ttt;
+
+void*
+ttt_functional_test_gtk_main(void *)
+{
+  gtk_main();
+
+  pthread_exit(NULL);
+}
+
+void
+ttt_functional_test_dumb_player_b()
+{
+  GtkButton *buttons[3][3];
+
+  guint i;
+
+  /* to avoid race-conditions copy the buttons */
+  gdk_threads_enter();
+
+  memcpy(buttons, ttt-&gt;buttons, 9 * sizeof(GtkButton *));
+
+  gdk_threads_leave();
+
+  /* TEST 1 - the dumb player B */
+  for(i = 0; i &lt; 3; i++){
+    /* assert player A clicks the button successfully */
+    if(!ttt_functional_test_util_button_click(buttons[0][i])){
+      exit(-1);
+    }
+
+    functional_test_util_idle_condition_and_timeout(
+         ttt_functional_test_util_idle_test_toggle_active,
+         ttt_functional_test_util_default_timeout,
+         &amp;buttons[0][i]);
+
+    /* assert player B clicks the button successfully */
+    if(!ttt_functional_test_util_button_click(buttons[1][i])){
+      exit(-1);
+    }
+
+    functional_test_util_idle_condition_and_timeout(
+         ttt_functional_test_util_idle_test_toggle_active,
+         ttt_functional_test_util_default_timeout,
+         &amp;buttons[1][i]);
+  }
+}
+
+int
+main(int argc, char **argv)
+{
+  pthread_t thread;
+
+  gtk_init(&amp;argc, &amp;argv);
+
+  /* start the tictactoe application */
+  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+  ttt = tictactoe_new();
+  gtk_container_add(window, ttt);
+
+  gtk_widget_show_all(window);
+
+  /* start the Gtk+ dispatcher */
+  pthread_create(&amp;thread, NULL,
+                 ttt_functional_test_gtk_main, NULL);
+
+  /* launch test routines */
+  ttt_functional_test_dumb_player_b();
+
+  /* terminate the application */
+  gdk_threads_enter();
+
+  gtk_main_quit();
+
+  gdk_threads_leave();
+
+  return(0);
+}
+</code></pre><p>（题图：opensource.com）</p><hr><p>作者简介：</p><p>Joël Krähemann - 精通 C 语言编程的自由软件爱好者。不管代码多复杂，它也是一点点写成的。作为高级的 Gtk+ 程序开发者，我知道多线程编程有多大的挑战性，有了多线程编程，我们就有了未来需求的良好基础。</p><p>摘自: <a href=https://opensource.com/article/17/7/functional-testing>https://opensource.com/article/17/7/functional-testing</a></p><p>作者：<a href=https://opensource.com/users/joel2001k>Joël Krähemann</a> 译者：<a href=https://github.com/sugarfillet>sugarfillet</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/gtk/ rel=tag>GTK</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%B5%8B%E8%AF%95/ rel=tag>测试</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

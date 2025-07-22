@@ -1,0 +1,45 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>生成 Linux 运行时间报告的 Bash 脚本 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="生成 Linux 运行时间报告的 Bash 脚本"><meta property="og:description" content="出于一些原因，你可能需要每月收集一次 Linux 系统运行时间报告。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11455-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-10-13T11:47:35+00:00"><meta property="article:modified_time" content="2019-10-13T11:47:35+00:00"><meta itemprop=name content="生成 Linux 运行时间报告的 Bash 脚本"><meta itemprop=description content="出于一些原因，你可能需要每月收集一次 Linux 系统运行时间报告。"><meta itemprop=datePublished content="2019-10-13T11:47:35+00:00"><meta itemprop=dateModified content="2019-10-13T11:47:35+00:00"><meta itemprop=wordCount content="232"><meta itemprop=keywords content="运行时间,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>生成 Linux 运行时间报告的 Bash 脚本</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-10-13T11:47:35Z>October 13, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201910/13/114727no80y3hzg3og2rhg.jpg alt></p><p>出于一些原因，你可能需要每月收集一次 <a href=https://www.2daygeek.com/linux-system-server-uptime-check/>Linux 系统运行时间</a>报告。如果是这样，你可以根据需要使用以下 <a href=https://www.2daygeek.com/category/shell-script/>bash 脚本</a> 之一。</p><p>我们为什么要收集这份报告？在一段时间后重启 Linux 服务器是解决某些未解决问题的好方法。（LCTT 译注：本文这些观点值得商榷，很多服务器可以稳定运行几千天，尤其是有了内核热补丁之后，启动并不是必须的。）</p><p>建议每 180 天重新启动一次。但时间段也许取决于你公司的政策。如果你已经长时间运行服务器而没有重启。这可能导致服务器上出现一些性能或内存问题，我在许多服务器上都注意到了这一点。</p><p>这些脚本一次性提供了所有系统运行报告。</p><h3 id=什么是-uptime-命令>什么是 uptime 命令</h3><p><code>uptime</code> 命令将告诉你系统已经运行了多长时间。它在一行中显示以下信息：当前时间、系统运行了多长时间、当前登录了多少用户以及过去 1、5 和 15 分钟的平均系统负载。</p><h3 id=什么是-tuptime>什么是 tuptime?</h3><p><a href=https://www.2daygeek.com/linux-tuptime-check-historical-uptime/>tuptime</a> 是用于报告系统的历史和统计运行时间的工具，可在重启之间保存。它类似于 <code>uptime</code> 命令，但输出更有趣。</p><h3 id=1检查-linux-系统运行时间的-bash-脚本>1）检查 Linux 系统运行时间的 Bash 脚本</h3><p>该 bash 脚本将收集所有服务器正常运行时间，并将报告发送到给定的电子邮箱地址。</p><p>请替换为你的电子邮箱地址，而不是用我们的，否则你将不会收到邮件。</p><pre tabindex=0><code># vi /opt/scripts/system-uptime-script.sh
+
+#!/bin/bash
+&gt; /tmp/uptime-report.out
+for host in cat /tmp/servers.txt
+do
+echo -n &#34;$host: &#34;
+ssh $host uptime | awk &#39;{print $3,$4}&#39; | sed &#39;s/,//&#39;
+done | column -t &gt;&gt; /tmp/uptime-report.out
+cat /tmp/uptime-report.out | mail -s &#34;Linux Servers Uptime Report&#34; &#34;2daygeek@gmail.com&#34;
+</code></pre><p>给 <code>system-uptime-script.sh</code> 设置可执行权限。</p><pre tabindex=0><code>$ chmod +x /opt/scripts/system-uptime-script.sh
+</code></pre><p>最后运行 bash 脚本获取输出。</p><pre tabindex=0><code># sh /opt/scripts/system-uptime-script.sh
+</code></pre><p>你将收到类似以下的报告。</p><pre tabindex=0><code># cat /tmp/uptime-report.out
+
+192.168.1.5:          2      days
+192.168.1.6:          15     days
+192.168.1.7:          30     days
+192.168.1.8:          7      days
+192.168.1.9:          67     days
+192.168.1.10:         130    days
+192.168.1.11:         23     days
+</code></pre><h3 id=2检查-linux-系统是否运行了-30-天以上的-bash-脚本>2）检查 Linux 系统是否运行了 30 天以上的 Bash 脚本</h3><p>此 bash 脚本会收集运行 30 天以上的服务器，并将报告发送到指定的邮箱地址。你可以根据需要更改天数。</p><pre tabindex=0><code># vi /opt/scripts/system-uptime-script-1.sh
+
+#!/bin/bash
+&gt; /tmp/uptime-report-1.out 
+for host in cat /tmp/servers.txt
+do
+echo -n &#34;$host: &#34;
+ssh $host uptime | awk &#39;{print $3,$4}&#39; | sed &#39;s/,//&#39;
+done | column -t &gt;&gt; /tmp/uptime-report-1.out
+cat /tmp/uptime-report-1.out | awk &#39; $2 &gt;= 30&#39; &gt; /tmp/uptime-report-2.out
+cat /tmp/uptime-report-2.out | mail -s &#34;Linux Servers Uptime Report&#34; &#34;2daygeek@gmail.com&#34;
+</code></pre><p>给 <code>system-uptime-script-1.sh</code> 设置可执行权限。</p><pre tabindex=0><code>$ chmod +x /opt/scripts/system-uptime-script-1.sh
+</code></pre><p>最后添加一条 <a href=https://www.2daygeek.com/crontab-cronjob-to-schedule-jobs-in-linux/>cronjob</a> 来自动执行。它会在每天早上 7 点运行。</p><pre tabindex=0><code># crontab -e
+
+0 7 * * * /bin/bash /opt/scripts/system-uptime-script-1.sh
+</code></pre><p><strong>注意：</strong> 你会在每天早上 7 点会收到一封电子邮件提醒，它是昨天的详情。</p><p>你将收到类似下面的报告。</p><pre tabindex=0><code># cat /tmp/uptime-report-2.out
+
+192.168.1.7:          30     days
+192.168.1.9:          67     days
+192.168.1.10:         130    days
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/bash-script-generate-linux-system-uptime-reports/>https://www.2daygeek.com/bash-script-generate-linux-system-uptime-reports/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BF%90%E8%A1%8C%E6%97%B6%E9%97%B4/ rel=tag>运行时间</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

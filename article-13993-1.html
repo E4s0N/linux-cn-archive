@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何打包你的 Python 代码 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何打包你的 Python 代码"><meta property="og:description" content="使用 setuptools 来向用户交付 Python 代码。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13993-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-11-17T18:02:56+00:00"><meta property="article:modified_time" content="2021-11-17T18:02:56+00:00"><meta itemprop=name content="如何打包你的 Python 代码"><meta itemprop=description content="使用 setuptools 来向用户交付 Python 代码。"><meta itemprop=datePublished content="2021-11-17T18:02:56+00:00"><meta itemprop=dateModified content="2021-11-17T18:02:56+00:00"><meta itemprop=wordCount content="229"><meta itemprop=keywords content="Python,打包,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何打包你的 Python 代码</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-11-17T18:02:56Z>November 17, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>使用 setuptools 来向用户交付 Python 代码。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202111/17/180249s8s1cnnn18gh3fsk.jpg alt title="Python programming language logo with question marks"></p><p>你花了几周的时间来完善你的代码。你已经对它进行了测试，并把它发送给一些亲近的开发者朋友以保证质量。你已经将所有的源代码发布在 <a href=https://opensource.com/life/16/8/how-construct-your-own-git-server-part-6>你的个人 Git 服务器</a> 上，并且从一些勇敢的早期使用者收到了一些有用的错误报告。现在你已经准备好将你的 Python 代码提供给全世界。</p><p>就在这时你遇到一个问题。你不知道如何交付产品。</p><p>将代码交付给它的目标用户是一件大事。这是软件开发的一个完整的分支，是 CI/CD 中的 “D”，但很多人都忘记了，至少到最后才知道。我写过关于 <a href=https://opensource.com/article/19/7/introduction-gnu-autotools>Autotools</a> 和 <a href=https://opensource.com/article/21/5/cmake>Cmake</a> 的文章，但有些语言有自己的方法来帮助你将你的代码提供给用户。对于 Python 来说，向用户提供代码的一个常见方法是使用 <code>setuptools</code>。</p><h3 id=安装-setuptools>安装 setuptools</h3><p>安装和更新 <code>setuptools</code> 的最简单方法是使用 <code>pip</code>：</p><pre tabindex=0><code>$ sudo python -m pip install --upgrade setuptools
+</code></pre><h3 id=示例库>示例库</h3><p>我创建了一个简单的 Python 库，名为 <code>myhellolib</code>，来作为需要打包的示例代码。这个库接受一个字符串，然后用大写字母打印出这个字符串。</p><p>它只有两行代码，但项目结构很重要，所以首先创建目录树：</p><pre tabindex=0><code>$ mkdir -p myhellolib.git/myhellolib
+</code></pre><p>为了确认这个项目是一个可导入的库（即 Python “模块”），在代码目录中创建一个空文件 <code>__init__.py</code>，同时创建一个包含代码的文件：</p><pre tabindex=0><code>$ touch myhellolib.git/myhellolib/__init__.py
+$ touch myhellolib.git/myhellolib/myhellolib.py
+</code></pre><p>在 <code>myhellolib.py</code> 文件中，输入简单的 Python 代码：</p><pre tabindex=0><code>def greeter(s):
+    print(s.upper())
+</code></pre><p>这就是写好的库。</p><h3 id=测试它>测试它</h3><p>在打包之前，测试一下你的库。创建一个 <code>myhellolib.git/test.py</code> 文件并输入以下代码：</p><pre tabindex=0><code>import myhellolib.myhellolib as hello
+hello.greeter(&#34;Hello Opensource.com.&#34;)
+</code></pre><p>运行该脚本：</p><pre tabindex=0><code>$ cd myhellolib.git
+$ python ./test.py
+HELLO OPENSOURCE.COM
+</code></pre><p>它可以工作，所以现在你可以把它打包了。</p><h3 id=setuptools>Setuptools</h3><p>要用 <code>setuptools</code> 打包一个项目，你必须创建一个 <code>.toml</code> 文件，将 <code>setuptools</code> 作为构建系统。将这段文字放在项目目录下的 <code>myhellolib.toml</code> 文件中。</p><pre tabindex=0><code>[build-system]
+requires = [&#34;setuptools&#34;, &#34;wheel&#34;]
+build-backend = &#34;setuptools.build_meta&#34;
+</code></pre><p>接下来，创建一个名为 <code>setup.py</code> 的文件，包含项目的元数据：</p><pre tabindex=0><code>from setuptools import setup
+
+setup(
+   name=&#39;myhellolib&#39;,
+   version=&#39;0.0.1&#39;,
+   packages=[&#39;myhellolib&#39;],
+   install_requires=[
+      &#39;requests&#39;,
+      &#39;importlib; python_version == &#34;3.8&#34;&#39;,
+   ],
+)
+</code></pre><p>不管你信不信，这就是 <code>setuptools</code> 需要的所有设置。你的项目已经可以进行打包。</p><h3 id=打包-python>打包 Python</h3><p>要创建你的 Python 包，你需要一个构建器。一个常见的工具是 <code>build</code>，你可以用 <code>pip</code> 安装它：</p><pre tabindex=0><code>$ python -m pip install build --user
+</code></pre><p>构建你的项目：</p><pre tabindex=0><code>$ python -m build
+</code></pre><p>过了一会儿，构建完成了，在你的项目文件夹中出现了一个新的目录，叫做 <code>dist</code>。这个文件夹包含一个 <code>.tar.gz</code> 和一个 <code>.whl</code> 文件。</p><p>这是你的第一个 Python 包! 下面是包的内容：</p><pre tabindex=0><code>$ tar --list --file dist/myhellolib-0.0.1.tar.gz
+myhellolib-0.0.1/
+myhellolib-0.0.1/PKG-INFO
+myhellolib-0.0.1/myhellolib/
+myhellolib-0.0.1/myhellolib/__init__.py
+myhellolib-0.0.1/myhellolib/myhellolib.py
+myhellolib-0.0.1/myhellolib.egg-info/
+myhellolib-0.0.1/myhellolib.egg-info/PKG-INFO
+myhellolib-0.0.1/myhellolib.egg-info/SOURCES.txt
+myhellolib-0.0.1/myhellolib.egg-info/dependency_links.txt
+myhellolib-0.0.1/myhellolib.egg-info/requires.txt
+myhellolib-0.0.1/myhellolib.egg-info/top_level.txt
+myhellolib-0.0.1/setup.cfg
+myhellolib-0.0.1/setup.py
+
+$ unzip -l dist/myhellolib-0.0.1-py3-none-any.whl 
+Archive:  dist/myhellolib-0.0.1-py3-none-any.whl
+Name
+----
+myhellolib/__init__.py
+myhellolib/myhellolib.py
+myhellolib-0.0.1.dist-info/METADATA
+myhellolib-0.0.1.dist-info/WHEEL
+myhellolib-0.0.1.dist-info/top_level.txt
+myhellolib-0.0.1.dist-info/RECORD
+-------
+6 files
+</code></pre><h3 id=让它可用>让它可用</h3><p>现在你知道了打包你的 Python 包是多么容易，你可以使用 Git 钩子、GitLab Web 钩子、Jenkins 或类似的自动化工具来自动完成这个过程。你甚至可以把你的项目上传到 PyPi，这个流行的 Python 模块仓库。一旦它在 PyPi 上，用户就可以用 <code>pip</code> 来安装它，就像你在这篇文章中安装 <code>setuptools</code> 和 <code>build</code> 一样！</p><p>当你坐下来开发一个应用或库时，打包并不是你首先想到的事情，但它是编程的一个重要方面。Python 开发者在程序员如何向世界提供他们的工作方面花了很多心思，没有比 <code>setuptools</code> 更容易的了。试用它，使用它，并继续用 Python 编码！</p><hr><p>via: <a href=https://opensource.com/article/21/11/packaging-python-setuptools>https://opensource.com/article/21/11/packaging-python-setuptools</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%89%93%E5%8C%85/ rel=tag>打包</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

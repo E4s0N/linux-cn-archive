@@ -1,0 +1,79 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Neofetch ：带发行版 Logo 图像的系统信息显示工具 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Neofetch ：带发行版 Logo 图像的系统信息显示工具"><meta property="og:description" content="它的主要特点有：运行速度快，可以显示全色图像 —— 用 ASCII 字符显示的发行版 logo ，旁边显示系统信息，可以高度定制，可以随时随地显示系统信息，并且在脚本结束的时候还可以通过一个特殊的参数来启用桌面截图。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8013-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-12-04T14:57:00+00:00"><meta property="article:modified_time" content="2016-12-04T14:57:00+00:00"><meta itemprop=name content="Neofetch ：带发行版 Logo 图像的系统信息显示工具"><meta itemprop=description content="它的主要特点有：运行速度快，可以显示全色图像 —— 用 ASCII 字符显示的发行版 logo ，旁边显示系统信息，可以高度定制，可以随时随地显示系统信息，并且在脚本结束的时候还可以通过一个特殊的参数来启用桌面截图。"><meta itemprop=datePublished content="2016-12-04T14:57:00+00:00"><meta itemprop=dateModified content="2016-12-04T14:57:00+00:00"><meta itemprop=wordCount content="453"><meta itemprop=keywords content="系统信息,neofetch,ScreenFetch,Linux_Logo,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Neofetch ：带发行版 Logo 图像的系统信息显示工具</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-12-04T14:57:00Z>December 04, 2016</time></div></div></header><div class="content post__content clearfix"><p>Neofetch 是一个跨平台的易于使用的 <a href=http://www.tecmint.com/screenfetch-system-information-generator-for-linux/>系统信息显示命令行脚本</a>，它收集你的系统信息，并在终端中和图像一起显示出来，这个图像可能是你的发行版的 logo 也可能是你选择的一幅 ascii 艺术字。</p><p>Neofetch 和 <a href=http://www.tecmint.com/screenfetch-system-information-generator-for-linux/>ScreenFetch</a> 或者 <a href=http://www.tecmint.com/linux_logo-tool-to-print-color-ansi-logos-of-linux/>Linux_Logo</a> 很像，但是它可以高度定制，并且还有一些额外的我们要在下面讨论的特点。</p><p>它的主要特点有：运行速度快，可以显示全色图像 —— 用 ASCII 字符显示的发行版 logo ，旁边显示系统信息，可以高度定制，可以随时随地显示系统信息，并且在脚本结束的时候还可以通过一个特殊的参数来启用桌面截图。</p><p><img src=/data/attachment/album/201612/04/145722xrl8tzwegoeh22oh.jpg alt></p><h4 id=系统要求>系统要求：</h4><ol><li>Bash 3.0+ 带 ncurses 支持。</li><li>w3m-img (有时候会打包成 w3m) 或者 iTerm2 或者 Terminology，用于显示图像。</li><li><a href=http://www.tecmint.com/install-imagemagick-in-linux/>imagemagick</a>，用于创建缩略图。</li><li>支持 <code>[\033[14t</code> 的 <a href=http://www.tecmint.com/linux-terminal-emulators/>Linux 终端模拟器</a> 或者 xdotool 或者 xwininfo + xprop 或者 xwininfo + xdpyinfo 。</li><li>Linux 系统中还需要 feh、nitrogen 或者 gsettings 来提供对墙纸的支持。</li></ol><p>注意：你可以从 Neofetch 的 Github 页面了解更多关于可选依赖的信息，以检查你的 <a href=http://www.tecmint.com/linux-terminal-emulators/>Linux 终端模拟器</a> 是不是真的支持 <code>\033[14t</code> 或者是否需要一些额外的依赖来使这个脚本在你的发行版上工作得更好。</p><h3 id=怎样在-linux-系统上安装-neofetch>怎样在 Linux 系统上安装 Neofetch</h3><p>Neofetch 可以从几乎所有 Linux 发行版的第三方仓库轻松安装，请按照以下各自的安装说明进行安装。</p><h4 id=debian>Debian</h4><pre tabindex=0><code>$ echo &#34;deb http://dl.bintray.com/dawidd6/neofetch jessie main&#34; | sudo tee -a /etc/apt/sources.list
+$ curl -L &#34;https://bintray.com/user/downloadSubjectPublicKey?username=bintray&#34; -o Release-neofetch.key &amp;&amp; sudo apt-key add Release-neofetch.key &amp;&amp; rm Release-neofetch.key
+$ sudo apt-get update
+$ sudo apt-get install neofetch
+</code></pre><h4 id=ubuntu-和-linux-mint>Ubuntu 和 Linux Mint</h4><pre tabindex=0><code>$ sudo add-apt-repository ppa:dawidd0811/neofetch
+$ sudo apt-get update
+$ sudo apt-get install neofetch
+</code></pre><h4 id=rhel-centos-和-fedora>RHEL, CentOS 和 Fedora</h4><p>你的系统里面要安装了 <code>dnf-plugins-core</code> ，或者用以下命令安装它：</p><pre tabindex=0><code>$ sudo yum install dnf-plugins-core
+</code></pre><p>启用 COPR 仓库然后安装 neofetch。</p><pre tabindex=0><code>$ sudo dnf copr enable konimex/neofetch
+$ sudo dnf install neofetch
+</code></pre><h4 id=arch-linux>Arch Linux</h4><p>你可以用 packer 或 Yaourt 从 AUR 安装 neofetch 或 neofetch-git。</p><pre tabindex=0><code>$ packer -S neofetch
+$ packer -S neofetch-git
+或
+$ yaourt -S neofetch
+$ yaourt -S neofetch-git
+</code></pre><h4 id=gentoo>Gentoo</h4><p>从 Gentoo/Funtoo 的官方源安装 app-misc/neofetch。如果你要安装这个程序的 git 版的话，你可以安装 app-misc/neofetch-9999。</p><h3 id=怎么在-linux-中使用-neofetch>怎么在 Linux 中使用 Neofetch</h3><p>一旦你安装了 Neofetch ，使用它的一般语法是：</p><pre tabindex=0><code>$ neofetch
+</code></pre><p>注意： 要是你没有安装 w3m-img 或者 <a href=http://www.tecmint.com/install-imagemagick-in-linux/>imagemagick</a> 的话，<a href=http://www.tecmint.com/screenfetch-system-information-generator-for-linux/>screenfetch</a> 会默认被启用，neofetch 会如下图所示显示你的 [ASCII 艺术 logo]。</p><h4 id=linux-mint-系统信息>Linux Mint 系统信息</h4><p><img src=/data/attachment/album/201612/04/145755ztaccavd22vssaop.png alt="Linux Mint 系统信息"></p><p><em>Linux Mint 系统信息</em></p><h4 id=ubuntu-系统信息>Ubuntu 系统信息</h4><p><img src=/data/attachment/album/201612/04/145756t92tpnypsgnmity2.png alt="Ubuntu System Information"></p><p><em>Ubuntu 系统信息</em></p><p>如果你想用图片显示你的发行版 logo，需要用下面的命令安装 w3m-img 或者 imagemagick 。</p><pre tabindex=0><code>$ sudo apt-get install w3m-img    [On Debian/Ubuntu/Mint]
+$ sudo yum install w3m-img        [On RHEL/CentOS/Fedora]
+</code></pre><p>然后再次运行 neofetch，你就会看到如下图所示的用你系统的默认墙纸来显示图片。</p><pre tabindex=0><code>$ neofetch
+</code></pre><p><img src=/data/attachment/album/201612/04/145757thnj4nc7888p8den.png alt="Ubuntu System Information with Logo"></p><p><em>Ubuntu 系统信息带 logo</em></p><p>第一次运行 neofetch 后，它会在这里创建一个配置文件： <code>$HOME/.config/neofetch/config</code>。</p><p>这个配置文件可以让你通过 <code>printinfo ()</code> 函数来调整你想显示在终端的系统信息。你可以增加，修改，删除，也可以使用 bash 代码去调整你要显示的信息。</p><p>你可以如下图所示用你喜欢的编辑器打开这个配置文件：</p><pre tabindex=0><code>$ vi ~/.config/neofetch/config
+</code></pre><p>以下是我系统配置的片段 ，显示了 <code>printinfo ()</code> 函数。</p><p>Neofetch 配置</p><pre tabindex=0><code>#!/usr/bin/env bash
+# vim:fdm=marker
+#
+# Neofetch config file
+# https://github.com/dylanaraps/neofetch
+
+# Speed up script by not using unicode
+export LC_ALL=C
+export LANG=C
+
+# Info Options {{{
+
+# Info
+# See this wiki page for more info:
+# https://github.com/dylanaraps/neofetch/wiki/Customizing-Info
+printinfo() {
+    info title
+    info underline
+
+    info &#34;Model&#34; model
+    info &#34;OS&#34; distro
+    info &#34;Kernel&#34; kernel
+    info &#34;Uptime&#34; uptime
+    info &#34;Packages&#34; packages
+    info &#34;Shell&#34; shell
+    info &#34;Resolution&#34; resolution
+    info &#34;DE&#34; de
+    info &#34;WM&#34; wm
+    info &#34;WM Theme&#34; wmtheme
+    info &#34;Theme&#34; theme
+    info &#34;Icons&#34; icons
+    info &#34;Terminal&#34; term
+    info &#34;Terminal Font&#34; termfont
+    info &#34;CPU&#34; cpu
+    info &#34;GPU&#34; gpu
+    info &#34;Memory&#34; memory
+
+    # info &#34;CPU Usage&#34; cpu_usage
+    # info &#34;Disk&#34; disk
+    # info &#34;Battery&#34; battery
+    # info &#34;Font&#34; font
+    # info &#34;Song&#34; song
+    # info &#34;Local IP&#34; localip
+    # info &#34;Public IP&#34; publicip
+    # info &#34;Users&#34; users
+    # info &#34;Birthday&#34; birthday
+
+    info linebreak
+    info cols
+    info linebreak
+}
+.....
+</code></pre><p>下面的命令可以显示所有你能在 neofetch 脚本中用的参数和配置值：</p><pre tabindex=0><code>$ neofetch --help
+</code></pre><p>要启用所有的功能和参数来运行程序，你可以用 <code>--test</code> 参数：</p><pre tabindex=0><code>$ neofetch --test
+</code></pre><p>要再次显示 ASCII 艺术 logo ，你可以用 <code>--ascii</code> 参数 :</p><pre tabindex=0><code>$ neofetch --ascii
+</code></pre><p>这篇文章中，我们向你介绍了一个可以高度定制的、用来收集系统信息并将它显示在终端上的命令行脚本。</p><p>如果你有什么问题，或者对这个脚本有什么想法，请在下面留言。</p><p>最后但是同样重要的是，如果你知道有类似的脚本，请毫不犹豫地告诉我们，感谢反馈。</p><p>在此访问 <a href=https://github.com/dylanaraps/neofetch>neofetch Github 仓库</a>。</p><hr><p>via: <a href=http://www.tecmint.com/neofetch-shows-linux-system-information-with-logo>http://www.tecmint.com/neofetch-shows-linux-system-information-with-logo</a></p><p>作者：<a href=http://www.tecmint.com/author/aaronkili/>Aaron Kili</a> 译者：<a href=https://github.com/Yinux>Yinux</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF/ rel=tag>系统信息</a></li><li class=tags__item><a class="tags__link btn" href=/tags/neofetch/ rel=tag>neofetch</a></li><li class=tags__item><a class="tags__link btn" href=/tags/screenfetch/ rel=tag>ScreenFetch</a></li><li class=tags__item><a class="tags__link btn" href=/tags/linux_logo/ rel=tag>Linux_Logo</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

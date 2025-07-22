@@ -1,0 +1,49 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 PyHamcrest 执行健壮的单元测试 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 PyHamcrest 执行健壮的单元测试"><meta property="og:description" content="使用此框架编写断言，提高开发测试的准确性。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10487-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-01-29T00:33:20+00:00"><meta property="article:modified_time" content="2019-01-29T00:33:20+00:00"><meta itemprop=name content="使用 PyHamcrest 执行健壮的单元测试"><meta itemprop=description content="使用此框架编写断言，提高开发测试的准确性。"><meta itemprop=datePublished content="2019-01-29T00:33:20+00:00"><meta itemprop=dateModified content="2019-01-29T00:33:20+00:00"><meta itemprop=wordCount content="225"><meta itemprop=keywords content="断言,测试,Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 PyHamcrest 执行健壮的单元测试</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-01-29T00:33:20Z>January 29, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>使用此框架编写断言，提高开发测试的准确性。</p></blockquote><p><img src=/data/attachment/album/201901/29/003322zr855ene5unu00un.jpg alt></p><p>在<a href=https://martinfowler.com/bliki/TestPyramid.html>测试金字塔</a>的底部是单元测试。单元测试每次只测试一个代码单元，通常是一个函数或方法。</p><p>通常，设计单个单元测试是为了测试通过一个函数或特定分支的特定执行流程，这使得将失败的单元测试和导致失败的 bug 对应起来变得容易。</p><p>理想情况下，单元测试很少使用或不使用外部资源，从而隔离它们并使它们更快。</p><p>单元测试套件通过在开发过程的早期发现问题来帮助维护高质量的产品。有效的单元测试可以在代码离开开发人员机器之前捕获 bug，或者至少可以在特定分支上的持续集成环境中捕获 bug。这标志着好的和坏的单元测试之间的区别：<em>好的</em>测试通过尽早捕获 bug 并使测试更快来提高开发人员的生产力。<em>坏的</em>测试降低了开发人员的工作效率。</p><p>当测试<em>附带的特性</em>时，生产率通常会降低。当代码更改时测试会失败，即使它仍然是正确的。发生这种情况是因为输出的不同，但在某种程度上是因为它不是 函数契约 function’s contract 的一部分。</p><p>因此，一个好的单元测试可以帮助执行函数所提交的契约。</p><p>如果单元测试中断，那意味着该契约被违反了，应该（通过更改文档和测试）明确修改，或者（通过修复代码并保持测试不变）来修复。</p><p>虽然将测试限制为只执行公共契约是一项需要学习的复杂技能，但有一些工具可以提供帮助。</p><p>其中一个工具是 <a href=http://hamcrest.org/>Hamcrest</a>，这是一个用于编写断言的框架。最初是为基于 Java 的单元测试而发明的，但它现在支持多种语言，包括 <a href=https://www.python.org/>Python</a>。</p><p>Hamcrest 旨在使测试断言更容易编写和更精确。</p><pre tabindex=0><code>def add(a, b):
+    return a + b
+
+from hamcrest import assert_that, equal_to
+
+def test_add():
+    assert_that(add(2, 2), equal_to(4))  
+</code></pre><p>这是一个用于简单函数的断言。如果我们想要断言更复杂的函数怎么办？</p><pre tabindex=0><code>def test_set_removal():
+    my_set = {1, 2, 3, 4}
+    my_set.remove(3)
+    assert_that(my_set, contains_inanyorder([1, 2, 4]))
+    assert_that(my_set, is_not(has_item(3)))
+</code></pre><p>注意，我们可以简单地断言其结果是任何顺序的 <code>1</code>、<code>2</code> 和 <code>4</code>，因为集合不保证顺序。</p><p>我们也可以很容易用 <code>is_not</code> 来否定断言。这有助于我们编写<em>精确的断言</em>，使我们能够把自己限制在执行函数的公共契约方面。</p><p>然而，有时候，内置的功能都不是我们<em>真正</em>需要的。在这些情况下，Hamcrest 允许我们编写自己的 匹配器 matchers 。</p><p>想象一下以下功能：</p><pre tabindex=0><code>def scale_one(a, b):
+    scale = random.randint(0, 5)
+    pick = random.choice([a,b])
+    return scale * pick
+</code></pre><p>我们可以自信地断言其结果均匀地分配到至少一个输入。</p><p>匹配器继承自 <code>hamcrest.core.base_matcher.BaseMatcher</code>，重写两个方法：</p><pre tabindex=0><code>class DivisibleBy(hamcrest.core.base_matcher.BaseMatcher):
+    def __init__(self, factor):
+        self.factor = factor
+
+    def _matches(self, item):
+        return (item % self.factor) == 0
+
+    def describe_to(self, description):
+        description.append_text(&#39;number divisible by&#39;)
+        description.append_text(repr(self.factor))
+</code></pre><p>编写高质量的 <code>describe_to</code> 方法很重要，因为这是测试失败时显示的消息的一部分。</p><pre tabindex=0><code>def divisible_by(num):
+    return DivisibleBy(num)
+</code></pre><p>按照惯例，我们将匹配器包装在一个函数中。有时这给了我们进一步处理输入的机会，但在这种情况下，我们不需要进一步处理。</p><pre tabindex=0><code>def test_scale():
+    result = scale_one(3, 7)
+    assert_that(result,
+                any_of(divisible_by(3),
+                divisible_by(7)))
+</code></pre><p>请注意，我们将 <code>divisible_by</code> 匹配器与内置的 <code>any_of</code> 匹配器结合起来，以确保我们只测试函数提交的内容。</p><p>在编辑这篇文章时，我听到一个传言，取 “Hamcrest” 这个名字是因为它是 “matches” 字母组成的字谜。嗯…</p><pre tabindex=0><code>&gt;&gt;&gt; assert_that(&#34;matches&#34;, contains_inanyorder(*&#34;hamcrest&#34;)
+Traceback (most recent call last):
+  File &#34;&lt;stdin&gt;&#34;, line 1, in &lt;module&gt;
+  File &#34;/home/moshez/src/devops-python/build/devops/lib/python3.6/site-packages/hamcrest/core/assert_that.py&#34;, line 43, in assert_that
+    _assert_match(actual=arg1, matcher=arg2, reason=arg3)
+  File &#34;/home/moshez/src/devops-python/build/devops/lib/python3.6/site-packages/hamcrest/core/assert_that.py&#34;, line 57, in _assert_match
+    raise AssertionError(description)
+AssertionError:
+Expected: a sequence over [&#39;h&#39;, &#39;a&#39;, &#39;m&#39;, &#39;c&#39;, &#39;r&#39;, &#39;e&#39;, &#39;s&#39;, &#39;t&#39;] in any order
+      but: no item matches: &#39;r&#39; in [&#39;m&#39;, &#39;a&#39;, &#39;t&#39;, &#39;c&#39;, &#39;h&#39;, &#39;e&#39;, &#39;s&#39;]
+</code></pre><p>经过进一步的研究，我找到了传言的来源：它是 “matchers” 字母组成的字谜。</p><pre tabindex=0><code>&gt;&gt;&gt; assert_that(&#34;matchers&#34;, contains_inanyorder(*&#34;hamcrest&#34;))
+&gt;&gt;&gt;
+</code></pre><p>如果你还没有为你的 Python 代码编写单元测试，那么现在是开始的好时机。如果你正在为你的 Python 代码编写单元测试，那么使用 Hamcrest 将允许你使你的断言更加<em>精确</em>，既不会比你想要测试的多也不会少。这将在修改代码时减少误报，并减少修改工作代码的测试所花费的时间。</p><hr><p>via: <a href=https://opensource.com/article/18/8/robust-unit-tests-hamcrest>https://opensource.com/article/18/8/robust-unit-tests-hamcrest</a></p><p>作者：<a href=https://opensource.com/users/moshez>Moshe Zadka</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%96%AD%E8%A8%80/ rel=tag>断言</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%B5%8B%E8%AF%95/ rel=tag>测试</a></li><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

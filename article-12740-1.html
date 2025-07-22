@@ -1,0 +1,46 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Linux 中减少/缩小 LVM 大小（逻辑卷调整） - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Linux 中减少/缩小 LVM 大小（逻辑卷调整）"><meta property="og:description" content="减少/缩小逻辑卷是数据损坏的最高风险。所以，如果可能的话，尽量避免这种情况，但如果没有其他选择的话，那就继续。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12740-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-10-21T21:07:00+00:00"><meta property="article:modified_time" content="2020-10-21T21:07:00+00:00"><meta itemprop=name content="如何在 Linux 中减少/缩小 LVM 大小（逻辑卷调整）"><meta itemprop=description content="减少/缩小逻辑卷是数据损坏的最高风险。所以，如果可能的话，尽量避免这种情况，但如果没有其他选择的话，那就继续。"><meta itemprop=datePublished content="2020-10-21T21:07:00+00:00"><meta itemprop=dateModified content="2020-10-21T21:07:00+00:00"><meta itemprop=wordCount content="299"><meta itemprop=keywords content="LVM,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Linux 中减少/缩小 LVM 大小（逻辑卷调整）</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-10-21T21:07:00Z>October 21, 2020</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202010/21/210459ydp5an23nfzgglyy.jpg alt></p><p>减少/缩小逻辑卷是数据损坏的最高风险。</p><p>所以，如果可能的话，尽量避免这种情况，但如果没有其他选择的话，那就继续。</p><p>缩减 LVM 之前，建议先做一个备份。</p><p>当你在 LVM 中的磁盘空间耗尽时，你可以通过缩小现有的没有使用全部空间的 LVM，而不是增加一个新的物理磁盘，在卷组上腾出一些空闲空间。</p><p><strong>需要注意的是：</strong> 在 GFS2 或者 XFS 文件系统上不支持缩小。</p><p>如果你是逻辑卷管理 （LVM） 的新手，我建议你从我们之前的文章开始学习。</p><ul><li><strong>第一部分：<a href=/article-12670-1.html>如何在 Linux 中创建/配置 LVM（逻辑卷管理）</a></strong></li><li><strong>第二部分：<a href=/article-12673-1.html>如何在 Linux 中扩展/增加 LVM（逻辑卷调整）</a></strong></li></ul><p><img src=/data/attachment/album/202010/21/210610kikq1xynfje7hjaa.jpeg alt></p><p>减少逻辑卷涉及以下步骤：</p><ul><li>卸载文件系统</li><li>检查文件系统是否有任何错误</li><li>缩小文件系统的大小</li><li>缩小逻辑卷的大小</li><li>重新检查文件系统是否存在错误（可选）</li><li>挂载文件系统</li><li>检查减少后的文件系统大小</li></ul><p><strong>比如：</strong> 你有一个 <strong>100GB</strong> 的没有使用全部空间的 LVM，你想把它减少到 <strong>80GB</strong>，这样 <strong>20GB</strong> 可以用于其他用途。</p><pre tabindex=0><code># df -h /testlvm1
+
+Filesystem              Size Used Avail Use% Mounted on
+/dev/mapper/vg01-lv002  100G 15G  85G   12%  /testlvm1
+</code></pre><h3 id=卸载文件系统>卸载文件系统</h3><p>使用 <code>umount</code> 命令卸载文件系统：</p><pre tabindex=0><code># umount /testlvm1
+</code></pre><h3 id=检查文件系统是否有任何错误>检查文件系统是否有任何错误</h3><p>使用 <code>e2fsck</code> 命令检查文件系统是否有错误：</p><pre tabindex=0><code># e2fsck -f /dev/mapper/vg01-lv002
+
+e2fsck 1.42.9 (28-Dec-2013)
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+/dev/mapper/vg01-lv002: 13/6553600 files (0.0% non-contiguous), 12231854/26212352 blocks
+</code></pre><h3 id=缩小文件系统>缩小文件系统</h3><p>下面的命令将把 <code>testlvm1</code> 文件系统从 <strong>100GB</strong> 缩小到 <strong>80GB</strong>。</p><p><strong>文件系统大小调整的常用语法（<code>resize2fs</code>）</strong>：</p><pre tabindex=0><code>resize2fs [现有逻辑卷名] [新的文件系统大小]
+</code></pre><p>实际命令如下：</p><pre tabindex=0><code># resize2fs /dev/mapper/vg01-lv002 80G
+
+resize2fs 1.42.9 (28-Dec-2013)
+Resizing the filesystem on /dev/mapper/vg01-lv002 to 28321400 (4k) blocks.
+The filesystem on /dev/mapper/vg01-lv002 is now 28321400 blocks long.
+</code></pre><h3 id=减少逻辑卷-lvm-容量>减少逻辑卷 （LVM） 容量</h3><p>现在使用 <code>lvreduce</code> 命令缩小逻辑卷（LVM） 的大小。通过下面的命令， <code>/dev/mapper/vg01-lv002</code> 将把逻辑卷 （LVM） 从 100GB 缩小到 80GB。</p><p><strong>LVM 缩减 （<code>lvreduce</code>） 的常用语法</strong>：</p><pre tabindex=0><code>lvreduce [新的 LVM 大小] [现有逻辑卷名称]
+</code></pre><p>实际命令如下：</p><pre tabindex=0><code># lvreduce -L 80G /dev/mapper/vg01-lv002
+
+WARNING: Reducing active logical volume to 80.00 GiB
+THIS MAY DESTROY YOUR DATA (filesystem etc.)
+Do you really want to reduce lv002? [y/n]: y
+Reducing logical volume lv002 to 80.00 GiB
+Logical volume lv002 successfully resized
+</code></pre><h3 id=可选检查文件系统是否有错误>可选：检查文件系统是否有错误</h3><p>缩减 LVM 后再次检查文件系统是否有错误：</p><pre tabindex=0><code># e2fsck -f /dev/mapper/vg01-lv002
+
+e2fsck 1.42.9 (28-Dec-2013)
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+/dev/mapper/vg01-lv002: 13/4853600 files (0.0% non-contiguous), 1023185/2021235 blocks
+</code></pre><h3 id=挂载文件系统并检查缩小后的大小>挂载文件系统并检查缩小后的大小</h3><p>最后挂载文件系统，并检查缩小后的文件系统大小。</p><p>使用 <code>mount</code> 命令<a href=https://www.2daygeek.com/mount-unmount-file-system-partition-in-linux/>挂载逻辑卷</a>：</p><pre tabindex=0><code># mount /testlvm1
+</code></pre><p>使用 <a href=https://www.2daygeek.com/linux-check-disk-space-usage-df-command/>df 命令</a>检查挂载的卷。</p><pre tabindex=0><code># df -h /testlvm1
+
+Filesystem              Size Used Avail Use% Mounted on
+/dev/mapper/vg01-lv002  80G  15G  65G   18%  /testlvm1
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/reduce-shrink-decrease-resize-lvm-logical-volume-in-linux/>https://www.2daygeek.com/reduce-shrink-decrease-resize-lvm-logical-volume-in-linux/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/lvm/ rel=tag>LVM</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

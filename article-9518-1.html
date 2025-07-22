@@ -1,0 +1,115 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何记录 Linux 的系统运行时间的统计信息 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何记录 Linux 的系统运行时间的统计信息"><meta property="og:description" content="Linux/Unix 系统管理员对服务器的系统运行时间有一种奇怪的痴迷。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9518-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-04-05T22:57:56+00:00"><meta property="article:modified_time" content="2018-04-05T22:57:56+00:00"><meta itemprop=name content="如何记录 Linux 的系统运行时间的统计信息"><meta itemprop=description content="Linux/Unix 系统管理员对服务器的系统运行时间有一种奇怪的痴迷。"><meta itemprop=datePublished content="2018-04-05T22:57:56+00:00"><meta itemprop=dateModified content="2018-04-05T22:57:56+00:00"><meta itemprop=wordCount content="667"><meta itemprop=keywords content="uptime,运行时间,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何记录 Linux 的系统运行时间的统计信息</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-04-05T22:57:56Z>April 05, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201804/05/225745wnm0m8gxamhtdglz.jpg alt></p><p>Linux/Unix 系统管理员对服务器的系统运行时间有一种奇怪的痴迷。这里有一个关于这个主题的 xkcd 漫画，一个好的系统管理员是一股不可阻挡的力量，他伫立在你家猫咪博客的服务器之前，对抗黑暗势力。</p><p><a href=https://www.cyberciti.biz/media/new/cms/2017/11/devotion_to_duty.png><img src=/data/attachment/album/201804/05/225757tu7qbq9gqz740hgg.png alt="Fig.01: Devotion to Duty https://xkcd.com/705/"></a></p><p>我们可以使用 <code>uptime</code> 命令或 <a href=https://www.cyberciti.biz//www.cyberciti.biz/faq/unix-linux-w-command-examples-syntax-usage-2/ title="See Linux/Unix w command examples for more info">w 命令</a> 或 <code>top</code> 命令来判断 Linux 系统运行了多久。我可以使用 <code>tuptime</code> 工具保留每次重新启动的运行时间，以<a href=https://www.cyberciti.biz/hardware/howto-see-historical-statistical-uptime-on-linux-server/>获得系统运行时间的历史和统计报告</a>。</p><p>这就像 <code>uptime</code> 命令一样，但输出结果更令人印象深刻。最近我发现了另一种称为 <code>uptimed</code> 的工具，用于记录关于机器的系统运行时间和统计信息。让我们看看如何使用 Linux 操作系统上的 <code>uptimed</code> 和 <code>uprecords</code> 来获得运行时间的记录统计信息。</p><p>查找系统运行时间非常简单，只需在基于 Linux 的系统上键入以下命令即可：</p><pre tabindex=0><code>$ uptime -p
+up 2 weeks, 4 days, 7 hours, 28 minutes
+</code></pre><p>要保留有关 <code>uptime</code> 的历史统计信息，请使用 <a href=https://www.cyberciti.biz/hardware/howto-see-historical-statistical-uptime-on-linux-server/>tuptime</a> 或 <code>uptimed</code> 工具。</p><h3 id=安装-uptimed>安装 uptimed</h3><p>安装 <code>uptimed</code> 的最简单的方式是通过你的软件包管理器，比如 apt/apt-get/yum 这些你的 Linux 发行版的朋友。</p><h4 id=在-debianubuntu-linux-上安装-uptimed>在 Debian/Ubuntu Linux 上安装 uptimed</h4><p>键入以下 <a href=https://www.cyberciti.biz//www.cyberciti.biz/faq/ubuntu-lts-debian-linux-apt-command-examples/ title="See Linux/Unix apt command examples for more info">apt 命令</a>/<a href=https://www.cyberciti.biz//www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html title="See Linux/Unix apt-get command examples for more info">apt-get 命令</a>：</p><pre tabindex=0><code>$ sudo apt-get install uptimed
+</code></pre><p>示例输出：</p><pre tabindex=0><code>Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following additional packages will be installed:
+  libuptimed0
+The following NEW packages will be installed:
+  libuptimed0 uptimed
+0 upgraded, 2 newly installed, 0 to remove and 3 not upgraded.
+Need to get 40.7 kB of archives.
+After this operation, 228 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://mirrors.linode.com/ubuntu xenial/universe amd64 libuptimed0 amd64 1:0.3.17-4 [9,050 B]
+Get:2 http://mirrors.linode.com/ubuntu xenial/universe amd64 uptimed amd64 1:0.3.17-4 [31.6 kB]
+Fetched 40.7 kB in 0s (2,738 kB/s)  
+Preconfiguring packages ...
+Selecting previously unselected package libuptimed0.
+(Reading database ... 39163 files and directories currently installed.)
+Preparing to unpack .../libuptimed0_1%3a0.3.17-4_amd64.deb ...
+Unpacking libuptimed0 (1:0.3.17-4) ...
+Selecting previously unselected package uptimed.
+Preparing to unpack .../uptimed_1%3a0.3.17-4_amd64.deb ...
+Unpacking uptimed (1:0.3.17-4) ...
+Processing triggers for systemd (229-4ubuntu21) ...
+Processing triggers for ureadahead (0.100.0-19) ...
+Processing triggers for man-db (2.7.5-1) ...
+Setting up libuptimed0 (1:0.3.17-4) ...
+Setting up uptimed (1:0.3.17-4) ...
+Processing triggers for libc-bin (2.23-0ubuntu9) ...
+Processing triggers for systemd (229-4ubuntu21) ...
+Processing triggers for ureadahead (0.100.0-19) ...
+</code></pre><h4 id=在-centosrhelfedoraoraclescientific-linux-上安装-uptimed>在 CentOS/RHEL/Fedora/Oracle/Scientific Linux 上安装 uptimed</h4><p>首先 <a href=https://www.cyberciti.biz/faq/installing-rhel-epel-repo-on-centos-redhat-7-x/>在 CentOS/RHEL 使用 EPEL 仓库</a>：</p><pre tabindex=0><code>$ sudo yum -y install epel-release
+</code></pre><p>然后，键入以下 <a href=https://www.cyberciti.biz//www.cyberciti.biz/faq/rhel-centos-fedora-linux-yum-command-howto/ title="See Linux/Unix yum command examples for more info">yum 命令</a>：</p><pre tabindex=0><code>$ sudo yum install uptimed
+</code></pre><p>示例输出：</p><pre tabindex=0><code>Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: centos.excellmedia.net
+ * epel: ftp.cuhk.edu.hk
+ * extras: centos.excellmedia.net
+ * updates: centos.excellmedia.net
+Resolving Dependencies
+--&gt; Running transaction check
+---&gt; Package uptimed.x86_64 0:0.4.0-6.el7 will be installed
+--&gt; Finished Dependency Resolution
+
+Dependencies Resolved
+
+===============================================================================
+ Package           Arch             Version               Repository      Size
+===============================================================================
+Installing:
+ uptimed           x86_64           0.4.0-6.el7           epel            47 k
+
+Transaction Summary
+===============================================================================
+Install  1 Package
+
+Total download size: 47 k
+Installed size: 98 k
+Is this ok [y/d/N]: y
+Downloading packages:
+uptimed-0.4.0-6.el7.x86_64.rpm                            |  47 kB   00:01     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : uptimed-0.4.0-6.el7.x86_64                                  1/1 
+  Verifying  : uptimed-0.4.0-6.el7.x86_64                                  1/1 
+
+Installed:
+  uptimed.x86_64 0:0.4.0-6.el7                                                 
+
+Complete!
+</code></pre><p>如果你正在使用 Fedora Linux，运行以下 <code>dnf</code> 命令：</p><pre tabindex=0><code>$ sudo dnf install uptimed
+</code></pre><h4 id=在-arch-linux-上安装-uptimed>在 Arch Linux 上安装 uptimed</h4><p>键入以下 <code>pacman</code> 命令：</p><pre tabindex=0><code>$ sudo pacman -S uptimed
+</code></pre><h4 id=在-gentoo-linux-上安装-uptimed>在 Gentoo Linux 上安装 uptimed</h4><p>键入以下 <code>emerge</code> 命令：</p><pre tabindex=0><code>$ sudo emerge --ask uptimed
+</code></pre><h3 id=如何配置-uptimed>如何配置 uptimed</h3><p>使用文本编辑器编辑 <code>/etc/uptimed.conf</code> 文件，例如 <code>vim</code> 命令：</p><pre tabindex=0><code>$ sudo vim /etc/uptimed.conf
+</code></pre><p>最少设置一个 email 地址来发送记录。假定有个兼容 sendmail 的 MTA 安装在 <code>/usr/lib/sendmail</code>。</p><pre tabindex=0><code>EMAIL=vivek@server1.cyberciti.biz
+</code></pre><p>保存并关闭文件。</p><h3 id=如何在系统启动时启动-uptimed-服务>如何在系统启动时启动 uptimed 服务？</h3><p>使用 <code>systemctl</code> 命令启动 <code>uptimed</code> 服务：</p><pre tabindex=0><code>$ sudo systemctl enable uptimed
+</code></pre><h3 id=我该如何-启动停止重启-或者查看-uptimed-服务的状态>我该如何 启动/停止/重启 或者查看 uptimed 服务的状态？</h3><pre tabindex=0><code>$ sudo systemctl start uptimed ## start it ##
+$ sudo systemctl stop uptimed ## stop it ##
+$ sudo systemctl restart uptimed ## restart it ##
+$ sudo systemctl status uptimed ## view status ##
+</code></pre><p>示例输出：</p><pre tabindex=0><code>● uptimed.service - uptime record daemon
+   Loaded: loaded (/lib/systemd/system/uptimed.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2017-11-09 17:49:14 UTC; 18min ago
+ Main PID: 11137 (uptimed)
+   CGroup: /system.slice/uptimed.service
+           └─11137 /usr/sbin/uptimed -f
+
+Nov 09 17:49:14 gfs04 systemd[1]: Started uptime record daemon.
+</code></pre><h3 id=如何查看-uptime-记录>如何查看 uptime 记录</h3><p>只需键入以下命令即可查看 <code>uptimed(8)</code> 程序的统计信息：</p><pre tabindex=0><code>$ uprecords
+</code></pre><p>示例输出：</p><p><a href=https://www.cyberciti.biz/media/new/cms/2017/11/uprecord-screenshot.jpg><img src=/data/attachment/album/201804/05/225757y3mxspe1xjtj3evz.jpg alt="Fig.02: uprecords in action"></a></p><p><code>uprecords</code> 有一些选项：</p><pre tabindex=0><code>$ uprecords -?
+</code></pre><p>示例输出：</p><pre tabindex=0><code>usage: uprecords [OPTION]...
+
+  -?             this help
+  -a             do not print ansi codes
+  -b             sort by boottime
+  -B             reverse sort by boottime
+  -k             sort by sysinfo
+  -K             reverse sort by sysinfo
+  -d             print downtime seen before every uptimes instead of system
+  -c             do not show current entry if not in top entries
+  -f             run continously in a loop
+  -s             do not print extra statistics
+  -w             wide output (more than 80 cols per line)
+  -i INTERVAL    use INTERVAL seconds for loop instead of 5, implies -f
+  -m COUNT       show a maximum of top COUNT entries instead of 10
+  -M             show next milestone
+  -v             version information
+</code></pre><h3 id=结论>结论</h3><p>这是一个极好的小工具，可以显示服务器正常运行时间的记录，以证明机器正常运行时间和你的业务连续性。在相关说明中，你可以看到官方的 <a href=https://store.xkcd.com/collections/apparel/products/sysadmin>XKCD 系统管理员 T恤</a> 因为漫画被制作成衬衫，其中包括背面的新插图。</p><p><a href=https://www.cyberciti.biz/media/new/cms/2017/11/sysadmin_shirt_5_1024x1024.jpg><img src=/data/attachment/album/201804/05/225758ad2mhmgudxe3uggx.jpg alt="Fig.03: Sysadmin XKCD shirt features the original comic on the front and a new illustration on the back."></a></p><hr><p>via: <a href=https://www.cyberciti.biz/hardware/see-records-statistics-about-a-linux-servers-uptime/>https://www.cyberciti.biz/hardware/see-records-statistics-about-a-linux-servers-uptime/</a></p><p>作者：<a href=https://www.cyberciti.biz>Vivek Gite</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/uptime/ rel=tag>uptime</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BF%90%E8%A1%8C%E6%97%B6%E9%97%B4/ rel=tag>运行时间</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,68 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在Ubuntu 14.04 上使用Bacula和Webmin设置备份服务器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在Ubuntu 14.04 上使用Bacula和Webmin设置备份服务器"><meta property="og:description" content="Bacula是一个开源网络备份解决方案，允许你在本地或者远程计算机组上备份或者还原数据。配置与安装很容易，并支持许多高级存储管理特性。 本教程中，让我们来学习一下如何在Ubuntu 14.04服务器上安装和配置Bacula。我的机器的IP是192.168.1.250/24，主机名是server.unixmen.local。现在让我们进入教程吧。 安装 Bacula Bacula使用SQL数据库管理它的信息。我们可以使用MySQL或者PostgreSQL数据库。本篇教程中，我使用MySQL。 输入下面的命令安装MySQL服务器。 sudo apt-get update sudo apt-get upgrade sudo apt-get install mysql-server"><meta property="og:type" content="article"><meta property="og:url" content="/article-3229-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-06-19T16:07:47+00:00"><meta property="article:modified_time" content="2014-06-19T16:07:47+00:00"><meta itemprop=name content="在Ubuntu 14.04 上使用Bacula和Webmin设置备份服务器"><meta itemprop=description content="Bacula是一个开源网络备份解决方案，允许你在本地或者远程计算机组上备份或者还原数据。配置与安装很容易，并支持许多高级存储管理特性。 本教程中，让我们来学习一下如何在Ubuntu 14.04服务器上安装和配置Bacula。我的机器的IP是192.168.1.250/24，主机名是server.unixmen.local。现在让我们进入教程吧。 安装 Bacula Bacula使用SQL数据库管理它的信息。我们可以使用MySQL或者PostgreSQL数据库。本篇教程中，我使用MySQL。 输入下面的命令安装MySQL服务器。 sudo apt-get update sudo apt-get upgrade sudo apt-get install mysql-server"><meta itemprop=datePublished content="2014-06-19T16:07:47+00:00"><meta itemprop=dateModified content="2014-06-19T16:07:47+00:00"><meta itemprop=wordCount content="274"><meta itemprop=keywords content="Bacula,Webmin,备份,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在Ubuntu 14.04 上使用Bacula和Webmin设置备份服务器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-06-19T16:07:47Z>June 19, 2014</time></div></div></header><div class="content post__content clearfix"><p><strong>Bacula</strong>是一个开源网络备份解决方案，允许你在本地或者远程计算机组上备份或者还原数据。配置与安装很容易，并支持许多高级存储管理特性。</p><p>本教程中，让我们来学习一下如何在Ubuntu 14.04服务器上安装和配置Bacula。我的机器的IP是<strong>192.168.1.250/24</strong>，主机名是<strong>server.unixmen.local</strong>。现在让我们进入教程吧。</p><h3 id=安装-bacula>安装 Bacula</h3><p>Bacula使用SQL数据库管理它的信息。我们可以使用MySQL或者PostgreSQL数据库。本篇教程中，我使用MySQL。</p><p>输入下面的命令安装MySQL服务器。</p><pre tabindex=0><code>sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install mysql-server
+</code></pre><p>在安装MySQL的过程中，可能提示需要输入数据库管理员密码。输入密码后按下OK。</p><p><img src=/data/attachment/album/201406/19/160749p7t0etnj7rplvelf.png alt></p><p>重新输入密码：</p><p><img src=/data/attachment/album/201406/19/160750d40545fbi6a454f2.png alt></p><p>现在使用下面的命令安装bacula：</p><pre tabindex=0><code>sudo apt-get install bacula-server bacula-client
+</code></pre><p>Bacula默认使用Postfix MTA。安装过程中，你会被要求配置Postfix。</p><p><img src=/data/attachment/album/201406/19/160751saaldmvnvzmlkdm6.png alt></p><p>选择Internet站点并点击OK。</p><p><img src=/data/attachment/album/201406/19/160752h8jgxcifilkilqv8.png alt></p><p>输入服务器完整域名（FQDN）：</p><p><img src=/data/attachment/album/201406/19/160754g6n7a61ayf8znk88.png alt></p><p>现在输入yes用dbconfig-common来配置Bacula数据库。</p><p><img src=/data/attachment/album/201406/19/160755j2v8du2ctaad4872.png alt></p><p>输入MySQL数据库管理员密码：</p><p><img src=/data/attachment/album/201406/19/160756jnqdant4mxqfmzxz.png alt></p><p>设置数据库的bacula-director-mysql用户的密码。如果留空不输入，会生成一个随机密码。</p><p><img src=/data/attachment/album/201406/19/160757jdmsrw9x40w6mn6t.png alt></p><p>重新输入密码：</p><p><img src=/data/attachment/album/201406/19/160759p833gz48lpc9d8i3.png alt></p><h3 id=创建备份与还原目录>创建备份与还原目录</h3><p>现在，让我们创建备份与还原目录。</p><pre tabindex=0><code>sudo mkdir -p /mybackup/backup /mybackup/restore
+</code></pre><p>设置上面目录的权限与所属用户/组：</p><pre tabindex=0><code>sudo chown -R bacula:bacula /mybackup/
+sudo chown -R 700 /mybackup/
+</code></pre><h3 id=配置-bacula>配置 Bacula</h3><p>Bacula有很多配置文件需要我们配置。</p><p><strong>更新 Bacula Director 配置:</strong></p><pre tabindex=0><code>sudo vi /etc/bacula/bacula-dir.conf
+</code></pre><p>找到下面的字段，并更新还原路径。本篇中，** /mybackup/restore**是我的还原位置。</p><pre tabindex=0><code>[...]
+Job {
+  Name = &#34;RestoreFiles&#34;
+  Type = Restore
+  Client=server-fd
+  FileSet=&#34;Full Set&#34;
+  Storage = File
+  Pool = Default
+  Messages = Standard
+  Where = /mybackup/restore
+}
+[...]
+</code></pre><p>滚动到“list of files to be backed up”字段，并设置备份的目录。本篇教程中，我希望备份“<strong>/home/sk</strong>”目录。所以我把这个目录包含进了“File”参数中。</p><pre tabindex=0><code>[...]
+
+#  By default this is defined to point to the Bacula binary
+#    directory to give a reasonable FileSet to backup to
+#    disk storage during initial testing.
+#
+    File = /home/sk
+  }
+[...]
+</code></pre><p>继续向下滚动，找到<strong>Exclude</strong> 字段，设置排除在备份目录外的目录列表。这里，我排除了目录**/mybackup**。</p><pre tabindex=0><code>[...]
+
+# If you backup the root directory, the following two excluded
+#   files can be useful
+#
+  Exclude {
+    File = /var/lib/bacula
+    File = /nonexistant/path/to/file/archive/dir
+    File = /proc
+    File = /tmp
+    File = /.journal
+    File = /.fsck
+    File = /mybackup
+  }
+}
+[...]
+</code></pre><p>保存并关闭文件。</p><p><strong>更新 Bacula 存储守护进程设置：</strong></p><p>编辑 <strong>/etc/bacula/bacula-sd.conf</strong>，</p><pre tabindex=0><code>sudo vi /etc/bacula/bacula-sd.conf
+</code></pre><p>设置备份目录位置，也就是本篇中的**/mybackup/backup**。</p><pre tabindex=0><code>[...]
+
+Device {
+  Name = FileStorage
+  Media Type = File
+  Archive Device = /mybackup/backup
+  LabelMedia = yes;                   # lets Bacula label unlabeled media
+  Random Access = Yes;
+  AutomaticMount = yes;               # when device opened, read it
+  RemovableMedia = no;
+  AlwaysOpen = no;
+}
+[...]
+</code></pre><p>现在如下检查是否所有的配置是有效的。如果下面的命令没有显示，那么配置就是有效的。</p><pre tabindex=0><code>sudo bacula-dir -tc /etc/bacula/bacula-dir.conf
+sudo bacula-sd -tc /etc/bacula/bacula-sd.conf
+</code></pre><p>一旦你完成所有的设置，重启所有的bacula服务。</p><pre tabindex=0><code>sudo /etc/init.d/bacula-director restart
+sudo /etc/init.d/bacula-fd restart
+sudo /etc/init.d/bacula-sd restart
+</code></pre><p>就是这样。现在，bacula已经成功安装与配置了。</p><h3 id=使用webmin-管理-bacula>使用Webmin 管理 Bacula</h3><p>使用命令行管理Bacula是有点困难的。所以我们使用一个图形化的管理工具“webmin”来简化我们的任务。</p><p>使用下面的命令在Ubuntu 14.04上安装Webmin。</p><ul><li><a href=http://linux.cn/article-3113-1.html>在 Ubuntu 14.04 LTS上安装Webmin</a></li></ul><p>现在使用URL https://ip-address:10000进入Webmin界面。在左边的窗格中进入系统标签并点击模块配置链接。如果在系统下没有找到它，在未使用模块一栏中查找。</p><p><img src=/data/attachment/album/201406/19/160800hkksmmo3qii7iukv.png alt></p><p>在数据库一栏中选择MySQL数据库。输入MySQL管理员密码，并点击保存。</p><p><img src=/data/attachment/album/201406/19/160803m8vlhv7461zsccoc.png alt></p><p>就是这样。现在你可以在webmin中简单地配置Bacula了。开始加入备份客户端，磁盘卷和计划任务吧。</p><p><img src=/data/attachment/album/201406/19/160805zalanznqqwyoll6y.png alt></p><p>干杯!</p><hr><p>via: <a href=http://www.unixmen.com/setup-backup-server-using-bacula-webmin-ubuntu-14-04/>http://www.unixmen.com/setup-backup-server-using-bacula-webmin-ubuntu-14-04/</a></p><p>译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/bacula/ rel=tag>Bacula</a></li><li class=tags__item><a class="tags__link btn" href=/tags/webmin/ rel=tag>Webmin</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%A4%87%E4%BB%BD/ rel=tag>备份</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

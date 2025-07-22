@@ -1,0 +1,115 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Betty：和你的Linux说说话 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Betty：和你的Linux说说话"><meta property="og:description" content="Betty 是一个将类英语短语翻译成Linux命令的开源工具。这个项目的主要目的是让大家可以通过输入自然语言来使用强大的Linux系统。让我们来看一下它是怎么工作的。  安装 Betty的安装非常简单直接。首先确认你已经安装了下面这些依赖包。 对于基于Debian的系统： sudo apt-get install git curl ruby  对于基于RPM的系统： yum install git curl ruby  现在用git工具把Betty库clone到你自定义的任何路径。这里我克隆到我的home目录，例如 /home/sk/. git clone https://github.com/pickhardt/betty  添加betty的别名到你的bashrc配置文件。"><meta property="og:type" content="article"><meta property="og:url" content="/article-3453-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-07-23T14:02:00+00:00"><meta property="article:modified_time" content="2014-07-23T14:02:00+00:00"><meta itemprop=name content="Betty：和你的Linux说说话"><meta itemprop=description content="Betty 是一个将类英语短语翻译成Linux命令的开源工具。这个项目的主要目的是让大家可以通过输入自然语言来使用强大的Linux系统。让我们来看一下它是怎么工作的。  安装 Betty的安装非常简单直接。首先确认你已经安装了下面这些依赖包。 对于基于Debian的系统： sudo apt-get install git curl ruby  对于基于RPM的系统： yum install git curl ruby  现在用git工具把Betty库clone到你自定义的任何路径。这里我克隆到我的home目录，例如 /home/sk/. git clone https://github.com/pickhardt/betty  添加betty的别名到你的bashrc配置文件。"><meta itemprop=datePublished content="2014-07-23T14:02:00+00:00"><meta itemprop=dateModified content="2014-07-23T14:02:00+00:00"><meta itemprop=wordCount content="462"><meta itemprop=keywords content="Betty,命令行,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Betty：和你的Linux说说话</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-07-23T14:02:00Z>July 23, 2014</time></div></div></header><div class="content post__content clearfix"><p><strong>Betty</strong> 是一个将类英语短语翻译成Linux命令的开源工具。这个项目的主要目的是让大家可以通过输入自然语言来使用强大的Linux系统。让我们来看一下它是怎么工作的。</p><p><img src=/data/attachment/album/201407/23/140316qg3jiywyi4iu7xut.jpg alt></p><h3 id=安装>安装</h3><p>Betty的安装非常简单直接。首先确认你已经安装了下面这些依赖包[LCTT译注，需要安装至少Ruby1.9以上版本]。</p><h4 id=对于基于debian的系统>对于基于Debian的系统：</h4><pre tabindex=0><code>sudo apt-get install git curl ruby
+</code></pre><h4 id=对于基于rpm的系统>对于基于RPM的系统：</h4><pre tabindex=0><code>yum install git curl ruby
+</code></pre><p>现在用git工具把Betty库clone到你自定义的任何路径。这里我克隆到我的home目录，<strong>例如 /home/sk/</strong>.</p><pre tabindex=0><code>git clone https://github.com/pickhardt/betty
+</code></pre><p>添加betty的别名到你的bashrc配置文件。</p><pre tabindex=0><code>sudo nano ~/.bashrc
+</code></pre><p>将下列行添加到文件的末尾：</p><pre tabindex=0><code>alias betty=&#34;/home/sk/betty/main.rb&#34;
+</code></pre><p>确保你已经正确地设置好了betty的路径。</p><p>好了，现在是时候和betty好好地玩耍了。</p><h3 id=用法>用法</h3><p>你应该在英语短语之前加上单词“betty” [LCTT译注，你自然可以用你的小甜心的名字来替换这个不是知道是谁的Betty :>]。你也许已经知道，如果我们想知道在系统中我们的用户名，应该运行下面的命令：</p><pre tabindex=0><code>whoami
+</code></pre><p>输出是这样的：</p><pre tabindex=0><code>sk
+</code></pre><p>如你所见，我当前登录的用户名是 <strong>sk</strong>. 现在我也可以通过下面的betty命令获取相同的结果。</p><pre tabindex=0><code>betty whats my username
+</code></pre><p>输出是这样的：</p><pre tabindex=0><code>Betty: Running whoami
+sk
+</code></pre><p>真的好酷，是不是？Betty理解我输入的“whats my username”短语，然后运行“whoami”命令，最后输出结果。</p><p>让我们也来看其他命令。</p><p>如果你的输入不够准确，Betty也能以多种方式回应你。例如，我们运行下面的命令：</p><pre tabindex=0><code>betty whats my name
+</code></pre><p>Betty不确定她应该查找系统用户名还是用户全名。这种情况下，她会询问你多个问题来找到准确的结果。如你下面所见，Betty问我想要运行哪一条命令（whoami 还是 finger $(whoami) | sed &rsquo;s/.<em>:</em>//;q&rsquo;)[LCTT译注，需要你的系统已经安装finger]。我只想知道我的用户名，所以我选择数字<strong>1</strong>。</p><pre tabindex=0><code>Betty: Okay, I have multiple ways to respond.
+Betty: Enter the number of the command you want me to run, or N (no) if you don&#39;t want me to run any.
+[1] whoami
+Gets your system username.
+[2] finger $(whoami) | sed &#39;s/.*: *//;q&#39;
+Gets your full name.
+1
+Betty: Running whoami
+sk
+</code></pre><h3 id=压缩和解压缩文件夹>压缩和解压缩文件夹</h3><p>如果你想要压缩一个文件或者文件夹，用下面的命令。例如，我想压缩我home目录下的“test”文件夹。</p><pre tabindex=0><code>betty compress test/ test.tar.gz
+</code></pre><p>输出是这样的：</p><pre tabindex=0><code>Betty: Running tar -czvf test.tar.gz test/
+test/
+test/home/
+test/home/sk/
+test/home/sk/test/
+test/home/sk/test/sample
+</code></pre><p>类似的，我们可以用下面的命令来解压缩一个归档文件。</p><pre tabindex=0><code>betty uncompress test.tar.gz
+</code></pre><p>输出是这样的：</p><pre tabindex=0><code>Betty: Running mkdir test &amp;&amp;  tar -zxvf test.tar.gz -C test
+test/
+test/home/
+test/home/sk/
+test/home/sk/test/
+test/home/sk/test/sample
+</code></pre><h3 id=完整的betty命令行列表>完整的Betty命令行列表</h3><p>Betty工具有一些命令格式。如果你输入“what is my user name”而不是“whats my username”，它是不能识别的。所以，你只能输入Betty支持的英语短语。</p><p>下面给出一个Betty支持的完整的命令行列表。</p><pre tabindex=0><code>Count:
+betty how many words are in this directory
+betty how many characters are in myfile.py
+betty count lines in this folder
+(Note that there&#39;s many ways to say more or less the same thing.)
+
+Config:
+betty change your name to Joe
+betty speak to me
+betty stop speaking to me
+
+Datetime:
+betty what time is it
+betty what is todays date
+betty what month is it
+betty whats today
+
+Find:
+betty find me all files that contain california
+
+Internet:
+betty download http://www.mysite.com/something.tar.gz to something.tar.gz
+betty uncompress something.tar.gz
+betty unarchive something.tar.gz to somedir
+(You can use unzip, unarchive, untar, uncompress, and expand interchangeably.)
+betty compress /path/to/dir
+
+iTunes:
+betty mute itunes
+betty unmute itunes
+betty pause the music
+betty resume itunes
+betty stop my music
+betty next song
+betty prev track
+betty what song is playing
+(Note that the words song, track, music, etc. are interchangeable)
+
+Fun:
+betty go crazy
+betty whats the meaning of life
+...and more that are left for you to discover!
+
+Map:
+betty show me a map of mountain view
+
+Meta:
+betty what version are you (or just betty version)
+betty whats your github again
+
+Permissions:
+betty give me permission to this directory
+betty give anotheruser ownership of myfile.txt
+
+Process:
+betty show me all processes by root containing grep
+betty show me all my processes containing netbio
+
+Sizes:
+betty show size for myfile.txt
+
+Spotify:
+betty play spotify
+betty pause spotify
+betty next spotify
+betty previous spotify
+
+User:
+betty whats my username
+betty whats my real name
+betty whats my ip address
+betty who else is logged in
+betty whats my version of ruby
+
+Web queries:
+betty turn web on
+betty please tell me what is the weather like in London
+</code></pre><p>对Linux初级使用者来说，Betty似乎是一个非常nice的工具。希望这个工具对你也会非常有用。</p><p>Cheers!</p><p>源代码：</p><ul><li><a href=https://github.com/pickhardt/betty>Betty Homepage</a></li></ul><hr><p>via: <a href=http://www.unixmen.com/betty-translate-english-phrases-linux-commands/>http://www.unixmen.com/betty-translate-english-phrases-linux-commands/</a></p><p>译者：<a href=https://github.com/CNprober>love_daisy_love</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/betty/ rel=tag>Betty</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/ rel=tag>命令行</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

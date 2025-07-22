@@ -1,0 +1,62 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Python 调试过程中设置不中断的断点 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Python 调试过程中设置不中断的断点"><meta property="og:description" content="你对如何让调试器变得更快产生过兴趣吗？本文将分享我们在为 Python 构建调试器时得到的一些经验。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11986-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-03-12T10:45:00+00:00"><meta property="article:modified_time" content="2020-03-12T10:45:00+00:00"><meta itemprop=name content="在 Python 调试过程中设置不中断的断点"><meta itemprop=description content="你对如何让调试器变得更快产生过兴趣吗？本文将分享我们在为 Python 构建调试器时得到的一些经验。"><meta itemprop=datePublished content="2020-03-12T10:45:00+00:00"><meta itemprop=dateModified content="2020-03-12T10:45:00+00:00"><meta itemprop=wordCount content="325"><meta itemprop=keywords content="Python,调试器,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Python 调试过程中设置不中断的断点</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-03-12T10:45:00Z>March 12, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>你对如何让调试器变得更快产生过兴趣吗？本文将分享我们在为 Python 构建调试器时得到的一些经验。</p></blockquote><p><img src=/data/attachment/album/202003/12/104433hq3qx2k81w1wamwm.jpg alt></p><p>整段故事讲的是我们在 <a href=https://rookout.com/>Rookout</a> 公司的团队为 Python 调试器开发不中断断点的经历，以及开发过程中得到的经验。我将在本月于旧金山举办的 <a href=https://pybay.com/>PyBay 2019</a> 上介绍有关 Python 调试过程的更多细节，但现在就让我们立刻开始这段故事。</p><h3 id=python-调试器的心脏sysset_trace>Python 调试器的心脏：sys.set_trace</h3><p>在诸多可选的 Python 调试器中，使用最广泛的三个是：</p><ul><li>pdb，它是 Python 标准库的一部分</li><li>PyDev，它是内嵌在 Eclipse 和 Pycharm 等 IDE 中的调试器</li><li>ipdb，它是 IPython 的调试器</li></ul><p>Python 调试器的选择虽多，但它们几乎都基于同一个函数：<code>sys.settrace</code>。 值得一提的是， <a href=https://docs.python.org/3/library/sys.html#sys.settrace>sys.settrace</a> 可能也是 Python 标准库中最复杂的函数。</p><p><img src=/data/attachment/album/202003/12/104537tddqil2d9m1ud1mq.png alt="set_trace Python 2 docs page" title="set_trace Python 2 docs page"></p><p>简单来讲，<code>settrace</code> 的作用是为解释器注册一个跟踪函数，它在下列四种情形发生时被调用：</p><ul><li>函数调用</li><li>语句执行</li><li>函数返回</li><li>异常抛出</li></ul><p>一个简单的跟踪函数看上去大概是这样：</p><pre tabindex=0><code>def simple_tracer(frame, event, arg):
+  co = frame.f_code
+  func_name = co.co_name
+  line_no = frame.f_lineno
+  print(&#34;{e} {f} {l}&#34;.format(
+e=event, f=func_name, l=line_no))
+  return simple_tracer
+</code></pre><p>在分析函数时我们首先关注的是参数和返回值，该跟踪函数的参数分别是：</p><ul><li><code>frame</code>，当前堆栈帧，它是包含当前函数执行时解释器里完整状态的对象</li><li><code>event</code>，事件，它是一个值可能为 <code>call</code>、<code>line</code>、<code>return</code> 或 <code>exception</code> 的字符串</li><li><code>arg</code>，参数，它的取值基于 <code>event</code> 的类型，是一个可选项</li></ul><p>该跟踪函数的返回值是它自身，这是由于解释器需要持续跟踪两类跟踪函数：</p><ul><li><strong>全局跟踪函数（每线程）</strong>：该跟踪函数由当前线程调用 <code>sys.settrace</code> 来设置，并在解释器创建一个新的堆栈帧时被调用（即代码中发生函数调用时）。虽然没有现成的方式来为不同的线程设置跟踪函数，但你可以调用 <code>threading.settrace</code> 来为所有新创建的 <code>threading</code> 模块线程设置跟踪函数。</li><li><strong>局部跟踪函数（每一帧）</strong>：解释器将该跟踪函数的值设置为全局跟踪函数创建帧时的返回值。同样也没有现成的方法能够在帧被创建时自动设置局部跟踪函数。</li></ul><p>该机制的目的是让调试器对被跟踪的帧有更精确的把握，以减少对性能的影响。</p><h3 id=简单三步构建调试器-我们最初的设想>简单三步构建调试器 （我们最初的设想）</h3><p>仅仅依靠上文提到的内容，用自制的跟踪函数来构建一个真正的调试器似乎有些不切实际。幸运的是，Python 的标准调试器 pdb 是基于 Bdb 构建的，后者是 Python 标准库中专门用于构建调试器的基类。</p><p>基于 Bdb 的简易断点调试器看上去是这样的：</p><pre tabindex=0><code>import bdb
+import inspect
+
+class Debugger(bdb.Bdb):
+  def __init__(self):
+      Bdb.__init__(self)
+      self.breakpoints = dict()
+      self.set_trace()
+
+def set_breakpoint(self, filename, lineno, method):
+  self.set_break(filename, lineno)
+  try :
+      self.breakpoints[(filename, lineno)].add(method)
+  except KeyError:
+      self.breakpoints[(filename, lineno)] = [method]
+
+def user_line(self, frame):
+  if not self.break_here(frame):
+      return
+
+  # Get filename and lineno from frame
+  (filename, lineno, _, _, _) = inspect.getframeinfo(frame)
+
+  methods = self.breakpoints[(filename, lineno)]
+  for method in methods:
+      method(frame)
+</code></pre><p>这个调试器类的全部构成是：</p><ol><li>继承 <code>Bdb</code>，定义一个简单的构造函数来初始化基类，并开始跟踪。</li><li>添加 <code>set_breakpoint</code> 方法，它使用 <code>Bdb</code> 来设置断点，并跟踪这些断点。</li><li>重载 <code>Bdb</code> 在当前用户行调用的 <code>user_line</code> 方法，该方法一定被一个断点调用，之后获取该断点的源位置，并调用已注册的断点。</li></ol><h3 id=这个简易的-bdb-调试器效率如何呢>这个简易的 Bdb 调试器效率如何呢？</h3><p>Rookout 的目标是在生产级性能的使用场景下提供接近普通调试器的使用体验。那么，让我们来看看先前构建出来的简易调试器表现的如何。</p><p>为了衡量调试器的整体性能开销，我们使用如下两个简单的函数来进行测试，它们分别在不同的情景下执行了 1600 万次。请注意，在所有情景下断点都不会被执行。</p><pre tabindex=0><code>def empty_method():
+   pass
+
+def simple_method():
+   a = 1
+   b = 2
+   c = 3
+   d = 4
+   e = 5
+   f = 6
+   g = 7
+   h = 8
+   i = 9
+   j = 10
+</code></pre><p>在使用调试器的情况下需要大量的时间才能完成测试。糟糕的结果指明了，这个简陋 <code>Bdb</code> 调试器的性能还远不足以在生产环境中使用。</p><p><img src=/data/attachment/album/202003/12/104544lrnq2nlwir8lqnrz.png alt="First Bdb debugger results" title="First Bdb debugger results"></p><h3 id=对调试器进行优化>对调试器进行优化</h3><p>降低调试器的额外开销主要有三种方法：</p><ol><li><strong>尽可能的限制局部跟踪</strong>：由于每一行代码都可能包含大量事件，局部跟踪比全局跟踪的开销要大得多。</li><li><strong>优化 <code>call</code> 事件并尽快将控制权还给解释器</strong>：在 <code>call</code> 事件发生时调试器的主要工作是判断是否需要对该事件进行跟踪。</li><li><strong>优化 <code>line</code> 事件并尽快将控制权还给解释器</strong>：在 <code>line</code> 事件发生时调试器的主要工作是判断我们在此处是否需要设置一个断点。</li></ol><p>于是我们复刻了 <code>Bdb</code> 项目，精简特征、简化代码，针对使用场景进行优化。这些工作虽然得到了一些效果，但仍无法满足我们的需求。因此我们又继续进行了其它的尝试，将代码优化并迁移至 <code>.pyx</code> 使用 <a href=https://cython.org/>Cython</a> 进行编译，可惜结果（如下图所示）依旧不够理想。最终，我们在深入了解 CPython 源码之后意识到，让跟踪过程快到满足生产需求是不可能的。</p><p><img src=/data/attachment/album/202003/12/104549qy01ndc8j800028y.png alt="Second Bdb debugger results" title="Second Bdb debugger results"></p><h3 id=放弃-bdb-转而尝试字节码操作>放弃 Bdb 转而尝试字节码操作</h3><p>熬过先前对标准调试方法进行的试验-失败-再试验循环所带来的失望，我们将目光转向另一种选择：字节码操作。</p><p>Python 解释器的工作主要分为两个阶段：</p><ol><li><strong>将 Python 源码编译成 Python 字节码</strong>：这种（对人类而言）不可读的格式专为执行的效率而优化，它们通常缓存在我们熟知的 <code>.pyc</code> 文件当中。</li><li><strong>遍历 解释器循环中的字节码</strong>： 在这一步中解释器会逐条的执行指令。</li></ol><p>我们选择的模式是：使用<strong>字节码操作</strong>来设置没有全局额外开销的<strong>不中断断点</strong>。这种方式的实现首先需要在内存中的字节码里找到我们感兴趣的部分，然后在该部分的相关机器指令前插入一个函数调用。如此一来，解释器无需任何额外的工作即可实现我们的不中断断点。</p><p>这种方法并不依靠魔法来实现，让我们简要地举个例子。</p><p>首先定义一个简单的函数：</p><pre tabindex=0><code>def multiply(a, b):
+   result = a * b
+   return result
+</code></pre><p>在 <a href=https://docs.python.org/2/library/inspect.html>inspect</a> 模块（其包含了许多实用的单元）的文档里，我们得知可以通过访问 <code>multiply.func_code.co_code</code> 来获取函数的字节码：</p><pre tabindex=0><code>&#39;|\x00\x00|\x01\x00\x14}\x02\x00|\x02\x00S&#39;
+</code></pre><p>使用 Python 标准库中的 <a href=https://docs.python.org/2/library/dis.html>dis</a> 模块可以翻译这些不可读的字符串。调用 <code>dis.dis(multiply.func_code.co_code)</code> 之后，我们就可以得到：</p><pre tabindex=0><code>  4          0 LOAD_FAST               0 (a)
+             3 LOAD_FAST               1 (b)
+             6 BINARY_MULTIPLY    
+             7 STORE_FAST              2 (result)
+
+  5         10 LOAD_FAST               2 (result)
+            13 RETURN_VALUE      
+</code></pre><p>与直截了当的解决方案相比，这种方法让我们更靠近发生在调试器背后的事情。可惜 Python 并没有提供在解释器中修改函数字节码的方法。我们可以对函数对象进行重写，不过那样做的效率满足不了大多数实际的调试场景。最后我们不得不采用一种迂回的方式来使用原生拓展才能完成这一任务。</p><h3 id=总结>总结</h3><p>在构建一个新工具时，总会学到许多事情的工作原理。这种刨根问底的过程能够使你的思路跳出桎梏，从而得到意料之外的解决方案。</p><p>在 Rookout 团队中构建不中断断点的这段时间里，我学到了许多有关编译器、调试器、服务器框架、并发模型等等领域的知识。如果你希望更深入的了解字节码操作，谷歌的开源项目 <a href=https://github.com/GoogleCloudPlatform/cloud-debug-python>cloud-debug-python</a> 为编辑字节码提供了一些工具。</p><hr><p>via: <a href=https://opensource.com/article/19/8/debug-python>https://opensource.com/article/19/8/debug-python</a></p><p>作者：<a href=https://opensource.com/users/liranhaimovitch>Liran Haimovitch</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/caiichenr>caiichenr</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%B0%83%E8%AF%95%E5%99%A8/ rel=tag>调试器</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,108 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Go 中复制文件的三种方法 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Go 中复制文件的三种方法"><meta property="og:description" content="本文是 Go 系列的第三篇文章，我将介绍三种最流行的复制文件的方法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14658-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-05-31T15:34:00+00:00"><meta property="article:modified_time" content="2022-05-31T15:34:00+00:00"><meta itemprop=name content="在 Go 中复制文件的三种方法"><meta itemprop=description content="本文是 Go 系列的第三篇文章，我将介绍三种最流行的复制文件的方法。"><meta itemprop=datePublished content="2022-05-31T15:34:00+00:00"><meta itemprop=dateModified content="2022-05-31T15:34:00+00:00"><meta itemprop=wordCount content="484"><meta itemprop=keywords content="复制,Go,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Go 中复制文件的三种方法</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-05-31T15:34:00Z>May 31, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202205/31/153413kcrth9v8c93r5u8e.jpg alt></p><blockquote><p>本文是 Go 系列的第三篇文章，我将介绍三种最流行的复制文件的方法。</p></blockquote><p>本文将介绍展示如何使用 <a href=https://golang.org/>Go 编程语言</a> 来复制文件。在 Go 中复制文件的方法有很多，我只介绍三种最常见的：使用 Go 库中的 <code>io.Copy()</code> 函数调用、一次读取输入文件并将其写入另一个文件，以及使用缓冲区一块块地复制文件。</p><h3 id=方法一使用-iocopy>方法一：使用 io.Copy()</h3><p>第一种方法就是使用 Go 标准库的 <code>io.Copy()</code> 函数。你可以在 <code>copy()</code> 函数的代码中找到它的实现逻辑，如下所示：</p><pre tabindex=0><code>func copy(src, dst string) (int64, error) {
+  sourceFileStat, err := os.Stat(src)
+  if err != nil {
+    return 0, err
+  }
+
+  if !sourceFileStat.Mode().IsRegular() {
+    return 0, fmt.Errorf(&#34;%s is not a regular file&#34;, src)
+  }
+
+  source, err := os.Open(src)
+  if err != nil {
+    return 0, err
+  }
+  defer source.Close()
+
+  destination, err := os.Create(dst)
+  if err != nil {
+    return 0, err
+  }
+  defer destination.Close()
+  nBytes, err := io.Copy(destination, source)
+    return nBytes, err
+  }
+</code></pre><p>首先，上述代码做了两个判断，以便确定它可以被打开读取：一是判断将要复制的文件是否存在（<code>os.Stat(src)</code>），二是判断它是否为常规文件（<code>sourceFileStat.Mode().IsRegular()</code>）。剩下的所有工作都由 <code>io.Copy(destination, source)</code> 这行代码来完成。<code>io.Copy()</code> 函数执行结束后，会返回复制的字节数和复制过程中发生的第一条错误消息。在 Go 中，如果没有错误消息，错误变量的值就为 <code>nil</code>。</p><p>你可以在 <a href=https://golang.org/pkg/io/>io 包</a> 的文档页面了解有关 <code>io.Copy()</code> 函数的更多信息。</p><p>运行 <code>cp1.go</code> 将产生以下输出：</p><pre tabindex=0><code>$ go run cp1.go
+Please provide two command line arguments!
+$ go run cp1.go fileCP.txt /tmp/fileCPCOPY
+Copied 3826 bytes!
+$ diff fileCP.txt /tmp/fileCPCOPY
+</code></pre><p>这个方法已经非常简单了，不过它没有为开发者提供灵活性。这并不总是一件坏事，但是，有些时候，开发者可能会需要/想要告诉程序该如何读取文件。</p><h3 id=方法二使用-ioutilwritefile-和-ioutilreadfile>方法二：使用 ioutil.WriteFile() 和 ioutil.ReadFile()</h3><p>复制文件的第二种方法是使用 <code>ioutil.ReadFile()</code> 和 <code>ioutil.WriteFile()</code> 函数。第一个函数用于将整个文件的内容，一次性地读入到某个内存中的字节切片里；第二个函数则用于将字节切片的内容写入到一个磁盘文件中。</p><p>实现代码如下：</p><pre tabindex=0><code>input, err := ioutil.ReadFile(sourceFile)
+if err != nil {
+  fmt.Println(err)
+  return
+}
+
+err = ioutil.WriteFile(destinationFile, input, 0644)
+if err != nil {
+  fmt.Println(&#34;Error creating&#34;, destinationFile)
+  fmt.Println(err)
+  return
+}
+</code></pre><p>上述代码包括了两个 <code>if</code> 代码块（嗯，用 Go 写程序就是这样的），程序的实际功能其实体现在 <code>ioutil.ReadFile()</code> 和 <code>ioutil.WriteFile()</code> 这两行代码中。</p><p>运行 <code>cp2.go</code>，你会得到下面的输出：</p><pre tabindex=0><code>$ go run cp2.go
+Please provide two command line arguments!
+$ go run cp2.go fileCP.txt /tmp/copyFileCP
+$ diff fileCP.txt /tmp/copyFileCP
+</code></pre><p>请注意，虽然这种方法能够实现文件复制，但它在复制大文件时的效率可能不高。这是因为当文件很大时，<code>ioutil.ReadFile()</code> 返回的字节切片会很大。</p><h3 id=方法三使用-osread-和-oswrite>方法三：使用 os.Read() 和 os.Write()</h3><p>在 Go 中复制文件的第三种方法就是下面要介绍的 <code>cp3.go</code>。它接受三个参数：输入文件名、输出文件名和缓冲区大小。</p><p><code>cp3.go</code> 最重要的部分位于以下 <code>for</code> 循环中，你可以在 <code>copy()</code> 函数中找到它，如下所示：</p><pre tabindex=0><code>buf := make([]byte, BUFFERSIZE)
+for {
+  n, err := source.Read(buf)
+  if err != nil &amp;&amp; err != io.EOF {
+    return err
+  }
+  if n == 0 {
+    break
+  }
+
+  if _, err := destination.Write(buf[:n]); err != nil {
+    return err
+  }
+}
+</code></pre><p>该方法使用 <code>os.Read()</code> 将输入文件的一小部分读入名为 <code>buf</code> 的缓冲区，然后使用 <code>os.Write()</code> 将该缓冲区的内容写入文件。当读取出错或到达文件末尾（<code>io.EOF</code>）时，复制过程将停止。</p><p>运行 <code>cp3.go</code>，你会得到下面的输出：</p><pre tabindex=0><code>$ go run cp3.go
+usage: cp3 source destination BUFFERSIZE
+$ go run cp3.go fileCP.txt /tmp/buf10 10
+Copying fileCP.txt to /tmp/buf10
+$ go run cp3.go fileCP.txt /tmp/buf20 20
+Copying fileCP.txt to /tmp/buf20
+</code></pre><p>在接下来的基准测试中，你会发现，缓冲区的大小极大地影响了 <code>cp3.go</code> 的性能。</p><h3 id=运行基准测试>运行基准测试</h3><p>在本文的最后一部分，我将尝试比较这三个程序以及 <code>cp3.go</code> 在不同缓冲区大小下的性能（使用 <code>time(1)</code> 命令行工具）。</p><p>以下输出显示了复制 500MB 大小的文件时，<code>cp1.go</code>、<code>cp2.go</code> 和 <code>cp3.go</code> 的性能对比：</p><pre tabindex=0><code>$ ls -l INPUT
+-rw-r--r--  1 mtsouk  staff  512000000 Jun  5 09:39 INPUT
+$ time go run cp1.go INPUT /tmp/cp1
+Copied 512000000 bytes!
+
+real    0m0.980s
+user    0m0.219s
+sys     0m0.719s
+$ time go run cp2.go INPUT /tmp/cp2
+
+real    0m1.139s
+user    0m0.196s
+sys     0m0.654s
+$ time go run cp3.go INPUT /tmp/cp3 1000000
+Copying INPUT to /tmp/cp3
+
+real    0m1.025s
+user    0m0.195s
+sys     0m0.486s
+</code></pre><p>我们可以看出，这三个程序的性能非常接近，这意味着 Go 标准库函数的实现非常聪明、经过了充分优化。</p><p>现在，让我们测试一下缓冲区大小对 <code>cp3.go</code> 的性能有什么影响吧！执行 <code>cp3.go</code>，并分别指定缓冲区大小为 10、20 和 1000 字节，在一台运行很快的机器上复制 500MB 文件，得到的结果如下：</p><pre tabindex=0><code>$ ls -l INPUT
+-rw-r--r--  1 mtsouk  staff  512000000 Jun  5 09:39 INPUT
+$ time go run cp3.go INPUT /tmp/buf10 10
+Copying INPUT to /tmp/buf10
+
+real    6m39.721s
+user    1m18.457s
+sys 5m19.186s
+$ time go run cp3.go INPUT /tmp/buf20 20
+Copying INPUT to /tmp/buf20
+
+real    3m20.819s
+user    0m39.444s
+sys 2m40.380s
+$ time go run cp3.go INPUT /tmp/buf1000 1000
+Copying INPUT to /tmp/buf1000
+
+real    0m4.916s
+user    0m1.001s
+sys     0m3.986s
+</code></pre><p>我们可以发现，缓冲区越大，<code>cp3.go</code> 运行得就越快，这或多或少是符合预期的。此外，使用小于 20 字节的缓冲区来复制大文件会非常缓慢，应该避免。</p><p>你可以在 <a href=https://github.com/mactsouk/opensource.com>GitHub</a> 找到 <code>cp1.go</code>、<code>cp2.go</code> 和 <code>cp3.go</code> 的 Go 代码。</p><p>如果你有任何问题或反馈，请在（原文）下方发表评论或在 <a href=https://twitter.com/mactsouk>Twitter</a> 上与我（原作者）联系。</p><hr><p>via: <a href=https://opensource.com/article/18/6/copying-files-go>https://opensource.com/article/18/6/copying-files-go</a></p><p>作者：<a href=https://opensource.com/users/mtsouk>Mihalis Tsoukalos</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/lkxed>lkxed</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%A4%8D%E5%88%B6/ rel=tag>复制</a></li><li class=tags__item><a class="tags__link btn" href=/tags/go/ rel=tag>Go</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

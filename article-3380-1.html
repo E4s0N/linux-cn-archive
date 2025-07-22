@@ -1,0 +1,141 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux下掌控磁盘分区的九大神器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux下掌控磁盘分区的九大神器"><meta property="og:description" content="在这篇文章中，我们来了解一些用来检查你的系统分区的一些命令，这些命令将检查每个磁盘的分区情况和其它细节，例如总空间容量，已用完的空间和文件系统等。 像fdisk，sfdisk和cfdisk命令这样的常规分区工具，不仅可以显示分区信息，还可以修改。  1. fdisk Fdisk是检查磁盘上分区的最常用命令，fdisk命令可以显示分区和细节，如文件系统类型，但是它并不报告每个分区的字节大小。 $ sudo fdisk -l Disk /dev/sda: 500.1 GB, 500107862016 bytes 255 heads, 63 sectors/track, 60801 cylinders, total 976773168 sectors Units = sectors"><meta property="og:type" content="article"><meta property="og:url" content="/article-3380-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-07-13T20:38:51+00:00"><meta property="article:modified_time" content="2014-07-13T20:38:51+00:00"><meta itemprop=name content="Linux下掌控磁盘分区的九大神器"><meta itemprop=description content="在这篇文章中，我们来了解一些用来检查你的系统分区的一些命令，这些命令将检查每个磁盘的分区情况和其它细节，例如总空间容量，已用完的空间和文件系统等。 像fdisk，sfdisk和cfdisk命令这样的常规分区工具，不仅可以显示分区信息，还可以修改。  1. fdisk Fdisk是检查磁盘上分区的最常用命令，fdisk命令可以显示分区和细节，如文件系统类型，但是它并不报告每个分区的字节大小。 $ sudo fdisk -l Disk /dev/sda: 500.1 GB, 500107862016 bytes 255 heads, 63 sectors/track, 60801 cylinders, total 976773168 sectors Units = sectors"><meta itemprop=datePublished content="2014-07-13T20:38:51+00:00"><meta itemprop=dateModified content="2014-07-13T20:38:51+00:00"><meta itemprop=wordCount content="797"><meta itemprop=keywords content="磁盘,分区,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux下掌控磁盘分区的九大神器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-07-13T20:38:51Z>July 13, 2014</time></div></div></header><div class="content post__content clearfix"><p>在这篇文章中，我们来了解一些用来检查你的系统分区的一些命令，这些命令将检查每个磁盘的分区情况和其它细节，例如总空间容量，已用完的空间和文件系统等。</p><p>像fdisk，sfdisk和cfdisk命令这样的常规分区工具，不仅可以显示分区信息，还可以修改。</p><p><img src=/data/attachment/album/201407/13/203853yhigl6ohgrwxo76z.jpg alt></p><h3 id=1-fdisk>1. fdisk</h3><p>Fdisk是检查磁盘上分区的最常用命令，fdisk命令可以显示分区和细节，如文件系统类型，但是它并不报告每个分区的字节大小。</p><pre tabindex=0><code>$ sudo fdisk -l
+
+Disk /dev/sda: 500.1 GB, 500107862016 bytes
+255 heads, 63 sectors/track, 60801 cylinders, total 976773168 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x30093008
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *          63   146801969    73400953+   7  HPFS/NTFS/exFAT
+/dev/sda2       146802031   976771071   414984520+   f  W95 Ext&#39;d (LBA)
+/dev/sda5       146802033   351614654   102406311    7  HPFS/NTFS/exFAT
+/dev/sda6       351614718   556427339   102406311   83  Linux
+/dev/sda7       556429312   560427007     1998848   82  Linux swap / Solaris
+/dev/sda8       560429056   976771071   208171008   83  Linux
+
+Disk /dev/sdb: 4048 MB, 4048551936 bytes
+54 heads, 9 sectors/track, 16270 cylinders, total 7907328 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x0001135d
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1   *        2048     7907327     3952640    b  W95 FAT32
+</code></pre><p>每个设备都单独显示其详细信息：容量大小，扇区数，设备ID及其包含的每个分区。</p><h3 id=2-sfdisk>2. sfdisk</h3><p>Sfdisk是另一种跟fdisk用途相似的实用工具，但具有更多的功能。它能够以MB为单位显示每个分区的大小。</p><pre tabindex=0><code>$ sudo sfdisk -l -uM
+
+Disk /dev/sda: 60801 cylinders, 255 heads, 63 sectors/track
+Warning: extended partition does not start at a cylinder boundary.
+DOS and Linux will interpret the contents differently.
+Units = mebibytes of 1048576 bytes, blocks of 1024 bytes, counting from 0
+
+   Device Boot Start   End    MiB    #blocks   Id  System
+/dev/sda1   *     0+ 71680- 71681-  73400953+   7  HPFS/NTFS/exFAT
+/dev/sda2     71680+ 476938  405259- 414984520+   f  W95 Ext&#39;d (LBA)
+/dev/sda3         0      -      0          0    0  Empty
+/dev/sda4         0      -      0          0    0  Empty
+/dev/sda5     71680+ 171686- 100007- 102406311    7  HPFS/NTFS/exFAT
+/dev/sda6     171686+ 271693- 100007- 102406311   83  Linux
+/dev/sda7     271694  273645   1952    1998848   82  Linux swap / Solaris
+/dev/sda8     273647  476938  203292  208171008   83  Linux
+
+Disk /dev/sdb: 1020 cylinders, 125 heads, 62 sectors/track
+Warning: The partition table looks like it was made
+  for C/H/S=*/54/9 (instead of 1020/125/62).
+For this listing I&#39;ll assume that geometry.
+Units = mebibytes of 1048576 bytes, blocks of 1024 bytes, counting from 0
+
+   Device Boot Start   End    MiB    #blocks   Id  System
+/dev/sdb1   *     1   3860   3860    3952640    b  W95 FAT32
+                start: (c,h,s) expected (4,11,6) found (0,32,33)
+                end: (c,h,s) expected (1023,53,9) found (492,53,9)
+/dev/sdb2         0      -      0          0    0  Empty
+/dev/sdb3         0      -      0          0    0  Empty
+/dev/sdb4         0      -      0          0    0  Empty
+</code></pre><h3 id=3-cfdisk>3. cfdisk</h3><p>Cfdisk是一个基于ncurses（提供字符终端处理库，包括面板和菜单）的带有交互式用户界面的Linux分区编辑器，它可以用来列出现有分区以及创建或修改这些分区。</p><p>下面是一个如何使用Cfdisk来列出分区的例子。</p><p><img src=/data/attachment/album/201407/13/203855r5m33disep1mrfma.png alt="linux cfdisk disk partitions"></p><p>Cfdisk一次只能列出一个分区，所以如果你需要看某一磁盘的细节，可以把该磁盘的设备名作为Cfdisk的参数。</p><pre tabindex=0><code>$ sudo cfdisk /dev/sdb
+</code></pre><h3 id=4-parted>4. parted</h3><p>Parted是另一个命令行实用程序，可以列出分区；如果需要的话，也可进行修改。</p><p>下面是一个例子，列出了详细的分区信息。</p><pre tabindex=0><code>$ sudo parted -l
+Model: ATA ST3500418AS (scsi)
+Disk /dev/sda: 500GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+
+Number  Start   End     Size    Type      File system     Flags
+ 1      32.3kB  75.2GB  75.2GB  primary   ntfs            boot
+ 2      75.2GB  500GB   425GB   extended                  lba
+ 5      75.2GB  180GB   105GB   logical   ntfs
+ 6      180GB   285GB   105GB   logical   ext4
+ 7      285GB   287GB   2047MB  logical   linux-swap(v1)
+ 8      287GB   500GB   213GB   logical   ext4
+
+
+Model: Sony Storage Media (scsi)
+Disk /dev/sdb: 4049MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      1049kB  4049MB  4048MB  primary  fat32        boot
+</code></pre><h3 id=5-df>5. df</h3><p>Df是不是一个分区工具，但它打印出挂装文件系统的细节，Df可以列出甚至不是真实的磁盘分区的文件系统。</p><p>这里是个简单的例子：</p><pre tabindex=0><code>$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda6        97G   43G   49G  48% /
+none            4.0K     0  4.0K   0% /sys/fs/cgroup
+udev            3.9G  8.0K  3.9G   1% /dev
+tmpfs           799M  1.7M  797M   1% /run
+none            5.0M     0  5.0M   0% /run/lock
+none            3.9G   12M  3.9G   1% /run/shm
+none            100M   20K  100M   1% /run/user
+/dev/sda8       196G  154G   33G  83% /media/13f35f59-f023-4d98-b06f-9dfaebefd6c1
+/dev/sda5        98G   37G   62G  38% /media/4668484A68483B47
+</code></pre><p>只有以 /dev 开始的文件系统才是实际的设备或分区。</p><p>可以使用grep命令来筛选出实际的硬盘分区或文件系统。</p><pre tabindex=0><code>$ df -h | grep ^/dev
+/dev/sda6        97G   43G   49G  48% /
+/dev/sda8       196G  154G   33G  83% /media/13f35f59-f023-4d98-b06f-9dfaebefd6c1
+/dev/sda5        98G   37G   62G  38% /media/4668484A68483B47
+</code></pre><p>要只显示真正的磁盘分区与分区类型，可以这样使用Df：</p><pre tabindex=0><code>$ df -h --output=source,fstype,size,used,avail,pcent,target -x tmpfs -x devtmpfs
+Filesystem     Type     Size  Used Avail Use% Mounted on
+/dev/sda6      ext4      97G   43G   49G  48% /
+/dev/sda8      ext4     196G  154G   33G  83% /media/13f35f59-f023-4d98-b06f-9dfaebefd6c1
+/dev/sda5      fuseblk   98G   37G   62G  38% /media/4668484A68483B47
+</code></pre><p>请注意，Df只显示已挂载的文件系统或分区，并不是所有。</p><h3 id=6-pydf>6. pydf</h3><p>它是用Python写的Df的改进版本，以易读的方式打印出所有磁盘分区。</p><pre tabindex=0><code>$ pydf
+Filesystem Size Used Avail Use%             Mounted on                                 
+/dev/sda6   96G  43G   48G 44.7 [####.....] /                                          
+/dev/sda8  195G 153G   32G 78.4 [#######..] /media/13f35f59-f023-4d98-b06f-9dfaebefd6c1
+/dev/sda5   98G  36G   61G 37.1 [###......] /media/4668484A68483B47
+</code></pre><p>另外，pydf被限制为仅显示已挂载的文件系统。</p><h3 id=7-lsblk>7. lsblk</h3><p>列出了所有的块存储设备，包括磁盘分区和光盘驱动器。细节包括所有分区/块总大小和挂载点。</p><p>它不会报告分区上的已使用和空闲磁盘空间。</p><pre tabindex=0><code>$ lsblk
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda      8:0    0 465.8G  0 disk 
+├─sda1   8:1    0    70G  0 part 
+├─sda2   8:2    0     1K  0 part 
+├─sda5   8:5    0  97.7G  0 part /media/4668484A68483B47
+├─sda6   8:6    0  97.7G  0 part /
+├─sda7   8:7    0   1.9G  0 part [SWAP]
+└─sda8   8:8    0 198.5G  0 part /media/13f35f59-f023-4d98-b06f-9dfaebefd6c1
+sdb      8:16   1   3.8G  0 disk 
+└─sdb1   8:17   1   3.8G  0 part 
+sr0     11:0    1  1024M  0 rom
+</code></pre><p>如果没有挂载点，这就意味着文件系统未安装，而对于cd/dvd这意味着没有插入光盘。</p><p>lsblk能够显示每个设备的更多信息，如标签和型号，更多请查看信息手册。</p><h3 id=8-blkid>8. blkid</h3><p>显示块设备（分区和存储介质）属性，例如UUID和文件系统类型，不报告分区空间。</p><pre tabindex=0><code>$ sudo blkid
+/dev/sda1: UUID=&#34;5E38BE8B38BE6227&#34; TYPE=&#34;ntfs&#34; 
+/dev/sda5: UUID=&#34;4668484A68483B47&#34; TYPE=&#34;ntfs&#34; 
+/dev/sda6: UUID=&#34;6fa5a72a-ba26-4588-a103-74bb6b33a763&#34; TYPE=&#34;ext4&#34; 
+/dev/sda7: UUID=&#34;94443023-34a1-4428-8f65-2fb02e571dae&#34; TYPE=&#34;swap&#34; 
+/dev/sda8: UUID=&#34;13f35f59-f023-4d98-b06f-9dfaebefd6c1&#34; TYPE=&#34;ext4&#34; 
+/dev/sdb1: UUID=&#34;08D1-8024&#34; TYPE=&#34;vfat&#34;
+</code></pre><h3 id=9-hwinfo>9. hwinfo</h3><p>hwinfo是一个通用的硬件信息的工具，可以用来打印出磁盘和分区表，但是输出不再像上面的命令那样打印每个分区的详细信息。</p><pre tabindex=0><code>$ hwinfo --block --short
+disk:                                                           
+  /dev/sda             ST3500418AS
+  /dev/sdb             Sony Storage Media
+partition:
+  /dev/sda1            Partition
+  /dev/sda2            Partition
+  /dev/sda5            Partition
+  /dev/sda6            Partition
+  /dev/sda7            Partition
+  /dev/sda8            Partition
+  /dev/sdb1            Partition
+cdrom:
+  /dev/sr0             SONY DVD RW DRU-190A
+</code></pre><h3 id=总结>总结</h3><p>parted的输出可以得到简洁而完整的不同分区的概述、其上的文件系统以及总空间。pydf和df它们一样，只是被限制为只显示已挂载文件系统。</p><p>fdisk和sfdisk显示完整大量的信息，需要花些时间来解释。cfdisk是一个交互式分区工具，每次显示一个单一的设备。</p><p>来尝试下这些命令吧，别忘了在下面评论哟！</p><p>（题图来源：http://freegraphicdownload.com/）</p><hr><p>via: <a href=http://www.binarytides.com/linux-command-check-disk-partitions/>http://www.binarytides.com/linux-command-check-disk-partitions/</a></p><p>译者：<a href=https://github.com/tenght>tenght</a> 校对：<a href=https://github.com/carolinewuyan>Caroline</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%A3%81%E7%9B%98/ rel=tag>磁盘</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%88%86%E5%8C%BA/ rel=tag>分区</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

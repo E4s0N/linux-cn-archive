@@ -1,0 +1,142 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>aria2 （命令行下载器）实例 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="aria2 （命令行下载器）实例"><meta property="og:description" content="aria2 是一个自由、开源、轻量级多协议和多源的命令行下载工具。它支持 HTTP/HTTPS、FTP、SFTP、 BitTorrent 和 Metalink 协议。"><meta property="og:type" content="article"><meta property="og:url" content="/article-7982-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-11-24T10:18:00+00:00"><meta property="article:modified_time" content="2016-11-24T10:18:00+00:00"><meta itemprop=name content="aria2 （命令行下载器）实例"><meta itemprop=description content="aria2 是一个自由、开源、轻量级多协议和多源的命令行下载工具。它支持 HTTP/HTTPS、FTP、SFTP、 BitTorrent 和 Metalink 协议。"><meta itemprop=datePublished content="2016-11-24T10:18:00+00:00"><meta itemprop=dateModified content="2016-11-24T10:18:00+00:00"><meta itemprop=wordCount content="568"><meta itemprop=keywords content="wget,aria2,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>aria2 （命令行下载器）实例</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-11-24T10:18:00Z>November 24, 2016</time></div></div></header><div class="content post__content clearfix"><p><a href=https://aria2.github.io/>aria2</a> 是一个自由、开源、轻量级多协议和多源的命令行下载工具。它支持 HTTP/HTTPS、FTP、SFTP、 BitTorrent 和 Metalink 协议。aria2 可以通过内建的 JSON-RPC 和 XML-RPC 接口来操纵。aria2 下载文件的时候，自动验证数据块。它可以通过多个来源或者多个协议下载一个文件，并且会尝试利用你的最大下载带宽。默认情况下，所有的 Linux 发行版都包括 aria2，所以我们可以从官方库中很容易的安装。一些 GUI 下载管理器例如 <a href=http://www.2daygeek.com/install-uget-download-manager-on-ubuntu-centos-debian-fedora-mint-rhel-opensuse/>uget</a> 使用 aria2 作为插件来提高下载速度。</p><p><img src=/data/attachment/album/201611/23/222806ck6kn26h2j96ck96.jpg alt></p><h3 id=aria2-特性>Aria2 特性</h3><ul><li>支持 HTTP/HTTPS GET</li><li>支持 HTTP 代理</li><li>支持 HTTP BASIC 认证</li><li>支持 HTTP 代理认证</li><li>支持 FTP （主动、被动模式）</li><li>通过 HTTP 代理的 FTP（GET 命令行或者隧道）</li><li>分段下载</li><li>支持 Cookie</li><li>可以作为守护进程运行。</li><li>支持使用 fast 扩展的 BitTorrent 协议</li><li>支持在多文件 torrent 中选择文件</li><li>支持 Metalink 3.0 版本（HTTP/FTP/BitTorrent）</li><li>限制下载、上传速度</li></ul><h3 id=1-linux-下安装-aria2>1) Linux 下安装 aria2</h3><p>我们可以很容易的在所有的 Linux 发行版上安装 aria2 命令行下载器，例如 Debian、 Ubuntu、 Mint、 RHEL、 CentOS、 Fedora、 suse、 openSUSE、 Arch Linux、 Manjaro、 Mageia 等等……只需要输入下面的命令安装即可。对于 CentOS、 RHEL 系统，我们需要开启 <a href=http://www.2daygeek.com/aria2-command-line-download-utility-tool/>uget</a> 或者 <a href=http://www.2daygeek.com/aria2-command-line-download-utility-tool/>RPMForge</a> 库的支持。</p><pre tabindex=0><code>[对于 Debian、 Ubuntu 和 Mint]
+$ sudo apt-get install aria2
+
+[对于 CentOS、 RHEL、 Fedora 21 和更早些的操作系统]
+# yum install aria2
+
+[Fedora 22 和 之后的系统]
+# dnf install aria2
+
+[对于 suse 和 openSUSE]
+# zypper install wget
+
+[Mageia]
+# urpmi aria2
+
+[对于 Arch Linux]
+$ sudo pacman -S aria2
+</code></pre><h3 id=2-下载单个文件>2) 下载单个文件</h3><p>下面的命令将会从指定的 URL 中下载一个文件，并且保存在当前目录，在下载文件的过程中，我们可以看到文件的（日期、时间、下载速度和下载进度）。</p><pre tabindex=0><code># aria2c https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+[#986c80 19MiB/21MiB(90%) CN:1 DL:3.0MiB]
+03/22 09:49:13 [NOTICE] Download complete: /opt/owncloud-9.0.0.tar.bz2
+
+Download Results:
+gid   |stat|avg speed  |path/URI
+======+====+===========+=======================================================
+986c80|OK  |   3.0MiB/s|/opt/owncloud-9.0.0.tar.bz2
+
+Status Legend:
+(OK):download completed.
+</code></pre><h3 id=3-使用不同的名字保存文件>3) 使用不同的名字保存文件</h3><p>在初始化下载的时候，我们可以使用 <code>-o</code>（小写）选项在保存文件的时候使用不同的名字。这儿我们将要使用 owncloud.zip 文件名来保存文件。</p><pre tabindex=0><code># aria2c -o owncloud.zip https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+[#d31304 16MiB/21MiB(74%) CN:1 DL:6.2MiB]
+03/22 09:51:02 [NOTICE] Download complete: /opt/owncloud.zip
+
+Download Results:
+gid   |stat|avg speed  |path/URI
+======+====+===========+=======================================================
+d31304|OK  |   7.3MiB/s|/opt/owncloud.zip
+
+Status Legend:
+(OK):download completed.
+</code></pre><h3 id=4-下载速度限制>4) 下载速度限制</h3><p>默认情况下，aria2 会利用全部带宽来下载文件，在文件下载完成之前，我们在服务器就什么也做不了（这将会影响其他服务访问带宽）。所以在下载大文件时最好使用 <code>–max-download-limit</code> 选项来避免进一步的问题。</p><pre tabindex=0><code># aria2c --max-download-limit=500k https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+[#7f9fbf 21MiB/21MiB(99%) CN:1 DL:466KiB]
+03/22 09:54:51 [NOTICE] Download complete: /opt/owncloud-9.0.0.tar.bz2
+
+Download Results:
+gid   |stat|avg speed  |path/URI
+======+====+===========+=======================================================
+7f9fbf|OK  |   462KiB/s|/opt/owncloud-9.0.0.tar.bz2
+
+Status Legend:
+(OK):download completed.
+</code></pre><h3 id=5-下载多个文件>5) 下载多个文件</h3><p>下面的命令将会从指定位置下载超过一个的文件并保存到当前目录，在下载文件的过程中，我们可以看到文件的（日期、时间、下载速度和下载进度）。</p><pre tabindex=0><code># aria2c -Z https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2 ftp://ftp.gnu.org/gnu/wget/wget-1.17.tar.gz
+[DL:1.7MiB][#53533c 272KiB/21MiB(1%)][#b52bb1 768KiB/3.6MiB(20%)]
+03/22 10:25:54 [NOTICE] Download complete: /opt/wget-1.17.tar.gz
+[#53533c 18MiB/21MiB(86%) CN:1 DL:3.2MiB]
+03/22 10:25:59 [NOTICE] Download complete: /opt/owncloud-9.0.0.tar.bz2
+
+Download Results:
+gid   |stat|avg speed  |path/URI
+======+====+===========+=======================================================
+b52bb1|OK  |   2.8MiB/s|/opt/wget-1.17.tar.gz
+53533c|OK  |   3.4MiB/s|/opt/owncloud-9.0.0.tar.bz2
+
+Status Legend:
+(OK):download completed.
+</code></pre><h3 id=6-续传未完成的下载>6) 续传未完成的下载</h3><p>当你遇到一些网络连接问题或者系统问题的时候，并将要下载一个大文件（例如： ISO 镜像文件），我建议你使用 <code>-c</code> 选项，它可以帮助我们从该状态续传未完成的下载，并且像往常一样完成。不然的话，当你再次下载，它将会初始化新的下载，并保存成一个不同的文件名（自动的在文件名后面添加 <code>.1</code> ）。注意：如果出现了任何中断，aria2 使用 <code>.aria2</code> 后缀保存（未完成的）文件。</p><pre tabindex=0><code># aria2c -c https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+[#db0b08 8.2MiB/21MiB(38%) CN:1 DL:3.1MiB ETA:4s]^C
+03/22 10:09:26 [NOTICE] Shutdown sequence commencing... Press Ctrl-C again for emergency shutdown.
+
+03/22 10:09:26 [NOTICE] Download GID#db0b08bf55d5908d not complete: /opt/owncloud-9.0.0.tar.bz2
+
+Download Results:
+gid   |stat|avg speed  |path/URI
+======+====+===========+=======================================================
+db0b08|INPR|   3.3MiB/s|/opt/owncloud-9.0.0.tar.bz2
+
+Status Legend:
+(INPR):download in-progress.
+
+如果重新启动传输，aria2 将会恢复下载。
+
+# aria2c -c https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+[#873d08 21MiB/21MiB(98%) CN:1 DL:2.7MiB]
+03/22 10:09:57 [NOTICE] Download complete: /opt/owncloud-9.0.0.tar.bz2
+
+Download Results:
+gid   |stat|avg speed  |path/URI
+======+====+===========+=======================================================
+873d08|OK  |   1.9MiB/s|/opt/owncloud-9.0.0.tar.bz2
+
+Status Legend:
+(OK):download completed.
+</code></pre><h3 id=7-从文件获取输入>7) 从文件获取输入</h3><p>就像 wget 可以从一个文件获取输入的 URL 列表来下载一样。我们需要创建一个文件，将每一个 URL 存储在单独的行中。ara2 命令行可以添加 <code>-i</code> 选项来执行此操作。</p><pre tabindex=0><code># aria2c -i test-aria2.txt
+[DL:3.9MiB][#b97984 192KiB/21MiB(0%)][#673c8e 2.5MiB/3.6MiB(69%)]
+03/22 10:14:22 [NOTICE] Download complete: /opt/wget-1.17.tar.gz
+[#b97984 19MiB/21MiB(90%) CN:1 DL:2.5MiB]
+03/22 10:14:30 [NOTICE] Download complete: /opt/owncloud-9.0.0.tar.bz2
+
+Download Results:
+gid   |stat|avg speed  |path/URI
+======+====+===========+=======================================================
+673c8e|OK  |   4.3MiB/s|/opt/wget-1.17.tar.gz
+b97984|OK  |   2.5MiB/s|/opt/owncloud-9.0.0.tar.bz2
+
+Status Legend:
+(OK):download completed.
+</code></pre><h3 id=8-每个主机使用两个连接来下载>8) 每个主机使用两个连接来下载</h3><p>默认情况，每次下载连接到一台服务器的最大数目，对于一条主机只能建立一条。我们可以通过 aria2 命令行添加 <code>-x2</code>（<code>2</code> 表示两个连接）来创建到每台主机的多个连接，以加快下载速度。</p><pre tabindex=0><code># aria2c -x2 https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+[#ddd4cd 18MiB/21MiB(83%) CN:1 DL:5.0MiB]
+03/22 10:16:27 [NOTICE] Download complete: /opt/owncloud-9.0.0.tar.bz2
+
+Download Results:
+gid   |stat|avg speed  |path/URI
+======+====+===========+=======================================================
+ddd4cd|OK  |   5.5MiB/s|/opt/owncloud-9.0.0.tar.bz2
+
+Status Legend:
+(OK):download completed.
+</code></pre><h3 id=9-下载-bittorrent-种子文件>9) 下载 BitTorrent 种子文件</h3><p>我们可以使用 aria2 命令行直接下载一个 BitTorrent 种子文件：</p><pre tabindex=0><code># aria2c https://torcache.net/torrent/C86F4E743253E0EBF3090CCFFCC9B56FA38451A3.torrent?title=[kat.cr]irudhi.suttru.2015.official.teaser.full.hd.1080p.pathi.team.sr
+[#388321 0B/0B CN:1 DL:0B]                                                                                                                    
+03/22 20:06:14 [NOTICE] Download complete: /opt/[kat.cr]irudhi.suttru.2015.official.teaser.full.hd.1080p.pathi.team.sr.torrent
+
+03/22 20:06:14 [ERROR] Exception caught
+Exception: [BtPostDownloadHandler.cc:98] errorCode=25 Could not parse BitTorrent metainfo
+
+Download Results:
+gid   |stat|avg speed  |path/URI
+======+====+===========+=======================================================
+388321|OK  |    11MiB/s|/opt/[kat.cr]irudhi.suttru.2015.official.teaser.full.hd.1080p.pathi.team.sr.torrent
+
+Status Legend:
+(OK):download completed.
+</code></pre><h3 id=10-下载-bittorrent-磁力链接>10) 下载 BitTorrent 磁力链接</h3><p>使用 aria2 我们也可以通过 BitTorrent 磁力链接直接下载一个种子文件：</p><pre tabindex=0><code># aria2c &#39;magnet:?xt=urn:btih:248D0A1CD08284299DE78D5C1ED359BB46717D8C&#39;
+</code></pre><h3 id=11-下载-bittorrent-metalink-种子>11) 下载 BitTorrent Metalink 种子</h3><p>我们也可以通过 aria2 命令行直接下载一个 Metalink 文件。</p><pre tabindex=0><code># aria2c https://curl.haxx.se/metalink.cgi?curl=tar.bz2
+</code></pre><h3 id=12-从密码保护的网站下载一个文件>12) 从密码保护的网站下载一个文件</h3><p>或者，我们也可以从一个密码保护网站下载一个文件。下面的命令行将会从一个密码保护网站中下载文件。</p><pre tabindex=0><code># aria2c --http-user=xxx --http-password=xxx https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+
+# aria2c --ftp-user=xxx --ftp-password=xxx ftp://ftp.gnu.org/gnu/wget/wget-1.17.tar.gz
+</code></pre><h3 id=13-阅读更多关于-aria2>13) 阅读更多关于 aria2</h3><p>如果你希望了解了解更多选项 —— 它们同时适用于 wget，可以输入下面的命令行在你自己的终端获取详细信息：</p><pre tabindex=0><code># man aria2c
+or
+# aria2c --help
+</code></pre><p>谢谢欣赏 …）</p><hr><p>via: <a href=http://www.2daygeek.com/aria2-command-line-download-utility-tool/>http://www.2daygeek.com/aria2-command-line-download-utility-tool/</a></p><p>作者：<a href=http://www.2daygeek.com/author/magesh/>MAGESH MARUTHAMUTHU</a> 译者：<a href=https://github.com/yangmingming>yangmingming</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/wget/ rel=tag>wget</a></li><li class=tags__item><a class="tags__link btn" href=/tags/aria2/ rel=tag>aria2</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

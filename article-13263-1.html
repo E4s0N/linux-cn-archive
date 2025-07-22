@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何用 C++ 读写文件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何用 C++ 读写文件"><meta property="og:description" content="如果你知道如何在 C++ 中使用输入输出（I/O）流，那么（原则上）你便能够处理任何类型的输入输出设备。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13263-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-04-03T20:40:00+00:00"><meta property="article:modified_time" content="2021-04-03T20:40:00+00:00"><meta itemprop=name content="如何用 C++ 读写文件"><meta itemprop=description content="如果你知道如何在 C++ 中使用输入输出（I/O）流，那么（原则上）你便能够处理任何类型的输入输出设备。"><meta itemprop=datePublished content="2021-04-03T20:40:00+00:00"><meta itemprop=dateModified content="2021-04-03T20:40:00+00:00"><meta itemprop=wordCount content="240"><meta itemprop=keywords content="输入输出,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何用 C++ 读写文件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-04-03T20:40:00Z>April 03, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>如果你知道如何在 C++ 中使用输入输出（I/O）流，那么（原则上）你便能够处理任何类型的输入输出设备。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202104/02/224507a2fq6ofotf4ff4rf.jpg alt title="Computer screen with files or windows open"></p><p>在 C++ 中，对文件的读写可以通过使用输入输出流与流运算符 <code>>></code> 和 <code>&lt;&lt;</code> 来进行。当读写文件的时候，这些运算符被应用于代表硬盘驱动器上文件类的实例上。这种基于流的方法有个巨大的优势：从 C++ 的角度，无论你要读取或写入的内容是文件、数据库、控制台，亦或是你通过网络连接的另外一台电脑，这都无关紧要。因此，知道如何使用流运算符来写入文件能够被转用到其他领域。</p><h3 id=输入输出流类>输入输出流类</h3><p>C++ 标准库提供了 <a href=https://en.cppreference.com/w/cpp/io/ios_base>ios_base</a> 类。该类作为所有 I/O 流的基类，例如 <a href=https://en.cppreference.com/w/cpp/io/basic_ofstream>basic_ofstream</a> 和 <a href=https://en.cppreference.com/w/cpp/io/basic_ifstream>basic_ifstream</a>。本例将使用读/写字符的专用类型 <code>ifstream</code> 和 <code>ofstream</code>。</p><ul><li><code>ofstream</code>：输出文件流，并且其能通过插入运算符 <code>&lt;&lt;</code> 来实现。</li><li><code>ifstream</code>：输入文件流，并且其能通过提取运算符 <code>>></code> 来实现。</li></ul><p>该两种类型都是在头文件 <code>&lt;fstream></code> 中所定义。</p><p>从 <code>ios_base</code> 继承的类在写入时可被视为数据接收器，在从其读取时可被视为数据源，与数据本身完全分离。这种面向对象的方法使 关注点分离 separation of concerns 和 依赖注入 dependency injection 等概念易于实现。</p><h3 id=一个简单的例子>一个简单的例子</h3><p>本例程是非常简单：实例化了一个 <code>ofstream</code> 来写入，和实例化一个 <code>ifstream</code> 来读取。</p><pre tabindex=0><code>#include &lt;iostream&gt; // cout, cin, cerr etc...
+#include &lt;fstream&gt; // ifstream, ofstream
+#include &lt;string&gt;
+
+
+int main()
+{
+    std::string sFilename = &#34;MyFile.txt&#34;;    
+
+    /******************************************
+     *                                        *
+     *                WRITING                 *
+     *                                        *
+     ******************************************/
+
+    std::ofstream fileSink(sFilename); // Creates an output file stream
+
+    if (!fileSink) {
+        std::cerr &lt;&lt; &#34;Canot open &#34; &lt;&lt; sFilename &lt;&lt; std::endl;
+        exit(-1);
+    }
+
+    /* std::endl will automatically append the correct EOL */
+    fileSink &lt;&lt; &#34;Hello Open Source World!&#34; &lt;&lt; std::endl;
+
+
+    /******************************************
+     *                                        *
+     *                READING                 *
+     *                                        *
+     ******************************************/
+   
+    std::ifstream fileSource(sFilename); // Creates an input file stream
+
+    if (!fileSource) {
+        std::cerr &lt;&lt; &#34;Canot open &#34; &lt;&lt; sFilename &lt;&lt; std::endl;
+        exit(-1);
+    }
+    else {
+        // Intermediate buffer
+        std::string buffer;
+
+        // By default, the &gt;&gt; operator reads word by workd (till whitespace)
+        while (fileSource &gt;&gt; buffer)
+        {
+            std::cout &lt;&lt; buffer &lt;&lt; std::endl;
+        }
+    }
+
+    exit(0);
+}
+</code></pre><p>该代码可以在 <a href=https://github.com/hANSIc99/cpp_input_output>GitHub</a> 上查看。当你编译并且执行它时，你应该能获得以下输出：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202104/02/224559znrekkvosgldny2v.png alt="Console screenshot" title="Console screenshot"></p><p>这是个简化的、适合初学者的例子。如果你想去使用该代码在你自己的应用中，请注意以下几点：</p><ul><li>文件流在程序结束的时候自动关闭。如果你想继续执行，那么应该通过调用 <code>close()</code> 方法手动关闭。</li><li>这些文件流类继承自 <a href=https://en.cppreference.com/w/cpp/io/basic_ios>basic_ios</a>（在多个层次上），并且重载了 <code>!</code> 运算符。这使你可以进行简单的检查是否可以访问该流。在 <a href=https://en.cppreference.com/w/cpp/io/basic_ios/operator!>cppreference.com</a> 上，你可以找到该检查何时会（或不会）成功的概述，并且可以进一步实现错误处理。</li><li>默认情况下，<code>ifstream</code> 停在空白处并跳过它。要逐行读取直到到达 <a href=https://en.wikipedia.org/wiki/Newline>EOF</a> ，请使用 <code>getline(...)</code> 方法。</li><li>为了读写二进制文件，请将 <code>std::ios::binary</code> 标志传递给构造函数：这样可以防止 <a href=https://en.wikipedia.org/wiki/Newline>EOL</a> 字符附加到每一行。</li></ul><h3 id=从系统角度进行写入>从系统角度进行写入</h3><p>写入文件时，数据将写入系统的内存写入缓冲区中。当系统收到系统调用 <a href=https://en.wikipedia.org/wiki/Sync_%28Unix%29>sync</a> 时，此缓冲区的内容将被写入硬盘。这也是你在不告知系统的情况下，不要卸下 U 盘的原因。通常，守护进程会定期调用 <code>sync</code>。为了安全起见，也可以手动调用 <code>sync()</code>：</p><pre tabindex=0><code>#include &lt;unistd.h&gt; // needs to be included
+
+sync();
+</code></pre><h3 id=总结>总结</h3><p>在 C++ 中读写文件并不那么复杂。更何况，如果你知道如何处理输入输出流，（原则上）那么你也知道如何处理任何类型的输入输出设备。对于各种输入输出设备的库能让你更容易地使用流运算符。这就是为什么知道输入输出流的流程会对你有所助益的原因。</p><hr><p>via: <a href=https://opensource.com/article/21/3/ccc-input-output>https://opensource.com/article/21/3/ccc-input-output</a></p><p>作者：<a href=https://opensource.com/users/hansic99>Stephan Avenwedde</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wyxplus>wyxplus</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/ rel=tag>输入输出</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

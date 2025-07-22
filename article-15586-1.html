@@ -1,0 +1,213 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Terraform 来管理 OpenStack 集群 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Terraform 来管理 OpenStack 集群"><meta property="og:description" content="Terraform 是一种声明性语言，可以作为你正在建设的基础设施的蓝图。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15586-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-03-01T11:49:10+00:00"><meta property="article:modified_time" content="2023-03-01T11:49:10+00:00"><meta itemprop=name content="使用 Terraform 来管理 OpenStack 集群"><meta itemprop=description content="Terraform 是一种声明性语言，可以作为你正在建设的基础设施的蓝图。"><meta itemprop=datePublished content="2023-03-01T11:49:10+00:00"><meta itemprop=dateModified content="2023-03-01T11:49:10+00:00"><meta itemprop=wordCount content="650"><meta itemprop=keywords content="OpenStack,Terraform,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Terraform 来管理 OpenStack 集群</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-03-01T11:49:10Z>March 01, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202303/01/114855zdkhdhsdoojmrqx2.jpg alt></p><blockquote><p>Terraform 是一种声明性语言，可以作为你正在建设的基础设施的蓝图。</p></blockquote><p>在拥有一个 OpenStack 生产环境和家庭实验室一段时间后，我可以肯定地说，从管理员和租户的角度置备工作负载和管理它是很重要的。</p><p>Terraform 是一个开源的基础设施即代码（IaC）软件工具，用于 置备 provisioning 网络、服务器、云平台等。Terraform 是一种声明性语言，可以作为你正在建设的基础设施的蓝图。你可以用 Git 来管理它，它有一个强大的 <a href=https://opensource.com/article/21/3/gitops>GitOps</a> 使用场景。</p><p>本文介绍了使用 Terraform 管理 OpenStack 集群的基础知识。我使用 Terraform 重新创建了 OpenStack 演示项目。</p><h3 id=安装-terraform>安装 Terraform</h3><p>我使用 CentOS 作为跳板机运行 Terraform。根据官方文档，第一步是添加 Hashicorp 仓库：</p><pre tabindex=0><code>$ sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+</code></pre><p>接下来，安装 Terraform：</p><pre tabindex=0><code>$ sudo dnf install terraform -y
+</code></pre><p>验证安装：</p><pre tabindex=0><code>$ terraform –version
+</code></pre><p>如果你看到返回的版本号，那么你已经安装了 Terraform。</p><h3 id=为-openstack-提供者创建一个-terraform-脚本>为 OpenStack 提供者创建一个 Terraform 脚本</h3><p>在 Terraform 中，你需要一个 提供者 provider ，它是一个转换器，Terraform 调用它将你的 <code>.tf</code> 转换为对你正在协调的平台的 API 调用。</p><p>有三种类型的提供者：官方、合作伙伴和社区：</p><ul><li>官方提供者由 Hashicorp 维护。</li><li>合作伙伴提供者由与 Hashicorp 合作的技术公司维护。</li><li>社区提供者是由开源社区成员维护的。</li></ul><p>在这个 <a href=https://registry.terraform.io/providers/terraform-provider-openstack/openstack/1.49.0>链接</a> 中有一个很好的 OpenStack 的社区提供者。要使用这个提供者，请创建一个 <code>.tf</code> 文件，并命名为 <code>main.tf</code>。</p><pre tabindex=0><code>$ vi main.tf
+</code></pre><p>在 <code>main.tf</code> 中添加以下内容：</p><pre tabindex=0><code>terraform {
+  required_version = &#34;&gt;= 0.14.0&#34;
+  required_providers {
+    openstack = {
+      source  = &#34;terraform-provider-openstack/openstack&#34;
+      version = &#34;1.49.0&#34;
+    }
+  }
+}
+
+provider &#34;openstack&#34; {
+  user_name   = “OS_USERNAME”
+  tenant_name = “OS_TENANT”
+  password    = “OS_PASSWORD”
+  auth_url    = “OS_AUTH_URL”
+  region      = “OS_REGION”
+}
+</code></pre><p>你需要修改 <code>OS_USERNAME</code>、<code>OS_TENANT</code>、<code>OS_PASSWORD</code>、<code>OS_AUTH_URL</code> 和 <code>OS_REGION</code> 变量才能工作。</p><h3 id=创建一个-terraform-管理文件>创建一个 Terraform 管理文件</h3><p>OpenStack 管理文件的重点是置备外部网络、路由、用户、镜像、租户配置文件和配额。</p><p>此示例提供风格，连接到外部网络的路由、测试镜像、租户配置文件和用户。</p><p>首先，为置备资源创建一个 <code>AdminTF</code> 目录：</p><pre tabindex=0><code>$ mkdir AdminTF
+
+$ cd AdminTF
+</code></pre><p>在 <code>main.tf</code> 中，添加以下内容：</p><pre tabindex=0><code>terraform {
+  required_version = &#34;&gt;= 0.14.0&#34;
+  required_providers {
+    openstack = {
+      source  = &#34;terraform-provider-openstack/openstack&#34;
+      version = &#34;1.49.0&#34;
+    }
+  }
+}
+
+provider &#34;openstack&#34; {
+  user_name   = “OS_USERNAME”
+  tenant_name = “admin”
+  password    = “OS_PASSWORD”
+  auth_url    = “OS_AUTH_URL”
+  region      = “OS_REGION”
+}
+
+resource &#34;openstack_compute_flavor_v2&#34; &#34;small-flavor&#34; {
+  name      = &#34;small&#34;
+  ram       = &#34;4096&#34;
+  vcpus     = &#34;1&#34;
+  disk      = &#34;0&#34;
+  flavor_id = &#34;1&#34;
+  is_public = &#34;true&#34;
+}
+
+resource &#34;openstack_compute_flavor_v2&#34; &#34;medium-flavor&#34; {
+  name      = &#34;medium&#34;
+  ram       = &#34;8192&#34;
+  vcpus     = &#34;2&#34;
+  disk      = &#34;0&#34;
+  flavor_id = &#34;2&#34;
+  is_public = &#34;true&#34;
+}
+
+resource &#34;openstack_compute_flavor_v2&#34; &#34;large-flavor&#34; {
+  name      = &#34;large&#34;
+  ram       = &#34;16384&#34;
+  vcpus     = &#34;4&#34;
+  disk      = &#34;0&#34;
+  flavor_id = &#34;3&#34;
+  is_public = &#34;true&#34;
+}
+
+resource &#34;openstack_compute_flavor_v2&#34; &#34;xlarge-flavor&#34; {
+  name      = &#34;xlarge&#34;
+  ram       = &#34;32768&#34;
+  vcpus     = &#34;8&#34;
+  disk      = &#34;0&#34;
+  flavor_id = &#34;4&#34;
+  is_public = &#34;true&#34;
+}
+
+resource &#34;openstack_networking_network_v2&#34; &#34;external-network&#34; {
+  name           = &#34;external-network&#34;
+  admin_state_up = &#34;true&#34;
+  external       = &#34;true&#34;
+  segments {
+    network_type     = &#34;flat&#34;
+    physical_network = &#34;physnet1&#34;
+  }
+}
+
+resource &#34;openstack_networking_subnet_v2&#34; &#34;external-subnet&#34; {
+  name            = &#34;external-subnet&#34;
+  network_id      = openstack_networking_network_v2.external-network.id
+  cidr            = &#34;10.0.0.0/8&#34;
+  gateway_ip      = &#34;10.0.0.1&#34;
+  dns_nameservers = [&#34;10.0.0.254&#34;, &#34;10.0.0.253&#34;]
+  allocation_pool {
+    start = &#34;10.0.0.1&#34;
+    end   = &#34;10.0.254.254&#34;
+  }
+}
+
+resource &#34;openstack_networking_router_v2&#34; &#34;external-router&#34; {
+  name                = &#34;external-router&#34;
+  admin_state_up      = true
+  external_network_id = openstack_networking_network_v2.external-network.id
+}
+
+resource &#34;openstack_images_image_v2&#34; &#34;cirros&#34; {
+  name             = &#34;cirros&#34;
+  image_source_url = &#34;https://download.cirros-cloud.net/0.6.1/cirros-0.6.1-x86_64-disk.img&#34;
+  container_format = &#34;bare&#34;
+  disk_format      = &#34;qcow2&#34;
+
+  properties = {
+    key = &#34;value&#34;
+  }
+}
+
+resource &#34;openstack_identity_project_v3&#34; &#34;demo-project&#34; {
+  name = &#34;Demo&#34;
+}
+
+resource &#34;openstack_identity_user_v3&#34; &#34;demo-user&#34; {
+  name               = &#34;demo-user&#34;
+  default_project_id = openstack_identity_project_v3.demo-project.id
+  password = &#34;demo&#34;
+}
+</code></pre><h3 id=创建一个租户-terraform-文件>创建一个租户 Terraform 文件</h3><p>作为一个 租户 Tenant ，你通常会创建虚拟机。你还为这些虚拟机创建网络和安全组。</p><p>这个例子使用上面由 Admin 文件创建的用户。</p><p>首先，创建一个 <code>TenantTF</code> 目录，用于与租户相关的置备：</p><pre tabindex=0><code>$ mkdir TenantTF
+$ cd TenantTF
+</code></pre><p>在 <code>main.tf</code> 中，添加以下内容：</p><pre tabindex=0><code>terraform {
+  required_version = &#34;&gt;= 0.14.0&#34;
+  required_providers {
+    openstack = {
+      source  = &#34;terraform-provider-openstack/openstack&#34;
+      version = &#34;1.49.0&#34;
+    }
+  }
+}
+
+provider &#34;openstack&#34; {
+  user_name   = “demo-user”
+  tenant_name = “demo”
+  password    = “demo”
+  auth_url    = “OS_AUTH_URL”
+  region      = “OS_REGION”
+}
+
+resource &#34;openstack_compute_keypair_v2&#34; &#34;demo-keypair&#34; {
+  name       = &#34;demo-key&#34;
+  public_key = &#34;ssh-rsa ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ&#34;
+}
+
+
+resource &#34;openstack_networking_network_v2&#34; &#34;demo-network&#34; {
+  name           = &#34;demo-network&#34;
+  admin_state_up = &#34;true&#34;
+}
+
+resource &#34;openstack_networking_subnet_v2&#34; &#34;demo-subnet&#34; {
+  network_id = openstack_networking_network_v2.demo-network.id
+  name       = &#34;demo-subnet&#34;
+  cidr       = &#34;192.168.26.0/24&#34;
+}
+
+resource &#34;openstack_networking_router_interface_v2&#34; &#34;demo-router-interface&#34; {
+  router_id = “XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX”
+  subnet_id = openstack_networking_subnet_v2.demo-subnet.id
+}
+
+resource &#34;openstack_compute_instance_v2&#34; &#34;demo-instance&#34; {
+  name            = &#34;demo&#34;
+  image_id        = &#34;YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY&#34;
+  flavor_id       = &#34;3&#34;
+  key_pair        = &#34;demo-key&#34;
+  security_groups = [&#34;default&#34;]
+
+  metadata = {
+    this = &#34;that&#34;
+  }
+
+  network {
+    name = &#34;demo-network&#34;
+  }
+}
+</code></pre><h3 id=初始化你的-terraform>初始化你的 Terraform</h3><p>创建 Terraform 文件后，你需要初始化 Terraform。</p><p>对于管理员：</p><pre tabindex=0><code>$ cd AdminTF
+
+$ terraform init
+
+$ terraform fmt
+</code></pre><p>对于租户：</p><pre tabindex=0><code>$ cd TenantTF
+
+$ terraform init
+
+$ terraform fmt
+</code></pre><p>命令解释：</p><ul><li><code>terraform init</code> 从镜像源下载提供者用于置备此项目。</li><li><code>terraform fmt</code> 格式化文件，以便在仓库中使用。</li></ul><h3 id=创建一个-terraform-计划>创建一个 Terraform 计划</h3><p>接下来，为你创建一个 计划 plan ，看看将创建哪些资源。</p><p>对于管理员：</p><pre tabindex=0><code>$ cd AdminTF
+
+$ terraform validate
+
+$ terraform plan
+</code></pre><p>对于租户：</p><pre tabindex=0><code>$ cd TenantTF
+
+$ terraform validate
+
+$ terraform plan
+</code></pre><p>命令解释：</p><ul><li><code>terraform validate</code> 验证 <code>.tf</code> 语法是否正确。</li><li><code>terraform plan</code> 在缓存中创建一个计划文件，所有管理的资源在创建和销毁时都可以被跟踪。</li></ul><h3 id=应用你的第一个-tf>应用你的第一个 TF</h3><p>要部署资源，使用 <code>terraform apply</code> 命令。该命令应用计划文件中的所有资源状态。</p><p>对于管理员：</p><pre tabindex=0><code>$ cd AdminTF
+
+$ terraform apply
+</code></pre><p>对于租户：</p><pre tabindex=0><code>$ cd TenantTF
+
+$ terraform apply
+</code></pre><h3 id=接下来的步骤>接下来的步骤</h3><p>之前，我写了一篇关于在树莓派上部署最小 OpenStack 集群的 <a href=https://opensource.com/article/20/12/openstack-raspberry-pi>文章</a>。你可以找到更详细的 <a href="https://www.ansible.com/blog/ansible-vs.-terraform-demystified?intcmp=7013a000002qLH8AAM">Terraform 和 Ansible</a> 配置，并通过 GitLab 实现一些 CI/CD。</p><hr><p>via: <a href=https://opensource.com/article/23/1/terraform-manage-openstack-cluster>https://opensource.com/article/23/1/terraform-manage-openstack-cluster</a></p><p>作者：<a href=https://opensource.com/users/ajscanlas>AJ Canlas</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/openstack/ rel=tag>OpenStack</a></li><li class=tags__item><a class="tags__link btn" href=/tags/terraform/ rel=tag>Terraform</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

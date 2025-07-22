@@ -1,0 +1,74 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Kubespray 安装 Kubernetes 集群 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Kubespray 安装 Kubernetes 集群"><meta property="og:description" content="你是否正在寻找有关如何使用 Kubespray 安装 Kubernetes（k8s）的简单指南？"><meta property="og:type" content="article"><meta property="og:url" content="/article-15675-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-03-30T07:45:00+00:00"><meta property="article:modified_time" content="2023-03-30T07:45:00+00:00"><meta itemprop=name content="使用 Kubespray 安装 Kubernetes 集群"><meta itemprop=description content="你是否正在寻找有关如何使用 Kubespray 安装 Kubernetes（k8s）的简单指南？"><meta itemprop=datePublished content="2023-03-30T07:45:00+00:00"><meta itemprop=dateModified content="2023-03-30T07:45:00+00:00"><meta itemprop=wordCount content="520"><meta itemprop=keywords content="Kubernetes,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Kubespray 安装 Kubernetes 集群</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-03-30T07:45:00Z>March 30, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074513iy2it365a3fti2f2.jpg alt></p><blockquote><p>你是否正在寻找有关如何使用 Kubespray 安装 Kubernetes（k8s）的简单指南？</p></blockquote><p>此页面上的分步指南将向你展示如何在 Linux 系统上使用 Kubespray 安装 Kubernetes 集群。</p><p>Kubespray 是一个自由开源的工具，它提供了 Ansible 剧本 playbook 来部署和管理 Kubernetes 集群。它旨在简化跨多个节点的 Kubernetes 集群的安装过程，允许用户快速轻松地部署和管理生产就绪的 Kubernetes 集群。</p><p>它支持一系列操作系统，包括 Ubuntu、CentOS、Rocky Linux 和 Red Hat Enterprise Linux（RHEL），它可以在各种平台上部署 Kubernetes，包括裸机、公共云和私有云。</p><p>在本指南中，我们使用以下实验室：</p><ul><li>Ansible 节点（Kubespray 节点）：最小安装的 Ubuntu 22.04 LTS（192.168.1.240）</li><li>3 个控制器节点：最小安装的 Rocky Linux 9（192.168.1.241/242/243）</li><li>2 个工作节点：最小安装的 Rocky Linux 9（192.168.1.244/245）</li></ul><h3 id=kubespray-的最低系统要求>Kubespray 的最低系统要求</h3><ul><li>主节点：1500 MB RAM、2 个 CPU 和 20 GB 可用磁盘空间</li><li>工作节点：1024 MB、2 个 CPU、20 GB 可用磁盘空间</li><li>Ansible 节点：1024 MB、1 个 CPU 和 20 GB 磁盘空间</li><li>每个节点上的互联网连接</li><li>拥有 sudo 管理员权限</li></ul><p>事不宜迟，让我们深入了解安装步骤。</p><h3 id=步骤-1配置-kubespray-节点>步骤 1）配置 Kubespray 节点</h3><p>登录到你的 Ubuntu 22.04 系统并安装 Ansible。运行以下一组命令：</p><pre tabindex=0><code>$ sudo apt update
+$ sudo apt install git python3 python3-pip -y
+$ git clone https://github.com/kubernetes-incubator/kubespray.git
+$ cd kubespray
+$ pip install -r requirements.txt
+</code></pre><p>验证 Ansible 版本，运行：</p><pre tabindex=0><code>$ ansible --version
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074744tzlklcpn0laclwab.jpg alt></p><p>创建主机清单，运行以下命令，不要忘记替换适合你部署的 IP 地址：</p><pre tabindex=0><code>$ cp -rfp inventory/sample inventory/mycluster
+$ declare -a IPS=(192.168.1.241 192.168.1.241 192.168.1.242 192.168.1.243 192.168.1.244 192.168.1.245)
+$ CONFIG_FILE=inventory/mycluster/hosts.yaml python3 contrib/inventory_builder/inventory.py ${IPS[@]}
+</code></pre><p>修改清单文件，设置 3 个控制节点和 2 个工作节点：</p><pre tabindex=0><code>$ vi inventory/mycluster/hosts.yaml
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074751opbkmajpspomgpcr.jpg alt></p><p>保存并关闭文件。</p><p>查看并修改文件 <code>inventory/mycluster/group_vars/k8s_cluster/k8s-cluster.yml</code> 中的以下参数：</p><pre tabindex=0><code>kube_version: v1.26.2
+kube_network_plugin: calico
+kube_pods_subnet: 10.233.64.0/18
+kube_service_addresses: 10.233.0.0/18
+cluster_name: linuxtechi.local
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074532u5s22rc84qajqqcj.gif alt></p><p>要启用 Kuberenetes 仪表板和入口控制器等插件，请在文件 <code>inventory/mycluster/group_vars/k8s_cluster/addons.yml</code> 中将参数设置为已启用：</p><pre tabindex=0><code>$ vi inventory/mycluster/group_vars/k8s_cluster/addons.yml
+</code></pre><pre tabindex=0><code>dashboard_enabled: true
+ingress_nginx_enabled: true
+ingress_nginx_host_network: true
+</code></pre><p>保存并退出文件。</p><h3 id=步骤-2将-ssh-密钥从-ansible-节点复制到所有其他节点>步骤 2）将 SSH 密钥从 Ansible 节点复制到所有其他节点</h3><p>首先在你的 Ansible 节点上为你的本地用户生成 SSH 密钥：</p><pre tabindex=0><code>$ ssh-keygen
+</code></pre><p>使用 <code>ssh-copy-id</code> 命令复制 SSH 密钥：</p><pre tabindex=0><code>$ ssh-copy-id sysops@192.168.1.241
+$ ssh-copy-id sysops@192.168.1.242
+$ ssh-copy-id sysops@192.168.1.243
+$ ssh-copy-id sysops@192.168.1.244
+$ ssh-copy-id sysops@192.168.1.245
+</code></pre><p>还要在每个节点上运行以下命令：</p><pre tabindex=0><code>$ echo &#34;sysops ALL=(ALL) NOPASSWD:ALL&#34; | sudo tee /etc/sudoers.d/sysops
+</code></pre><h3 id=步骤-3禁用防火墙并启用-ipv4-转发>步骤 3）禁用防火墙并启用 IPV4 转发</h3><p>要在所有节点上禁用防火墙，请从 Ansible 节点运行以下 <code>ansible</code> 命令:</p><pre tabindex=0><code>$ cd kubespray
+$ ansible all -i inventory/mycluster/hosts.yaml -m shell -a &#34;sudo systemctl stop firewalld &amp;&amp; sudo systemctl disable firewalld&#34;
+</code></pre><p>运行以下 <code>ansible</code> 命令以在所有节点上启用 IPv4 转发和禁用交换:</p><pre tabindex=0><code>$ ansible all -i inventory/mycluster/hosts.yaml -m shell -a &#34;echo &#39;net.ipv4.ip_forward=1&#39; | sudo tee -a /etc/sysctl.conf&#34;
+$ ansible all -i inventory/mycluster/hosts.yaml -m shell -a &#34;sudo sed -i &#39;/ swap / s/^\(.*\)$/#\1/g&#39; /etc/fstab &amp;&amp; sudo swapoff -a&#34;
+</code></pre><h3 id=步骤-4启动-kubernetes-部署>步骤 4）启动 Kubernetes 部署</h3><p>现在，我们都准备好开始 Kubernetes 集群部署，从 Ansible 节点运行下面的 Ansible 剧本：</p><pre tabindex=0><code>$ cd kubespray
+$ ansible-playbook -i inventory/mycluster/hosts.yaml --become --become-user=root cluster.yml
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074819ettkq000l0y3zlyi.jpg alt></p><p>现在监控部署，可能需要 20 到 30 分钟，具体取决于互联网速度和硬件资源。</p><p>部署完成后，我们将在屏幕上看到以下输出：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074827jol95oahh7ldzcho.jpg alt></p><p>很好，上面的输出确认部署已成功完成。</p><h3 id=步骤-5访问-kubernetes-集群>步骤 5）访问 Kubernetes 集群</h3><p>登录到第一个主节点，切换到 root 用户，在那里运行 <code>kubectl</code> 命令：</p><pre tabindex=0><code>$ sudo su -
+# kubectl get nodes
+# kubectl get pods -A
+</code></pre><p>输出：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074834mindtwdtndw9mitk.jpg alt></p><p>完美，上面的输出确认集群中的所有节点都处于就绪状态，并且所有命名空间的 容器荚 Pod 都已启动并正在运行。这表明我们的 Kubernetes 集群部署成功。</p><p>让我们尝试部署基于 Nginx 的部署并将其公开为节点端口，运行以下 <code>kubectl</code> 命令：</p><pre tabindex=0><code>$ kubectl create deployment demo-nginx-kubespray --image=nginx --replicas=2
+$ kubectl expose deployment demo-nginx-kubespray --type NodePort --port=80
+$ kubectl get  deployments.apps
+$ kubectl get pods
+$ kubectl get svc demo-nginx-kubespray
+</code></pre><p>以上命令的输出：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074845c9oy794yazykk4b7.jpg alt></p><p>现在尝试使用工作节点的 IP 地址和节点端口（30050）访问此 Nginx 应用。</p><p>使用以下 <code>curl</code> 命令或 Web 浏览器访问此应用。</p><pre tabindex=0><code>$ curl 192.168.1.245:30050
+</code></pre><p>或者，</p><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074853yv0oc3av6w0doak6.jpg alt></p><p>完美，这证实了应用可以在我们的集群之外访问。</p><h3 id=步骤-6kubernetes-仪表板gui>步骤 6）Kubernetes 仪表板（GUI）</h3><p>要访问 Kubernetes 仪表板，让我们首先创建服务帐户并分配管理员权限，以便它可以使用令牌访问仪表板。</p><p>在 kube-system 命名空间中创建名为 “admin-user” 的服务帐户：</p><pre tabindex=0><code>$ vi dashboard-adminuser.yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kube-system
+</code></pre><p>保存并关闭文件。</p><pre tabindex=0><code>$ kubectl apply -f dashboard-adminuser.yml
+serviceaccount/admin-user created
+</code></pre><p>创建集群角色绑定：</p><pre tabindex=0><code>$ vi admin-role-binding.yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kube-system
+</code></pre><p>保存并退出文件。</p><pre tabindex=0><code>$ kubectl apply -f admin-role-binding.yml
+clusterrolebinding.rbac.authorization.k8s.io/admin-user created
+</code></pre><p>现在，为管理员用户创建令牌：</p><pre tabindex=0><code>$ kubectl -n kube-system  create token admin-user
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074907i0zmlbkh0v0iie30.jpg alt></p><p>复制此令牌并将其放在安全的地方，因为我们将使用令牌登录 Kubernetes 仪表板。</p><p>使用以下 <code>ssh</code> 命令从你的系统连接到第一个主节点：</p><pre tabindex=0><code>$ ssh -L8001:localhost:8001 sysops@192.168.1.241
+</code></pre><p>注意：替换适合你环境的 IP 地址。</p><p>登录后，切换到 root 用户并运行 <code>kubectl proxy</code> 命令：</p><pre tabindex=0><code>$ sudo su -
+# kubectl proxy
+Starting to serve on 127.0.0.1:8001
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074917omylemjvb2rjnv00.jpg alt></p><p>打开系统的网络浏览器，如下设置代理：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074927n92die39ej6gd2aq.jpg alt></p><p>完成代理设置后，将以下网址粘贴到浏览器中：</p><pre tabindex=0><code>http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#/login
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/074953cb9z1rb3aabiturl.jpg alt></p><p>选择令牌登录并粘贴你在上面为管理员用户生成的令牌，然后单击“ 登录 Sign in ”。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202303/30/075004w1tvevvzrjantji4.jpg alt></p><p>这就是本指南的全部内容，我希望你能从中找到有用的信息。请在下面的评论部分中发表你的疑问和反馈。</p><hr><p>via: <a href=https://www.linuxtechi.com/install-kubernetes-using-kubespray/>https://www.linuxtechi.com/install-kubernetes-using-kubespray/</a></p><p>作者：<a href=https://www.linuxtechi.com/author/pradeep/>Pradeep Kumar</a> 选题：<a href=https://github.com/lkxed/>lkxed</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/kubernetes/ rel=tag>Kubernetes</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

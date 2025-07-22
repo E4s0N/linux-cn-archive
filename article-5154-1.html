@@ -1,0 +1,84 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux 基础：如何在Ubuntu上检查一个软件包是否安装 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux 基础：如何在Ubuntu上检查一个软件包是否安装"><meta property="og:description" content="如果你正在管理Debian或者Ubuntu服务器，你也许会经常使用dpkg 或者 apt-get命令。这两个命令用来安装、卸载和更新包。 在本篇中，让我们看下如何在基于DEB的系统下检查是否安装了一个包。 要检查特定的包，比如firefox是否安装了，使用这个命令： dpkg -s firefox  示例输出：  Package: firefox Status: install ok installed Priority: optional Section: web Installed-Size: 93339 Maintainer: Ubuntu Mozilla Team ubuntu-mozillateam@lists.ubuntu.com Architecture: amd64 Version: 35.0+build3-0ubuntu0.14.04.2 Replaces: kubun"><meta property="og:type" content="article"><meta property="og:url" content="/article-5154-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-03-31T08:42:00+00:00"><meta property="article:modified_time" content="2015-03-31T08:42:00+00:00"><meta itemprop=name content="Linux 基础：如何在Ubuntu上检查一个软件包是否安装"><meta itemprop=description content="如果你正在管理Debian或者Ubuntu服务器，你也许会经常使用dpkg 或者 apt-get命令。这两个命令用来安装、卸载和更新包。 在本篇中，让我们看下如何在基于DEB的系统下检查是否安装了一个包。 要检查特定的包，比如firefox是否安装了，使用这个命令： dpkg -s firefox  示例输出：  Package: firefox Status: install ok installed Priority: optional Section: web Installed-Size: 93339 Maintainer: Ubuntu Mozilla Team ubuntu-mozillateam@lists.ubuntu.com Architecture: amd64 Version: 35.0+build3-0ubuntu0.14.04.2 Replaces: kubun"><meta itemprop=datePublished content="2015-03-31T08:42:00+00:00"><meta itemprop=dateModified content="2015-03-31T08:42:00+00:00"><meta itemprop=wordCount content="286"><meta itemprop=keywords content="软件包,apt,dpkg,apt-get,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux 基础：如何在Ubuntu上检查一个软件包是否安装</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-03-31T08:42:00Z>March 31, 2015</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201503/30/134439j2j5747yac16y76w.png alt></p><p>如果你正在管理Debian或者Ubuntu服务器，你也许会经常使用<strong>dpkg</strong> 或者 <strong>apt-get</strong>命令。这两个命令用来安装、卸载和更新包。</p><p>在本篇中，让我们看下如何在基于DEB的系统下检查是否安装了一个包。</p><p>要检查特定的包，比如firefox是否安装了，使用这个命令：</p><pre tabindex=0><code>dpkg -s firefox
+</code></pre><p>示例输出：</p><pre tabindex=0><code> Package: firefox
+ Status: install ok installed
+ Priority: optional
+ Section: web
+ Installed-Size: 93339
+ Maintainer: Ubuntu Mozilla Team &lt;ubuntu-mozillateam@lists.ubuntu.com&gt;
+ Architecture: amd64
+ Version: 35.0+build3-0ubuntu0.14.04.2
+ Replaces: kubuntu-firefox-installer
+ Provides: gnome-www-browser, iceweasel, www-browser
+ Depends: lsb-release, libasound2 (&gt;= 1.0.16), libatk1.0-0 (&gt;= 1.12.4), libc6 (&gt;= 2.17), libcairo2 (&gt;= 1.2.4), libdbus-1-3 (&gt;= 1.0.2), libdbus-glib-1-2 (&gt;= 0.78), libfontconfig1 (&gt;= 2.9.0), libfreetype6 (&gt;= 2.2.1), libgcc1 (&gt;= 1:4.1.1), libgdk-pixbuf2.0-0 (&gt;= 2.22.0), libglib2.0-0 (&gt;= 2.37.3), libgtk2.0-0 (&gt;= 2.24.0), libpango-1.0-0 (&gt;= 1.22.0), libpangocairo-1.0-0 (&gt;= 1.14.0), libstartup-notification0 (&gt;= 0.8), libstdc++6 (&gt;= 4.6), libx11-6, libxcomposite1 (&gt;= 1:0.3-1), libxdamage1 (&gt;= 1:1.1), libxext6, libxfixes3, libxrender1, libxt6
+ Recommends: xul-ext-ubufox, libcanberra0, libdbusmenu-glib4, libdbusmenu-gtk4
+ Suggests: ttf-lyx
+ Conffiles:
+ /etc/firefox/syspref.js 09e457e65435a1a043521f2bd19cd2a1
+ /etc/apport/blacklist.d/firefox ee63264f847e671832d42255912ce144
+ /etc/apport/native-origins.d/firefox 7c26b75c7c2b715c89cc6d85338252a4
+ /etc/apparmor.d/usr.bin.firefox f54f7a43361c7ecfa3874abca2f292cf
+ Description: Safe and easy web browser from Mozilla
+ Firefox delivers safe, easy web browsing. A familiar user interface,
+ enhanced security features including protection from online identity theft,
+ and integrated search let you get the most out of the web.
+ Xul-Appid: {ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+</code></pre><p>如上所见，firefox已经安装了。</p><p>同样，你可以使用<strong>dpkg-query</strong> 命令。这个命令会有一个更好的输出，当然，你可以用通配符。</p><pre tabindex=0><code>dpkg-query -l firefox
+</code></pre><p>示例输出：</p><pre tabindex=0><code>Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
+|/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
+||/ Name                                 Version                 Architecture            Description
++++-====================================-=======================-=======================-=============================================================================
+ii  firefox                              35.0+build3-0ubuntu0.14 amd64                   Safe and easy web browser from Mozilla
+</code></pre><p>要列出你系统中安装的所有包，输入下面的命令：</p><pre tabindex=0><code>dpkg --get-selections
+</code></pre><p>示例输出：</p><pre tabindex=0><code>abiword                        install
+abiword-common                    install
+accountsservice                    install
+acl                        install
+adduser                        install
+alsa-base                    install
+alsa-utils                    install
+anacron                        install
+app-install-data                install
+apparmor                    install
+.
+.
+.
+zeitgeist                    install
+zeitgeist-core                    install
+zeitgeist-datahub                install
+zenity                        install
+zenity-common                    install
+zip                        install
+zlib1g:amd64                    install
+zlib1g:i386                    install
+</code></pre><p>上面的输出可能会非常长，这依赖于你的系统已安装的包。</p><p>你同样可以通过<strong>grep</strong>来过滤割到更精确的包。比如，我想要使用<strong>dpkg</strong>命令查看系统中安装的gcc包：</p><pre tabindex=0><code>dpkg --get-selections | grep gcc
+</code></pre><p>示例输出：</p><pre tabindex=0><code>gcc                        install
+gcc-4.8                        install
+gcc-4.8-base:amd64                install
+gcc-4.8-base:i386                install
+gcc-4.9-base:amd64                install
+gcc-4.9-base:i386                install
+libgcc-4.8-dev:amd64                install
+libgcc1:amd64                    install
+libgcc1:i386                    install
+</code></pre><p>此外，你可以使用“<strong>-L</strong>”参数来找出包中文件的位置。</p><pre tabindex=0><code>dpkg -L gcc-4.8
+</code></pre><p>示例输出：</p><pre tabindex=0><code>/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/gcc-4.8-base
+/usr/share/doc/gcc-4.8-base/README.Bugs
+/usr/share/doc/gcc-4.8-base/NEWS.html
+/usr/share/doc/gcc-4.8-base/quadmath
+/usr/share/doc/gcc-4.8-base/quadmath/changelog.gz
+/usr/share/doc/gcc-4.8-base/gcc
+.
+.
+.
+/usr/bin/x86_64-linux-gnu-gcc-4.8
+/usr/bin/x86_64-linux-gnu-gcc-ar-4.8
+/usr/bin/x86_64-linux-gnu-gcov-4.8
+</code></pre><p>就是这样了。希望这篇对你有用。</p><p>美好的一天！</p><hr><p>via: <a href=http://www.unixmen.com/linux-basics-check-package-installed-not-ubuntu/>http://www.unixmen.com/linux-basics-check-package-installed-not-ubuntu/</a></p><p>作者：<a href=http://www.unixmen.com/author/sk/>SK</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BD%AF%E4%BB%B6%E5%8C%85/ rel=tag>软件包</a></li><li class=tags__item><a class="tags__link btn" href=/tags/apt/ rel=tag>apt</a></li><li class=tags__item><a class="tags__link btn" href=/tags/dpkg/ rel=tag>dpkg</a></li><li class=tags__item><a class="tags__link btn" href=/tags/apt-get/ rel=tag>apt-get</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

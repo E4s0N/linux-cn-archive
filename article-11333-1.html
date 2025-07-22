@@ -1,0 +1,220 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 HTTPie 进行 API 测试 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 HTTPie 进行 API 测试"><meta property="og:description" content="使用 HTTPie 调试 API，这是一个用 Python 写的易用的命令行工具。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11333-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-09-12T10:29:59+00:00"><meta property="article:modified_time" content="2019-09-12T10:29:59+00:00"><meta itemprop=name content="使用 HTTPie 进行 API 测试"><meta itemprop=description content="使用 HTTPie 调试 API，这是一个用 Python 写的易用的命令行工具。"><meta itemprop=datePublished content="2019-09-12T10:29:59+00:00"><meta itemprop=dateModified content="2019-09-12T10:29:59+00:00"><meta itemprop=wordCount content="693"><meta itemprop=keywords content="HTTPie,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 HTTPie 进行 API 测试</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-09-12T10:29:59Z>September 12, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>使用 HTTPie 调试 API，这是一个用 Python 写的易用的命令行工具。</p></blockquote><p><img src=/data/attachment/album/201909/12/102919ry1ute1y9h991ftz.jpg alt></p><p><a href=https://httpie.org/>HTTPie</a> 是一个非常易用、易于升级的 HTTP 客户端。它的发音为 “aitch-tee-tee-pie” 并以 <code>http</code> 命令运行，它是一个用 Python 编写的来用于访问 Web 的命令行工具。</p><p>由于这是一篇关于 HTTP 客户端的指导文章，因此你需要一个 HTTP 服务器来试用它。在这里，访问 <a href=https://github.com/postmanlabs/httpbin>httpbin.org</a>，它是一个简单的开源 HTTP 请求和响应服务。httpbin.org 网站是一种测试 Web API 的强大方式，并能仔细管理并显示请求和响应内容，不过现在让我们专注于 HTTPie 的强大功能。</p><h3 id=wget-和-curl-的替代品>Wget 和 cURL 的替代品</h3><p>你可能听说过古老的 <a href=https://en.wikipedia.org/wiki/Wget>Wget</a> 或稍微新一些的 <a href=https://en.wikipedia.org/wiki/CURL>cURL</a> 工具，它们允许你从命令行访问 Web。它们是为访问网站而编写的，而 HTTPie 则用于访问 Web API。</p><p>网站请求发生在计算机和正在阅读并响应它所看到的内容的最终用户之间，这并不太依赖于结构化的响应。但是，API 请求会在两台计算机之间进行<em>结构化</em>调用，人并不是该流程内的一部分，像 HTTPie 这样的命令行工具的参数可以有效地处理这个问题。</p><h3 id=安装-httpie>安装 HTTPie</h3><p>有几种方法可以安装 HTTPie。你可以通过包管理器安装，无论你使用的是 <code>brew</code>、<code>apt</code>、<code>yum</code> 还是 <code>dnf</code>。但是，如果你已配置 <a href=https://opensource.com/article/19/6/virtual-environments-python-macos>virtualenvwrapper</a>，那么你可以用自己的方式安装：</p><pre tabindex=0><code>$ mkvirtualenv httpie
+...
+(httpie) $ pip install httpie
+...
+(httpie) $ deactivate
+$ alias http=~/.virtualenvs/httpie/bin/http
+$ http -b GET https://httpbin.org/get
+{
+    &#34;args&#34;: {},
+    &#34;headers&#34;: {
+        &#34;Accept&#34;: &#34;*/*&#34;,
+        &#34;Accept-Encoding&#34;: &#34;gzip, deflate&#34;,
+        &#34;Host&#34;: &#34;httpbin.org&#34;,
+        &#34;User-Agent&#34;: &#34;HTTPie/1.0.2&#34;
+    },
+    &#34;origin&#34;: &#34;104.220.242.210, 104.220.242.210&#34;,
+    &#34;url&#34;: &#34;https://httpbin.org/get&#34;
+}
+</code></pre><p>通过将 <code>http</code> 别名指向为虚拟环境中的命令，即使虚拟环境在非活动状态，你也可以运行它。你可以将 <code>alias</code> 命令放在 <code>.bash_profile</code> 或 <code>.bashrc</code> 中，这样你就可以使用以下命令升级 HTTPie：</p><pre tabindex=0><code>$ ~/.virtualenvs/httpie/bin/pip install -U pip
+</code></pre><h3 id=使用-httpie-查询网站>使用 HTTPie 查询网站</h3><p>HTTPie 可以简化查询和测试 API。上面使用了一个选项，<code>-b</code>（即 <code>--body</code>）。没有它，HTTPie 将默认打印整个响应，包括响应头：</p><pre tabindex=0><code>$ http GET https://httpbin.org/get
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Connection: keep-alive
+Content-Encoding: gzip
+Content-Length: 177
+Content-Type: application/json
+Date: Fri, 09 Aug 2019 20:19:47 GMT
+Referrer-Policy: no-referrer-when-downgrade
+Server: nginx
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+
+{
+    &#34;args&#34;: {},
+    &#34;headers&#34;: {
+        &#34;Accept&#34;: &#34;*/*&#34;,
+        &#34;Accept-Encoding&#34;: &#34;gzip, deflate&#34;,
+        &#34;Host&#34;: &#34;httpbin.org&#34;,
+        &#34;User-Agent&#34;: &#34;HTTPie/1.0.2&#34;
+    },
+    &#34;origin&#34;: &#34;104.220.242.210, 104.220.242.210&#34;,
+    &#34;url&#34;: &#34;https://httpbin.org/get&#34;
+}
+</code></pre><p>这在调试 API 服务时非常重要，因为大量信息在响应头中发送。例如，查看发送的 cookie 通常很重要。httpbin.org 提供了通过 URL 路径设置 cookie（用于测试目的）的方式。以下设置一个标题为 <code>opensource</code>， 值为 <code>awesome</code> 的 cookie：</p><pre tabindex=0><code>$ http GET https://httpbin.org/cookies/set/opensource/awesome
+HTTP/1.1 302 FOUND
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Connection: keep-alive
+Content-Length: 223
+Content-Type: text/html; charset=utf-8
+Date: Fri, 09 Aug 2019 20:22:39 GMT
+Location: /cookies
+Referrer-Policy: no-referrer-when-downgrade
+Server: nginx
+Set-Cookie: opensource=awesome; Path=/
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+
+&lt;!DOCTYPE HTML PUBLIC &#34;-//W3C//DTD HTML 3.2 Final//EN&#34;&gt;
+&lt;title&gt;Redirecting...&lt;/title&gt;
+&lt;h1&gt;Redirecting...&lt;/h1&gt;
+&lt;p&gt;You should be redirected automatically to target URL:
+&lt;a href=&#34;/cookies&#34;&gt;/cookies&lt;/a&gt;.  If not click the link.
+</code></pre><p>注意 <code>Set-Cookie: opensource=awesome; Path=/</code> 的响应头。这表明你预期设置的 cookie 已正确设置，路径为 <code>/</code>。另请注意，即使你得到了 <code>302</code> 重定向，<code>http</code> 也不会遵循它。如果你想要遵循重定向，则需要明确使用 <code>--follow</code> 标志请求：</p><pre tabindex=0><code>$ http --follow GET https://httpbin.org/cookies/set/opensource/awesome
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Connection: keep-alive
+Content-Encoding: gzip
+Content-Length: 66
+Content-Type: application/json
+Date: Sat, 10 Aug 2019 01:33:34 GMT
+Referrer-Policy: no-referrer-when-downgrade
+Server: nginx
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+
+{
+    &#34;cookies&#34;: {
+        &#34;opensource&#34;: &#34;awesome&#34;
+    }
+}
+</code></pre><p>但此时你无法看到原来的 <code>Set-Cookie</code> 头。为了看到中间响应，你需要使用 <code>--all</code>：</p><pre tabindex=0><code>$ http --headers --all --follow GET https://httpbin.org/cookies/set/opensource/awesome
+HTTP/1.1 302 FOUND
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Content-Type: text/html; charset=utf-8
+Date: Sat, 10 Aug 2019 01:38:40 GMT
+Location: /cookies
+Referrer-Policy: no-referrer-when-downgrade
+Server: nginx
+Set-Cookie: opensource=awesome; Path=/
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Content-Length: 223
+Connection: keep-alive
+
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Content-Encoding: gzip
+Content-Type: application/json
+Date: Sat, 10 Aug 2019 01:38:41 GMT
+Referrer-Policy: no-referrer-when-downgrade
+Server: nginx
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Content-Length: 66
+Connection: keep-alive
+</code></pre><p>打印响应体并不有趣，因为你大多数时候只关心 cookie。如果你想看到中间请求的响应头，而不是最终请求中的响应体，你可以使用：</p><pre tabindex=0><code>$ http --print hb --history-print h --all --follow GET https://httpbin.org/cookies/set/opensource/awesome
+HTTP/1.1 302 FOUND
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Content-Type: text/html; charset=utf-8
+Date: Sat, 10 Aug 2019 01:40:56 GMT
+Location: /cookies
+Referrer-Policy: no-referrer-when-downgrade
+Server: nginx
+Set-Cookie: opensource=awesome; Path=/
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Content-Length: 223
+Connection: keep-alive
+
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Content-Encoding: gzip
+Content-Type: application/json
+Date: Sat, 10 Aug 2019 01:40:56 GMT
+Referrer-Policy: no-referrer-when-downgrade
+Server: nginx
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Content-Length: 66
+Connection: keep-alive
+
+{
+  &#34;cookies&#34;: {
+    &#34;opensource&#34;: &#34;awesome&#34;
+  }
+}
+</code></pre><p>你可以使用 <code>--print</code> 精确控制打印的内容（<code>h</code>：响应头；<code>b</code>：响应体），并使用 <code>--history-print</code> 覆盖中间请求的打印内容设置。</p><h3 id=使用-httpie-下载二进制文件>使用 HTTPie 下载二进制文件</h3><p>有时响应体并不是文本形式，它需要发送到可被不同应用打开的文件：</p><pre tabindex=0><code>$ http GET https://httpbin.org/image/jpeg
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Connection: keep-alive
+Content-Length: 35588
+Content-Type: image/jpeg
+Date: Fri, 09 Aug 2019 20:25:49 GMT
+Referrer-Policy: no-referrer-when-downgrade
+Server: nginx
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+
+
++-----------------------------------------+
+| NOTE: binary data not shown in terminal |
++-----------------------------------------+
+</code></pre><p>要得到正确的图片，你需要保存到文件：</p><pre tabindex=0><code>$ http --download GET https://httpbin.org/image/jpeg
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Connection: keep-alive
+Content-Length: 35588
+Content-Type: image/jpeg
+Date: Fri, 09 Aug 2019 20:28:13 GMT
+Referrer-Policy: no-referrer-when-downgrade
+Server: nginx
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+
+Downloading 34.75 kB to &#34;jpeg.jpe&#34;
+Done. 34.75 kB in 0.00068s (50.05 MB/s)
+</code></pre><p>试一下！图片很可爱。</p><h3 id=使用-httpie-发送自定义请求>使用 HTTPie 发送自定义请求</h3><p>你可以发送指定的请求头。这对于需要非标准头的自定义 Web API 很有用：</p><pre tabindex=0><code>$ http GET https://httpbin.org/headers X-Open-Source-Com:Awesome
+{
+  &#34;headers&#34;: {
+    &#34;Accept&#34;: &#34;*/*&#34;,
+    &#34;Accept-Encoding&#34;: &#34;gzip, deflate&#34;,
+    &#34;Host&#34;: &#34;httpbin.org&#34;,
+    &#34;User-Agent&#34;: &#34;HTTPie/1.0.2&#34;,
+    &#34;X-Open-Source-Com&#34;: &#34;Awesome&#34;
+  }
+}
+</code></pre><p>最后，如果要发送 JSON 字段（尽管可以指定确切的内容），对于许多嵌套较少的输入，你可以使用快捷方式：</p><pre tabindex=0><code>$ http --body PUT https://httpbin.org/anything open-source=awesome author=moshez
+{
+  &#34;args&#34;: {},
+  &#34;data&#34;: &#34;{\&#34;open-source\&#34;: \&#34;awesome\&#34;, \&#34;author\&#34;: \&#34;moshez\&#34;}&#34;,
+  &#34;files&#34;: {},
+  &#34;form&#34;: {},
+  &#34;headers&#34;: {
+    &#34;Accept&#34;: &#34;application/json, */*&#34;,
+    &#34;Accept-Encoding&#34;: &#34;gzip, deflate&#34;,
+    &#34;Content-Length&#34;: &#34;46&#34;,
+    &#34;Content-Type&#34;: &#34;application/json&#34;,
+    &#34;Host&#34;: &#34;httpbin.org&#34;,
+    &#34;User-Agent&#34;: &#34;HTTPie/1.0.2&#34;
+  },
+  &#34;json&#34;: {
+    &#34;author&#34;: &#34;moshez&#34;,
+    &#34;open-source&#34;: &#34;awesome&#34;
+  },
+  &#34;method&#34;: &#34;PUT&#34;,
+  &#34;origin&#34;: &#34;73.162.254.113, 73.162.254.113&#34;,
+  &#34;url&#34;: &#34;https://httpbin.org/anything&#34;
+}
+</code></pre><p>下次在调试 Web API 时，无论是你自己的还是别人的，记得放下 cURL，试试 HTTPie 这个命令行工具。</p><hr><p>via: <a href=https://opensource.com/article/19/8/getting-started-httpie>https://opensource.com/article/19/8/getting-started-httpie</a></p><p>作者：<a href=https://opensource.com/users/moshezhttps://opensource.com/users/mkalindepauleduhttps://opensource.com/users/jamesf>Moshe Zadka</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/httpie/ rel=tag>HTTPie</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

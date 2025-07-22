@@ -1,0 +1,55 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 dnf 进行 Linux 包管理 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 dnf 进行 Linux 包管理"><meta property="og:description" content="了解如何在 Linux 上使用 dnf 命令安装软件包，然后下载我们的速查表，让正确的命令触手可及。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14542-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-05-04T10:15:39+00:00"><meta property="article:modified_time" content="2022-05-04T10:15:39+00:00"><meta itemprop=name content="使用 dnf 进行 Linux 包管理"><meta itemprop=description content="了解如何在 Linux 上使用 dnf 命令安装软件包，然后下载我们的速查表，让正确的命令触手可及。"><meta itemprop=datePublished content="2022-05-04T10:15:39+00:00"><meta itemprop=dateModified content="2022-05-04T10:15:39+00:00"><meta itemprop=wordCount content="391"><meta itemprop=keywords content="dnf,软件包管理,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 dnf 进行 Linux 包管理</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-05-04T10:15:39Z>May 04, 2022</time></div></div></header><div class="content post__content clearfix"><blockquote><p>了解如何在 Linux 上使用 <code>dnf</code> 命令安装软件包，然后下载我们的速查表，让正确的命令触手可及。</p></blockquote><p><img src=/data/attachment/album/202205/04/101526nlsnpu34ppgscsch.jpg alt title="Package wrapped with brown paper and red bow"></p><p>在计算机系统上安装应用程序非常简单：就是将档案（如 <code>.zip</code> 文件）中的文件复制到目标计算机上，放在操作系统预期放应用程序的位置。因为我们中的许多人习惯于使用花哨的安装“向导”来帮助我们在计算机上安装软件，所以这个过程似乎在技术上应该比实际更复杂。</p><p>然而，复杂的是，是什么构成了一个程序？用户认为的单个应用程序实际上包含了分散在操作系统中的软件库的各种依赖代码（例如：Linux 上的 .so 文件、Windows 上的 .dll 文件和 macOS 上的 .dylib 文件）。</p><p>为了让用户不必担心这些程序代码之间的复杂的互相依赖关系， Linux 使用 包管理系统 package management system 来跟踪哪些应用程序需要哪些库，哪些库或应用程序有安全或功能更新，以及每个软件会附带安装哪些额外的数据文件。包管理器本质上是一个安装向导。它们易于使用，提供了图形界面和基于终端的界面，让你的生活更轻松。你越了解你的发行版的包管理器，你的生活就会越轻松。</p><h3 id=在-linux-上安装应用程序>在 Linux 上安装应用程序</h3><p>如果你在使用 Linux 桌面时，偶尔想要安装一个应用程序，那么你可能正在寻找 <a href=https://wiki.gnome.org/Apps/Software>GNOME “软件”</a>，它是一个桌面应用程序浏览器。</p><p><img src=/data/attachment/album/202205/04/101540ua7z7xaipq5pq17z.png alt="GNOME “软件” 程序" title="The GNOME Software app"></p><p>它会按你的预期工作：点击它的界面，直到你找到一个看起来有用的应用程序，然后单击 “安装” 按钮。</p><p>或者，你可以在 GNOME “软件” 中打开从网络下载的 <code>.rpm</code> 或 <code>.flatpakref</code> 软件包，以便它进行安装。</p><p>但如果你更倾向于使用命令行，请继续阅读。</p><h3 id=用-dnf-搜索软件>用 dnf 搜索软件</h3><p>在安装应用程序之前，你可能需要确认它是否存在于你的发行版的服务器上。通常，使用 <code>dnf</code> 搜索应用程序的通用名称就足够了。例如，假设你最近阅读了 <a href=https://opensource.com/article/20/11/cockpit-server-management>一篇关于 Cockpit 的文章</a>，并决定尝试一下。你可以搜索 <code>cockpit</code> 验证该发行版是否包含它：</p><pre tabindex=0><code>$ dnf search cockpit
+ Last metadata expiration check: 0:01:46 ago on Tue 18 May 2021 19:18:15 NZST.
+ ==== Name Exactly Matched: cockpit ====
+ cockpit.x86_64 : Web Console for Linux servers
+
+==== Name &amp; Summary Matched: cockpit ==
+ cockpit-bridge.x86_64 : Cockpit bridge server-side component
+ cockpit-composer.noarch : Composer GUI for use with Cockpit
+ [...]
+</code></pre><p>有一个精确的匹配。上面列出的匹配的软件包名为 <code>cockpit.x86_64</code>，但名称中的 <code>.x86_64</code> 部分仅表示它兼容该 CPU 架构。默认情况下，你的系统会安装适配当前 CPU 架构的软件包，因此你可以忽略该扩展名。所以你确认你要查找的软件包确实简称为 <code>cockpit</code>。</p><p>现在你可以放心地使用 <code>dnf install</code> 安装它。 此步骤需要管理员权限：</p><pre tabindex=0><code>$ sudo dnf install cockpit
+</code></pre><p>一般来说，这就是典型的 <code>dnf</code> 工作流：搜索并安装。</p><p>然而，有时 <code>dnf search</code> 的结果并不清晰，或者你想要关于一个软件包的更多信息，而不仅仅是它的通用名称。有一些相关的 <code>dnf</code> 子命令，具体取决于你想要的信息。</p><h3 id=软件包的元数据>软件包的元数据</h3><p>如果你觉得你的搜索已 <em>接近</em> 想要的结果，但还不确定，查看软件包的元数据通常会有所帮助，例如项目的网址和描述。要获取此信息，请使用顾名思义的 <code>dnf info</code> 命令：</p><pre tabindex=0><code>$ dnf info terminator
+Available Packages
+Name         : terminator
+Version      : 1.92
+Release      : 2.el8
+Architecture : noarch
+Size         : 526 k
+Source       : terminator-1.92-2.el8.src.rpm
+Repository   : epel
+Summary      : Store and run multiple GNOME terminals in one window
+URL          : https://github.com/gnome-terminator
+License      : GPLv2
+Description  : Multiple GNOME terminals in one window.  This is a project to produce
+             : an efficient way of filling a large area of screen space with
+             : terminals. This is done by splitting the window into a resizeable
+             : grid of terminals. As such, you can  produce a very flexible
+             : arrangements of terminals for different tasks.
+</code></pre><p>这个信息告诉你可用软件包的版本、在你系统中注册的哪一个存储库提供了它、该项目的网站以及详细的功能描述。</p><h3 id=哪个软件包提供的这个文件>哪个软件包提供的这个文件？</h3><p>软件包名称并不总是与你要查找的内容相匹配。例如，假设你正在阅读的文档告诉你必须安装名为 <code>qmake-qt5</code> 的东西：</p><pre tabindex=0><code>$ dnf search qmake-qt5
+No matches found.
+</code></pre><p><code>dnf</code> 数据库非常广泛，因此你不要局限于搜索完全匹配的内容。你可以使用 <code>dnf provides</code> 命令来了解你正在寻找的东西是否作为某个更大的软件包的一部分而提供：</p><pre tabindex=0><code>$ dnf provides qmake-qt5
+qt5-qtbase-devel-5.12.5-8.el8.i686 : Development files for qt5-qtbase
+Repo        : appstream
+Matched from:
+Filename    : /usr/bin/qmake-qt5
+
+qt5-qtbase-devel-5.15.2-3.el8.x86_64 : Development files for qt5-qtbase
+Repo        : appstream
+Matched from:
+Filename    : /usr/bin/qmake-qt5
+</code></pre><p>可以确认应用程序 <code>qmake-qt5</code> 是名为 <code>qt5-qtbase-devel</code> 的软件包的一部分。它还告诉你，该应用程序会安装到 <code>/usr/bin</code>，因此你知道了安装后它的确切位置。</p><h3 id=软件包中包含哪些文件>软件包中包含哪些文件？</h3><p>有时我发现自己会从完全不同的角度来对待 <code>dnf</code>。有时，我已经确认我的系统上安装了一个应用程序；我只是不知道我是怎么得到它的。还有一些时候，我知道我安装了一个特定的软件包，但我不清楚这个软件包到底在我的系统上安装了什么。</p><p>如果你需要对包的 有效负载 payload 进行 “ 逆向工程 reverse engineer ”，可以使用 <code>dnf repoquery</code> 命令和 <code>--list</code> 选项。这将查看存储库中有关软件包的元数据，并列出该软件包提供的所有文件：</p><pre tabindex=0><code>$ dnf repoquery --list qt5-qtbase-devel
+/usr/bin/fixqt4headers.pl
+/usr/bin/moc-qt5
+/usr/bin/qdbuscpp2xml-qt5
+/usr/bin/qdbusxml2cpp-qt5
+/usr/bin/qlalr
+/usr/bin/qmake-qt5
+/usr/bin/qvkgen
+/usr/bin/rcc-qt5
+[...]
+</code></pre><p>这些列表可能很长，使用 <code>less</code> 或你喜欢的分页命令配合管道操作会有所帮助。</p><h3 id=移除应用程序>移除应用程序</h3><p>如果你决定系统中不再需要某个应用程序，可以使用 <code>dnf remove</code> 卸载它，该软件包本身安装的文件以及不再需要的任何依赖项都会被移除：</p><pre tabindex=0><code>$ dnf remove bigapp
+</code></pre><p>有时，你发现随着一个应用程序一起安装的依赖项对后来安装的其他应用程序也有用。如果两个包需要相同的依赖项，<code>dnf remove</code> <em>不会</em> 删除依赖项。在安装和卸载大量应用程序之后，孤儿软件包散落各处的现象并不少见。大约每年我都要执行一次 <code>dnf autoremove</code> 来清除所有未使用的软件包：</p><pre tabindex=0><code>$ dnf autoremove
+</code></pre><p>这不是必需的，但这是一个让我的电脑感觉更好的大扫除步骤。</p><h3 id=了解-dnf>了解 dnf</h3><p>你对包管理器的工作方式了解得越多，在必要时安装和查询应用程序就越容易。即便你不是 <code>dnf</code> 的重度使用者，当你发现自己与基于 RPM 的发行版交互时，了解它也会很有用。</p><p>告别 <code>yum</code> 后，我最喜欢的包管理器之一是 <code>dnf</code> 命令。虽然我不喜欢它的所有子命令，但我发现它是目前最健壮的 包管理系统 package management system 之一。 <a href=https://opensource.com/downloads/dnf-cheat-sheet>下载我们的 dnf 速查表</a> 习惯该命令，不要害怕尝试一些新技巧。一旦熟悉了它，你可能会发现很难使用其他任何东西替代它。</p><blockquote><p><strong><a href=https://opensource.com/downloads/dnf-cheat-sheet>dnf 速查表</a></strong></p></blockquote><hr><p>via: <a href=https://opensource.com/article/21/6/dnf-linux>https://opensource.com/article/21/6/dnf-linux</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/hanszhao80>hanszhao80</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/dnf/ rel=tag>dnf</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BD%AF%E4%BB%B6%E5%8C%85%E7%AE%A1%E7%90%86/ rel=tag>软件包管理</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

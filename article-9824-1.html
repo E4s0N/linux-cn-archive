@@ -1,0 +1,56 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Arch Linux 中查找已安装的专有软件包？ - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Arch Linux 中查找已安装的专有软件包？"><meta property="og:description" content="它将基于 Arch 系统中的所有安装包与 Parabola 的软件包 blacklist 和 aur-blacklist 进行比较，然后显示出你的斯托曼自由指数（“自由/总计”比分）。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9824-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-07-10T08:08:13+00:00"><meta property="article:modified_time" content="2018-07-10T08:08:13+00:00"><meta itemprop=name content="如何在 Arch Linux 中查找已安装的专有软件包？"><meta itemprop=description content="它将基于 Arch 系统中的所有安装包与 Parabola 的软件包 blacklist 和 aur-blacklist 进行比较，然后显示出你的斯托曼自由指数（“自由/总计”比分）。"><meta itemprop=datePublished content="2018-07-10T08:08:13+00:00"><meta itemprop=dateModified content="2018-07-10T08:08:13+00:00"><meta itemprop=wordCount content="367"><meta itemprop=keywords content="专有软件,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Arch Linux 中查找已安装的专有软件包？</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-07-10T08:08:13Z>July 10, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201807/10/080816o0dnrwvfrfdsdvxv.jpg alt></p><p>你是狂热的自由软件支持者吗？你目前在使用任何基于 Arch 的 Linux 发行版吗？我有一个小小的提示送给你！现在，你可以轻松地在 Arch Linux 及其变体（如 Antergos、Manjaro Linux 等）中找到已安装的专有软件包。你无需在已安装软件包的网站中参考其许可细节，也无需使用任何其它外部工具来查明软件包是自由的还是专有的。（LCTT 译注：其实下面还是借助了一个外部程序）</p><h3 id=在-arch-linux-中查找已安装的专有软件包>在 Arch Linux 中查找已安装的专有软件包</h3><p>一位开发人员开发了一个名为 “<a href=https://github.com/vmavromatis/absolutely-proprietary>Absolutely Proprietary</a>” 的实用程序，它是一种用于基于 Arch 发行版的专有软件包检测器。它将基于 Arch 系统中的所有安装包与 Parabola 的软件包 <a href=https://git.parabola.nu/blacklist.git/plain/blacklist.txt>blacklist</a> 和 <a href=https://git.parabola.nu/blacklist.git/plain/aur-blacklist.txt>aur-blacklist</a> 进行比较，然后显示出你的 斯托曼自由指数 Stallman Freedom Index （“自由/总计”比分）。此外，你可以将该列表保存到文件中，并与其他系统/用户共享或比较。</p><p>在安装之前，确保你安装了 Python 和 Git。</p><p>然后，<code>git clone</code> 仓库：</p><pre tabindex=0><code>git clone https://github.com/vmavromatis/absolutely-proprietary.git
+</code></pre><p>这条命令将会下载所有内容到你当前工作目录中的 <code>absolutely-proprietary</code> 目录。</p><p>进入此目录：</p><pre tabindex=0><code>cd absolutely-proprietary
+</code></pre><p>接着，使用以下命令查找已安装的专有软件：</p><pre tabindex=0><code>python main.py
+</code></pre><p>这条命令将会下载 <code>blacklist.txt</code>、<code>aur-blacklist.txt</code>，并将本地已安装的软件包与远程软件包进行比较并显示其指数。</p><p>以下是在我的 Arch Linux 桌面的示例输出：</p><pre tabindex=0><code>Retrieving local packages (including AUR)...
+Downloading https://git.parabola.nu/blacklist.git/plain/blacklist.txt
+Downloading https://git.parabola.nu/blacklist.git/plain/aur-blacklist.txt
+Comparing local packages to remote...
+=============================================
+47 ABSOLUTELY PROPRIETARY PACKAGES INSTALLED
+=============================================
+
+Your GNU/Linux is infected with 47 proprietary packages out of 1370 total installed.
+Your Stallman Freedom Index is 96.57
+
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| Name | Status | Libre Alternatives | Description |
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| chromium-pepper-flash | nonfree | | proprietary Google Chrome EULA, missing sources |
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| faac | nonfree | | [FIXME:description] is a GPL&#39;ed package, but has non free code that can&#39;t be distributed und|
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| libunrar | nonfree | | part of nonfree unrar, Issue442 |
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| opera | nonfree | | nonfree, nondistributable, built from binary installers, etc |
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| shutter | nonfree | | need registered user to download (and access website) the source code and depends perl-net-d|
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| ttf-ms-fonts | nonfree | | |
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| ttf-ubuntu-font-family | nonfree | | Ubuntu font license considered non-free by DFSG and Fedora |
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| unace | nonfree | | license forbids making competing ACE archivers from unace |
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| unrar | nonfree | unar | |
+| | | fsf | |
+| | | unrar | |
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| virtualbox | nonfree | | contains BIOS which needs a nonfree compiler to build from source (OpenWatcom compiler), doe|
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+| wordnet | nonfree | | |
++------------------------|---------|--------------------|---------------------------------------------------------------------------------------------+
+
+
+Save list to file? (Y/n)
+</code></pre><p><img src=/data/attachment/album/201807/10/080818k88t8g88o83vq1t1.png alt></p><p>如你所见，我的系统中有 47 个专有软件包。就像我说的那样，我们可以将它保存到文件中稍后查看。为此，当提示你将列表保存在文件时，请按 <code>y</code>。然后按 <code>y</code> 接受默认值，或按 <code>n</code> 以你喜欢的格式和位置来保存它。</p><pre tabindex=0><code>Save list to file? (Y/n) y
+Save as markdown table? (Y/n) y
+Save it to (/tmp/tmpkuky_082.md): y
+The list is saved at /home/sk/absolutely-proprietary/y.md
+
+You can review it from the command line
+using the &#34;less -S /home/sk/absolutely-proprietary/y.md&#34;
+or, if installed, the &#34;most /home/sk/absolutely-proprietary/y.md&#34; commands
+</code></pre><p>你可能已经注意到，我只有 <strong>nonfree</strong> 包。它还会显示另外两种类型的软件包，例如 semifree、 uses-nonfree。</p><ul><li><strong>nonfree</strong>：这个软件包是公然的非自由软件。</li><li><strong>semifree</strong>：这个软件包大部分是自由的，但包含一些非自由软件。</li><li><strong>uses-nonfree</strong>：这个软件包依赖、推荐或不恰当地与其他自由软件或服务集成。</li></ul><p>该使用程序的另一个显著特点是它不仅显示了专有软件包，而且还显示这些包的替代品。</p><p>希望这有些帮助。我很快就会在这里提供另一份有用的指南。敬请关注！</p><p>干杯!</p><p>资源：</p><ul><li><a href=https://github.com/vmavromatis/absolutely-proprietary>Absolutely Proprietary</a></li></ul><hr><p>via: <a href=https://www.ostechnix.com/find-installed-proprietary-packages-arch-linux/>https://www.ostechnix.com/find-installed-proprietary-packages-arch-linux/</a></p><p>作者：<a href=https://www.ostechnix.com/author/sk/>SK</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E4%B8%93%E6%9C%89%E8%BD%AF%E4%BB%B6/ rel=tag>专有软件</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

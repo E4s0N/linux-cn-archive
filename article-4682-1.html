@@ -1,0 +1,155 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>硬盘监控和分析工具：Smartctl - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="硬盘监控和分析工具：Smartctl"><meta property="og:description" content="Smartctl（S.M.A.R.T 自监控，分析和报告技术）是类Unix系统下实施SMART任务命令行套件或工具，它用于打印SMART自检和错误日志，启用并禁用SMRAT自动检测，以及初始化设备自检。 Smartctl对于Linux物理服务器十分有用，在这些服务器上，可以对智能磁盘进行错误检查，并将与硬件RAID相关的磁盘信息摘录下来。 在本帖中，我们将讨论smartctl命令的一些实用样例。如果你的Linux上海没有安装smartctl，请按以下步骤来安装。  安装 Smartctl 对于 Ubuntu $ sudo apt-get install smartmontools  对于 CentOS  RHEL # yum install smartmontools"><meta property="og:type" content="article"><meta property="og:url" content="/article-4682-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-01-16T16:21:59+00:00"><meta property="article:modified_time" content="2015-01-16T16:21:59+00:00"><meta itemprop=name content="硬盘监控和分析工具：Smartctl"><meta itemprop=description content="Smartctl（S.M.A.R.T 自监控，分析和报告技术）是类Unix系统下实施SMART任务命令行套件或工具，它用于打印SMART自检和错误日志，启用并禁用SMRAT自动检测，以及初始化设备自检。 Smartctl对于Linux物理服务器十分有用，在这些服务器上，可以对智能磁盘进行错误检查，并将与硬件RAID相关的磁盘信息摘录下来。 在本帖中，我们将讨论smartctl命令的一些实用样例。如果你的Linux上海没有安装smartctl，请按以下步骤来安装。  安装 Smartctl 对于 Ubuntu $ sudo apt-get install smartmontools  对于 CentOS  RHEL # yum install smartmontools"><meta itemprop=datePublished content="2015-01-16T16:21:59+00:00"><meta itemprop=dateModified content="2015-01-16T16:21:59+00:00"><meta itemprop=wordCount content="958"><meta itemprop=keywords content="smartctl,硬盘,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>硬盘监控和分析工具：Smartctl</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-01-16T16:21:59Z>January 16, 2015</time></div></div></header><div class="content post__content clearfix"><p><strong>Smartctl</strong>（S.M.A.R.T 自监控，分析和报告技术）是类Unix系统下实施SMART任务命令行套件或工具，它用于打印SMART<strong>自检</strong>和<strong>错误日志</strong>，启用并禁用SMRAT<strong>自动检测</strong>，以及初始化设备自检。</p><p>Smartctl对于Linux物理服务器十分有用，在这些服务器上，可以对智能磁盘进行错误检查，并将与<strong>硬件RAID</strong>相关的磁盘信息摘录下来。</p><p>在本帖中，我们将讨论smartctl命令的一些实用样例。如果你的Linux上海没有安装smartctl，请按以下步骤来安装。</p><p><img src=/data/attachment/album/201501/16/162204x9qqklzo66kl8j88.png alt></p><h3 id=安装-smartctl>安装 Smartctl</h3><p><strong>对于 Ubuntu</strong></p><pre tabindex=0><code>$ sudo apt-get install smartmontools
+</code></pre><p><strong>对于 CentOS & RHEL</strong></p><pre tabindex=0><code># yum install smartmontools
+</code></pre><h3 id=启动smartctl服务>启动Smartctl服务</h3><p><strong>对于 Ubuntu</strong></p><pre tabindex=0><code>$ sudo /etc/init.d/smartmontools start
+</code></pre><p><strong>对于 CentOS & RHEL</strong></p><pre tabindex=0><code># service smartd start ; chkconfig smartd on
+</code></pre><h3 id=样例>样例</h3><h4 id=样例1-检查磁盘的-smart-功能是否启用>样例：1 检查磁盘的 Smart 功能是否启用</h4><pre tabindex=0><code>root@linuxtechi:~# smartctl -i /dev/sdb
+smartctl 6.2 2013-07-26 r3841 [x86_64-linux-3.13.0-32-generic] (local build)
+Copyright (C) 2002-13, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Model Family:     Seagate Momentus 5400.6
+Device Model:     ST9320325AS
+Serial Number:    5VD2V59T
+LU WWN Device Id: 5 000c50 020a37ec4
+Firmware Version: 0002BSM1
+User Capacity:    320,072,933,376 bytes [320 GB]
+Sector Size:      512 bytes logical/physical
+Rotation Rate:    5400 rpm
+Device is:        In smartctl database [for details use: -P show]
+ATA Version is:   ATA8-ACS T13/1699-D revision 4
+SATA Version is:  SATA 2.6, 1.5 Gb/s
+Local Time is:    Sun Nov 16 12:32:09 2014 IST
+SMART support is: Available - device has SMART capability.
+SMART support is: Enabled
+</code></pre><p>这里‘/dev/sdb’是你的硬盘。上面输出中的最后两行显示了SMART功能已启用。</p><h4 id=样例2-启用磁盘的-smart-功能>样例：2 启用磁盘的 Smart 功能</h4><pre tabindex=0><code>root@linuxtechi:~# smartctl -s on /dev/sdb
+smartctl 6.2 2013-07-26 r3841 [x86_64-linux-3.13.0-32-generic] (local build)
+Copyright (C) 2002-13, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF ENABLE/DISABLE COMMANDS SECTION ===
+SMART Enabled.
+</code></pre><h4 id=样例3-禁用磁盘的-smart-功能>样例：3 禁用磁盘的 Smart 功能</h4><pre tabindex=0><code>root@linuxtechi:~# smartctl -s off  /dev/sdb
+smartctl 6.2 2013-07-26 r3841 [x86_64-linux-3.13.0-32-generic] (local build)
+Copyright (C) 2002-13, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF ENABLE/DISABLE COMMANDS SECTION ===
+SMART Disabled. Use option -s with argument &#39;on&#39; to enable it.
+</code></pre><h4 id=样例4-显示磁盘的详细-smart-信息>样例：4 显示磁盘的详细 Smart 信息</h4><pre tabindex=0><code>root@linuxtechi:~# smartctl -a /dev/sdb              // For IDE drive
+root@linuxtechi:~# smartctl -a -d ata /dev/sdb       // For SATA drive
+</code></pre><h4 id=样例5-显示磁盘总体健康状况>样例：5 显示磁盘总体健康状况</h4><pre tabindex=0><code>root@linuxtechi:~# smartctl -H  /dev/sdb
+smartctl 6.2 2013-07-26 r3841 [x86_64-linux-3.13.0-32-generic] (local build)
+Copyright (C) 2002-13, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF READ SMART DATA SECTION ===
+SMART overall-health self-assessment test result: PASSED
+Warning: This result is based on an Attribute check.
+Please note the following marginal Attributes:
+ID# ATTRIBUTE_NAME          FLAG     VALUE WORST THRESH TYPE      UPDATED  WHEN_FAILED RAW_VALUE
+190 Airflow_Temperature_Cel 0x0022   067   045   045    Old_age   Always   In_the_past 33 (Min/Max 25/33)
+</code></pre><h4 id=样例6-使用long和short选项测试硬盘>样例：6 使用long和short选项测试硬盘</h4><p><strong>Long测试</strong></p><pre tabindex=0><code>root@linuxtechi:~# smartctl --test=long /dev/sdb
+smartctl 6.2 2013-07-26 r3841 [x86_64-linux-3.13.0-32-generic] (local build)
+Copyright (C) 2002-13, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF OFFLINE IMMEDIATE AND SELF-TEST SECTION ===
+Sending command: &#34;Execute SMART Extended self-test routine immediately in off-line mode&#34;.
+Drive command &#34;Execute SMART Extended self-test routine immediately in off-line mode&#34; successful.
+Testing has begun.
+Please wait 102 minutes for test to complete.
+Test will complete after Sun Nov 16 14:29:43 2014
+
+Use smartctl -X to abort test.
+</code></pre><p>或者，我们可以重定向测试输出到日志文件，就像下面这样</p><pre tabindex=0><code>root@linuxtechi:~# smartctl --test=long /dev/sdb &gt; /var/log/long.text
+</code></pre><p><strong>Short测试</strong></p><pre tabindex=0><code>root@linuxtechi:~# smartctl --test=short /dev/sdb
+smartctl 6.2 2013-07-26 r3841 [x86_64-linux-3.13.0-32-generic] (local build)
+Copyright (C) 2002-13, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF OFFLINE IMMEDIATE AND SELF-TEST SECTION ===
+Sending command: &#34;Execute SMART Short self-test routine immediately in off-line mode&#34;.
+Drive command &#34;Execute SMART Short self-test routine immediately in off-line mode&#34; successful.
+Testing has begun.
+Please wait 1 minutes for test to complete.
+Test will complete after Sun Nov 16 12:51:45 2014
+
+Use smartctl -X to abort test.
+</code></pre><p>或</p><pre tabindex=0><code>root@linuxtechi:~# smartctl --test=short /dev/sdb &gt; /var/log/short.text
+</code></pre><p><strong>注意</strong>：short测试将花费最多2分钟，而在long测试中没有时间限制，因为它会读取并验证磁盘的每个段。</p><h4 id=样例7-查看驱动器的自检结果>样例：7 查看驱动器的自检结果</h4><pre tabindex=0><code>root@linuxtechi:~# smartctl -l selftest /dev/sdb
+smartctl 6.2 2013-07-26 r3841 [x86_64-linux-3.13.0-32-generic] (local build)
+Copyright (C) 2002-13, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF READ SMART DATA SECTION ===
+SMART Self-test log structure revision number 1
+Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA_of_first_error
+# 1  Short offline       Completed: read failure       90%       492         210841222
+# 2  Extended offline    Completed: read failure       90%       492         210841222
+</code></pre><h4 id=样例8-计算测试时间估值>样例：8 计算测试时间估值</h4><pre tabindex=0><code>root@linuxtechi:~# smartctl -c  /dev/sdb
+smartctl 6.2 2013-07-26 r3841 [x86_64-linux-3.13.0-32-generic] (local build)
+Copyright (C) 2002-13, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF READ SMART DATA SECTION ===
+General SMART Values:
+Offline data collection status:  (0x00)    Offline data collection activity
+                    was never started.
+                    Auto Offline Data Collection: Disabled.
+Self-test execution status:      ( 121)    The previous self-test completed having
+                    the read element of the test failed.
+Total time to complete Offline 
+data collection:         (    0) seconds.
+Offline data collection
+capabilities:              (0x73) SMART execute Offline immediate.
+                    Auto Offline data collection on/off support.
+                    Suspend Offline collection upon new
+                    command.
+                    No Offline surface scan supported.
+                    Self-test supported.
+                    Conveyance Self-test supported.
+                    Selective Self-test supported.
+SMART capabilities:            (0x0003)    Saves SMART data before entering
+                    power-saving mode.
+                    Supports SMART auto save timer.
+Error logging capability:        (0x01)    Error logging supported.
+                    General Purpose Logging supported.
+Short self-test routine 
+recommended polling time:      (   1) minutes.
+Extended self-test routine
+recommended polling time:      ( 102) minutes.
+Conveyance self-test routine
+recommended polling time:      (   2) minutes.
+SCT capabilities:            (0x103b)    SCT Status supported.
+                    SCT Error Recovery Control supported.
+                    SCT Feature Control supported.
+                    SCT Data Table supported.
+</code></pre><h4 id=样例9-显示磁盘错误日志>样例：9 显示磁盘错误日志</h4><pre tabindex=0><code>root@linuxtechi:~# smartctl -l error  /dev/sdb
+
+Sample Output
+
+smartctl 6.2 2013-07-26 r3841 [x86_64-linux-3.13.0-32-generic] (local build)
+Copyright (C) 2002-13, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF READ SMART DATA SECTION ===
+SMART Error Log Version: 1
+ATA Error Count: 5
+    CR = Command Register [HEX]
+    FR = Features Register [HEX]
+    SC = Sector Count Register [HEX]
+    SN = Sector Number Register [HEX]
+    CL = Cylinder Low Register [HEX]
+    CH = Cylinder High Register [HEX]
+    DH = Device/Head Register [HEX]
+    DC = Device Command Register [HEX]
+    ER = Error register [HEX]
+    ST = Status register [HEX]
+Powered_Up_Time is measured from power on, and printed as
+DDd+hh:mm:SS.sss where DD=days, hh=hours, mm=minutes,
+SS=sec, and sss=millisec. It &#34;wraps&#34; after 49.710 days.
+
+Commands leading to the command that caused the error were:
+  CR FR SC SN CL CH DH DC   Powered_Up_Time  Command/Feature_Name
+  -- -- -- -- -- -- -- --  ----------------  --------------------
+  25 da 08 e7 e5 a5 4c 00      00:30:44.515  READ DMA EXT
+  25 da 08 df e5 a5 4c 00      00:30:44.514  READ DMA EXT
+  25 da 80 5f e5 a5 4c 00      00:30:44.502  READ DMA EXT
+  25 da f0 5f e6 a5 4c 00      00:30:44.496  READ DMA EXT
+  25 da 10 4f e6 a5 4c 00      00:30:44.383  READ DMA EXT
+</code></pre><hr><p>via: <a href=http://www.linuxtechi.com/smartctl-monitoring-analysis-tool-hard-drive/>http://www.linuxtechi.com/smartctl-monitoring-analysis-tool-hard-drive/</a></p><p>作者：<a href=http://www.linuxtechi.com/author/pradeep/>Pradeep Kumar</a> 译者：<a href=https://github.com/GOLinux>GOLinux</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/smartctl/ rel=tag>smartctl</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%A1%AC%E7%9B%98/ rel=tag>硬盘</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

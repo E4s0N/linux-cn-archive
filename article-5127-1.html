@@ -1,0 +1,125 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在CentOS 7上给一个网卡分配多个IP地址 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在CentOS 7上给一个网卡分配多个IP地址"><meta property="og:description" content="有时你也许想要给一个网卡多个地址。你该怎么做呢？另外买一个网卡来分配地址？在小型网络中其实不用这么做。我们现在可以在CentOS/RHEL 7中给一个网卡分配多个ip地址。想知道怎么做么？好的，跟随我，这并不难。  首先，让我们找到网卡的IP地址。在我的CentOS 7服务器中，我只使用了一个网卡。 用root特权运行下面的命令： ip addr  示例输出： 1: lo: LOOPBACK,UP,LOWER_UP mtu 65536 qdisc noqueue state UNKNOWN link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 inet 127.0.0.1/8 scope host lo valid_lft forever preferred_"><meta property="og:type" content="article"><meta property="og:url" content="/article-5127-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-03-26T13:58:00+00:00"><meta property="article:modified_time" content="2015-03-26T13:58:00+00:00"><meta itemprop=name content="在CentOS 7上给一个网卡分配多个IP地址"><meta itemprop=description content="有时你也许想要给一个网卡多个地址。你该怎么做呢？另外买一个网卡来分配地址？在小型网络中其实不用这么做。我们现在可以在CentOS/RHEL 7中给一个网卡分配多个ip地址。想知道怎么做么？好的，跟随我，这并不难。  首先，让我们找到网卡的IP地址。在我的CentOS 7服务器中，我只使用了一个网卡。 用root特权运行下面的命令： ip addr  示例输出： 1: lo: LOOPBACK,UP,LOWER_UP mtu 65536 qdisc noqueue state UNKNOWN link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 inet 127.0.0.1/8 scope host lo valid_lft forever preferred_"><meta itemprop=datePublished content="2015-03-26T13:58:00+00:00"><meta itemprop=dateModified content="2015-03-26T13:58:00+00:00"><meta itemprop=wordCount content="448"><meta itemprop=keywords content="IP地址,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在CentOS 7上给一个网卡分配多个IP地址</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-03-26T13:58:00Z>March 26, 2015</time></div></div></header><div class="content post__content clearfix"><p>有时你也许想要给一个网卡多个地址。你该怎么做呢？另外买一个网卡来分配地址？在小型网络中其实不用这么做。我们现在可以在CentOS/RHEL 7中给一个网卡分配多个ip地址。想知道怎么做么？好的，跟随我，这并不难。</p><p><img src=/data/attachment/album/201503/26/101151p4cwwf5fr9wf4rtv.jpg alt></p><p>首先，让我们找到网卡的IP地址。在我的CentOS 7服务器中，我只使用了一个网卡。</p><p>用root特权运行下面的命令：</p><pre tabindex=0><code>ip addr
+</code></pre><p>示例输出：</p><pre tabindex=0><code>1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 08:00:27:80:63:19 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.150/24 brd 192.168.1.255 scope global enp0s3
+       valid_lft forever preferred_lft forever
+</code></pre><p>如上所见，我的网卡名是enp0s3，ip地址是192.168.1.150。</p><p>如你所知，网卡的配置文件存储在 <strong>/etc/sysconfig/network-scripts/</strong> 目录下。每个网卡的详细内容将会以不同的名字存储，比如<strong>ifcfg-enp0s3</strong>。</p><p>让我们看下<strong>ifcfg-enp0s3</strong>的细节。</p><pre tabindex=0><code>cat /etc/sysconfig/network-scripts/ifcfg-enp0s3
+</code></pre><p>示例输出：</p><pre tabindex=0><code>TYPE=&#34;Ethernet&#34;
+BOOTPROTO=&#34;none&#34;
+DEFROUTE=&#34;yes&#34;
+IPV4_FAILURE_FATAL=&#34;no&#34;
+IPV6INIT=&#34;yes&#34;
+IPV6_AUTOCONF=&#34;yes&#34;
+IPV6_DEFROUTE=&#34;yes&#34;
+IPV6_FAILURE_FATAL=&#34;no&#34;
+NAME=&#34;enp0s3&#34;
+UUID=&#34;e9f9caef-cb9e-4a19-aace-767c6ee6f849&#34;
+ONBOOT=&#34;yes&#34;
+HWADDR=&#34;08:00:27:80:63:19&#34;
+IPADDR0=&#34;192.168.1.150&#34;
+PREFIX0=&#34;24&#34;
+GATEWAY0=&#34;192.168.1.1&#34;
+DNS1=&#34;192.168.1.1&#34;
+IPV6_PEERDNS=&#34;yes&#34;
+IPV6_PEERROUTES=&#34;yes&#34;
+</code></pre><p>好的，现在我们将在相同的子网中分配多个地址了。</p><p>编辑文件 <strong>/etc/sysconfig/network-scripts/ifcfg-enp0s3</strong>：</p><pre tabindex=0><code>vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
+</code></pre><p>像下面那样加入额外的IP地址。</p><pre tabindex=0><code>TYPE=&#34;Ethernet&#34;
+BOOTPROTO=&#34;none&#34;
+DEFROUTE=&#34;yes&#34;
+IPV4_FAILURE_FATAL=&#34;no&#34;
+IPV6INIT=&#34;yes&#34;
+IPV6_AUTOCONF=&#34;yes&#34;
+IPV6_DEFROUTE=&#34;yes&#34;
+IPV6_FAILURE_FATAL=&#34;no&#34;
+NAME=&#34;enp0s3&#34;
+UUID=&#34;933cdc9b-b383-4ddd-b219-5a72c69c9cf0&#34;
+ONBOOT=&#34;yes&#34;
+HWADDR=&#34;08:00:27:3F:AB:68&#34;
+IPADDR0=&#34;192.168.1.150&#34;
+IPADDR1=&#34;192.168.1.151&#34;
+IPADDR2=&#34;192.168.1.152&#34;
+PREFIX0=&#34;24&#34;
+GATEWAY0=&#34;192.168.1.1&#34;
+DNS1=&#34;192.168.1.1&#34;
+IPV6_PEERDNS=&#34;yes&#34;
+IPV6_PEERROUTES=&#34;yes&#34;
+</code></pre><p>如你所见，我已经加了两个IP地址：<strong>IPADDR1=”192.168.1.151″ & IPADDR2=”192.168.1.152″</strong></p><p>类似地，你可以加入更多的ip地址。</p><p>最后，保存并退出文件。重启网络服务来使更改生效。</p><pre tabindex=0><code>systemctl restart network
+</code></pre><p>现在，让我们检查是否已经加入了ip地址。</p><pre tabindex=0><code>ip addr
+</code></pre><p>示例输出：</p><pre tabindex=0><code>: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: enp0s3: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 08:00:27:3f:ab:68 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.150/24 brd 192.168.1.255 scope global enp0s3
+       valid_lft forever preferred_lft forever
+    inet 192.168.1.151/24 brd 192.168.1.255 scope global secondary enp0s3
+       valid_lft forever preferred_lft forever
+    inet 192.168.1.152/24 brd 192.168.1.255 scope global secondary enp0s3
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fe3f:ab68/64 scope link 
+       valid_lft forever preferred_lft forever
+</code></pre><p>如你所见，单个网卡已经有3个ip地址了。</p><p>让我们ping一下新增的IP地址：</p><pre tabindex=0><code>ping -c 4 192.168.1.151
+</code></pre><p>示例输出：</p><pre tabindex=0><code>PING 192.168.1.151 (192.168.1.151) 56(84) bytes of data.
+64 bytes from 192.168.1.151: icmp_seq=1 ttl=64 time=0.048 ms
+64 bytes from 192.168.1.151: icmp_seq=2 ttl=64 time=0.075 ms
+64 bytes from 192.168.1.151: icmp_seq=3 ttl=64 time=0.077 ms
+64 bytes from 192.168.1.151: icmp_seq=4 ttl=64 time=0.077 ms
+
+--- 192.168.1.151 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 2999ms
+rtt min/avg/max/mdev = 0.048/0.069/0.077/0.013 ms
+</code></pre><hr><pre tabindex=0><code>ping -c 4 192.168.1.152
+</code></pre><p>示例输出：</p><pre tabindex=0><code>PING 192.168.1.152 (192.168.1.152) 56(84) bytes of data.
+64 bytes from 192.168.1.152: icmp_seq=1 ttl=64 time=0.034 ms
+64 bytes from 192.168.1.152: icmp_seq=2 ttl=64 time=0.075 ms
+64 bytes from 192.168.1.152: icmp_seq=3 ttl=64 time=0.073 ms
+64 bytes from 192.168.1.152: icmp_seq=4 ttl=64 time=0.075 ms
+
+--- 192.168.1.152 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 2999ms
+rtt min/avg/max/mdev = 0.034/0.064/0.075/0.018 ms
+</code></pre><p>如果你想要使用<strong>不同的子网</strong>，你要改变<strong>PREFIX0=24</strong>成不同的子网，比如 <strong>PREFIX1=16</strong>。</p><p>比如，我想要添加一个A类地址（*<em>比如10.0.0.1</em>）到我的网卡中。</p><pre tabindex=0><code>TYPE=&#34;Ethernet&#34;
+BOOTPROTO=&#34;none&#34;
+DEFROUTE=&#34;yes&#34;
+IPV4_FAILURE_FATAL=&#34;no&#34;
+IPV6INIT=&#34;yes&#34;
+IPV6_AUTOCONF=&#34;yes&#34;
+IPV6_DEFROUTE=&#34;yes&#34;
+IPV6_FAILURE_FATAL=&#34;no&#34;
+NAME=&#34;enp0s3&#34;
+UUID=&#34;933cdc9b-b383-4ddd-b219-5a72c69c9cf0&#34;
+ONBOOT=&#34;yes&#34;
+HWADDR=&#34;08:00:27:3F:AB:68&#34;
+IPADDR0=&#34;192.168.1.150&#34;
+IPADDR1=&#34;192.168.1.151&#34;
+IPADDR2=&#34;192.168.1.152&#34;
+IPADDR3=&#34;10.0.0.1&#34;
+PREFIX0=&#34;24&#34;
+PREFIX1=16
+GATEWAY0=&#34;192.168.1.1&#34;
+DNS1=&#34;192.168.1.1&#34;
+IPV6_PEERDNS=&#34;yes&#34;
+IPV6_PEERROUTES=&#34;yes&#34;
+</code></pre><p>你可以看到我已经添加一个A类地址(10.0.0.1)并且前缀是16。</p><p>保存并退出文件。重启网络服务，接着，ping新增的地址：</p><pre tabindex=0><code>ping -c 4 10.0.0.1
+</code></pre><p>示例输出：</p><pre tabindex=0><code>PING 10.0.0.1 (10.0.0.1) 56(84) bytes of data.
+64 bytes from 10.0.0.1: icmp_seq=1 ttl=64 time=0.097 ms
+64 bytes from 10.0.0.1: icmp_seq=2 ttl=64 time=0.073 ms
+64 bytes from 10.0.0.1: icmp_seq=3 ttl=64 time=0.074 ms
+64 bytes from 10.0.0.1: icmp_seq=4 ttl=64 time=0.075 ms
+
+--- 10.0.0.1 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3000ms
+rtt min/avg/max/mdev = 0.073/0.079/0.097/0.014 ms
+</code></pre><p>相似地，你可以添加不同的网关。</p><p>就是这样。</p><hr><p>via: <a href=http://www.unixmen.com/linux-basics-assign-multiple-ip-addresses-single-network-interface-card-centos-7/>http://www.unixmen.com/linux-basics-assign-multiple-ip-addresses-single-network-interface-card-centos-7/</a></p><p>作者：<a href=http://www.unixmen.com/author/sk/>SK</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ip%E5%9C%B0%E5%9D%80/ rel=tag>IP地址</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

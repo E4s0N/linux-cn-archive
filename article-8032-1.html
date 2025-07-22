@@ -1,0 +1,48 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>不常见但是很有用的 GCC 命令行选项（二） - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="不常见但是很有用的 GCC 命令行选项（二）"><meta property="og:description" content="开发者们通常用来生成警告的 -Wall 选项，并不包括一些特殊的警告。如果你不了解这些特殊警告，并且不知道如何生成它们，不用担心，我将在这篇文章中详细讲解关于它们所有的细节。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8032-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-12-13T08:43:34+00:00"><meta property="article:modified_time" content="2016-12-13T08:43:34+00:00"><meta itemprop=name content="不常见但是很有用的 GCC 命令行选项（二）"><meta itemprop=description content="开发者们通常用来生成警告的 -Wall 选项，并不包括一些特殊的警告。如果你不了解这些特殊警告，并且不知道如何生成它们，不用担心，我将在这篇文章中详细讲解关于它们所有的细节。"><meta itemprop=datePublished content="2016-12-13T08:43:34+00:00"><meta itemprop=dateModified content="2016-12-13T08:43:34+00:00"><meta itemprop=wordCount content="310"><meta itemprop=keywords content="gcc,调试,编译,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>不常见但是很有用的 GCC 命令行选项（二）</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-12-13T08:43:34Z>December 13, 2016</time></div></div></header><div class="content post__content clearfix"><p>gcc 编译器提供了几乎数不清的命令行选项列表。当然，没有人会使用过或者精通它所有的命令行选项，但是有一些命令行选项是每一个 gcc 用户都应该知道的 - 即使不是必须知道。它们中有一些很常用，其他一些不太常用，但不常用并不意味着它们的用处没前者大。</p><p><img src=/data/attachment/album/201612/13/084321p0tmmzbm0x8xlcyk.jpg alt></p><p>在这个系列的文章中，我们集中于一些不常用但是很有用的 gcc 命令行选项，在<a href=/article-8025-1.html>第一节</a>已经讲到几个这样的命令行选项。</p><p>不知道你是否能够回想起，在这个系列教程的第一部分的开始，我简要的提到了开发者们通常用来生成警告的 <code>-Wall</code> 选项，并不包括一些特殊的警告。如果你不了解这些特殊警告，并且不知道如何生成它们，不用担心，我将在这篇文章中详细讲解关于它们所有的细节。</p><p>除此以外，这篇文章也将涉及与浮点值相关的 gcc 警告选项，以及在 gcc 命令行选项列表变得很大的时候如何更好的管理它们。</p><p>在继续之前，请记住，这个教程中的所有例子、命令和指令都已在 Ubuntu 16.04 LTS 操作系统和 gcc 5.4.0 上测试过。</p><h3 id=生成--wall-选项不包括的警告>生成 -Wall 选项不包括的警告</h3><p>尽管 gcc 编译器的 <code>-Wall</code> 选项涵盖了绝大多数警告标记，依然有一些警告不能生成。为了生成它们，请使用 <code>-Wextra</code> 选项。</p><p>比如，下面的代码：</p><pre tabindex=0><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+int main()
+{
+    int i=0;
+    /* ...
+       some code here 
+       ...
+    */
+
+    if(i);
+        return 1;
+     return 0; 
+}
+</code></pre><p>我不小心在 <code>if</code> 条件后面多打了一个分号。现在，如果使用下面的 gcc 命令来进行编译，不会生成任何警告。</p><pre tabindex=0><code>gcc -Wall test.c -o test
+</code></pre><p>但是如果同时使用 <code>-Wextra</code> 选项来进行编译：</p><pre tabindex=0><code>gcc -Wall -Wextra test.c -o test
+</code></pre><p>会生成下面这样一个警告：</p><pre tabindex=0><code>test.c: In function ‘main’:
+test.c:10:8: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+ if(i);
+</code></pre><p>从上面的警告清楚的看到， <code>-Wextra</code> 选项从内部启用了 <code>-Wempty-body</code> 选项，从而可以检测可疑代码并生成警告。下面是这个选项启用的全部警告标记。</p><ul><li><code>-Wclobbered</code></li><li><code>-Wempty-body</code></li><li><code>-Wignored-qualifiers</code></li><li><code>-Wmissing-field-initializers</code></li><li><code>-Wmissing-parameter-type</code> （仅针对 C 语言）</li><li><code>-Wold-style-declaration</code> （仅针对 C 语言）</li><li><code>-Woverride-init</code></li><li><code>-Wsign-compare</code></li><li><code>-Wtype-limits</code></li><li><code>-Wuninitialized</code></li><li><code>-Wunused-parameter</code> （只有和 <code>-Wunused</code> 或 <code>-Wall</code> 选项使用时才会启用）</li><li><code>-Wunused-but-set-parameter (只有和</code>-Wunused<code>或</code>-Wall` 选项使用时才会生成）</li></ul><p>如果想对上面所提到的标记有更进一步的了解，请查看 <a href=https://linux.die.net/man/1/gcc>gcc 手册</a>。</p><p>此外，遇到下面这些情况， <code>-Wextra</code> 选项也会生成警告：</p><ul><li>一个指针和整数 <code>0</code> 进行 <code>&lt;</code>， <code>&lt;=</code>， <code>></code>， 或 <code>>=</code> 比较</li><li>（仅 C++）一个枚举类型和一个非枚举类型同时出现在一个条件表达式中</li><li>（仅 C++）有歧义的虚拟基底</li><li>（仅 C++）寄存器类型的数组加下标</li><li>（仅 C++）对寄存器类型的变量进行取址</li><li>（仅 C++）基类没有在派生类的复制构建函数中进行初始化</li></ul><h3 id=浮点值的等值比较时生成警告>浮点值的等值比较时生成警告</h3><p>你可能已经知道，浮点值不能进行确切的相等比较（如果不知道，请阅读与浮点值比较相关的 <a href=https://isocpp.org/wiki/faq/newbie>FAQ</a>)。但是如果你不小心这样做了， gcc 编译器是否会报出错误或警告？让我们来测试一下：</p><p>下面是一段使用 <code>==</code> 运算符进行浮点值比较的代码：</p><pre tabindex=0><code>#include&lt;stdio.h&gt;
+
+void compare(float x, float y)
+{
+    if(x == y)
+    {
+        printf(&#34;\n EQUAL \n&#34;);
+    }
+}
+
+int main(void)
+{
+    compare(1.234, 1.56789);
+
+    return 0; 
+}
+</code></pre><p>使用下面的 gcc 命令（包含 <code>-Wall</code> 和 <code>-Wextra</code> 选项）来编译这段代码：</p><pre tabindex=0><code>gcc -Wall -Wextra test.c -o test
+</code></pre><p>遗憾的是，上面的命令没有生成任何与浮点值比较相关的警告。快速看一下 gcc 手册，在这种情形下可以使用一个专用的 <code>-Wfloat-equal</code> 选项。</p><p>下面是包含这个选项的命令：</p><pre tabindex=0><code>gcc -Wall -Wextra -Wfloat-equal test.c -o test
+</code></pre><p>下面是这条命令产生的输出：</p><pre tabindex=0><code>test.c: In function ‘compare’:
+test.c:5:10: warning: comparing floating point with == or != is unsafe [-Wfloat-equal]
+ if(x == y)
+</code></pre><p>正如上面你所看到的输出那样， <code>-Wfloat-equal</code> 选项会强制 gcc 编译器生成一个与浮点值比较相关的警告。</p><p>这儿是<a href=https://linux.die.net/man/1/gcc>gcc 手册</a>关于这一选项的说明：</p><blockquote><p>这背后的想法是，有时，对程序员来说，把浮点值考虑成近似无限精确的实数是方便的。如果你这样做，那么你需要通过分析代码，或者其他方式，算出这种计算方式引入的最大或可能的最大误差，然后进行比较时（以及产生输出时，不过这是一个不同的问题）允许这个误差。特别要指出，不应该检查是否相等，而应该检查两个值是否可能出现范围重叠；这是用关系运算符来做的，所以等值比较可能是搞错了。</p></blockquote><h3 id=如何更好的管理-gcc-命令行选项>如何更好的管理 gcc 命令行选项</h3><p>如果在你使用的 gcc 命令中，命令行选项列表变得很大而且很难管理，那么你可以把它放在一个文本文件中，然后把文件名作为 gcc 命令的一个参数。之后，你必须使用 <code>@file</code> 命令行选项。</p><p>比如，下面这行是你的 gcc 命令：</p><pre tabindex=0><code>gcc -Wall -Wextra -Wfloat-equal test.c -o test
+</code></pre><p>然后你可以把这三个和警告相关的选项放到一个文件里，文件名叫做 <code>gcc-options</code>：</p><pre tabindex=0><code>$ cat gcc-options&amp;nbsp;
+-Wall -Wextra -Wfloat-equal
+</code></pre><p>这样，你的 gcc 命令会变得更加简洁并且易于管理：</p><pre tabindex=0><code>gcc @gcc-options test.c -o test
+</code></pre><p>下面是 gcc 手册关于 <code>@file</code> 的说明：</p><blockquote><p>从文件中读取命令行选项。读取到的选项随之被插入到原始 <code>@file</code> 选项所在的位置。如果文件不存在或者无法读取，那么这个选项就会被当成文字处理，而不会被删除。</p><p>文件中的选项以空格分隔。选项中包含空白字符的话，可以用一个由单引号或双引号包围完整选项。任何字符（包括反斜杠: &lsquo;'）均可能通过一个 &lsquo;' 前缀而包含在一个选项中。如果该文件本身包含额外的 <code>@file</code> 选项，那么它将会被递归处理。</p></blockquote><h3 id=结论>结论</h3><p>在这个系列的教程中，我们一共讲解了 5 个不常见但是很有用的 gcc 命令行选项： <code>-Save-temps</code>、<code>-g</code>、 <code>-Wextra</code>、<code>-Wfloat-equal</code> 以及 <code>@file</code>。记得花时间练习使用每一个选项，同时不要忘了浏览 gcc 手册上面所提供的关于它们的全部细节。</p><p>你是否知道或使用其他像这样有用的 gcc 命令行选项，并希望把它们在全世界范围内分享？请在下面的评论区留下所有的细节。</p><hr><p>via: <a href=https://www.howtoforge.com/tutorial/uncommon-but-useful-gcc-command-line-options-2/>https://www.howtoforge.com/tutorial/uncommon-but-useful-gcc-command-line-options-2/</a></p><p>作者：<a href=https://twitter.com/howtoforgecom>Ansh</a> 译者：<a href=https://github.com/ucasFL>ucasFL</a> 校对：<a href=https://github.com/jasminepeng>jasminepeng</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/gcc/ rel=tag>gcc</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%B0%83%E8%AF%95/ rel=tag>调试</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%BC%96%E8%AF%91/ rel=tag>编译</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

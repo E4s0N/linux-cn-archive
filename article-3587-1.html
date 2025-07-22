@@ -1,0 +1,120 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux系统中‘dmesg’命令处理故障和收集系统信息的7种用法 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux系统中‘dmesg’命令处理故障和收集系统信息的7种用法"><meta property="og:description" content="‘dmesg’命令显示linux内核的环形缓冲区信息，我们可以从中获得诸如系统架构、cpu、挂载的硬件，RAM等多个运行级别的大量的系统信息。当计算机启动时，系统内核（操作系统的核心部分）将会被加载到内存中。在加载的过程中会显示很多的信息，在这些信息中我们可以看到内核检测硬件设备。"><meta property="og:type" content="article"><meta property="og:url" content="/article-3587-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-08-11T18:05:47+00:00"><meta property="article:modified_time" content="2014-08-11T18:05:47+00:00"><meta itemprop=name content="Linux系统中‘dmesg’命令处理故障和收集系统信息的7种用法"><meta itemprop=description content="‘dmesg’命令显示linux内核的环形缓冲区信息，我们可以从中获得诸如系统架构、cpu、挂载的硬件，RAM等多个运行级别的大量的系统信息。当计算机启动时，系统内核（操作系统的核心部分）将会被加载到内存中。在加载的过程中会显示很多的信息，在这些信息中我们可以看到内核检测硬件设备。"><meta itemprop=datePublished content="2014-08-11T18:05:47+00:00"><meta itemprop=dateModified content="2014-08-11T18:05:47+00:00"><meta itemprop=wordCount content="850"><meta itemprop=keywords content="dmesg,命令,Linux,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux系统中‘dmesg’命令处理故障和收集系统信息的7种用法</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-08-11T18:05:47Z>August 11, 2014</time></div></div></header><div class="content post__content clearfix"><p>‘dmesg’命令显示linux内核的环形缓冲区信息，我们可以从中获得诸如系统架构、cpu、挂载的硬件，RAM等多个运行级别的大量的系统信息。当计算机启动时，系统内核（操作系统的核心部分）将会被加载到内存中。在加载的过程中会显示很多的信息，在这些信息中我们可以看到内核检测硬件设备。</p><p><a href=https://camo.githubusercontent.com/433d31191ed6401b5285a33a5b0a6c01d439d0fe/687474703a2f2f7777772e7465636d696e742e636f6d2f77702d636f6e74656e742f75706c6f6164732f323031342f30372f646d6573672d436f6d6d616e642d4578616d706c65732e706e67><img src=https://camo.githubusercontent.com/433d31191ed6401b5285a33a5b0a6c01d439d0fe/687474703a2f2f7777772e7465636d696e742e636f6d2f77702d636f6e74656e742f75706c6f6164732f323031342f30372f646d6573672d436f6d6d616e642d4578616d706c65732e706e67 alt="dmesg Command Examples"></a></p><p>dmesg 命令的使用范例</p><p>‘dmesg’命令设备故障的诊断是非常重要的。在‘dmesg’命令的帮助下进行硬件的连接或断开连接操作时，我们可以看到硬件的检测或者断开连接的信息。‘dmesg’命令在多数基于<strong>Linux</strong>和<strong>Unix</strong>的操作系统中都可以使用。</p><p>下面我们展示一些最负盛名的‘dmesg’命令工具以及其实际使用举例。‘dmesg’命令的使用语法如下。</p><pre tabindex=0><code># dmesg [options...]
+</code></pre><h3 id=1-列出加载到内核中的所有驱动>1. 列出加载到内核中的所有驱动</h3><p>我们可以使用如‘<strong>more</strong>’。 ‘<strong>tail</strong>’, ‘<strong>less</strong> ’或者‘<strong>grep</strong>’文字处理工具来处理‘dmesg’命令的输出。由于dmesg日志的输出不适合在一页中完全显示，因此我们使用管道（pipe）将其输出送到more或者less命令单页显示。</p><pre tabindex=0><code>[root@tecmint.com ~]# dmesg | more
+[root@tecmint.com ~]# dmesg | less
+</code></pre><h3 id=输出>输出</h3><pre tabindex=0><code>[    0.000000] Initializing cgroup subsys cpuset
+[    0.000000] Initializing cgroup subsys cpu
+[    0.000000] Initializing cgroup subsys cpuacct
+[    0.000000] Linux version 3.11.0-13-generic (buildd@aatxe) (gcc version 4.8.1 (Ubuntu/Linaro 4.8.1-10ubuntu8) ) #20-Ubuntu SMP Wed Oct 23 17:26:33 UTC 2013 
+(Ubuntu 3.11.0-13.20-generic 3.11.6)
+[    0.000000] KERNEL supported cpus:
+[    0.000000]   Intel GenuineIntel
+[    0.000000]   AMD AuthenticAMD
+[    0.000000]   NSC Geode by NSC
+[    0.000000]   Cyrix CyrixInstead
+[    0.000000]   Centaur CentaurHauls
+[    0.000000]   Transmeta GenuineTMx86
+[    0.000000]   Transmeta TransmetaCPU
+[    0.000000]   UMC UMC UMC UMC
+[    0.000000] e820: BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000007dc08bff] usable
+[    0.000000] BIOS-e820: [mem 0x000000007dc08c00-0x000000007dc5cbff] ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x000000007dc5cc00-0x000000007dc5ebff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x000000007dc5ec00-0x000000007fffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000e0000000-0x00000000efffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fed003ff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fed20000-0x00000000fed9ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fee00000-0x00000000feefffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000ffb00000-0x00000000ffffffff] reserved
+[    0.000000] NX (Execute Disable) protection: active
+.....
+</code></pre><h3 id=2-列出所有被检测到的硬件>2. 列出所有被检测到的硬件</h3><p>要显示所有被内核检测到的硬盘设备，你可以使用‘<strong>grep</strong>’命令搜索‘<strong>sda</strong>’关键词，如下：</p><pre tabindex=0><code>[root@tecmint.com ~]# dmesg | grep sda
+
+[    1.280971] sd 2:0:0:0: [sda] 488281250 512-byte logical blocks: (250 GB/232 GiB)
+[    1.281014] sd 2:0:0:0: [sda] Write Protect is off
+[    1.281016] sd 2:0:0:0: [sda] Mode Sense: 00 3a 00 00
+[    1.281039] sd 2:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn&#39;t support DPO or FUA
+[    1.359585]  sda: sda1 sda2 &lt; sda5 sda6 sda7 sda8 &gt;
+[    1.360052] sd 2:0:0:0: [sda] Attached SCSI disk
+[    2.347887] EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
+[   22.928440] Adding 3905532k swap on /dev/sda6.  Priority:-1 extents:1 across:3905532k FS
+[   23.950543] EXT4-fs (sda1): re-mounted. Opts: errors=remount-ro
+[   24.134016] EXT4-fs (sda5): mounted filesystem with ordered data mode. Opts: (null)
+[   24.330762] EXT4-fs (sda7): mounted filesystem with ordered data mode. Opts: (null)
+[   24.561015] EXT4-fs (sda8): mounted filesystem with ordered data mode. Opts: (null)
+</code></pre><p><strong>注解</strong> ‘sda’表示第一块 SATA硬盘，‘sdb’表示第二块SATA硬盘。若想查看IDE硬盘搜索‘hda’或‘hdb’关键词。</p><h3 id=3-只输出dmesg命令的前20行日志>3. 只输出dmesg命令的前20行日志</h3><p>在‘dmesg’命令后跟随‘head’命令来显示开始几行，‘dmesg | head -20′命令将显示开始的前20行。</p><pre tabindex=0><code>[root@tecmint.com ~]# dmesg | head  -20
+
+[    0.000000] Initializing cgroup subsys cpuset
+[    0.000000] Initializing cgroup subsys cpu
+[    0.000000] Initializing cgroup subsys cpuacct
+[    0.000000] Linux version 3.11.0-13-generic (buildd@aatxe) (gcc version 4.8.1 (Ubuntu/Linaro 4.8.1-10ubuntu8) ) #20-Ubuntu SMP Wed Oct 23 17:26:33 UTC 2013 (Ubuntu 3.11.0-13.20-generic 3.11.6)
+[    0.000000] KERNEL supported cpus:
+[    0.000000]   Intel GenuineIntel
+[    0.000000]   AMD AuthenticAMD
+[    0.000000]   NSC Geode by NSC
+[    0.000000]   Cyrix CyrixInstead
+[    0.000000]   Centaur CentaurHauls
+[    0.000000]   Transmeta GenuineTMx86
+[    0.000000]   Transmeta TransmetaCPU
+[    0.000000]   UMC UMC UMC UMC
+[    0.000000] e820: BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000007dc08bff] usable
+[    0.000000] BIOS-e820: [mem 0x000000007dc08c00-0x000000007dc5cbff] ACPI NVS
+[    0.000000] BIOS-e820: [mem 0x000000007dc5cc00-0x000000007dc5ebff] ACPI data
+[    0.000000] BIOS-e820: [mem 0x000000007dc5ec00-0x000000007fffffff] reserved
+</code></pre><h3 id=4-只输出dmesg命令最后20行日志>4. 只输出dmesg命令最后20行日志</h3><p>在‘dmesg’命令后跟随‘tail’命令（‘ dmesg | tail -20’）来输出‘dmesg’命令的最后20行日志，当你插入可移动设备时它是非常有用的。</p><pre tabindex=0><code>[root@tecmint.com ~]# dmesg | tail -20
+
+parport0: PC-style at 0x378, irq 7 [PCSPP,TRISTATE]
+ppdev: user-space parallel port driver
+EXT4-fs (sda1): mounted filesystem with ordered data mode
+Adding 2097144k swap on /dev/sda2.  Priority:-1 extents:1 across:2097144k
+readahead-disable-service: delaying service auditd
+ip_tables: (C) 2000-2006 Netfilter Core Team
+nf_conntrack version 0.5.0 (16384 buckets, 65536 max)
+NET: Registered protocol family 10
+lo: Disabled Privacy Extensions
+e1000: eth0 NIC Link is Up 1000 Mbps Full Duplex, Flow Control: None
+Slow work thread pool: Starting up
+Slow work thread pool: Ready
+FS-Cache: Loaded
+CacheFiles: Loaded
+CacheFiles: Security denies permission to nominate security context: error -95
+eth0: no IPv6 routers present
+type=1305 audit(1398268784.593:18630): audit_enabled=0 old=1 auid=4294967295 ses=4294967295 res=1
+readahead-collector: starting delayed service auditd
+readahead-collector: sorting
+readahead-collector: finished
+</code></pre><h3 id=5-搜索包含特定字符串的被检测到的硬件>5. 搜索包含特定字符串的被检测到的硬件</h3><p>由于‘dmesg’命令的输出实在太长了，在其中搜索某个特定的字符串是非常困难的。因此，有必要过滤出一些包含‘<strong>usb</strong>’ ‘<strong>dma</strong>’ ‘<strong>tty</strong>’ ‘<strong>memory</strong>’等字符串的日志行。<a href=http://www.tecmint.com/12-practical-examples-of-linux-grep-command/>grep 命令</a> 的‘<strong>-i</strong>’选项表示忽略大小写。</p><pre tabindex=0><code>[root@tecmint.com log]# dmesg | grep -i usb
+[root@tecmint.com log]# dmesg | grep -i dma
+[root@tecmint.com log]# dmesg | grep -i tty
+[root@tecmint.com log]# dmesg | grep -i memory
+</code></pre><h3 id=输出-1>输出</h3><pre tabindex=0><code>[    0.000000] Scanning 1 areas for low memory corruption
+[    0.000000] initial memory mapped: [mem 0x00000000-0x01ffffff]
+[    0.000000] Base memory trampoline at [c009b000] 9b000 size 16384
+[    0.000000] init_memory_mapping: [mem 0x00000000-0x000fffff]
+[    0.000000] init_memory_mapping: [mem 0x37800000-0x379fffff]
+[    0.000000] init_memory_mapping: [mem 0x34000000-0x377fffff]
+[    0.000000] init_memory_mapping: [mem 0x00100000-0x33ffffff]
+[    0.000000] init_memory_mapping: [mem 0x37a00000-0x37bfdfff]
+[    0.000000] Early memory node ranges
+[    0.000000] PM: Registered nosave memory: [mem 0x0009f000-0x000effff]
+[    0.000000] PM: Registered nosave memory: [mem 0x000f0000-0x000fffff]
+[    0.000000] please try &#39;cgroup_disable=memory&#39; option if you don&#39;t want memory cgroups
+[    0.000000] Memory: 2003288K/2059928K available (6352K kernel code, 607K rwdata, 2640K rodata, 880K init, 908K bss, 56640K reserved, 1146920K highmem)
+[    0.000000] virtual kernel memory layout:
+[    0.004291] Initializing cgroup subsys memory
+[    0.004609] Freeing SMP alternatives memory: 28K (c1a3e000 - c1a45000)
+[    0.899622] Freeing initrd memory: 23616K (f51d0000 - f68e0000)
+[    0.899813] Scanning for low memory corruption every 60 seconds
+[    0.946323] agpgart-intel 0000:00:00.0: detected 32768K stolen memory
+[    1.360318] Freeing unused kernel memory: 880K (c1962000 - c1a3e000)
+[    1.429066] [drm] Memory usable by graphics device = 2048M
+</code></pre><h3 id=6-清空dmesg缓冲区日志>6. 清空dmesg缓冲区日志</h3><p>我们可以使用如下命令来清空dmesg的日志。该命令会清空dmesg环形缓冲区中的日志。但是你依然可以查看存储在‘<strong>/var/log/dmesg</strong>’文件中的日志。你连接任何的设备都会产生dmesg日志输出。</p><pre tabindex=0><code>[root@tecmint.com log]# dmesg -c
+</code></pre><h3 id=7-实时监控dmesg日志输出>7. 实时监控dmesg日志输出</h3><p>在某些发行版中可以使用命令‘tail -f /var/log/dmesg’来实时监控dmesg的日志输出。</p><pre tabindex=0><code>[root@tecmint.com log]# watch &#34;dmesg | tail -20&#34;
+</code></pre><p><strong>结论</strong>：dmesg命令在系统dmesg记录实时更改或产生的情况下是非常有用的。你可以使用man dmesg来获取更多关于dmesg的信息。</p><hr><p><a href=https://camo.githubusercontent.com/53d677032382a09e50d21d9ee15e621f7c5a7b5c/687474703a2f2f312e67726176617461722e636f6d2f6176617461722f33366337633235313634633334353566326637313162303165333935646530643f733d383026643d626c616e6b26723d47><img src=https://camo.githubusercontent.com/53d677032382a09e50d21d9ee15e621f7c5a7b5c/687474703a2f2f312e67726176617461722e636f6d2f6176617461722f33366337633235313634633334353566326637313162303165333935646530643f733d383026643d626c616e6b26723d47 alt></a></p><p>Narad Shrestha</p><ul><li><a href=http://twitter.com/@nrdshrestha>Twitter profile</a></li><li><a href=http://facebook.com/narad.shrestha.9>Facebook profile</a></li><li><a href="http://plus.google.com/104542109955805873615?rel=author">Google+ profile</a></li></ul><p>他在IT领域拥有超过10年的丰富经验，其中包括各种Linux发行版，开源软件和网络工作。 Narad始终坚持与他人分享IT知识和自如地运用新技术。</p><hr><p>via: <a href=http://www.tecmint.com/dmesg-commands/>http://www.tecmint.com/dmesg-commands/</a></p><p>译者：<a href=https://github.com/cvsher>cvsher</a> 校对：<a href=https://github.com/carolinewuyan>Caroline</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/dmesg/ rel=tag>dmesg</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4/ rel=tag>命令</a></li><li class=tags__item><a class="tags__link btn" href=/tags/linux/ rel=tag>Linux</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

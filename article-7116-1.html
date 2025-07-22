@@ -1,0 +1,133 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 FreeBSD 10.2 上安装使用 Nginx 的 Ghost - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 FreeBSD 10.2 上安装使用 Nginx 的 Ghost"><meta property="og:description" content="Ghost 是使用 Node.js 编写的博客平台。它不仅开源，而且有很漂亮的界面设计、对用户友好并且免费。它允许你快速地在网络上发布内容，或者创建你的混合网站。"><meta property="og:type" content="article"><meta property="og:url" content="/article-7116-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-03-17T08:35:00+00:00"><meta property="article:modified_time" content="2016-03-17T08:35:00+00:00"><meta itemprop=name content="如何在 FreeBSD 10.2 上安装使用 Nginx 的 Ghost"><meta itemprop=description content="Ghost 是使用 Node.js 编写的博客平台。它不仅开源，而且有很漂亮的界面设计、对用户友好并且免费。它允许你快速地在网络上发布内容，或者创建你的混合网站。"><meta itemprop=datePublished content="2016-03-17T08:35:00+00:00"><meta itemprop=dateModified content="2016-03-17T08:35:00+00:00"><meta itemprop=wordCount content="625"><meta itemprop=keywords content="ghost,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 FreeBSD 10.2 上安装使用 Nginx 的 Ghost</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-03-17T08:35:00Z>March 17, 2016</time></div></div></header><div class="content post__content clearfix"><p>Node.js 是用于开发服务器端应用程序的开源的运行时环境。Node.js 应用使用 JavaScript 编写，能在任何有 Node.js 运行时的服务器上运行。它跨平台支持 Linux、Windows、OSX、IBM AIX，也包括 FreeBSD。Node.js 是 Ryan Dahl 以及在 Joyent 工作的其他开发者于 2009 年创建的。它的设计目标就是构建可扩展的网络应用程序。</p><p>Ghost 是使用 Node.js 编写的博客平台。它不仅开源，而且有很漂亮的界面设计、对用户友好并且免费。它允许你快速地在网络上发布内容，或者创建你的混合网站。</p><p><img src=/data/attachment/album/201603/16/203846s60trc50g0gdye6m.png alt></p><p>在这篇指南中我们会在 FreeBSD 上安装使用 Nginx 作为 web 服务器的 Ghost。我们会在 FreeBSD 10.2 上安装 Node.js、Npm、nginx 和 sqlite3。</p><h3 id=第一步---安装-nodejs-npm-和-sqlite3>第一步 - 安装 Node.js npm 和 Sqlite3</h3><p>如果你想在你的服务器上运行 ghost，你必须安装 node.js。在这一部分，我们会从 freebsd 移植软件库中安装 node.js，请进入库目录 &ldquo;/usr/ports/www/node&rdquo; 并通过运行命令 &ldquo;<strong>make</strong>&rdquo; 安装。</p><pre tabindex=0><code>cd /usr/ports/www/node
+make install clean
+</code></pre><p>如果你已经安装了 node.js，那就进入到 npm 目录并安装它。<strong>npm</strong> 是用于安装、发布和管理 node 程序的软件包管理器。</p><pre tabindex=0><code>cd /usr/ports/www/npm/
+make install clean
+</code></pre><p>下一步，安装 sqlite3。默认情况下 ghost 使用 sqlite3 作为数据库系统，但它也支持 mysql/mariadb 和 postgresql。我们会使用 sqlite3 作为默认数据库。</p><pre tabindex=0><code>cd /usr/ports/databases/sqlite3/
+make install clean
+</code></pre><p>如果安装完了所有软件，还有检查 node.js 和 npm 的版本：</p><pre tabindex=0><code>node --version
+v0.12.6
+
+npm --version
+2.11.3
+
+sqlite3 --version
+3.8.10.2
+</code></pre><p><img src=/data/attachment/album/201603/16/203852mpnpagnarn4gz1li.png alt="node 和 npm 版本"></p><h3 id=第二步---添加-ghost-用户>第二步 - 添加 Ghost 用户</h3><p>我们会以普通用户 &ldquo;<strong>ghost</strong>&rdquo; 身份安装和运行 ghost。用 &ldquo;adduser&rdquo; 命令添加新用户：</p><pre tabindex=0><code>adduser ghost
+FILL With Your INFO
+</code></pre><p><img src=/data/attachment/album/201603/16/203856ailxrj1l3jajrmi6.png alt="添加用户 Ghost"></p><h3 id=第三步---安装-ghost>第三步 - 安装 Ghost</h3><p>我们会把 ghost 安装到 &ldquo;<strong>/var/www/</strong>&rdquo; 目录，首先新建目录然后进入到安装目录：</p><pre tabindex=0><code>mkdir -p /var/www/
+cd /var/www/
+</code></pre><p>用 wget 命令下载最新版本的 ghost：</p><pre tabindex=0><code>wget --no-check-certificate https://ghost.org/zip/ghost-latest.zip
+</code></pre><p>把它解压到 &ldquo;<strong>ghost</strong>&rdquo; 目录：</p><pre tabindex=0><code>unzip -d ghost ghost-latest.zip
+</code></pre><p>下一步，更改属主为 &ldquo;<strong>ghost</strong>"，我们会以这个用户安装和运行它。</p><pre tabindex=0><code>chown -R ghost:ghost ghost/
+</code></pre><p>都做完了的话，通过输入以下命令切换到 &ldquo;<strong>ghost</strong>&rdquo; 用户：</p><pre tabindex=0><code>su - ghost
+</code></pre><p>然后进入到安装目录&rdquo;/var/www/ghost/"：</p><pre tabindex=0><code>cd /var/www/ghost/
+</code></pre><p>在安装 ghost 之前，我们需要为 node.js 安装 sqlite3 模块，用 npm 命令安装：</p><pre tabindex=0><code>setenv CXX c++ ; npm install sqlite3 --sqlite=/usr/local
+</code></pre><p><strong>注意： 以 “ghost” 用户运行，而不是 root 用户。</strong></p><p>现在，我们准备好安装 ghost 了，用 npm 命令安装：</p><pre tabindex=0><code>npm install --production
+</code></pre><p>下一步，复制配置文件 &ldquo;config.example.js&rdquo; 为 &ldquo;<strong>config.js</strong>"，用 nano 编辑器编辑：</p><pre tabindex=0><code>cp config.example.js config.js
+nano -c config.js
+</code></pre><p>更改 server 模块的第 25 行：</p><pre tabindex=0><code>host: &#39;0.0.0.0&#39;,
+</code></pre><p>保存并退出。</p><p>现在用下面的命令运行 ghost：</p><pre tabindex=0><code>npm start --production
+</code></pre><p>通过访问服务器 ip 和 2368 号端口验证一下。</p><p><img src=/data/attachment/album/201603/16/203858vawrwpwv667r7z7e.png alt="Ghost 安装完成"></p><p>以 “ghost” 用户在 &ldquo;/var/www/ghost&rdquo; 目录安装了 ghost。</p><h3 id=第四步---作为-freebsd-服务运行-ghost>第四步 - 作为 FreeBSD 服务运行 Ghost</h3><p>要在 freebsd 上以服务形式运行应用，你需要在 rc.d 目录添加脚本。我们会在 &ldquo;<strong>/usr/local/etc/rc.d/</strong>&rdquo; 目录为 ghost 创建新的服务脚本。</p><p>在创建服务脚本之前，为了以服务形式运行 ghost，我们需要安装一个 node.js 模块，用 npm 命令以 <strong>sudo/root</strong> 权限安装 forever 模块：</p><pre tabindex=0><code>npm install forever -g
+</code></pre><p>现在进入到 rc.d 目录并创建名为 ghost 的新文件：</p><pre tabindex=0><code>cd /usr/local/etc/rc.d/
+nano -c ghost
+</code></pre><p>粘贴下面的服务脚本：</p><pre tabindex=0><code>#!/bin/sh
+
+# PROVIDE: ghost
+# KEYWORD: shutdown
+PATH=&#34;/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin&#34;
+
+. /etc/rc.subr
+
+name=&#34;ghost&#34;
+rcvar=&#34;ghost_enable&#34;
+extra_commands=&#34;status&#34;
+
+load_rc_config ghost
+: ${ghost_enable:=&#34;NO&#34;}
+
+status_cmd=&#34;ghost_status&#34;
+start_cmd=&#34;ghost_start&#34;
+stop_cmd=&#34;ghost_stop&#34;
+restart_cmd=&#34;ghost_restart&#34;
+
+ghost=&#34;/var/www/ghost&#34;
+log=&#34;/var/log/ghost/ghost.log&#34;
+ghost_start() {
+sudo -u ghost sh -c &#34;cd $ghost &amp;&amp; NODE_ENV=production forever start -al $log index.js&#34;
+}
+
+ghost_stop() {
+sudo -u ghost sh -c &#34;cd $ghost &amp;&amp; NODE_ENV=production forever stop index.js&#34;
+}
+
+ghost_status() {
+sudo -u ghost sh -c &#34;NODE_ENV=production forever list&#34;
+}
+
+ghost_restart() {
+ghost_stop;
+ghost_start;
+}
+
+run_rc_command &#34;$1&#34;
+</code></pre><p>保存并退出。</p><p>下一步，给 ghost 服务脚本添加可执行权限：</p><pre tabindex=0><code>chmod +x ghost
+</code></pre><p>为 ghost 日志创建新的目录和文件，并把属主修改为 ghost 用户：</p><pre tabindex=0><code>mkdir -p /var/www/ghost/
+touch /var/www/ghost/ghost.log
+chown -R /var/www/ghost/
+</code></pre><p>最后，如果你想运行 ghost 服务，你需要用 sysrc 命令添加 ghost 服务到开机启动应用程序：</p><pre tabindex=0><code>sysrc ghost_enable=yes
+</code></pre><p>用以下命令启动 ghost：</p><pre tabindex=0><code>service ghost start
+</code></pre><p>其它命令：</p><pre tabindex=0><code>service ghost stop
+service ghost status
+service ghost restart
+</code></pre><p><img src=/data/attachment/album/201603/16/203859c2ilg5s5kjlj3ivj.png alt="Ghost 服务命令"></p><h3 id=第五步---为-ghost-安装和配置-nginx>第五步 - 为 Ghost 安装和配置 Nginx</h3><p>默认情况下，ghost 会以独立模式运行，你可以不用 Nginx、apache 或 IIS web 服务器直接运行它。但在这篇指南中我们会安装和配置 nginx 和 ghost 一起使用。</p><p>用 pkg 命令从 freebsd 库中安装 nginx：</p><pre tabindex=0><code>pkg install nginx
+</code></pre><p>下一步，进入 nginx 配置目录并为 virtualhost 配置创建新的目录。</p><pre tabindex=0><code>cd /usr/local/etc/nginx/
+mkdir virtualhost/
+</code></pre><p>进入 virtualhost 目录，用 nano 编辑器创建名为 ghost.conf 的新文件：</p><pre tabindex=0><code>cd virtualhost/
+nano -c ghost.conf
+</code></pre><p>粘贴下面的 virtualhost 配置：</p><pre tabindex=0><code>server {
+listen 80;
+
+#Your Domain
+server_name ghost.me;
+
+location ~* \.(?:ico|css|js|gif|jpe?g|png|ttf|woff)$ {
+access_log off;
+expires 30d;
+add_header Pragma public;
+add_header Cache-Control &#34;public, mustrevalidate, proxy-revalidate&#34;;
+proxy_pass http://127.0.0.1:2368;
+}
+
+location / {
+add_header X-XSS-Protection &#34;1; mode=block&#34;;
+add_header Cache-Control &#34;public, max-age=0&#34;;
+add_header Content-Security-Policy &#34;script-src &#39;self&#39; ; font-src &#39;self&#39; ; connect-src &#39;self&#39; ; block-all-mixed-content; reflected-xss block; referrer no-referrer&#34;;
+add_header X-Content-Type-Options nosniff;
+add_header X-Frame-Options DENY;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header Host $http_host;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_pass http://127.0.0.1:2368;
+}
+
+location = /robots.txt { access_log off; log_not_found off; }
+location = /favicon.ico { access_log off; log_not_found off; }
+
+location ~ /\.ht {
+deny all;
+}
+
+}
+</code></pre><p>保存并退出。</p><p>要启用 virtualhost 配置，你需要把那个文件添加到 <strong>nginx.conf</strong>。进入 nginx 配置目录并编辑 nginx.conf 文件：</p><pre tabindex=0><code>cd /usr/local/etc/nginx/
+nano -c nginx.conf
+</code></pre><p>在最后一行的前面，包含 virtualhost 配置目录：</p><pre tabindex=0><code>[......]
+
+include virtualhost/*.conf;
+
+}
+</code></pre><p>保存并退出。</p><p>用命令 &ldquo;<strong>nginx -t</strong>&rdquo; 测试 nginx 配置，如果没有错误，用 sysrc 添加 nginx 到开机启动：</p><pre tabindex=0><code>sysrc nginx_enable=yes
+</code></pre><p>并启动 nginx：</p><pre tabindex=0><code>service nginx start
+</code></pre><p>现在测试所有 nginx 和 virtualhost 配置。请打开你的浏览器并输入： ghost.me</p><p><img src=/data/attachment/album/201603/16/203901uyy11oid2ndz4yje.png alt="ghost.me 成功运行"></p><p>Ghost.me 正在成功运行。</p><p>如果你想要检查 nginx 服务器，可以使用 &ldquo;<strong>curl</strong>&rdquo; 命令。</p><p><img src=/data/attachment/album/201603/16/203903lhechzjkc3ec88ce.png alt="测试 ghost 和 nginx"></p><p>Ghost 正在 nginx 上运行。</p><h3 id=总结>总结</h3><p>Node.js 是 Ryan Dahl 为创建和开发可扩展服务器端应用程序创建的运行时环境。Ghost 是使用 node.js 编写的开源博客平台，它有漂亮的外观设计并且易于使用。默认情况下，ghost 是可以单独运行的 web 应用程序，并不需要类似 apache、nginx 或 IIS 之类的 web 服务器，但我们也可以和 web 服务器集成（在这篇指南中使用 Nginx）。Sqlite 是 ghost 默认使用的数据库，它还支持 msql/mariadb 和 postgresql。Ghost 能快速部署并且易于使用和配置。</p><hr><p>via: <a href=http://linoxide.com/linux-how-to/install-ghost-nginx-freebsd-10-2/>http://linoxide.com/linux-how-to/install-ghost-nginx-freebsd-10-2/</a></p><p>作者：<a href=http://linoxide.com/author/arulm/>Arul</a> 译者：<a href=http://mutouxiaogui.cn/blog/>ictlyh</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ghost/ rel=tag>ghost</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

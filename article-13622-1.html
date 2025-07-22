@@ -1,0 +1,54 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>编程基础：Java 中的输入和输出 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="编程基础：Java 中的输入和输出"><meta property="og:description" content="学习 Java 如何外理数据的读与写。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13622-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-07-27T10:19:01+00:00"><meta property="article:modified_time" content="2021-07-27T10:19:01+00:00"><meta itemprop=name content="编程基础：Java 中的输入和输出"><meta itemprop=description content="学习 Java 如何外理数据的读与写。"><meta itemprop=datePublished content="2021-07-27T10:19:01+00:00"><meta itemprop=dateModified content="2021-07-27T10:19:01+00:00"><meta itemprop=wordCount content="282"><meta itemprop=keywords content="Java,输入,输出,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>编程基础：Java 中的输入和输出</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-07-27T10:19:01Z>July 27, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>学习 Java 如何外理数据的读与写。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202107/27/101854by7yizpokqyo77kk.jpg alt title="Coffee beans and a cup of coffee"></p><p>当你写一个程序时，你的应用程序可能需要读取和写入存储在用户计算机上的文件。这在你想加载或存储配置选项，你需要创建日志文件，或你的用户想要保存工作以待后用的情况下是很常见的。每种语言处理这项任务的方式都有所不同。本文演示了如何用 Java 处理数据文件。</p><h3 id=安装-java>安装 Java</h3><p>不管你的计算机是什么平台，你都可以从 <a href=https://adoptopenjdk.net>AdoptOpenJDK</a> 安装 Java。这个网站提供安全和开源的 Java 构建。在 Linux 上，你的软件库中也可能找到 AdoptOpenJDK 的构建。</p><p>我建议你使用最新的长期支持（LTS）版本。最新的非 LTS 版本对希望尝试最新 Java 功能的开发者来说是最好的，但它很可能超过大多数用户所安装的版本 —— 要么是系统上默认安装的，要么是以前为其他 Java 应用安装的。使用 LTS 版本可以确保你与大多数用户所安装的版本保持一致。</p><p>一旦你安装好了 Java，就可以打开你最喜欢的文本编辑器并准备开始写代码了。你可能还想要研究一下 <a href=https://opensource.com/article/20/7/ide-java>Java 集成开发环境</a>。BlueJ 是新程序员的理想选择，而 Eclipse 和 Netbeans 对中级和有经验的编码者更友好。</p><h3 id=利用-java-读取文件>利用 Java 读取文件</h3><p>Java 使用 <code>File</code> 类来加载文件。</p><p>这个例子创建了一个叫 <code>Ingest</code> 的类来读取文件中数据。当你要在 Java 中打开一个文件时，你创建了一个 <code>Scanner</code> 对象，它可以逐行扫描你提供的文件。事实上，<code>Scanner</code> 与文本编辑器中的光标是相同的概念，这样你可以用 <code>Scanner</code> 的一些方法（如 <code>nextLine</code>）来控制这个“光标”以进行读写。</p><pre tabindex=0><code>import java.io.File;
+import java.util.Scanner;
+import java.io.FileNotFoundException;
+
+public class Ingest {
+  public static void main(String[] args) {
+   
+      try {
+          File myFile = new File(&#34;example.txt&#34;);
+          Scanner myScanner = new Scanner(myFile);
+          while (myScanner.hasNextLine()) {
+              String line = myScanner.nextLine();
+              System.out.println(line);
+          }
+          myScanner.close();
+      } catch (FileNotFoundException ex) {
+          ex.printStackTrace();  
+      } //try
+    } //main
+} //class
+</code></pre><p>这段代码首先在假设存在一个名为 <code>example.txt</code> 的文件的情况下创建了变量 <code>myfile</code>。如果该文件不存在，Java 就会“抛出一个异常”（如它所说的，这意味着它在你试图做的事情中发现了一个错误），这个异常是被非常特定的 <code>FileNotFoundException</code> 类所“捕获”。事实上，有一个专门的类来处理这个明确的错误，这说明这个错误是多么常见。</p><p>接下来，它创建了一个 <code>Scanner</code> 并将文件加载到其中。我把它叫做 <code>myScanner</code>，以区别于它的通用类模板。接着，一个 <code>while</code> 循环将 <code>myScanner</code> 逐行送入文件中，只要 <em>存在</em> 下一行。这就是 <code>hasNextLine</code> 方法的作用：它检测“光标”之后是否还有数据。你可以通过在文本编辑器中打开一个文件来模拟这个过程：你的光标从文件的第一行开始，你可以用键盘控制光标来向下扫描文件，直到你走完了所有的行。</p><p><code>while</code> 循环创建了一个变量 <code>line</code>，并将文件当前行的数据分配给它。然后将 <code>line</code> 的内容打印出来以提供反馈。一个更有用的程序可能会解析每一行的内容，从而提取它所包含的任何重要数据。</p><p>在这个过程结束时，关闭 <code>myScanner</code> 对象。</p><h3 id=运行代码>运行代码</h3><p>将你的代码保存到 <code>Ingest.java</code> 文件（这是一个 Java 惯例，将类名的首字母大写，并以类名来命名相应的文件）。如果你试图运行这个简单的应用程序，你可能会接收到一个错误信息，这是因为还没有 <code>example.txt</code> 文件供应用程序加载:</p><pre tabindex=0><code>$ java ./Ingest.java
+java.io.FileNotFoundException:
+example.txt (No such file or directory)
+</code></pre><p>正好可以编写一个将数据写入文件的 Java 应用程序，多么完美的时机！</p><h3 id=利用-java-将数据写入文件>利用 Java 将数据写入文件</h3><p>无论你是存储用户使用你的应用程序创建的数据，还是仅仅存储关于用户在应用程序中做了什么的元数据（例如，游戏保存或最近播放的歌曲），有很多很好的理由来存储数据供以后使用。在 Java 中，这是通过 <code>FileWriter</code> 类实现的，这次先打开一个文件，向其中写入数据，然后关闭该文件。</p><pre tabindex=0><code>import java.io.FileWriter;
+import java.io.IOException;
+
+public class Exgest {
+  public static void main(String[] args) {
+    try {
+        FileWriter myFileWriter = new FileWriter(&#34;example.txt&#34;, true);
+        myFileWriter.write(&#34;Hello world\n&#34;);
+        myFileWriter.close();
+    } catch (IOException ex) {
+        System.out.println(ex);
+    } // try
+  } // main
+}
+</code></pre><p>这个类的逻辑和流程与读取文件类似。但它不是一个 <code>Scanner</code>，而是以一个文件的名字为参数创建的一个 <code>FileWriter</code> 对象。<code>FileWriter</code> 语句末尾的 <code>true</code> 标志告诉 <code>FileWriter</code> 将文本 <em>追加</em> 到文件的末尾。要覆盖一个文件的内容，请移除 <code>true</code> 标志。</p><pre tabindex=0><code>`FileWriter myFileWriter = new FileWriter(&#34;example.txt&#34;, true);`
+</code></pre><p>因为我在向文件中写入纯文本，所以我在写入文件的数据（<code>Hello world</code>）的结尾处手动添加了换行符（<code>\n</code>）。</p><h3 id=试试代码>试试代码</h3><p>将这段代码保存到 <code>Exgest.java</code> 文件，遵循 Java 的惯例，使文件名为与类名相匹配。</p><p>既然你已经掌握了用 Java 创建和读取数据的方法，你可以按相反的顺序尝试运行你的新应用程序。</p><pre tabindex=0><code>$ java ./Exgest.java
+$ java ./Ingest.java
+Hello world
+$
+</code></pre><p>因为程序是把数据追加到文件末尾，所以你可以重复执行你的应用程序以多次写入数据，只要你想把更多的数据添加到你的文件中。</p><pre tabindex=0><code>$ java ./Exgest.java
+$ java ./Exgest.java
+$ java ./Exgest.java
+$ java ./Ingest.java
+Hello world
+Hello world
+Hello world
+$
+</code></pre><h3 id=java-和数据>Java 和数据</h3><p>你不会经常向文件中写入原始文本；事实上，你可能会使用一个其它的类库以写入特定的格式。例如，你可能使用 XML 类库来写复杂的数据，使用 INI 或 YAML 类库来写配置文件，或者使用各种专门类库来写二进制格式，如图像或音频。</p><p>更完整的信息，请参阅 <a href=https://access.redhat.com/documentation/en-us/openjdk/11/>OpenJDK 文档</a>。</p><hr><p>via: <a href=https://opensource.com/article/21/3/io-java>https://opensource.com/article/21/3/io-java</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/piaoshi>piaoshi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/java/ rel=tag>Java</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BE%93%E5%85%A5/ rel=tag>输入</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BE%93%E5%87%BA/ rel=tag>输出</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

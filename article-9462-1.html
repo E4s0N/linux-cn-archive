@@ -1,0 +1,51 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 上使用 NTP 保持精确的时间 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 上使用 NTP 保持精确的时间"><meta property="og:description" content="如何保持正确的时间，如何使用 NTP 和 systemd 让你的计算机在不滥用时间服务器的前提下保持同步。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9462-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-03-19T13:38:25+00:00"><meta property="article:modified_time" content="2018-03-19T13:38:25+00:00"><meta itemprop=name content="在 Linux 上使用 NTP 保持精确的时间"><meta itemprop=description content="如何保持正确的时间，如何使用 NTP 和 systemd 让你的计算机在不滥用时间服务器的前提下保持同步。"><meta itemprop=datePublished content="2018-03-19T13:38:25+00:00"><meta itemprop=dateModified content="2018-03-19T13:38:25+00:00"><meta itemprop=wordCount content="475"><meta itemprop=keywords content="NTP,时间,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 上使用 NTP 保持精确的时间</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-03-19T13:38:25Z>March 19, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201803/19/133828fjuejxe4geg4j2eg.jpg alt></p><p>如何保持正确的时间，如何使用 NTP 和 systemd 让你的计算机在不滥用时间服务器的前提下保持同步。</p><h3 id=它的时间是多少>它的时间是多少？</h3><p>让 Linux 来告诉你时间的时候，它是很奇怪的。你可能认为是使用 <code>time</code> 命令来告诉你时间，其实并不是，因为 <code>time</code> 只是一个测量一个进程运行了多少时间的计时器。为得到时间，你需要运行的是 <code>date</code> 命令，你想查看更多的日期，你可以运行 <code>cal</code> 命令。文件上的时间戳也是一个容易混淆的地方，因为根据你的发行版默认情况不同，它一般有两种不同的显示方法。下面是来自 Ubuntu 16.04 LTS 的示例：</p><pre tabindex=0><code>$ ls -l
+drwxrwxr-x 5 carla carla 4096 Mar 27 2017 stuff
+drwxrwxr-x 2 carla carla 4096 Dec 8 11:32 things
+-rw-rw-r-- 1 carla carla 626052 Nov 21 12:07 fatpdf.pdf
+-rw-rw-r-- 1 carla carla 2781 Apr 18 2017 oddlots.txt
+</code></pre><p>有些显示年，有些显示时间，这样的方式让你的文件更混乱。GNU 默认的情况是，如果你的文件在六个月以内，则显示时间而不是年。我想这样做可能是有原因的。如果你的 Linux 是这样的，尝试用 <code>ls -l --time-style=long-iso</code> 命令，让时间戳用同一种方式去显示，按字母顺序排序。请查阅 <a href=https://www.linux.com/learn/how-change-linux-date-and-time-simple-commands>如何更改 Linux 的日期和时间：简单的命令</a> 去学习 Linux 上管理时间的各种方法。</p><h3 id=检查当前设置>检查当前设置</h3><p>NTP —— 网络时间协议，它是保持计算机正确时间的老式方法。<code>ntpd</code> 是 NTP 守护程序，它通过周期性地查询公共时间服务器来按需调整你的计算机时间。它是一个简单的、轻量级的协议，使用它的基本功能时设置非常容易。systemd 通过使用 <code>systemd-timesyncd.service</code> 已经越俎代庖地 “干了 NTP 的活”，它可以用作 <code>ntpd</code> 的客户端。</p><p>在我们开始与 NTP “打交道” 之前，先花一些时间来了检查一下当前的时间设置是否正确。</p><p>你的系统上（至少）有两个时钟：系统时间 —— 它由 Linux 内核管理，第二个是你的主板上的硬件时钟，它也称为实时时钟（RTC）。当你进入系统的 BIOS 时，你可以看到你的硬件时钟的时间，你也可以去改变它的设置。当你安装一个新的 Linux 时，在一些图形化的时间管理器中，你会被询问是否设置你的 RTC 为 UTC（ 世界标准时间 Coordinated Universal Time ）时区，因为所有的时区和夏令时都是基于 UTC 的。你可以使用 <code>hwclock</code> 命令去检查：</p><pre tabindex=0><code>$ sudo hwclock --debug
+hwclock from util-linux 2.27.1
+Using the /dev interface to the clock.
+Hardware clock is on UTC time
+Assuming hardware clock is kept in UTC time.
+Waiting for clock tick...
+...got clock tick
+Time read from Hardware Clock: 2018/01/22 22:14:31
+Hw clock time : 2018/01/22 22:14:31 = 1516659271 seconds since 1969
+Time since last adjustment is 1516659271 seconds
+Calculated Hardware Clock drift is 0.000000 seconds
+Mon 22 Jan 2018 02:14:30 PM PST .202760 seconds
+</code></pre><p><code>Hardware clock is on UTC time</code> 表明了你的计算机的 RTC 是使用 UTC 时间的，虽然它把该时间转换为你的本地时间。如果它被设置为本地时间，它将显示 <code>Hardware clock is on local time</code>。</p><p>你应该有一个 <code>/etc/adjtime</code> 文件。如果没有的话，使用如下命令同步你的 RTC 为系统时间，</p><pre tabindex=0><code>$ sudo hwclock -w
+</code></pre><p>这个命令将生成该文件，内容看起来类似如下：</p><pre tabindex=0><code>$ cat /etc/adjtime
+0.000000 1516661953 0.000000
+1516661953
+UTC
+</code></pre><p>新发明的 systemd 方式是去运行 <code>timedatectl</code> 命令，运行它不需要 root 权限：</p><pre tabindex=0><code>$ timedatectl
+ Local time: Mon 2018-01-22 14:17:51 PST
+ Universal time: Mon 2018-01-22 22:17:51 UTC
+ RTC time: Mon 2018-01-22 22:17:51
+ Time zone: America/Los_Angeles (PST, -0800)
+ Network time on: yes
+NTP synchronized: yes
+ RTC in local TZ: no
+</code></pre><p><code>RTC in local TZ: no</code> 表明它使用 UTC 时间。那么怎么改成使用本地时间？这里有许多种方法可以做到。最简单的方法是使用一个图形配置工具，比如像 openSUSE 中的 YaST。你也可使用 <code>timedatectl</code>：</p><pre tabindex=0><code>$ timedatectl set-local-rtc 0
+</code></pre><p>或者编辑 <code>/etc/adjtime</code>，将 <code>UTC</code> 替换为 <code>LOCAL</code>。</p><h3 id=systemd-timesyncd-客户端>systemd-timesyncd 客户端</h3><p>现在，我已经累了，但是我们刚到非常精彩的部分。谁能想到计时如此复杂？我们甚至还没有了解到它的皮毛；阅读 <code>man 8 hwclock</code> 去了解你的计算机如何保持时间的详细内容。</p><p>systemd 提供了 <code>systemd-timesyncd.service</code> 客户端，它可以查询远程时间服务器并调整你的本地系统时间。在 <code>/etc/systemd/timesyncd.conf</code> 中配置你的（时间）服务器。大多数 Linux 发行版都提供了一个默认配置，它指向他们维护的时间服务器上，比如，以下是 Fedora 的：</p><pre tabindex=0><code>[Time]
+#NTP=
+#FallbackNTP=0.fedora.pool.ntp.org 1.fedora.pool.ntp.org
+</code></pre><p>你可以输入你希望使用的其它时间服务器，比如你自己的本地 NTP 服务器，在 <code>NTP=</code> 行上输入一个以空格分隔的服务器列表。（别忘了取消这一行的注释）<code>NTP=</code> 行上的任何内容都将覆盖掉 <code>FallbackNTP</code> 行上的配置项。</p><p>如果你不想使用 systemd 呢？那么，你将需要 NTP 就行。</p><h3 id=配置-ntp-服务器和客户端>配置 NTP 服务器和客户端</h3><p>配置你自己的局域网 NTP 服务器是一个非常好的实践，这样你的网内计算机就不需要不停查询公共 NTP 服务器。在大多数 Linux 上的 NTP 都来自 <code>ntp</code> 包，它们大多都提供 <code>/etc/ntp.conf</code> 文件去配置时间服务器。查阅 <a href=http://support.ntp.org/bin/view/Servers/NTPPoolServers>NTP 时间服务器池</a> 去找到你所在的区域的合适的 NTP 服务器池。然后在你的 <code>/etc/ntp.conf</code> 中输入 4 - 5 个服务器，每个服务器用单独的一行：</p><pre tabindex=0><code>driftfile /var/ntp.drift
+logfile /var/log/ntp.log
+server 0.europe.pool.ntp.org
+server 1.europe.pool.ntp.org
+server 2.europe.pool.ntp.org
+server 3.europe.pool.ntp.org
+</code></pre><p><code>driftfile</code> 告诉 <code>ntpd</code> 它需要保存用于启动时使用时间服务器快速同步你的系统时钟的信息。而日志也将保存在他们自己指定的目录中，而不是转储到 syslog 中。如果你的 Linux 发行版默认提供了这些文件，请使用它们。</p><p>现在去启动守护程序；在大多数主流的 Linux 中它的命令是 <code>sudo systemctl start ntpd</code>。让它运行几分钟之后，我们再次去检查它的状态：</p><pre tabindex=0><code>$ ntpq -p
+ remote refid st t when poll reach delay offset jitter
+==============================================================
++dev.smatwebdesi 192.168.194.89 3 u 25 64 37 92.456 -6.395 18.530
+*chl.la 127.67.113.92 2 u 23 64 37 75.175 8.820 8.230
++four0.fairy.mat 35.73.197.144 2 u 22 64 37 116.272 -10.033 40.151
+-195.21.152.161 195.66.241.2 2 u 27 64 37 107.559 1.822 27.346
+</code></pre><p>我不知道这些内容是什么意思，但重要的是，你的守护程序已经与时间服务器开始对话了，而这正是我们所需要的。你可以去运行 <code>sudo systemctl enable ntpd</code> 命令，永久启用它。如果你的 Linux 没有使用 systemd，那么，给你留下的家庭作业就是找出如何去运行 <code>ntpd</code>。</p><p>现在，你可以在你的局域网中的其它计算机上设置 <code>systemd-timesyncd</code>，这样它们就可以使用你的本地 NTP 服务器了，或者，在它们上面安装 NTP，然后在它们的 <code>/etc/ntp.conf</code> 上输入你的本地 NTP 服务器。</p><p>NTP 服务器会受到攻击，而且需求在不断增加。你可以通过运行你自己的公共 NTP 服务器来提供帮助。下周我们将学习如何运行你自己的公共服务器。</p><p>通过来自 Linux 基金会和 edX 的免费课程 <a href=https://training.linuxfoundation.org/linux-courses/system-administration-training/introduction-to-linux>“Linux 入门”</a> 来学习更多 Linux 的知识。</p><hr><p>via: <a href=https://www.linux.com/learn/intro-to-linux/2018/1/keep-accurate-time-linux-ntp>https://www.linux.com/learn/intro-to-linux/2018/1/keep-accurate-time-linux-ntp</a></p><p>作者：<a href=https://www.linux.com/users/cschroder>CARLA SCHRODER</a> 译者：<a href=https://github.com/qhwdw>qhwdw</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ntp/ rel=tag>NTP</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%97%B6%E9%97%B4/ rel=tag>时间</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

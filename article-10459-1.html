@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Flatpak 新手指南 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Flatpak 新手指南"><meta property="og:description" content="Flatpak 作为分发桌面应用的新框架可以让开发者完全摆脱这些负担。开发者只需构建一个 Flatpak app 就可以在多种发行版上安装使用。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10459-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-01-20T11:31:08+00:00"><meta property="article:modified_time" content="2019-01-20T11:31:08+00:00"><meta itemprop=name content="Flatpak 新手指南"><meta itemprop=description content="Flatpak 作为分发桌面应用的新框架可以让开发者完全摆脱这些负担。开发者只需构建一个 Flatpak app 就可以在多种发行版上安装使用。"><meta itemprop=datePublished content="2019-01-20T11:31:08+00:00"><meta itemprop=dateModified content="2019-01-20T11:31:08+00:00"><meta itemprop=wordCount content="483"><meta itemprop=keywords content="Flatpak,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Flatpak 新手指南</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-01-20T11:31:08Z>January 20, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201901/20/113109d3443v33qv66vb4y.jpg alt></p><p>以前，我们介绍 Ubuntu 推出的 <a href=http://www.ostechnix.com/introduction-ubuntus-snap-packages/>Snaps</a>。Snaps 是由 Canonical 公司为 Ubuntu 开发的，并随后移植到其他的 Linux 发行版，如 Arch、Gentoo、Fedora 等等。由于一个 snap 包中含有软件的二进制文件和其所需的所有依赖和库，所以可以在无视软件版本、在任意 Linux 发行版上安装软件。和 Snaps 类似，还有一个名为 Flatpak 的工具。也许你已经知道，为不同的 Linux 发行版打包并分发应用是一件多么费时又复杂的工作，因为不同的 Linux 发行版的库不同，库的版本也不同。现在，Flatpak 作为分发桌面应用的新框架可以让开发者完全摆脱这些负担。开发者只需构建一个 Flatpak app 就可以在多种发行版上安装使用。这真是又酷又棒！</p><p>用户也完全不用担心库和依赖的问题了，所有的东西都和 app 打包在了一起。更重要的是 Flatpak app 们都自带沙箱，而且与宿主操作系统的其他部分隔离。对了，Flatpak 还有一个很棒的特性，它允许用户在同一个系统中安装同一应用的多个版本，例如 VLC 播放器的 2.1 版、2.2 版、2.3 版。这使开发者测试同一个软件的多个版本变得更加方便。</p><p>在本文中，我们将指导你如何在 GNU/Linux 中安装 Flatpak。</p><h3 id=安装-flatpak>安装 Flatpak</h3><p>Flatpak 可以在大多数的主流 Linux 发行版上安装使用，如 Arch Linux、Debian、Fedora、Gentoo、Red Hat、Linux Mint、openSUSE、Solus、Mageia 还有 Ubuntu。</p><p>在 Arch Linux 上，使用这一条命令来安装 Flatpak：</p><pre tabindex=0><code>$ sudo pacman -S flatpak
+</code></pre><p>对于 Debian 用户，Flatpak 被收录进 Stretch 或之后版本的默认软件源中。要安装 Flatpak，直接执行：</p><pre tabindex=0><code>$ sudo apt install flatpak
+</code></pre><p>对于 Fedora 用户，Flatpak 是发行版默认安装的软件。你可以直接跳过这一步。</p><p>如果因为某种原因没有安装的话，可以执行：</p><pre tabindex=0><code>$ sudo dnf install flatpak
+</code></pre><p>对于 RHEL 7 用户，安装 Flatpak 的命令为：</p><pre tabindex=0><code>$ sudo yum install flatpak
+</code></pre><p>如果你在使用 Linux Mint 18.3，那么 Flatpat 也随系统默认安装，所以跳过这一步。</p><p>在 openSUSE Tumbleweed 中，使用 Zypper 包管理来安装 Flatpak：</p><pre tabindex=0><code>$ sudo zypper install flatpak
+</code></pre><p>而 Ubuntu 需要添加下面的软件源再安装 Flatpak，命令如下：</p><pre tabindex=0><code>$ sudo add-apt-repository ppa:alexlarsson/flatpak
+$ sudo apt update
+$ sudo apt install flatpak
+</code></pre><p>Gnome 提供了一个 Flatpak 插件，安装它就可以使用图形界面来安装 Flatpak app 了。插件的安装命令为：</p><pre tabindex=0><code>$ sudo apt install gnome-software-plugin-flatpak
+</code></pre><p>如果你是用发行版没有在上述的说明里，请你参考官方<a href=https://flatpak.org/setup/>安装指南</a>。</p><h3 id=开始使用-flatpak>开始使用 Flatpak</h3><p>有不少流行应用都支持 Flatpak 安装，如 Gimp、Kdenlive、Steam、Spotify、Visual Sudio Code 等。</p><p>下面让我来一起学习 flatpak 的基本操作命令。</p><p>首先，我们需要添加远程仓库。</p><h4 id=添加软件仓库>添加软件仓库</h4><p><strong>添加 Flathub 仓库：</strong></p><p><strong>Flathub</strong> 是一个包含了几乎所有 flatpak 应用的仓库。运行这条命令来启用它：</p><pre tabindex=0><code>$ sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+</code></pre><p>对于流行应用来说，Flathub 已经可以满足需求。如果你想试试 GNOME 应用的话，可以添加 GNOME 的仓库。</p><p><strong>添加 GNOME 仓库：</strong></p><p>GNOME 仓库包括了所有的 GNOME 核心应用，它提供了两种版本： 稳定版 stable 和 每日构建版 nightly 。</p><p>使用下面的命令来添加 GNOME 稳定版仓库：</p><pre tabindex=0><code>$ wget https://sdk.gnome.org/keys/gnome-sdk.gpg
+$ sudo flatpak remote-add --gpg-import=gnome-sdk.gpg --if-not-exists gnome-apps https://sdk.gnome.org/repo-apps/
+</code></pre><p>需要注意的是，GNOME 稳定版仓库中的应用需要 <strong>3.20 版本的 org.gnome.Platform 运行时环境</strong>。</p><p>安装稳定版运行时环境，请执行：</p><pre tabindex=0><code>$ sudo flatpak remote-add --gpg-import=gnome-sdk.gpg gnome https://sdk.gnome.org/repo/
+</code></pre><p>如果想使用每日构建版的 GNOME 仓库，使用如下的命令：</p><pre tabindex=0><code>$ wget https://sdk.gnome.org/nightly/keys/nightly.gpg
+$ sudo flatpak remote-add --gpg-import=nightly.gpg --if-not-exists gnome-nightly-apps https://sdk.gnome.org/nightly/repo-apps/
+</code></pre><p>同样，每日构建版的 GNOME 仓库也需要 <strong>org.gnome.Platform 运行时环境的每日构建版本</strong>。</p><p>执行下面的命令安装每日构建版的运行时环境：</p><pre tabindex=0><code>$ sudo flatpak remote-add --gpg-import=nightly.gpg gnome-nightly https://sdk.gnome.org/nightly/repo/
+</code></pre><h4 id=查看软件仓库>查看软件仓库</h4><p>要查看已经添加的软件仓库，执行下面的命令：</p><pre tabindex=0><code>$ flatpak remotes
+Name Options
+flathub system
+gnome system
+gnome-apps system
+gnome-nightly system
+gnome-nightly-apps system
+</code></pre><p>如你所见，上述命令会列出你添加到系统中的软件仓库。此外，执行结果还表明了软件仓库的配置是 用户级 per-user 还是 系统级 system-wide 。</p><h4 id=删除软件仓库>删除软件仓库</h4><p>要删除软件仓库，例如 flathub，用这条命令：</p><pre tabindex=0><code>$ sudo flatpak remote-delete flathub
+</code></pre><p>这里的 flathub 是软件仓库的名字。</p><h4 id=安装-flatpak-应用>安装 Flatpak 应用</h4><p>这一节，我们将学习如何安装 flatpak 应用。</p><p>要安装一个应用，只要一条命令就能完成：</p><pre tabindex=0><code>$ sudo flatpak install flathub com.spotify.Client
+</code></pre><p>所有的稳定版 GNOME 软件仓库中的应用，都使用“stable”作为版本名。</p><p>例如，想从稳定版 GNOME 软件仓库中安装稳定版 Evince，就执行：</p><pre tabindex=0><code>$ sudo flatpak install gnome-apps org.gnome.Evince stable
+</code></pre><p>所有的每日构建版 GNOME 仓库中的应用，都使用“master”作为版本名。</p><p>例如，要从每日构建版 GNOME 软件仓库中安装 gedit 的每次构建版本，就执行：</p><pre tabindex=0><code>$ sudo flatpak install gnome-nightly-apps org.gnome.gedit master
+</code></pre><p>如果不希望应用安装在 系统级 system-wide ，而只安装在 用户级 per-user ，那么你可以这样安装软件：</p><pre tabindex=0><code>$ flatpak install --user &lt;name-of-app&gt;
+</code></pre><p>所有的应用都会被存储在 <code>$HOME/.var/app/</code> 目录下.</p><pre tabindex=0><code>$ ls $HOME/.var/app/
+com.spotify.Client
+</code></pre><h4 id=执行-flatpak-应用>执行 Flatpak 应用</h4><p>你可以直接使用 应用启动器 application launcher 来运行已安装的 Flatpak 应用。如果你想从命令行启动的话，以 Spotify 为例，执行下面的命令：</p><pre tabindex=0><code>$ flatpak run com.spotify.Client
+</code></pre><h4 id=列出已安装的-flatpak-应用>列出已安装的 Flatpak 应用</h4><p>要查看已安装的应用程序和运行时环境，执行：</p><pre tabindex=0><code>$ flatpak list
+</code></pre><p>想只查看已安装的应用，那就用这条命令：</p><pre tabindex=0><code>$ flatpak list --app
+</code></pre><p>如果想查询已添加的软件仓库中的可安装程序和可安装的运行时环境，使用命令：</p><pre tabindex=0><code>$ flatpak remote-ls
+</code></pre><p>只列出可安装的应用程序的命令是：</p><pre tabindex=0><code>$ flatpak remote-ls --app
+</code></pre><p>查询指定远程仓库中的所有可安装的应用程序和运行时环境，这里以 gnome-apps 为例，执行命令：</p><pre tabindex=0><code>$ flatpak remote-ls gnome-apps
+</code></pre><p>只列出可安装的应用程序，这里以 flathub 为例：</p><pre tabindex=0><code>$ flatpak remote-ls flathub --app
+</code></pre><h4 id=更新应用程序>更新应用程序</h4><p>更新所有的 Flatpak 应用程序，执行：</p><pre tabindex=0><code>$ flatpak update
+</code></pre><p>更新指定的 Flatpak 应用程序，执行：</p><pre tabindex=0><code>$ flatpak update com.spotify.Client
+</code></pre><h4 id=获取应用详情>获取应用详情</h4><p>执行下面的命令来查看已安装应用程序的详细信息：</p><pre tabindex=0><code>$ flatpak info io.github.mmstick.FontFinder
+</code></pre><p>输出样例：</p><pre tabindex=0><code>Ref: app/io.github.mmstick.FontFinder/x86_64/stable
+ID: io.github.mmstick.FontFinder
+Arch: x86_64
+Branch: stable
+Origin: flathub
+Date: 2018-04-11 15:10:31 +0000
+Subject: Workaround appstream issues (391ef7f5)
+Commit: 07164e84148c9fc8b0a2a263c8a468a5355b89061b43e32d95008fc5dc4988f4
+Parent: dbff9150fce9fdfbc53d27e82965010805f16491ec7aa1aa76bf24ec1882d683
+Location: /var/lib/flatpak/app/io.github.mmstick.FontFinder/x86_64/stable/07164e84148c9fc8b0a2a263c8a468a5355b89061b43e32d95008fc5dc4988f4
+Installed size: 2.5 MB
+Runtime: org.gnome.Platform/x86_64/3.28
+</code></pre><h4 id=删除应用程序>删除应用程序</h4><p>要删除一个 Flatpak 应用程序，这里以 spotify 为例，执行：</p><pre tabindex=0><code>$ sudo flatpak uninstall com.spotify.Client
+</code></pre><p>如果你需要更多信息，可以参考 Flatpak 的帮助。</p><pre tabindex=0><code>$ flatpak --help
+</code></pre><p>到此，希望你对 Flatpak 有了一些基础了解。</p><p>如果你觉得这篇指南有些帮助，请在你的社交媒体上分享它来支持我们。</p><p>稍后还有更多精彩内容，敬请期待~</p><hr><p>via: <a href=https://www.ostechnix.com/flatpak-new-framework-desktop-applications-linux/>https://www.ostechnix.com/flatpak-new-framework-desktop-applications-linux/</a></p><p>作者：<a href=https://www.ostechnix.com/author/sk/>SK</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wwhio>wwhio</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/flatpak/ rel=tag>Flatpak</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

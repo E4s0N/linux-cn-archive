@@ -1,0 +1,106 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Sensu 监控入门 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Sensu 监控入门"><meta property="og:description" content="这个开源解决方案可以简单而有效地监控你的云基础设施。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10783-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-04-27T13:17:00+00:00"><meta property="article:modified_time" content="2019-04-27T13:17:00+00:00"><meta itemprop=name content="Sensu 监控入门"><meta itemprop=description content="这个开源解决方案可以简单而有效地监控你的云基础设施。"><meta itemprop=datePublished content="2019-04-27T13:17:00+00:00"><meta itemprop=dateModified content="2019-04-27T13:17:00+00:00"><meta itemprop=wordCount content="512"><meta itemprop=keywords content="监控,Sensu,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Sensu 监控入门</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-04-27T13:17:00Z>April 27, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>这个开源解决方案可以简单而有效地监控你的云基础设施。</p></blockquote><p><img src=/data/attachment/album/201904/27/131642n3ay23qfiutcqy2s.jpg alt></p><p>Sensu 是一个开源的基础设施和应用程序监控解决方案，它可以监控服务器、相关服务和应用程序健康状况，并通过第三方集成发送警报和通知。Sensu 用 Ruby 编写，可以使用 <a href=https://www.rabbitmq.com/>RabbitMQ</a> 或 <a href=https://redis.io/topics/config>Redis</a> 来处理消息，它使用 Redis 来存储数据。</p><p>如果你想以一种简单而有效的方式监控云基础设施，Sensu 是一个不错的选择。它可以与你的组织已经使用的许多现代 DevOps 组件集成，比如 <a href=https://slack.com/>Slack</a>、<a href=https://en.wikipedia.org/wiki/HipChat>HipChat</a> 或 <a href=http://www.irc.org/>IRC</a>，它甚至可以用 <a href=https://www.pagerduty.com/>PagerDuty</a> 发送移动或寻呼机的警报。</p><p>Sensu 的<a href=https://docs.sensu.io/sensu-core/1.4/overview/architecture/>模块化架构</a>意味着每个组件都可以安装在同一台服务器上或者在完全独立的机器上。</p><h3 id=结构>结构</h3><p>Sensu 的主要通信机制是 Transport。每个 Sensu 组件必须连接到 Transport 才能相互发送消息。Transport 可以使用 RabbitMQ（在生产环境中推荐使用）或 Redis。</p><p>Sensu 服务器处理事件数据并采取行动。它注册客户端并使用过滤器、增变器和处理程序检查结果和监视事件。服务器向客户端发布检查说明，Sensu API 提供 RESTful API，提供对监控数据和核心功能的访问。</p><p><a href=https://docs.sensu.io/sensu-core/1.4/installation/install-sensu-client/>Sensu 客户端</a>执行 Sensu 服务器安排的检查或本地检查定义。Sensu 使用数据存储（Redis）来保存所有的持久数据。最后，<a href=https://uchiwa.io/#/>Uchiwa</a> 是与 Sensu API 进行通信的 Web 界面。</p><p><img src=/data/attachment/album/201904/27/131719v8j05zv65qz6grqz.png alt title=sensu_system.png></p><h3 id=安装-sensu>安装 Sensu</h3><h4 id=条件>条件</h4><ul><li>一个 Linux 系统作为服务器节点（本文使用了 CentOS 7）</li><li>要监控的一台或多台 Linux 机器（客户机）</li></ul><h4 id=服务器侧>服务器侧</h4><p>Sensu 需要安装 Redis。要安装 Redis，启用 EPEL 仓库：</p><pre tabindex=0><code>$ sudo yum install epel-release -y
+</code></pre><p>然后安装 Redis：</p><pre tabindex=0><code>$ sudo yum install redis -y
+</code></pre><p>修改 <code>/etc/redis.conf</code> 来禁用保护模式，监听每个地址并设置密码：</p><pre tabindex=0><code>$ sudo sed -i &#39;s/^protected-mode yes/protected-mode no/g&#39; /etc/redis.conf
+$ sudo sed -i &#39;s/^bind 127.0.0.1/bind 0.0.0.0/g&#39; /etc/redis.conf
+$ sudo sed -i &#39;s/^# requirepass foobared/requirepass password123/g&#39; /etc/redis.conf
+</code></pre><p>启用并启动 Redis 服务：</p><pre tabindex=0><code>$ sudo systemctl enable redis
+$ sudo systemctl start redis
+</code></pre><p>Redis 现在已经安装并准备好被 Sensu 使用。</p><p>现在让我们来安装 Sensu。</p><p>首先，配置 Sensu 仓库并安装软件包：</p><pre tabindex=0><code>$ sudo tee /etc/yum.repos.d/sensu.repo &lt;&lt; EOF
+[sensu]
+name=sensu
+baseurl=https://sensu.global.ssl.fastly.net/yum/\$releasever/\$basearch/
+gpgcheck=0
+enabled=1
+EOF
+
+$ sudo yum install sensu uchiwa -y
+</code></pre><p>让我们为 Sensu 创建最简单的配置文件：</p><pre tabindex=0><code>$ sudo tee /etc/sensu/conf.d/api.json &lt;&lt; EOF
+{
+  &#34;api&#34;: {
+        &#34;host&#34;: &#34;127.0.0.1&#34;,
+        &#34;port&#34;: 4567
+  }
+}
+EOF
+</code></pre><p>然后，配置 <code>sensu-api</code> 在本地主机上使用端口 4567 监听：</p><pre tabindex=0><code>$ sudo tee /etc/sensu/conf.d/redis.json &lt;&lt; EOF
+{
+  &#34;redis&#34;: {
+        &#34;host&#34;: &#34;&lt;IP of server&gt;&#34;,
+        &#34;port&#34;: 6379,
+        &#34;password&#34;: &#34;password123&#34;
+  }
+}
+EOF
+
+
+$ sudo tee /etc/sensu/conf.d/transport.json &lt;&lt; EOF
+{
+  &#34;transport&#34;: {
+        &#34;name&#34;: &#34;redis&#34;
+  }
+}
+EOF
+</code></pre><p>在这两个文件中，我们将 Sensu 配置为使用 Redis 作为传输机制，还有 Reids 监听的地址。客户端需要直接连接到传输机制。每台客户机都需要这两个文件。</p><pre tabindex=0><code>$ sudo tee /etc/sensu/uchiwa.json &lt;&lt; EOF
+{
+   &#34;sensu&#34;: [
+        {
+        &#34;name&#34;: &#34;sensu&#34;,
+        &#34;host&#34;: &#34;127.0.0.1&#34;,
+        &#34;port&#34;: 4567
+        }
+   ],
+   &#34;uchiwa&#34;: {
+        &#34;host&#34;: &#34;0.0.0.0&#34;,
+        &#34;port&#34;: 3000
+   }
+}
+EOF
+</code></pre><p>在这个文件中，我们配置 Uchiwa 监听每个地址（0.0.0.0）的端口 3000。我们还配置 Uchiwa 使用 <code>sensu-api</code>（已配置好）。</p><p>出于安全原因，更改刚刚创建的配置文件的所有者：</p><pre tabindex=0><code>$ sudo chown -R sensu:sensu /etc/sensu
+</code></pre><p>启用并启动 Sensu 服务：</p><pre tabindex=0><code>$ sudo systemctl enable sensu-server sensu-api sensu-client
+$ sudo systemctl start sensu-server sensu-api sensu-client
+$ sudo systemctl enable uchiwa
+$ sudo systemctl start uchiwa
+</code></pre><p>尝试访问 Uchiwa 网站：<code>http://&lt;服务器的 IP 地址>:3000</code></p><p>对于生产环境，建议运行 RabbitMQ 集群作为 Transport 而不是 Redis（虽然 Redis 集群也可以用于生产环境），运行多个 Sensu 服务器实例和 API 实例，以实现负载均衡和高可用性。</p><p>Sensu 现在安装完成，让我们来配置客户端。</p><h4 id=客户端侧>客户端侧</h4><p>要添加一个新客户端，你需要通过创建 <code>/etc/yum.repos.d/sensu.repo</code> 文件在客户机上启用 Sensu 仓库。</p><pre tabindex=0><code>$ sudo tee /etc/yum.repos.d/sensu.repo &lt;&lt; EOF
+[sensu]
+name=sensu
+baseurl=https://sensu.global.ssl.fastly.net/yum/\$releasever/\$basearch/
+gpgcheck=0
+enabled=1
+EOF
+</code></pre><p>启用仓库后，安装 Sensu：</p><pre tabindex=0><code>$ sudo yum install sensu -y
+</code></pre><p>要配置 <code>sensu-client</code>，创建在服务器中相同的 <code>redis.json</code> 和 <code>transport.json</code>，还有 <code>client.json</code> 配置文件：</p><pre tabindex=0><code>$ sudo tee /etc/sensu/conf.d/client.json &lt;&lt; EOF
+{
+  &#34;client&#34;: {
+        &#34;name&#34;: &#34;rhel-client&#34;,
+        &#34;environment&#34;: &#34;development&#34;,
+        &#34;subscriptions&#34;: [
+        &#34;frontend&#34;
+        ]
+  }
+}
+EOF
+</code></pre><p>在 <code>name</code> 字段中，指定一个名称来标识此客户机（通常是主机名）。<code>environment</code> 字段可以帮助你过滤，而 <code>subscriptions</code> 定义了客户机将执行哪些监视检查。</p><p>最后，启用并启动服务并签入 Uchiwa，因为客户机会自动注册：</p><pre tabindex=0><code>$ sudo systemctl enable sensu-client
+$ sudo systemctl start sensu-client
+</code></pre><h3 id=sensu-检查>Sensu 检查</h3><p>Sensu 检查有两个组件：一个插件和一个定义。</p><p>Sensu 与 <a href=https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/pluginapi.html>Nagios 检查插件规范</a>兼容，因此无需修改即可使用用于 Nagios 的任何检查。检查是可执行文件，由 Sensu 客户机运行。</p><p>检查定义可以让 Sensu 知道如何、在哪以及何时运行插件。</p><h4 id=客户端侧-1>客户端侧</h4><p>让我们在客户机上安装一个检查插件。请记住，此插件将在客户机上执行。</p><p>启用 EPEL 并安装 <code>nagios-plugins-http</code>：</p><pre tabindex=0><code>$ sudo yum install -y epel-release
+$ sudo yum install -y nagios-plugins-http
+</code></pre><p>现在让我们通过手动执行它来了解这个插件。尝试检查客户机上运行的 Web 服务器的状态。它应该会失败，因为我们并没有运行 Web 服务器：</p><pre tabindex=0><code>$ /usr/lib64/nagios/plugins/check_http -I 127.0.0.1
+connect to address 127.0.0.1 and port 80: Connection refused
+HTTP CRITICAL - Unable to open TCP socket
+</code></pre><p>不出所料，它失败了。检查执行的返回值：</p><pre tabindex=0><code>$ echo $?
+2
+</code></pre><p>Nagios 检查插件规范定义了插件执行的四个返回值：</p><table><thead><tr><th>插件返回码</th><th>状态</th></tr></thead><tbody><tr><td>0</td><td>OK</td></tr><tr><td>1</td><td>WARNING</td></tr><tr><td>2</td><td>CRITICAL</td></tr><tr><td>3</td><td>UNKNOWN</td></tr></tbody></table><p>有了这些信息，我们现在可以在服务器上创建检查定义。</p><h4 id=服务器侧-1>服务器侧</h4><p>在服务器机器上，创建 <code>/etc/sensu/conf.d/check_http.json</code> 文件：</p><pre tabindex=0><code>{
+  &#34;checks&#34;: {
+    &#34;check_http&#34;: {
+      &#34;command&#34;: &#34;/usr/lib64/nagios/plugins/check_http -I 127.0.0.1&#34;,
+      &#34;interval&#34;: 10,
+      &#34;subscribers&#34;: [
+        &#34;frontend&#34;
+      ]
+    }
+  }
+}
+</code></pre><p>在 <code>command</code> 字段中，使用我们之前测试过的命令。<code>interval</code> 会告诉 Sensu 这个检查的频率，以秒为单位。最后，<code>subscribers</code> 将定义执行检查的客户机。</p><p>重新启动 <code>sensu-api</code> 和 <code>sensu-server</code> 并确认新检查在 Uchiwa 中可用。</p><pre tabindex=0><code>$ sudo systemctl restart sensu-api sensu-server
+</code></pre><h3 id=接下来>接下来</h3><p>Sensu 是一个功能强大的工具，本文只简要介绍它可以干什么。参阅<a href=https://docs.sensu.io/>文档</a>了解更多信息，访问 Sensu 网站了解有关 <a href=https://sensu.io/community>Sensu 社区</a>的更多信息。</p><hr><p>via: <a href=https://opensource.com/article/18/8/getting-started-sensu-monitoring-solution>https://opensource.com/article/18/8/getting-started-sensu-monitoring-solution</a></p><p>作者：<a href=https://opensource.com/users/mzamot>Michael Zamot</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%9B%91%E6%8E%A7/ rel=tag>监控</a></li><li class=tags__item><a class="tags__link btn" href=/tags/sensu/ rel=tag>Sensu</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

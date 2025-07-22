@@ -1,0 +1,114 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何 Docker 化 Python Django 应用程序 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何 Docker 化 Python Django 应用程序"><meta property="og:description" content="我们将学习如何 docker 化一个 Python Django 应用程序，然后使用一个 docker-compose 脚本将应用程序作为容器部署到 docker 环境。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10006-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-09-12T22:42:00+00:00"><meta property="article:modified_time" content="2018-09-12T22:42:00+00:00"><meta itemprop=name content="如何 Docker 化 Python Django 应用程序"><meta itemprop=description content="我们将学习如何 docker 化一个 Python Django 应用程序，然后使用一个 docker-compose 脚本将应用程序作为容器部署到 docker 环境。"><meta itemprop=datePublished content="2018-09-12T22:42:00+00:00"><meta itemprop=dateModified content="2018-09-12T22:42:00+00:00"><meta itemprop=wordCount content="667"><meta itemprop=keywords content="容器,Django,Docker,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何 Docker 化 Python Django 应用程序</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-09-12T22:42:00Z>September 12, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201809/12/224251lbb2vtrfhbq3bb0b.jpg alt></p><p>Docker 是一个开源项目，为开发人员和系统管理员提供了一个开放平台，可以将应用程序构建、打包为一个轻量级容器，并在任何地方运行。Docker 会在软件容器中自动部署应用程序。</p><p>Django 是一个用 Python 编写的 Web 应用程序框架，遵循 MVC（模型-视图-控制器）架构。它是免费的，并在开源许可下发布。它速度很快，旨在帮助开发人员尽快将他们的应用程序上线。</p><p>在本教程中，我将逐步向你展示在 Ubuntu 16.04 中如何为现有的 Django 应用程序创建 docker 镜像。我们将学习如何 docker 化一个 Python Django 应用程序，然后使用一个 <code>docker-compose</code> 脚本将应用程序作为容器部署到 docker 环境。</p><p>为了部署我们的 Python Django 应用程序，我们需要其它 docker 镜像：一个用于 Web 服务器的 nginx docker 镜像和用于数据库的 PostgreSQL 镜像。</p><h3 id=我们要做什么>我们要做什么？</h3><ol><li>安装 Docker-ce</li><li>安装 Docker-compose</li><li>配置项目环境</li><li>构建并运行</li><li>测试</li></ol><h3 id=步骤-1---安装-docker-ce>步骤 1 - 安装 Docker-ce</h3><p>在本教程中，我们将从 docker 仓库安装 docker-ce 社区版。我们将安装 docker-ce 社区版和 <code>docker-compose</code>（其支持 compose 文件版本 3）。</p><p>在安装 docker-ce 之前，先使用 <code>apt</code> 命令安装所需的 docker 依赖项。</p><pre tabindex=0><code>sudo apt install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+</code></pre><p>现在通过运行以下命令添加 docker 密钥和仓库。</p><pre tabindex=0><code>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository \
+   &#34;deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable&#34;
+</code></pre><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/1.png><img src=/data/attachment/album/201809/12/224259ns0hkmf0gny9zbdg.png alt="安装 Docker-ce"></a></p><p>更新仓库并安装 docker-ce。</p><pre tabindex=0><code>sudo apt update
+sudo apt install -y docker-ce
+</code></pre><p>安装完成后，启动 docker 服务并使其能够在每次系统引导时启动。</p><pre tabindex=0><code>systemctl start docker
+systemctl enable docker
+</code></pre><p>接着，我们将添加一个名为 <code>omar</code> 的新用户并将其添加到 <code>docker</code> 组。</p><pre tabindex=0><code>useradd -m -s /bin/bash omar
+usermod -a -G docker omar
+</code></pre><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/2.png><img src=/data/attachment/album/201809/12/224301hx2ttu88u20t2vv7.png alt="启动 Docker"></a></p><p>以 <code>omar</code> 用户身份登录并运行 <code>docker</code> 命令，如下所示。</p><pre tabindex=0><code>su - omar
+docker run hello-world
+</code></pre><p>确保你能从 Docker 获得 hello-world 消息。</p><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/3.png><img src=/data/attachment/album/201809/12/224303a42mfmv0l722vvsy.png alt="检查 Docker 安装"></a></p><p>Docker-ce 安装已经完成。</p><h3 id=步骤-2---安装-docker-compose>步骤 2 - 安装 Docker-compose</h3><p>在本教程中，我们将使用支持 compose 文件版本 3 的最新 <code>docker-compose</code>。我们将手动安装 <code>docker-compose</code>。</p><p>使用 <code>curl</code> 命令将最新版本的 <code>docker-compose</code> 下载到 <code>/usr/local/bin</code> 目录，并使用 <code>chmod</code> 命令使其有执行权限。</p><p>运行以下命令：</p><pre tabindex=0><code>sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+</code></pre><p>现在检查 <code>docker-compose</code> 版本。</p><pre tabindex=0><code>docker-compose version
+</code></pre><p>确保你安装的是最新版本的 docker-compose 1.21。</p><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/4.png><img src=/data/attachment/album/201809/12/224304sfv8739py9fxz9z1.png alt="安装 Docker-compose"></a></p><p>已安装支持 compose 文件版本 3 的 <code>docker-compose</code> 最新版本。</p><h3 id=步骤-3---配置项目环境>步骤 3 - 配置项目环境</h3><p>在这一步中，我们将配置 Python Django 项目环境。我们将创建新目录 <code>guide01</code>，并使其成为我们项目文件的主目录，例如包括 Dockerfile、Django 项目、nginx 配置文件等。</p><p>登录到 <code>omar</code> 用户。</p><pre tabindex=0><code>su - omar
+</code></pre><p>创建一个新目录 <code>guide01</code>，并进入目录。</p><pre tabindex=0><code>mkdir -p guide01
+cd guide01/
+</code></pre><p>现在在 <code>guide01</code> 目录下，创建两个新目录 <code>project</code> 和 <code>config</code>。</p><pre tabindex=0><code>mkdir project/ config/
+</code></pre><p>注意：</p><ul><li><code>project</code> 目录：我们所有的 python Django 项目文件都将放在该目录中。</li><li><code>config</code> 目录：项目配置文件的目录，包括 nginx 配置文件、python pip 的<code>requirements.txt</code> 文件等。</li></ul><h4 id=创建一个新的-requirementstxt-文件>创建一个新的 requirements.txt 文件</h4><p>接下来，使用 <code>vim</code> 命令在 <code>config</code> 目录中创建一个新的 <code>requirements.txt</code> 文件。</p><pre tabindex=0><code>vim config/requirements.txt
+</code></pre><p>粘贴下面的配置：</p><pre tabindex=0><code>Django==2.0.4  
+gunicorn==19.7.0  
+psycopg2==2.7.4
+</code></pre><p>保存并退出。</p><h4 id=创建-nginx-虚拟主机文件-djangoconf>创建 Nginx 虚拟主机文件 django.conf</h4><p>在 <code>config</code> 目录下创建 nginx 配置目录并添加虚拟主机配置文件 <code>django.conf</code>。</p><pre tabindex=0><code>mkdir -p config/nginx/
+vim config/nginx/django.conf
+</code></pre><p>粘贴下面的配置：</p><pre tabindex=0><code>upstream web {
+  ip_hash;
+  server web:8000;
+}
+ 
+# portal
+server {
+  location / {
+        proxy_pass http://web/;
+  }
+  listen 8000;
+  server_name localhost;
+ 
+  location /static {    
+    autoindex on;    
+    alias /src/static/;    
+  }
+}
+</code></pre><p>保存并退出。</p><h4 id=创建-dockerfile>创建 Dockerfile</h4><p>在 <code>guide01</code> 目录下创建新文件 <code>Dockerfile</code>。</p><p>运行以下命令：</p><pre tabindex=0><code>vim Dockerfile
+</code></pre><p>现在粘贴下面的 Dockerfile 脚本：</p><pre tabindex=0><code>FROM python:3.5-alpine
+ENV PYTHONUNBUFFERED 1  
+
+RUN apk update &amp;&amp; \
+    apk add --virtual build-deps gcc python-dev musl-dev &amp;&amp; \
+    apk add postgresql-dev bash
+
+RUN mkdir /config  
+ADD /config/requirements.txt /config/  
+RUN pip install -r /config/requirements.txt
+RUN mkdir /src
+WORKDIR /src
+</code></pre><p>保存并退出。</p><p>注意：</p><p>我们想要为我们的 Django 项目构建基于 Alpine Linux 的 Docker 镜像，Alpine 是最小的 Linux 版本。我们的 Django 项目将运行在带有 Python 3.5 的 Alpine Linux 上，并添加 postgresql-dev 包以支持 PostgreSQL 数据库。然后，我们将使用 python <code>pip</code> 命令安装在 <code>requirements.txt</code> 上列出的所有 Python 包，并为我们的项目创建新目录 <code>/src</code>。</p><h4 id=创建-docker-compose-脚本>创建 Docker-compose 脚本</h4><p>使用 <a href=https://www.howtoforge.com/vim-basics>vim</a> 命令在 <code>guide01</code> 目录下创建 <code>docker-compose.yml</code> 文件。</p><pre tabindex=0><code>vim docker-compose.yml
+</code></pre><p>粘贴以下配置内容：</p><pre tabindex=0><code>version: &#39;3&#39;
+  services:
+    db:
+      image: postgres:10.3-alpine
+      container_name: postgres01
+    nginx:
+      image: nginx:1.13-alpine
+      container_name: nginx01
+      ports:
+        - &#34;8000:8000&#34;
+      volumes:
+        - ./project:/src
+        - ./config/nginx:/etc/nginx/conf.d
+      depends_on:
+        - web
+    web:
+      build: .
+      container_name: django01
+      command: bash -c &#34;python manage.py makemigrations &amp;&amp; python manage.py migrate &amp;&amp; python manage.py collectstatic --noinput &amp;&amp; gunicorn hello_django.wsgi -b 0.0.0.0:8000&#34;
+      depends_on:
+        - db
+      volumes:
+        - ./project:/src
+      expose:
+        - &#34;8000&#34;
+      restart: always
+</code></pre><p>保存并退出。</p><p>注意：</p><p>使用这个 <code>docker-compose</code> 文件脚本，我们将创建三个服务。使用 alpine Linux 版的 PostgreSQL 创建名为 <code>db</code> 的数据库服务，再次使用 alpine Linux 版的 Nginx 创建 <code>nginx</code> 服务，并使用从 Dockerfile 生成的自定义 docker 镜像创建我们的 python Django 容器。</p><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/5.png><img src=/data/attachment/album/201809/12/224306xwwngh3hcj3hjx63.png alt=配置项目环境></a></p><h4 id=配置-django-项目>配置 Django 项目</h4><p>将 Django 项目文件复制到 <code>project</code> 目录。</p><pre tabindex=0><code>cd ~/django
+cp -r * ~/guide01/project/
+</code></pre><p>进入 <code>project</code> 目录并编辑应用程序设置 <code>settings.py</code>。</p><pre tabindex=0><code>cd ~/guide01/project/
+vim hello_django/settings.py
+</code></pre><p>注意：</p><p>我们将部署名为 “hello_django” 的简单 Django 应用程序。</p><p>在 <code>ALLOW_HOSTS</code> 行中，添加服务名称 <code>web</code>。</p><pre tabindex=0><code>ALLOW_HOSTS = [&#39;web&#39;]
+</code></pre><p>现在更改数据库设置，我们将使用 PostgreSQL 数据库来运行名为 <code>db</code> 的服务，使用默认用户和密码。</p><pre tabindex=0><code>DATABASES = {  
+    &#39;default&#39;: {
+        &#39;ENGINE&#39;: &#39;django.db.backends.postgresql_psycopg2&#39;,
+        &#39;NAME&#39;: &#39;postgres&#39;,
+        &#39;USER&#39;: &#39;postgres&#39;,
+        &#39;HOST&#39;: &#39;db&#39;,
+        &#39;PORT&#39;: 5432,
+    }
+}
+</code></pre><p>至于 <code>STATIC_ROOT</code> 配置目录，将此行添加到文件行的末尾。</p><pre tabindex=0><code>STATIC_ROOT = os.path.join(BASE_DIR, &#39;static/&#39;)
+</code></pre><p>保存并退出。</p><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/6.png><img src=/data/attachment/album/201809/12/224308p889db0480mvvhvv.png alt="配置 Django 项目"></a></p><p>现在我们准备在 docker 容器下构建和运行 Django 项目。</p><h3 id=步骤-4---构建并运行-docker-镜像>步骤 4 - 构建并运行 Docker 镜像</h3><p>在这一步中，我们想要使用 <code>guide01</code> 目录中的配置为我们的 Django 项目构建一个 Docker 镜像。</p><p>进入 <code>guide01</code> 目录。</p><pre tabindex=0><code>cd ~/guide01/
+</code></pre><p>现在使用 <code>docker-compose</code> 命令构建 docker 镜像。</p><pre tabindex=0><code>docker-compose build
+</code></pre><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/7.png><img src=/data/attachment/album/201809/12/224309y7e5m7rsv1ws8ep8.png alt="运行 docker 镜像"></a></p><p>启动 <code>docker-compose</code> 脚本中的所有服务。</p><pre tabindex=0><code>docker-compose up -d
+</code></pre><p>等待几分钟让 Docker 构建我们的 Python 镜像并下载 nginx 和 postgresql docker 镜像。</p><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/8.png><img src=/data/attachment/album/201809/12/224310j1i9h4f0116xv2bp.png alt="使用 docker-compose 构建镜像"></a></p><p>完成后，使用以下命令检查运行容器并在系统上列出 docker 镜像。</p><pre tabindex=0><code>docker-compose ps
+docker-compose images
+</code></pre><p>现在，你将在系统上运行三个容器，列出 Docker 镜像，如下所示。</p><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/9.png><img src=/data/attachment/album/201809/12/224312bk776vllj8p8ojw4.png alt="docke-compose ps 命令"></a></p><p>我们的 Python Django 应用程序现在在 docker 容器内运行，并且已经创建了为我们服务的 docker 镜像。</p><h3 id=步骤-5---测试>步骤 5 - 测试</h3><p>打开 Web 浏览器并使用端口 8000 键入服务器地址，我的是：<code>http://ovh01:8000/</code>。</p><p>现在你将看到默认的 Django 主页。</p><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/10.png><img src=/data/attachment/album/201809/12/224313il5btwplmjojlzo9.png alt="默认 Django 项目主页"></a></p><p>接下来，通过在 URL 上添加 <code>/admin</code> 路径来测试管理页面。</p><pre tabindex=0><code>http://ovh01:8000/admin/
+</code></pre><p>然后你将会看到 Django 管理登录页面。</p><p><a href=https://www.howtoforge.com/images/docker_guide_dockerizing_python_django_application/big/11.png><img src=/data/attachment/album/201809/12/224314itr60vi6liqixisc.png alt="Django administration"></a></p><p>Docker 化 Python Django 应用程序已成功完成。</p><h3 id=参考>参考</h3><ul><li><a href=https://docs.docker.com/>https://docs.docker.com/</a></li></ul><hr><p>via: <a href=https://www.howtoforge.com/tutorial/docker-guide-dockerizing-python-django-application/>https://www.howtoforge.com/tutorial/docker-guide-dockerizing-python-django-application/</a></p><p>作者：<a href=https://www.howtoforge.com/tutorial/docker-guide-dockerizing-python-django-application/>Muhammad Arul</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%B9%E5%99%A8/ rel=tag>容器</a></li><li class=tags__item><a class="tags__link btn" href=/tags/django/ rel=tag>Django</a></li><li class=tags__item><a class="tags__link btn" href=/tags/docker/ rel=tag>Docker</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

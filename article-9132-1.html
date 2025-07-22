@@ -1,0 +1,62 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Ubuntu 16.04 下随机化你的 WiFi MAC 地址 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Ubuntu 16.04 下随机化你的 WiFi MAC 地址"><meta property="og:description" content="你的设备的 MAC 地址可以在不同的 WiFi 网络中记录你的活动。这些信息能被共享后出售，用于识别特定的个体。但可以用随机生成的伪 MAC 地址来阻止这一行为。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9132-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-12-11T18:59:00+00:00"><meta property="article:modified_time" content="2017-12-11T18:59:00+00:00"><meta itemprop=name content="在 Ubuntu 16.04 下随机化你的 WiFi MAC 地址"><meta itemprop=description content="你的设备的 MAC 地址可以在不同的 WiFi 网络中记录你的活动。这些信息能被共享后出售，用于识别特定的个体。但可以用随机生成的伪 MAC 地址来阻止这一行为。"><meta itemprop=datePublished content="2017-12-11T18:59:00+00:00"><meta itemprop=dateModified content="2017-12-11T18:59:00+00:00"><meta itemprop=wordCount content="370"><meta itemprop=keywords content="WiFi,MAC,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Ubuntu 16.04 下随机化你的 WiFi MAC 地址</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-12-11T18:59:00Z>December 11, 2017</time></div></div></header><div class="content post__content clearfix"><blockquote><p>你的设备的 MAC 地址可以在不同的 WiFi 网络中记录你的活动。这些信息能被共享后出售，用于识别特定的个体。但可以用随机生成的伪 MAC 地址来阻止这一行为。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/201712/11/190224a08seleao084es0b.jpg alt></p><p>每一个诸如 WiFi 或者以太网卡这样的网络设备，都有一个叫做 MAC 地址的唯一标识符，如：<code>b4:b6:76:31:8c:ff</code>。这就是你能上网的原因：每当你连上 WiFi，路由器就会用这一地址来向你接受和发送数据，并且用它来区别你和这一网络的其它设备。</p><p>这一设计的缺陷在于唯一性，不变的 MAC 地址正好可以用来追踪你。连上了星巴克的 WiFi? 好，注意到了。在伦敦的地铁上? 也记录下来。</p><p>如果你曾经在某一个 WiFi 验证页面上输入过你的真实姓名，你就已经把自己和这一 MAC 地址建立了联系。没有仔细阅读许可服务条款、你可以认为，机场的免费 WiFi 正通过出售所谓的 ‘顾客分析数据’（你的个人信息）获利。出售的对象包括酒店，餐饮业，和任何想要了解你的人。</p><p>我不想信息被记录，再出售给多家公司，所以我花了几个小时想出了一个解决方案。</p><h3 id=mac-地址不一定总是不变的>MAC 地址不一定总是不变的</h3><p>幸运的是，在不断开网络的情况下，是可以随机生成一个伪 MAC 地址的。</p><p>我想随机生成我的 MAC 地址，但是有三个要求：</p><ol><li>MAC 地址在不同网络中是不相同的。这意味着，我在星巴克和在伦敦地铁网络中的 MAC 地址是不相同的，这样在不同的服务提供商中就无法将我的活动系起来。</li><li>MAC 地址需要经常更换，这样在网络上就没人知道我就是去年在这儿经过了 75 次的那个人。</li><li>MAC 地址一天之内应该保持不变。当 MAC 地址更改时，大多数网络都会与你断开连接，然后必须得进入验证页面再次登陆 - 这很烦人。</li></ol><h3 id=操作ruby-网络管理器-rt--networkmanager-rtruby>操作 网络管理器 NetworkManager</h3><p>我第一次尝试用一个叫做 <code>macchanger</code> 的工具，但是失败了。因为 网络管理器 NetworkManager 会根据它自己的设置恢复默认的 MAC 地址。</p><p>我了解到，网络管理器 1.4.1 以上版本可以自动生成随机的 MAC 地址。如果你在使用 Ubuntu 17.04 版本，你可以根据<a href=https://gist.github.com/paulfurley/978d4e2e0cceb41d67d017a668106c53/>这一配置文件</a>实现这一目的。但这并不能完全符合我的三个要求（你必须在 随机 random 和 稳定 stable 这两个选项之中选择一个，但没有一天之内保持不变这一选项）</p><p>因为我使用的是 Ubuntu 16.04，网络管理器版本为 1.2，不能直接使用高版本这一新功能。可能网络管理器有一些随机化方法支持，但我没能成功。所以我编了一个脚本来实现这一目标。</p><p>幸运的是，网络管理器 1.2 允许模拟 MAC 地址。你在已连接的网络中可以看见 ‘编辑连接’ 这一选项。</p><p>网络管理器也支持钩子处理 —— 任何位于 <code>/etc/NetworkManager/dispatcher.d/pre-up.d/</code> 的脚本在建立网络连接之前都会被执行。</p><h3 id=分配随机生成的伪-mac-地址>分配随机生成的伪 MAC 地址</h3><p>我想根据网络 ID 和日期来生成新的随机 MAC 地址。 我们可以使用网络管理器的命令行工具 nmcli 来显示所有可用网络：</p><pre tabindex=0><code>&gt; nmcli connection
+NAME                 UUID                                  TYPE             DEVICE
+Gladstone Guest      618545ca-d81a-11e7-a2a4-271245e11a45  802-11-wireless  wlp1s0
+DoESDinky            6e47c080-d81a-11e7-9921-87bc56777256  802-11-wireless  --
+PublicWiFi           79282c10-d81a-11e7-87cb-6341829c2a54  802-11-wireless  --
+virgintrainswifi     7d0c57de-d81a-11e7-9bae-5be89b161d22  802-11-wireless  --
+</code></pre><p>因为每个网络都有一个唯一标识符（UUID），为了实现我的计划，我将 UUID 和日期拼接在一起，然后使用 MD5 生成 hash 值：</p><pre tabindex=0><code># eg 618545ca-d81a-11e7-a2a4-271245e11a45-2017-12-03
+
+&gt; echo -n &#34;${UUID}-$(date +%F)&#34; | md5sum
+
+53594de990e92f9b914a723208f22b3f  -
+</code></pre><p>生成的结果可以代替 MAC 地址的最后八个字节。</p><p>值得注意的是，最开始的字节 <code>02</code> 代表这个地址是<a href=https://en.wikipedia.org/wiki/MAC_address#Universal_vs._local>自行指定</a>的。实际上，真实 MAC 地址的前三个字节是由制造商决定的，例如 <code>b4:b6:76</code> 就代表 Intel。</p><p>有可能某些路由器会拒绝自己指定的 MAC 地址，但是我还没有遇到过这种情况。</p><p>每次连接到一个网络，这一脚本都会用 <code>nmcli</code> 来指定一个随机生成的伪 MAC 地址。</p><p>最后，我查看了 <code>ifconfig</code> 的输出结果，我发现 MAC 地址 <code>HWaddr</code> 已经变成了随机生成的地址（模拟 Intel 的），而不是我真实的 MAC 地址。</p><pre tabindex=0><code>&gt; ifconfig
+wlp1s0    Link encap:Ethernet  HWaddr b4:b6:76:45:64:4d
+          inet addr:192.168.0.86  Bcast:192.168.0.255  Mask:255.255.255.0
+          inet6 addr: fe80::648c:aff2:9a9d:764/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:12107812 errors:0 dropped:2 overruns:0 frame:0
+          TX packets:18332141 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:11627977017 (11.6 GB)  TX bytes:20700627733 (20.7 GB)
+</code></pre><h3 id=脚本>脚本</h3><p>完整的脚本也可以<a href=https://gist.github.com/paulfurley/46e0547ce5c5ea7eabeaef50dbacef3f>在 Github 上查看</a>。</p><pre tabindex=0><code>#!/bin/sh
+
+# /etc/NetworkManager/dispatcher.d/pre-up.d/randomize-mac-addresses
+
+# Configure every saved WiFi connection in NetworkManager with a spoofed MAC
+# address, seeded from the UUID of the connection and the date eg:
+# &#39;c31bbcc4-d6ad-11e7-9a5a-e7e1491a7e20-2017-11-20&#39;
+
+# This makes your MAC impossible(?) to track across WiFi providers, and
+# for one provider to track across days.
+
+# For craptive portals that authenticate based on MAC, you might want to
+# automate logging in :)
+
+# Note that NetworkManager &gt;= 1.4.1 (Ubuntu 17.04+) can do something similar
+# automatically.
+
+export PATH=$PATH:/usr/bin:/bin
+
+LOG_FILE=/var/log/randomize-mac-addresses
+
+echo &#34;$(date): $*&#34; &gt; ${LOG_FILE}
+
+WIFI_UUIDS=$(nmcli --fields type,uuid connection show |grep 802-11-wireless |cut &#39;-d &#39; -f3)
+
+for UUID in ${WIFI_UUIDS}
+do
+    UUID_DAILY_HASH=$(echo &#34;${UUID}-$(date +F)&#34; | md5sum)
+
+    RANDOM_MAC=&#34;02:$(echo -n ${UUID_DAILY_HASH} | sed &#39;s/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/\1:\2:\3:\4:\5/&#39;)&#34;
+
+    CMD=&#34;nmcli connection modify ${UUID} wifi.cloned-mac-address ${RANDOM_MAC}&#34;
+
+    echo &#34;$CMD&#34; &gt;&gt; ${LOG_FILE}
+    $CMD &amp;
+done
+
+wait
+</code></pre><p><em>更新：<a href=https://gist.github.com/paulfurley/46e0547ce5c5ea7eabeaef50dbacef3f/revisions#diff-824d510864d58c07df01102a8f53faef>使用自己指定的 MAC 地址</a>可以避免和真正的 intel 地址冲突。感谢 <a href=https://twitter.com/fink_/status/937305600005943296>@_fink</a></em></p><hr><p>via: <a href=https://www.paulfurley.com/randomize-your-wifi-mac-address-on-ubuntu-1604-xenial/>https://www.paulfurley.com/randomize-your-wifi-mac-address-on-ubuntu-1604-xenial/</a></p><p>作者：<a href=https://www.paulfurley.com/>Paul M Furley</a> 译者：<a href=https://github.com/wenwensnow>wenwensnow</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/wifi/ rel=tag>WiFi</a></li><li class=tags__item><a class="tags__link btn" href=/tags/mac/ rel=tag>MAC</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

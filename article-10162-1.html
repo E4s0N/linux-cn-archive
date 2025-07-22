@@ -1,0 +1,93 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>坚实的 React 基础：初学者指南 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="坚实的 React 基础：初学者指南"><meta property="og:description" content="这篇文章针对的是那些希望理论与实践完美结合的观众。我会告诉你一些理论，以便你了解幕后发生的事情，然后我会向你展示如何编写一些 React.js 代码。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10162-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-10-28T10:46:00+00:00"><meta property="article:modified_time" content="2018-10-28T10:46:00+00:00"><meta itemprop=name content="坚实的 React 基础：初学者指南"><meta itemprop=description content="这篇文章针对的是那些希望理论与实践完美结合的观众。我会告诉你一些理论，以便你了解幕后发生的事情，然后我会向你展示如何编写一些 React.js 代码。"><meta itemprop=datePublished content="2018-10-28T10:46:00+00:00"><meta itemprop=dateModified content="2018-10-28T10:46:00+00:00"><meta itemprop=wordCount content="508"><meta itemprop=keywords content="React,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>坚实的 React 基础：初学者指南</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-10-28T10:46:00Z>October 28, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201810/28/104728nzehe82q5h9b8fqj.png alt></p><p>在过去的几个月里，我一直在使用 React 和 React-Native。我已经发布了两个作为产品的应用， <a href=https://kivenaa.com/>Kiven Aa</a>（React）和 <a href="https://play.google.com/store/apps/details?id=com.pollenchat.android">Pollen Chat</a>（React Native）。当我开始学习 React 时，我找了一些不仅仅是教我如何用 React 写应用的东西（一个博客，一个视频，一个课程，等等），我也想让它帮我做好面试准备。</p><p>我发现的大部分资料都集中在某一单一方面上。所以，这篇文章针对的是那些希望理论与实践完美结合的观众。我会告诉你一些理论，以便你了解幕后发生的事情，然后我会向你展示如何编写一些 React.js 代码。</p><p>如果你更喜欢视频形式，我在 [YouTube][<a href=https://youtu.be/WJ6PgzI16I4>https://youtu.be/WJ6PgzI16I4</a>] 上传了整个课程，请去看看。</p><p>让我们开始……</p><blockquote><p>React.js 是一个用于构建用户界面的 JavaScript 库</p></blockquote><p>你可以构建各种单页应用程序。例如，你希望在用户界面上实时显示变化的聊天软件和电子商务门户。</p><h3 id=一切都是组件>一切都是组件</h3><p>React 应用由组件组成，数量繁多且互相嵌套。你或许会问：”可什么是组件呢？“</p><p>组件是可重用的代码段，它定义了某些功能在 UI 上的外观和行为。 比如，按钮就是一个组件。</p><p>让我们看看下面的计算器，当你尝试计算 2 + 2 = 4 -1 = 3（简单的数学题）时，你会在 Google 上看到这个计算器。</p><p><img src=/data/attachment/album/201810/28/104744a002jj0m8gwkxw2m.png alt></p><p><em>红色标记表示组件</em></p><p>如上图所示，这个计算器有很多区域，比如展示窗口和数字键盘。所有这些都可以是许多单独的组件或一个巨大的组件。这取决于在 React 中分解和抽象出事物的程度。你为所有这些组件分别编写代码，然后合并这些组件到一个容器中，而这个容器又是一个 React 组件。这样你就可以创建可重用的组件，最终的应用将是一组协同工作的单独组件。</p><p>以下是一个你践行了以上原则并可以用 React 编写计算器的方法。</p><pre tabindex=0><code>&lt;Calculator&gt;
+  &lt;DisplayWindow /&gt;
+  &lt;NumPad&gt;
+    &lt;Key number={1}/&gt;
+    &lt;Key number={2}/&gt;
+    .
+    .
+    .
+    &lt;Key number={9}/&gt;
+  &lt;/NumPad&gt;
+&lt;/Calculator&gt;
+</code></pre><p>没错！它看起来像HTML代码，然而并不是。我们将在后面的部分中详细探讨它。</p><h3 id=设置我们的-playground>设置我们的 Playground</h3><p>这篇教程专注于 React 的基础部分。它没有偏向 Web 或 React Native（开发移动应用）。所以，我们会用一个在线编辑器，这样可以在学习 React 能做什么之前避免 web 或 native 的具体配置。</p><p>我已经为读者在 <a href=https://codepen.io/raynesax/pen/MrNmBM>codepen.io</a> 设置好了开发环境。只需点开<a href=https://codepen.io/raynesax/pen/MrNmBM>该链接</a>并且阅读 HTML 和 JavaScript 中的所有注释。</p><h3 id=控制组件>控制组件</h3><p>我们已经了解到 React 应用是各种组件的集合，结构为嵌套树。因此，我们需要某种机制来将数据从一个组件传递到另一个组件。</p><h4 id=进入-props>进入 “props”</h4><p>我们可以使用 <code>props</code> 对象将任意数据传递给我们的组件。 React 中的每个组件都会获取 <code>props</code> 对象。在学习如何使用 <code>props</code> 之前，让我们学习函数式组件。</p><h4 id=a-函数式组件>a) 函数式组件</h4><p>在 React 中，一个函数式组件通过 <code>props</code> 对象使用你传递给它的任意数据。它返回一个对象，该对象描述了 React 应渲染的 UI。函数式组件也称为无状态组件。</p><p>让我们编写第一个函数式组件。</p><pre tabindex=0><code>function Hello(props) {
+  return &lt;div&gt;{props.name}&lt;/div&gt;
+}
+</code></pre><p>就这么简单。我们只是将 <code>props</code> 作为参数传递给了一个普通的 JavaScript 函数并且有返回值。嗯？返回了什么？那个 <code>&lt;div>{props.name}&lt;/div></code>。它是 JSX（JavaScript Extended）。我们将在后面的部分中详细了解它。</p><p>上面这个函数将在浏览器中渲染出以下 HTML。</p><pre tabindex=0><code>&lt;!-- If the &#34;props&#34; object is: {name: &#39;rajat&#39;} --&gt;
+&lt;div&gt;
+  rajat
+&lt;/div&gt;
+</code></pre><blockquote><p>阅读以下有关 JSX 的部分，这一部分解释了如何从我们的 JSX 代码中得到这段 HTML 。</p></blockquote><p>如何在 React 应用中使用这个函数式组件？ 很高兴你问了！ 它就像下面这么简单。</p><pre tabindex=0><code>&lt;Hello name=&#39;rajat&#39; age={26}/&gt;
+</code></pre><p>属性 <code>name</code> 在上面的代码中变成了 <code>Hello</code> 组件里的 <code>props.name</code> ，属性 <code>age</code> 变成了 <code>props.age</code> 。</p><blockquote><p>记住！ 你可以将一个 React 组件嵌套在其他 React 组件中。</p></blockquote><p>让我们在 codepen playground 使用 <code>Hello</code> 组件。用我们的 <code>Hello</code> 组件替换 <code>ReactDOM.render()</code> 中的 <code>div</code>，并在底部窗口中查看更改。</p><pre tabindex=0><code>function Hello(props) {
+  return &lt;div&gt;{props.name}&lt;/div&gt;
+}
+
+ReactDOM.render(&lt;Hello name=&#34;rajat&#34;/&gt;, document.getElementById(&#39;root&#39;));
+</code></pre><blockquote><p>但是如果你的组件有一些内部状态怎么办？例如，像下面的计数器组件一样，它有一个内部计数变量，它在 <code>+</code> 和 <code>-</code> 键按下时发生变化。</p></blockquote><p><img src=/data/attachment/album/201810/28/104630blf1tp07171zt1h4.gif alt></p><p><em>具有内部状态的 React 组件</em></p><h4 id=b-基于类的组件>b) 基于类的组件</h4><p>基于类的组件有一个额外属性 <code>state</code> ，你可以用它存放组件的私有数据。我们可以用 <code>class</code> 表示法重写我们的 <code>Hello</code> 。由于这些组件具有状态，因此这些组件也称为有状态组件。</p><pre tabindex=0><code>class Counter extends React.Component {
+  // this method should be present in your component
+  render() {
+    return (
+      &lt;div&gt;
+        {this.props.name}
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre><p>我们继承了 React 库的 <code>React.Component</code> 类以在 React 中创建基于类的组件。在<a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes>这里</a>了解更多有关 JavaScript 类的东西。</p><p><code>render()</code> 方法必须存在于你的类中，因为 React 会查找此方法，用以了解它应在屏幕上渲染的 UI。为了使用这种内部状态，我们首先要在组件</p><p>要使用这种内部状态，我们首先必须按以下方式初始化组件类的构造函数中的状态对象。</p><pre tabindex=0><code>class Counter extends React.Component {
+  constructor() {
+    super();
+    
+    // define the internal state of the component
+    this.state = {name: &#39;rajat&#39;}
+  }
+  
+  render() {
+    return (
+      &lt;div&gt;
+        {this.state.name}
+      &lt;/div&gt;
+    );
+  }
+}
+
+// Usage:
+// In your react app: &lt;Counter /&gt;
+</code></pre><p>类似地，可以使用 <code>this.props</code> 对象在我们基于类的组件内访问 <code>props</code>。</p><p>要设置 <code>state</code>，请使用 <code>React.Component</code> 的 <code>setState()</code>。 在本教程的最后一部分中，我们将看到一个这样的例子。</p><blockquote><p>提示：永远不要在 <code>render()</code> 函数中调用 <code>setState()</code>，因为 <code>setState</code> 会导致组件重新渲染，这将导致无限循环。</p></blockquote><p><img src=/data/attachment/album/201810/28/104806ilinyzkkd5v88n4m.png alt></p><p><em>基于类的组件具有可选属性 “state”。</em></p><p>除了 <code>state</code> 以外，基于类的组件有一些声明周期方法比如 <code>componentWillMount()</code>。你可以利用这些去做初始化 <code>state</code>这样的事， 可是那将超出这篇文章的范畴。</p><h3 id=jsx>JSX</h3><p>JSX 是 JavaScript Extended 的缩写，它是一种编写 React 组件的方法。使用 JSX，你可以在类 XML 标签中获得 JavaScript 的全部力量。</p><p>你把 JavaScript 表达式放在 <code>{}</code> 里。下面是一些有效的 JSX 例子。</p><pre tabindex=0><code> &lt;button disabled={true}&gt;Press me!&lt;/button&gt;
+ &lt;button disabled={true}&gt;Press me {3+1} times!&lt;/button&gt;;
+ &lt;div className=&#39;container&#39;&gt;&lt;Hello /&gt;&lt;/div&gt;
+</code></pre><p>它的工作方式是你编写 JSX 来描述你的 UI 应该是什么样子。像 Babel 这样的转码器将这些代码转换为一堆 <code>React.createElement()</code> 调用。然后，React 库使用这些 <code>React.createElement()</code> 调用来构造 DOM 元素的树状结构。对于 React 的网页视图或 React Native 的 Native 视图，它将保存在内存中。</p><p>React 接着会计算它如何在展示给用户的 UI 的内存中有效地模仿这个树。此过程称为 <a href=https://reactjs.org/docs/reconciliation.html>reconciliation</a>。完成计算后，React 会对屏幕上的真正 UI 进行更改。</p><p><img src=/data/attachment/album/201810/28/104817g6jgbjnwagfnze0r.png alt></p><p><em>React 如何将你的 JSX 转化为描述应用 UI 的树。</em></p><p>你可以使用 <a href=https://babeljs.io/repl>Babel 的在线 REPL</a> 查看当你写一些 JSX 的时候，React 的真正输出。</p><p><img src=/data/attachment/album/201810/28/104830m4184mdrdh48888t.png alt></p><p><em>使用Babel REPL 转换 JSX 为普通 JavaScript</em></p><blockquote><p>由于 JSX 只是 <code>React.createElement()</code> 调用的语法糖，因此可以在没有 JSX 的情况下使用 React。</p></blockquote><p>现在我们了解了所有的概念，所以我们已经准备好编写我们之前看到之前的 GIF 图中的计数器组件。</p><p>代码如下，我希望你已经知道了如何在我们的 playground 上渲染它。</p><pre tabindex=0><code>class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    
+    this.state = {count: this.props.start || 0}
+    
+    // the following bindings are necessary to make `this` work in the callback
+    this.inc = this.inc.bind(this);
+    this.dec = this.dec.bind(this);
+  }
+  
+  inc() {
+    this.setState({
+      count: this.state.count + 1
+    });
+  }
+  
+  dec() {
+    this.setState({
+      count: this.state.count - 1
+    });
+  }
+  
+  render() {
+    return (
+      &lt;div&gt;
+        &lt;button onClick={this.inc}&gt;+&lt;/button&gt;
+        &lt;button onClick={this.dec}&gt;-&lt;/button&gt;
+        &lt;div&gt;{this.state.count}&lt;/div&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre><p>以下是关于上述代码的一些重点。</p><ol><li>JSX 使用 <code>驼峰命名</code> ，所以 <code>button</code> 的 属性是 <code>onClick</code>，不是我们在HTML中用的 <code>onclick</code>。</li><li>绑定 <code>this</code> 是必要的，以便在回调时工作。 请参阅上面代码中的第8行和第9行。</li></ol><p>最终的交互式代码位于<a href=https://codepen.io/raynesax/pen/QaROqK>此处</a>。</p><p>有了这个，我们已经到了 React 速成课程的结束。我希望我已经阐明了 React 如何工作，以及如何使用 React 来构建更大的应用程序，使用更小和可重用的组件。</p><hr><p>via: <a href=https://medium.freecodecamp.org/rock-solid-react-js-foundations-a-beginners-guide-c45c93f5a923>https://medium.freecodecamp.org/rock-solid-react-js-foundations-a-beginners-guide-c45c93f5a923</a></p><p>作者：<a href=https://medium.freecodecamp.org/@rajat1saxena>Rajat Saxena</a> 译者：<a href=https://github.com/GraveAccent>GraveAccent</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/react/ rel=tag>React</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

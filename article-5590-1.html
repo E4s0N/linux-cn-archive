@@ -1,0 +1,62 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在Linux中用chattr和lsattr命令管理文件和目录属性 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在Linux中用chattr和lsattr命令管理文件和目录属性"><meta property="og:description" content="为了允许添加数据，防止更改或者删除等，文件和文件夹可以设定了特定的控制属性。例如，你可以在关键的系统文件或者文件夹中启用属性，然后没有任何用户，包括root，可以删除或者修改它，比如不允许使用像dump这样的命令等备份工具去备份一个特定的文件或者文件夹，等等。这些属性只可以在ext2，ext3或者ext4文件系统中的文件和文件夹上设定。  有两个命令 lsattr 和 chattr 用来管理属性。下面是常用属性的列表。        属性   描述     a (append)   允许在文件中进行追加操作     A   这个属性不允许更新文件的访问时间     c (compre"><meta property="og:type" content="article"><meta property="og:url" content="/article-5590-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-06-09T07:12:00+00:00"><meta property="article:modified_time" content="2015-06-09T07:12:00+00:00"><meta itemprop=name content="在Linux中用chattr和lsattr命令管理文件和目录属性"><meta itemprop=description content="为了允许添加数据，防止更改或者删除等，文件和文件夹可以设定了特定的控制属性。例如，你可以在关键的系统文件或者文件夹中启用属性，然后没有任何用户，包括root，可以删除或者修改它，比如不允许使用像dump这样的命令等备份工具去备份一个特定的文件或者文件夹，等等。这些属性只可以在ext2，ext3或者ext4文件系统中的文件和文件夹上设定。  有两个命令 lsattr 和 chattr 用来管理属性。下面是常用属性的列表。        属性   描述     a (append)   允许在文件中进行追加操作     A   这个属性不允许更新文件的访问时间     c (compre"><meta itemprop=datePublished content="2015-06-09T07:12:00+00:00"><meta itemprop=dateModified content="2015-06-09T07:12:00+00:00"><meta itemprop=wordCount content="321"><meta itemprop=keywords content="lsattr,chattr,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在Linux中用chattr和lsattr命令管理文件和目录属性</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-06-09T07:12:00Z>June 09, 2015</time></div></div></header><div class="content post__content clearfix"><p>为了允许添加数据，防止更改或者删除等，文件和文件夹可以设定了特定的控制属性。例如，你可以在关键的系统文件或者文件夹中启用属性，然后没有任何用户，包括root，可以删除或者修改它，比如不允许使用像dump这样的命令等备份工具去备份一个特定的文件或者文件夹，等等。这些属性只可以在ext2，ext3或者ext4文件系统中的文件和文件夹上设定。</p><p><img src=/data/attachment/album/201506/08/101852ztnsest7d6ptnrt1.jpg alt></p><p>有两个命令 <strong>lsattr</strong> 和 <strong>chattr</strong> 用来管理属性。下面是常用属性的列表。</p><p>| <strong>属性</strong> | <strong>描述</strong> |
+| a (append) | 允许在文件中进行追加操作 |
+| A | 这个属性不允许更新文件的访问时间 |
+| c (compressed) | 启用这个属性时，文件在磁盘上会自动压缩 |
+| d (dump) | 不能使用dump命令备份文件 |
+| D | 设置了文件夹的D属性时，更改会在同步保存在磁盘上 |
+| e (extent format) | 它表明，该文件使用磁盘上的块的映射扩展 |
+| i (immutable) | 在文件上启用这个属性时，我们不能更改、重命名或者删除这个文件 |
+| j (journaling) | 设置了这个属性时，文件的数据首先保存在日志中，然后再写入文件 |
+| S (synchronous) | 设置了这个属性时，变更或更改同步保存到磁盘上 |</p><p>chattr属性中可以使用的不同选项 ：</p><ul><li><strong>-R</strong> 递归地修改文件夹和子文件夹的属性</li><li><strong>-V</strong> chattr命令会输出带有版本信息的冗余信息</li><li><strong>-f</strong> 忽略大部分错误信息</li></ul><p>在chattr中用于设置或者取消属性的 <strong>操作符</strong></p><ul><li>&lsquo;+&rsquo; 符号用来为文件和文件夹设置属性，</li><li>&lsquo;-&rsquo; 符号用来移除或者取消属性</li><li>&lsquo;=&rsquo; 使它们成为文件有的唯一属性。</li></ul><p><strong>chattr</strong> 和 <strong>lsattr</strong> 命令的基本语法 ：</p><pre tabindex=0><code># chattr &lt;options&gt; &lt;attributes&gt; &lt;file or Directory &gt;
+# lsattr &lt;File or Directory&gt;
+</code></pre><h3 id=例1-使用i属性使文件不可更改>例:1 使用‘i’属性使文件不可更改</h3><pre tabindex=0><code>[root@linuxtechi ~]# chattr +i dummy_data
+[root@linuxtechi ~]# lsattr dummy_data
+----i----------- dummy_data
+</code></pre><p>现在试着删除或者修改文件</p><pre tabindex=0><code>[root@linuxtechi ~]# rm -f dummy_data
+rm: cannot remove &#39;dummy_data&#39;: Operation not permitted
+
+[root@linuxtechi ~]# echo &#34;test&#34; &gt;&gt; dummy_data
+-bash: dummy_data: Permission denied
+</code></pre><h3 id=例2-移除不可更改属性>例:2 移除不可更改属性</h3><pre tabindex=0><code>[root@linuxtechi ~]# chattr -i dummy_data
+[root@linuxtechi ~]# lsattr dummy_data
+---------------- dummy_data
+</code></pre><h3 id=例3-在文件中只允许追加操作>例:3 在文件中只允许追加操作</h3><pre tabindex=0><code>[root@linuxtechi ~]# chattr +a dummy_data
+[root@linuxtechi ~]# lsattr dummy_data
+-----a---------- dummy_data
+</code></pre><p>现在试着把fstab文件的内容追加到dummy_data文件</p><pre tabindex=0><code>[root@linuxtechi ~]# cat /etc/fstab &gt;&gt; dummy_data
+[root@linuxtechi ~]#
+</code></pre><h3 id=例-4-使用--r-选项和-i-属性使文件夹和它的子文件夹成为安全目录>例 :4 使用 -R 选项和 ‘+i’ 属性使文件夹和它的子文件夹成为安全目录</h3><p>让我们来新建一个sysadmin文件夹和它的子文件夹</p><pre tabindex=0><code>[root@linuxtechi ~]# mkdir sysadmin
+[root@linuxtechi ~]# mkdir sysadmin/admim_{1,2,3,4,5}
+[root@linuxtechi ~]# ls -l sysadmin/
+total 0
+drwxr-xr-x. 2 root root 6 Apr 19 09:50 admim_1
+drwxr-xr-x. 2 root root 6 Apr 19 09:50 admim_2
+drwxr-xr-x. 2 root root 6 Apr 19 09:50 admim_3
+drwxr-xr-x. 2 root root 6 Apr 19 09:50 admim_4
+drwxr-xr-x. 2 root root 6 Apr 19 09:50 admim_5
+</code></pre><p>在sysadmin文件夹递归设置不可更改属性</p><pre tabindex=0><code>[root@linuxtechi ~]# chattr -R +i sysadmin
+
+[root@linuxtechi ~]# lsattr -R sysadmin/
+----i----------- sysadmin/admim_1
+sysadmin/admim_1:
+----i----------- sysadmin/admim_2
+sysadmin/admim_2:
+----i----------- sysadmin/admim_3
+sysadmin/admim_3:
+----i----------- sysadmin/admim_4
+sysadmin/admim_4:
+----i----------- sysadmin/admim_5
+sysadmin/admim_5:
+[root@linuxtechi ~]#
+</code></pre><p>现在试着用rm命令删除文件夹</p><pre tabindex=0><code>[root@linuxtechi ~]# rm -rf sysadmin
+rm: cannot remove ‘sysadmin/admim_1’: Permission denied
+rm: cannot remove ‘sysadmin/admim_2’: Permission denied
+rm: cannot remove ‘sysadmin/admim_3’: Permission denied
+rm: cannot remove ‘sysadmin/admim_4’: Permission denied
+rm: cannot remove ‘sysadmin/admim_5’: Permission denied
+[root@linuxtechi ~]#
+</code></pre><p>使用以下命令递归取消属性</p><pre tabindex=0><code>[root@linuxtechi ~]# chattr -R -i sysadmin
+</code></pre><hr><p>via: <a href=http://www.linuxtechi.com/file-directory-attributes-in-linux-using-chattr-lsattr-command/>http://www.linuxtechi.com/file-directory-attributes-in-linux-using-chattr-lsattr-command/</a></p><p>作者：<a href=http://www.linuxtechi.com/author/pradeep/>Pradeep Kumar</a> 译者：<a href=https://github.com/ictlyh>ictlyh</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/lsattr/ rel=tag>lsattr</a></li><li class=tags__item><a class="tags__link btn" href=/tags/chattr/ rel=tag>chattr</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

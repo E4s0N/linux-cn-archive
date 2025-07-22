@@ -1,0 +1,45 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Shell 脚本中执行语法检查调试模式 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Shell 脚本中执行语法检查调试模式"><meta property="og:description" content="在本系列的这一部分，我们将了解如何使用语法检查调试模式。记住我们之前在本系列的第一部分中解释了不同的调试选项，在这里，我们将使用它们来执行脚本调试。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8045-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-12-19T09:19:23+00:00"><meta property="article:modified_time" content="2016-12-19T09:19:23+00:00"><meta itemprop=name content="如何在 Shell 脚本中执行语法检查调试模式"><meta itemprop=description content="在本系列的这一部分，我们将了解如何使用语法检查调试模式。记住我们之前在本系列的第一部分中解释了不同的调试选项，在这里，我们将使用它们来执行脚本调试。"><meta itemprop=datePublished content="2016-12-19T09:19:23+00:00"><meta itemprop=dateModified content="2016-12-19T09:19:23+00:00"><meta itemprop=wordCount content="253"><meta itemprop=keywords content="脚本,调试,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Shell 脚本中执行语法检查调试模式</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-12-19T09:19:23Z>December 19, 2016</time></div></div></header><div class="content post__content clearfix"><p>我们开启了 Shell 脚本调试系列文章，先是解释了不同的调试选项，下面介绍<a href=/article-8028-1.html>如何启用 Shell 调试模式</a>。</p><p>写完脚本后，建议在运行脚本之前先检查脚本中的语法，而不是查看它们的输出以确认它们是否正常工作。</p><p>在本系列的这一部分，我们将了解如何使用语法检查调试模式。记住我们之前在本系列的<a href=/article-8028-1.html>第一部分</a>中解释了不同的调试选项，在这里，我们将使用它们来执行脚本调试。</p><p><img src=/data/attachment/album/201612/19/091411hx24y6u67y7xv258.jpg alt></p><h3 id=启用-verbose-调试模式>启用 verbose 调试模式</h3><p>在进入本指导的重点之前，让我们简要地探索下 <strong>verbose 模式</strong>。它可以用 <code>-v</code> 调试选项来启用，它会告诉 shell 在读取时显示每行。</p><p>要展示这个如何工作，下面是一个示例脚本来<a href=/article-8014-1.html>批量将 PNG 图片转换成 JPG 格式</a>。</p><p>将下面内容输入（或者复制粘贴）到一个文件中。</p><pre tabindex=0><code>#!/bin/bash
+#convert
+for image in *.png; do
+convert  &#34;$image&#34;  &#34;${image%.png}.jpg&#34;
+echo &#34;image $image converted to ${image%.png}.jpg&#34;
+done
+exit 0
+</code></pre><p>接着保存文件，并用下面的命令使脚本可执行：</p><pre tabindex=0><code>$ chmod +x script.sh
+</code></pre><p>我们可以执行脚本并显示它被 Shell 读取到的每一行：</p><pre tabindex=0><code>$ bash -v script.sh
+</code></pre><p><img src=/data/attachment/album/201612/19/091926fbqqc4xv0d0qjfxr.png alt="Display All Lines in Shell Script"></p><p><em>显示shell脚本中的所有行</em></p><h3 id=在-shell-脚本中启用语法检查调试模式>在 Shell 脚本中启用语法检查调试模式</h3><p>回到我们主题的重点，<code>-n</code> 激活语法检查模式。它会让 shell 读取所有的命令，但是不会执行它们，它（shell）只会检查语法。</p><p>一旦 shell 脚本中发现有错误，shell 会在终端中输出错误，不然就不会显示任何东西。</p><p>激活语法检查的命令如下：</p><pre tabindex=0><code>$ bash -n script.sh
+</code></pre><p>因为脚本中的语法是正确的，上面的命令不会显示任何东西。所以，让我们尝试删除结束 for 循环的 <code>done</code> 来看下是否会显示错误：</p><p>下面是修改过的含有 bug 的批量将 png 图片转换成 jpg 格式的脚本。</p><pre tabindex=0><code>#!/bin/bash
+#script with a bug
+#convert
+for image in *.png; do
+convert  &#34;$image&#34;  &#34;${image%.png}.jpg&#34;
+echo &#34;image $image converted to ${image%.png}.jpg&#34;
+exit 0
+</code></pre><p>保存文件，接着运行该脚本并执行语法检查：</p><pre tabindex=0><code>$ bash -n script.sh
+</code></pre><p><img src=/data/attachment/album/201612/19/091927q88zeu688keopklc.png alt="Check Syntax in Shell Script"></p><p><em>检查 shell 脚本语法</em></p><p>从上面的输出中，我们看到我们的脚本中有一个错误，for 循环缺少了一个结束的 <code>done</code> 关键字。shell 脚本从头到尾检查文件，一旦没有找到它（<code>done</code>），shell 会打印出一个语法错误：</p><pre tabindex=0><code>script.sh: line 11: syntax error: unexpected end of file
+</code></pre><p>我们可以同时结合 verbose 模式和语法检查模式：</p><pre tabindex=0><code>$ bash -vn script.sh
+</code></pre><p><img src=/data/attachment/album/201612/19/091928t72tl80lt3b8j8yb.png alt="Enable Verbose and Syntax Checking in Script"></p><p><em>在脚本中同时启用 verbose 检查和语法检查</em></p><p>另外，我们可以通过修改脚本的首行来启用脚本检查，如下面的例子：</p><pre tabindex=0><code>#!/bin/bash -n
+#altering the first line of a script to enable syntax checking
+#convert
+for image in *.png; do
+convert  &#34;$image&#34;  &#34;${image%.png}.jpg&#34;
+echo &#34;image $image converted to ${image%.png}.jpg&#34;
+exit 0
+</code></pre><p>如上所示，保存文件并在运行中检查语法：</p><pre tabindex=0><code>$ ./script.sh
+script.sh: line 12: syntax error: unexpected end of file
+</code></pre><p>此外，我们可以用内置的 set 命令来在脚本中启用调试模式。</p><p>下面的例子中，我们只检查脚本中的 for 循环语法。</p><pre tabindex=0><code>#!/bin/bash
+#using set shell built-in command to enable debugging
+#convert
+#enable debugging
+set -n
+for image in *.png; do
+convert  &#34;$image&#34;  &#34;${image%.png}.jpg&#34;
+echo &#34;image $image converted to ${image%.png}.jpg&#34;
+#disable debugging
+set +n
+exit 0
+</code></pre><p>再一次保存并执行脚本：</p><pre tabindex=0><code>$ ./script.sh 
+</code></pre><p>总的来说，我们应该保证在执行 Shell 脚本之前先检查脚本语法以捕捉错误。</p><p>请在下面的反馈栏中，给我们发送关于这篇指导的任何问题或反馈。在这个系列的第三部分中，我们会解释并使用 shell 追踪调试模式。</p><hr><p>作者简介：</p><p><img src=/data/attachment/album/201612/19/091929ioey7fbu7gm762im.jpg alt></p><p>Aaron Kili 是一个 Linux 及 F.O.S.S 热衷者，即将是 Linux 系统管理员、web 开发者，目前是 TecMint 的内容创作者，他喜欢用电脑工作，并热心分享知识。</p><hr><p>via: <a href=http://www.tecmint.com/check-syntax-in-shell-script/>http://www.tecmint.com/check-syntax-in-shell-script/</a></p><p>作者：<a href=http://www.tecmint.com/author/aaronkili/>Aaron Kili</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/jasminepeng>jasminepeng</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%84%9A%E6%9C%AC/ rel=tag>脚本</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%B0%83%E8%AF%95/ rel=tag>调试</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

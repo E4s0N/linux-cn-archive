@@ -1,0 +1,99 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>怎样在 CentOS 里下载 RPM 包及其所有依赖包 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="怎样在 CentOS 里下载 RPM 包及其所有依赖包"><meta property="og:description" content="我们可以使用 curl 或者 wget 下载任何软件包，然而这些命令并不能下载要求的依赖软件包。你必须去花一些时间而且手动的去寻找和下载被安装的软件所依赖的软件包。"><meta property="og:type" content="article"><meta property="og:url" content="/article-7937-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-11-07T17:25:00+00:00"><meta property="article:modified_time" content="2016-11-07T17:25:00+00:00"><meta itemprop=name content="怎样在 CentOS 里下载 RPM 包及其所有依赖包"><meta itemprop=description content="我们可以使用 curl 或者 wget 下载任何软件包，然而这些命令并不能下载要求的依赖软件包。你必须去花一些时间而且手动的去寻找和下载被安装的软件所依赖的软件包。"><meta itemprop=datePublished content="2016-11-07T17:25:00+00:00"><meta itemprop=dateModified content="2016-11-07T17:25:00+00:00"><meta itemprop=wordCount content="519"><meta itemprop=keywords content="RPM,软件包,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>怎样在 CentOS 里下载 RPM 包及其所有依赖包</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-11-07T17:25:00Z>November 07, 2016</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201611/07/173052bje21e908eajj2ek.jpg alt></p><p>前几天我尝试去创建一个仅包含我们经常在 CentOS 7 下使用的软件的本地仓库。当然，我们可以使用 curl 或者 wget 下载任何软件包，然而这些命令并不能下载要求的依赖软件包。你必须去花一些时间而且手动的去寻找和下载被安装的软件所依赖的软件包。然而，我们并不是必须这样。在这个简短的教程中，我将会带领你以两种方式下载软件包及其所有依赖包。我已经在 CentOS 7 下进行了测试，不过这些相同的步骤或许在其他基于 RPM 管理系统的发行版上也可以工作，例如 RHEL，Fedora 和 Scientific Linux。</p><h3 id=方法-1-利用-downloadonly-插件下载-rpm-软件包及其所有依赖包>方法 1 利用 “Downloadonly” 插件下载 RPM 软件包及其所有依赖包</h3><p>我们可以通过 yum 命令的 “Downloadonly” 插件下载 RPM 软件包及其所有依赖包。</p><p>为了安装 Downloadonly 插件，以 root 身份运行以下命令。</p><pre tabindex=0><code>yum install yum-plugin-downloadonly
+</code></pre><p>现在，运行以下命令去下载一个 RPM 软件包。</p><pre tabindex=0><code>yum install --downloadonly &lt;package-name&gt;
+</code></pre><p>默认情况下，这个命令将会下载并把软件包保存到 <code>/var/cache/yum/</code> 的 <code>rhel-{arch}-channel/packageslocation</code> 目录，不过，你也可以下载和保存软件包到任何位置，你可以通过 <code>–downloaddir</code> 选项来指定。</p><pre tabindex=0><code>yum install --downloadonly --downloaddir=&lt;directory&gt; &lt;package-name&gt;
+</code></pre><p>例子:</p><pre tabindex=0><code>yum install --downloadonly --downloaddir=/root/mypackages/ httpd
+</code></pre><p>终端输出:</p><pre tabindex=0><code>Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: centos.excellmedia.net
+ * epel: epel.mirror.angkasa.id
+ * extras: centos.excellmedia.net
+ * updates: centos.excellmedia.net
+Resolving Dependencies
+--&gt; Running transaction check
+---&gt; Package httpd.x86_64 0:2.4.6-40.el7.centos.4 will be installed
+--&gt; Processing Dependency: httpd-tools = 2.4.6-40.el7.centos.4 for package: httpd-2.4.6-40.el7.centos.4.x86_64
+--&gt; Processing Dependency: /etc/mime.types for package: httpd-2.4.6-40.el7.centos.4.x86_64
+--&gt; Processing Dependency: libaprutil-1.so.0()(64bit) for package: httpd-2.4.6-40.el7.centos.4.x86_64
+--&gt; Processing Dependency: libapr-1.so.0()(64bit) for package: httpd-2.4.6-40.el7.centos.4.x86_64
+--&gt; Running transaction check
+---&gt; Package apr.x86_64 0:1.4.8-3.el7 will be installed
+---&gt; Package apr-util.x86_64 0:1.5.2-6.el7 will be installed
+---&gt; Package httpd-tools.x86_64 0:2.4.6-40.el7.centos.4 will be installed
+---&gt; Package mailcap.noarch 0:2.1.41-2.el7 will be installed
+--&gt; Finished Dependency Resolution
+
+Dependencies Resolved
+
+=======================================================================================================================================
+ Package Arch Version Repository Size
+=======================================================================================================================================
+Installing:
+ httpd x86_64 2.4.6-40.el7.centos.4 updates 2.7 M
+Installing for dependencies:
+ apr x86_64 1.4.8-3.el7 base 103 k
+ apr-util x86_64 1.5.2-6.el7 base 92 k
+ httpd-tools x86_64 2.4.6-40.el7.centos.4 updates 83 k
+ mailcap noarch 2.1.41-2.el7 base 31 k
+
+Transaction Summary
+=======================================================================================================================================
+Install 1 Package (+4 Dependent packages)
+
+Total download size: 3.0 M
+Installed size: 10 M
+Background downloading packages, then exiting:
+(1/5): apr-1.4.8-3.el7.x86_64.rpm | 103 kB 00:00:01 
+(2/5): apr-util-1.5.2-6.el7.x86_64.rpm | 92 kB 00:00:01 
+(3/5): mailcap-2.1.41-2.el7.noarch.rpm | 31 kB 00:00:01 
+(4/5): httpd-tools-2.4.6-40.el7.centos.4.x86_64.rpm | 83 kB 00:00:01 
+(5/5): httpd-2.4.6-40.el7.centos.4.x86_64.rpm | 2.7 MB 00:00:09 
+---------------------------------------------------------------------------------------------------------------------------------------
+Total 331 kB/s | 3.0 MB 00:00:09 
+exiting because &#34;Download Only&#34; specified
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201611/07/172733jqrrvca6qb6roqx8.png alt></p><p>现在去你指定的目录位置下，你将会看到那里有下载好的软件包和依赖的软件。在我这种情况下，我已经把软件包下载到 <code>/root/mypackages/</code> 目录下。</p><p>让我们来查看一下内容。</p><pre tabindex=0><code>ls /root/mypackages/
+</code></pre><p>样本输出：</p><pre tabindex=0><code>apr-1.4.8-3.el7.x86_64.rpm
+apr-util-1.5.2-6.el7.x86_64.rpm
+httpd-2.4.6-40.el7.centos.4.x86_64.rpm
+httpd-tools-2.4.6-40.el7.centos.4.x86_64.rpm
+mailcap-2.1.41-2.el7.noarch.rpm
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201611/07/172800chxg00wlpd0ylx0v.png alt></p><p>正如你在上面输出所看到的, httpd软件包已经被依据所有依赖性下载完成了 。</p><p>请注意，这个插件适用于 <code>yum install/yum update</code>， 但是并不适用于 <code>yum groupinstall</code>。默认情况下，这个插件将会下载仓库中最新可用的软件包。然而你可以通过指定版本号来下载某个特定的软件版本。</p><p>例子:</p><pre tabindex=0><code>yum install --downloadonly --downloaddir=/root/mypackages/ httpd-2.2.6-40.el7
+</code></pre><p>此外，你也可以如下一次性下载多个包：</p><pre tabindex=0><code>yum install --downloadonly --downloaddir=/root/mypackages/ httpd vsftpd
+</code></pre><h3 id=方法-2-使用-yumdownloader-工具来下载-rpm-软件包及其所有依赖包>方法 2 使用 “Yumdownloader” 工具来下载 RPM 软件包及其所有依赖包</h3><p>“Yumdownloader” 是一款简单，但是却十分有用的命令行工具，它可以一次性下载任何 RPM 软件包及其所有依赖包。</p><p>以 root 身份运行如下命令安装 “Yumdownloader” 工具。</p><pre tabindex=0><code>yum install yum-utils
+</code></pre><p>一旦安装完成，运行如下命令去下载一个软件包，例如 httpd。</p><pre tabindex=0><code>yumdownloader httpd
+</code></pre><p>为了根据所有依赖性下载软件包，我们使用 <code>--resolve</code> 参数：</p><pre tabindex=0><code>yumdownloader --resolve httpd
+</code></pre><p>默认情况下，Yumdownloader 将会下载软件包到当前工作目录下。</p><p>为了将软件下载到一个特定的目录下，我们使用 <code>--destdir</code> 参数：</p><pre tabindex=0><code>yumdownloader --resolve --destdir=/root/mypackages/ httpd
+</code></pre><p>或者，</p><pre tabindex=0><code>yumdownloader --resolve --destdir /root/mypackages/ httpd
+</code></pre><p>终端输出：</p><pre tabindex=0><code>Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: centos.excellmedia.net
+ * epel: epel.mirror.angkasa.id
+ * extras: centos.excellmedia.net
+ * updates: centos.excellmedia.net
+--&gt; Running transaction check
+---&gt; Package httpd.x86_64 0:2.4.6-40.el7.centos.4 will be installed
+--&gt; Processing Dependency: httpd-tools = 2.4.6-40.el7.centos.4 for package: httpd-2.4.6-40.el7.centos.4.x86_64
+--&gt; Processing Dependency: /etc/mime.types for package: httpd-2.4.6-40.el7.centos.4.x86_64
+--&gt; Processing Dependency: libaprutil-1.so.0()(64bit) for package: httpd-2.4.6-40.el7.centos.4.x86_64
+--&gt; Processing Dependency: libapr-1.so.0()(64bit) for package: httpd-2.4.6-40.el7.centos.4.x86_64
+--&gt; Running transaction check
+---&gt; Package apr.x86_64 0:1.4.8-3.el7 will be installed
+---&gt; Package apr-util.x86_64 0:1.5.2-6.el7 will be installed
+---&gt; Package httpd-tools.x86_64 0:2.4.6-40.el7.centos.4 will be installed
+---&gt; Package mailcap.noarch 0:2.1.41-2.el7 will be installed
+--&gt; Finished Dependency Resolution
+(1/5): apr-util-1.5.2-6.el7.x86_64.rpm | 92 kB 00:00:01 
+(2/5): mailcap-2.1.41-2.el7.noarch.rpm | 31 kB 00:00:02 
+(3/5): apr-1.4.8-3.el7.x86_64.rpm | 103 kB 00:00:02 
+(4/5): httpd-tools-2.4.6-40.el7.centos.4.x86_64.rpm | 83 kB 00:00:03 
+(5/5): httpd-2.4.6-40.el7.centos.4.x86_64.rpm | 2.7 MB 00:00:19
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201611/07/172825ez4nhrn96b39lbr8.png alt></p><p>让我们确认一下软件包是否被下载到我们指定的目录下。</p><pre tabindex=0><code>ls /root/mypackages/
+</code></pre><p>终端输出：</p><pre tabindex=0><code>apr-1.4.8-3.el7.x86_64.rpm
+apr-util-1.5.2-6.el7.x86_64.rpm
+httpd-2.4.6-40.el7.centos.4.x86_64.rpm
+httpd-tools-2.4.6-40.el7.centos.4.x86_64.rpm
+mailcap-2.1.41-2.el7.noarch.rpm
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201611/07/172848ua6rsyccao0zxan6.png alt></p><p>不像 Downloadonly 插件，Yumdownload 可以下载一组相关的软件包。</p><pre tabindex=0><code>yumdownloader &#34;@Development Tools&#34; --resolve --destdir /root/mypackages/
+</code></pre><p>在我看来，我喜欢 Yumdownloader 更胜于 Yum 的 Downloadonly 插件。但是，两者都是十分简单易懂而且可以完成相同的工作。</p><p>这就是今天所有的内容，如果你觉得这份引导教程有用，清在你的社交媒体上面分享一下去让更多的人知道。</p><p>干杯！</p><hr><p>via: <a href=https://www.ostechnix.com/download-rpm-package-dependencies-centos/>https://www.ostechnix.com/download-rpm-package-dependencies-centos/</a></p><p>作者：<a href="http://ostechnix.tradepub.com/free/w_make272/prgm.cgi?a=1">SK</a> 译者：<a href=https://github.com/LinuxBars>LinuxBars</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/rpm/ rel=tag>RPM</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BD%AF%E4%BB%B6%E5%8C%85/ rel=tag>软件包</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

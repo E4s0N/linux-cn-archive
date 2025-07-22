@@ -1,0 +1,89 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Kubernetes 集群上安装 Ansible AWX - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Kubernetes 集群上安装 Ansible AWX"><meta property="og:description" content="在本文中，我们将逐步向你展示如何在 Kubernetes（k8s）集群上安装 Ansible AWX。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15941-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-06-25T17:26:00+00:00"><meta property="article:modified_time" content="2023-06-25T17:26:00+00:00"><meta itemprop=name content="如何在 Kubernetes 集群上安装 Ansible AWX"><meta itemprop=description content="在本文中，我们将逐步向你展示如何在 Kubernetes（k8s）集群上安装 Ansible AWX。"><meta itemprop=datePublished content="2023-06-25T17:26:00+00:00"><meta itemprop=dateModified content="2023-06-25T17:26:00+00:00"><meta itemprop=wordCount content="452"><meta itemprop=keywords content="Ansible,Kubernetes,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Kubernetes 集群上安装 Ansible AWX</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-06-25T17:26:00Z>June 25, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/172630f134fo6cg5gcodu4.jpg alt></p><blockquote><p>在本文中，我们将逐步向你展示如何在 Kubernetes（k8s）集群上安装 Ansible AWX。</p></blockquote><p>Ansible AWX 是一个强大的开源工具，用于管理和自动化 IT 基础设施。AWX 为 Ansible 提供图形用户界面，使你可以轻松创建、安排和运行 Ansible 剧本 Playbook 。</p><p>另一方面，Kubernetes 是一种流行的容器编排平台，广泛用于部署和管理容器化应用。</p><p>先决条件：</p><ul><li>Kubernetes 集群</li><li>Kubectl</li><li>具有 sudo 权限和集群管理员权限的普通用户</li><li>互联网连接</li></ul><h3 id=步骤-1安装-helm>步骤 1：安装 Helm</h3><p>如果你的系统上安装了 Helm，则在命令下运行以进行安装，</p><pre tabindex=0><code>$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+$ chmod +x get_helm.sh
+$ ./get_helm.sh
+$ helm version
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/173004ydhfhw6he7f7y7c3.jpg alt=Install-helm-linux-command-line></p><h3 id=步骤-2安装-awx-chart>步骤 2：安装 AWX chart</h3><p>在 Kubernetes 上安装 AWX 的最简单方法是使用 AWX Helm “ 海图 chart ”。因此，要通过 “海图” 安装 AWX，首先使用以下 <code>helm</code> 命令添加仓库。（LCTT 译注：Kubernetes 生态中大量使用了和航海有关的比喻，因此本文在翻译时也采用了这些比喻）</p><pre tabindex=0><code>$ helm repo add awx-operator https://ansible.github.io/awx-operator/
+&#34;awx-operator&#34; has been added to your repositories
+$
+</code></pre><p>注意：如果你之前已经添加过此仓库，请在命令下运行以获取最新版本的软件包。</p><pre tabindex=0><code>$ helm repo update
+</code></pre><p>要通过 Helm 安装 awx-operator，请运行:</p><pre tabindex=0><code>$ helm install ansible-awx-operator awx-operator/awx-operator -n awx --create-namespace
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/173022vo84mjx3imdjd84m.jpg alt=helm-install-awx-operator-kubernetes></p><p>这将下载 AWX 海图并将其安装在 <code>awx</code> 命名空间中的 Kubernetes 集群上。安装过程可能需要几分钟，请耐心等待。</p><h3 id=步骤-3验证-awx-操作员安装>步骤 3：验证 AWX 操作员安装</h3><p>安装成功后，你可以通过运行以下命令来验证 AWX 操作员 operator 状态：</p><pre tabindex=0><code>$ sudo kubectl get pods -n awx
+</code></pre><p>你应该看到这样的东西：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/173034r44ipn354p2i43t5.jpg alt=awx-operator-pod-status-kubectl></p><h3 id=步骤-4-创建-pvpvc-并部署-awx-yaml-文件>步骤 4： 创建 PV、PVC 并部署 AWX yaml 文件</h3><p>AWX 需要 postgres 容器荚 pod 的持久卷。那么，让我们首先为本地卷创建一个存储类。</p><p>注意：在本文中，我使用本地文件系统作为持久卷。</p><pre tabindex=0><code>$ vi local-storage-class.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage
+  namespace: awxprovisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+</code></pre><p>保存并关闭文件，然后运行：</p><pre tabindex=0><code>$ kubectl create -f local-storage-class.yaml
+$ kubectl get sc -n awx
+NAME            PROVISIONER                    RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   
+local-storage   kubernetes.io/no-provisioner   Delete          WaitForFirstConsumer   false                 
+$
+</code></pre><p>接下来使用以下 <code>pv.yaml</code> 文件创建持久卷（PV）：</p><pre tabindex=0><code>$ vi pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+  namespace: awx
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: local-storage
+  local:
+    path: /mnt/storage
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k8s-worker
+</code></pre><p>保存并退出文件。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/173359dku85vqq8v1k4mxf.jpg alt=Postgres-pv-awx-kubernetes></p><p>重要说明：确保文件夹 <code>/mnt/storage</code> 存在于工作节点上，如果不存在，则在工作节点上使用 <code>mkdir</code> 命令创建它。在我们的例子中，工作节点是 <code>k8s-worker</code>。</p><p>执行下面的命令在 <code>awx</code> 命名空间中创建 <code>postgres-pv</code>。</p><pre tabindex=0><code>$ kubectl create -f pv.yaml
+</code></pre><p>成功创建 PV 后，使用 <code>pvc.yaml</code> 文件创建 PersistentVolumeClaim：</p><pre tabindex=0><code>$ vi  pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-13-ansible-awx-postgres-13-0
+  namespace: awx
+spec:
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/173128aqq33bt6wp15vmm7.jpg alt=posgres-pvc-awx-kubernetes></p><p>要创建 PVC，请运行以下 <code>kubectl</code> 命令：</p><pre tabindex=0><code>$ kubectl create -f pvc.yaml
+</code></pre><p>使用下面的命令验证 PV 和 PVC 的状态：</p><pre tabindex=0><code>$ kubectl get pv,pvc -n awx
+</code></pre><p>现在，我们都准备好部署 AWX 实例了。创建一个包含以下内容的 <code>ansible-awx.yaml</code> 文件：</p><pre tabindex=0><code>$ vi ansible-awx.yaml
+---
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: ansible-awx
+  namespace: awx
+spec:
+  service_type: nodeport
+  postgres_storage_class: local-storage
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/173144bk6wj8k3bbr8j6rb.jpg alt=Ansible-awx-yaml-file></p><p>保存并关闭文件。</p><p>执行以下 <code>kubectl</code> 命令来部署 awx 实例：</p><pre tabindex=0><code>$ kubectl create -f ansible-awx.yaml
+</code></pre><p>等待几分钟，然后检查 <code>awx</code> 命名空间中的容器荚状态。</p><pre tabindex=0><code>$ kubectl get pods -n awx
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/173159zxo7dr7d7xtux3r1.jpg alt=Ansible-AWX-Pods-Status-Kubernetes></p><h3 id=步骤-5访问-awx-web-界面>步骤 5：访问 AWX Web 界面</h3><p>要访问 AWX Web 界面，你需要创建一个公开 awx-web 部署的服务：</p><pre tabindex=0><code>$ kubectl expose deployment ansible-awx-web --name ansible-awx-web-svc --type NodePort -n awx
+</code></pre><p>此命令将创建一个 <code>NodePort</code> 服务，该服务将 AWX Web 容器的端口映射到 Kubernetes 节点上的端口。你可以通过运行以下命令找到端口号：</p><pre tabindex=0><code>$ kubectl get svc ansible-awx-web-svc  -n awx
+</code></pre><p>这将输出如下内容：</p><pre tabindex=0><code>NAME                 TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+ansible-awx-web-svc   NodePort   10.99.83.248   &lt;none&gt;        8052:32254/TCP   82s
+</code></pre><p>在此示例中，Web 服务在端口 32254 上可用。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/173214q4m2vwv4g22em2vs.jpg alt=Expose-Ansible-AWX-Web-NodePort-Kubernetes></p><p>默认情况下，admin 用户是 Web 界面的 <code>admin</code>，密码在 <code>&lt;resourcename>-admin-password</code> 机密信息中。要检索管理员密码，请运行：</p><pre tabindex=0><code>$ kubectl get secrets -n awx | grep -i admin-password
+ansible-awx-admin-password        Opaque               1      109m
+$
+$ kubectl get secret ansible-awx-admin-password -o jsonpath=&#34;{.data.password}&#34; -n awx | base64 --decode ; echo
+l9mWcIOXQhSKnzZQyQQ9LZf3awDV0YMJ
+$
+</code></pre><p>你现在可以打开 Web 浏览器并进入 <code>http://&lt;node-ip>:&lt;node-port>/</code> 来访问 AWX Web 界面。在上面的示例中，URL 是：</p><pre tabindex=0><code>http://192.168.1.223:3225
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/173224juuvfqfhdlevebws.jpg alt=AWX-Login-URL-Kubernetes></p><p>输入凭据后单击登录。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202306/25/173233xqr98skyytr8md3r.jpg alt=Ansible-AWX-Web-Dashboard></p><p>恭喜！ 你已在 Kubernetes 上成功安装 Ansible AWX。你现在可以使用 AWX 来自动化你的 IT 基础架构，并让你作为系统管理员的生活更轻松。</p><p><em>（题图：MJ/bfd354aa-2ee5-4555-98b8-ac5207cbeabe）</em></p><hr><p>via: <a href=https://www.linuxtechi.com/install-ansible-awx-on-kubernetes-cluster/>https://www.linuxtechi.com/install-ansible-awx-on-kubernetes-cluster/</a></p><p>作者：<a href=https://www.linuxtechi.com/author/pradeep/>Pradeep Kumar</a> 选题：<a href=https://github.com/lkxed/>lkxed</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ansible/ rel=tag>Ansible</a></li><li class=tags__item><a class="tags__link btn" href=/tags/kubernetes/ rel=tag>Kubernetes</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

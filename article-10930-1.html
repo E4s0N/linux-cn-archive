@@ -1,0 +1,214 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux 下的进程间通信：套接字和信号 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux 下的进程间通信：套接字和信号"><meta property="og:description" content="学习在 Linux 中进程是如何与其他进程进行同步的。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10930-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-06-02T23:44:52+00:00"><meta property="article:modified_time" content="2019-06-02T23:44:52+00:00"><meta itemprop=name content="Linux 下的进程间通信：套接字和信号"><meta itemprop=description content="学习在 Linux 中进程是如何与其他进程进行同步的。"><meta itemprop=datePublished content="2019-06-02T23:44:52+00:00"><meta itemprop=dateModified content="2019-06-02T23:44:52+00:00"><meta itemprop=wordCount content="1140"><meta itemprop=keywords content="IPC,进程间通信,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux 下的进程间通信：套接字和信号</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-06-02T23:44:52Z>June 02, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>学习在 Linux 中进程是如何与其他进程进行同步的。</p></blockquote><p><img src=/data/attachment/album/201906/02/234437y6gig4tg4yy94356.jpg alt></p><p>本篇是 Linux 下<a href=https://en.wikipedia.org/wiki/Inter-process_communication>进程间通信</a>（IPC）系列的第三篇同时也是最后一篇文章。<a href=/article-10826-1.html>第一篇文章</a>聚焦在通过共享存储（文件和共享内存段）来进行 IPC，<a href=/article-10845-1.html>第二篇文章</a>则通过管道（无名的或者命名的）及消息队列来达到相同的目的。这篇文章将目光从高处（套接字）然后到低处（信号）来关注 IPC。代码示例将用力地充实下面的解释细节。</p><h3 id=套接字>套接字</h3><p>正如管道有两种类型（命名和无名）一样，套接字也有两种类型。IPC 套接字（即 Unix 套接字）给予进程在相同设备（主机）上基于通道的通信能力；而网络套接字给予进程运行在不同主机的能力，因此也带来了网络通信的能力。网络套接字需要底层协议的支持，例如 TCP（传输控制协议）或 UDP（用户数据报协议）。</p><p>与之相反，IPC 套接字依赖于本地系统内核的支持来进行通信；特别的，IPC 通信使用一个本地的文件作为套接字地址。尽管这两种套接字的实现有所不同，但在本质上，IPC 套接字和网络套接字的 API 是一致的。接下来的例子将包含网络套接字的内容，但示例服务器和客户端程序可以在相同的机器上运行，因为服务器使用了 <code>localhost</code>（127.0.0.1）这个网络地址，该地址表示的是本地机器上的本地机器地址。</p><p>套接字以流的形式（下面将会讨论到）被配置为双向的，并且其控制遵循 C/S（客户端/服务器端）模式：客户端通过尝试连接一个服务器来初始化对话，而服务器端将尝试接受该连接。假如万事顺利，来自客户端的请求和来自服务器端的响应将通过管道进行传输，直到其中任意一方关闭该通道，从而断开这个连接。</p><p>一个迭代服务器（只适用于开发）将一直和连接它的客户端打交道：从最开始服务第一个客户端，然后到这个连接关闭，然后服务第二个客户端，循环往复。这种方式的一个缺点是处理一个特定的客户端可能会挂起，使得其他的客户端一直在后面等待。生产级别的服务器将是并发的，通常使用了多进程或者多线程的混合。例如，我台式机上的 Nginx 网络服务器有一个 4 个 工人 worker 的进程池，它们可以并发地处理客户端的请求。在下面的代码示例中，我们将使用迭代服务器，使得我们将要处理的问题保持在一个很小的规模，只关注基本的 API，而不去关心并发的问题。</p><p>最后，随着各种 POSIX 改进的出现，套接字 API 随着时间的推移而发生了显著的变化。当前针对服务器端和客户端的示例代码特意写的比较简单，但是它着重强调了基于流的套接字中连接的双方。下面是关于流控制的一个总结，其中服务器端在一个终端中开启，而客户端在另一个不同的终端中开启：</p><ul><li>服务器端等待客户端的连接，对于给定的一个成功连接，它就读取来自客户端的数据。</li><li>为了强调是双方的会话，服务器端会对接收自客户端的数据做回应。这些数据都是 ASCII 字符代码，它们组成了一些书的标题。</li><li>客户端将书的标题写给服务器端的进程，并从服务器端的回应中读取到相同的标题。然后客户端和服务器端都在屏幕上打印出标题。下面是服务器端的输出，客户端的输出也和它完全一样：</li></ul><pre tabindex=0><code>Listening on port 9876 for clients...
+War and Peace
+Pride and Prejudice
+The Sound and the Fury
+</code></pre><h4 id=示例-1-使用套接字的客户端程序>示例 1. 使用套接字的客户端程序</h4><pre tabindex=0><code>#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netinet/tcp.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &#34;sock.h&#34;
+
+void report(const char* msg, int terminate) {
+  perror(msg);
+  if (terminate) exit(-1); /* failure */
+}
+
+int main() {
+  int fd = socket(AF_INET,     /* network versus AF_LOCAL */
+          SOCK_STREAM, /* reliable, bidirectional: TCP */
+          0);          /* system picks underlying protocol */
+  if (fd &lt; 0) report(&#34;socket&#34;, 1); /* terminate */
+    
+  /* bind the server&#39;s local address in memory */
+  struct sockaddr_in saddr;
+  memset(&amp;saddr, 0, sizeof(saddr));          /* clear the bytes */
+  saddr.sin_family = AF_INET;                /* versus AF_LOCAL */
+  saddr.sin_addr.s_addr = htonl(INADDR_ANY); /* host-to-network endian */
+  saddr.sin_port = htons(PortNumber);        /* for listening */
+  
+  if (bind(fd, (struct sockaddr *) &amp;saddr, sizeof(saddr)) &lt; 0)
+    report(&#34;bind&#34;, 1); /* terminate */
+    
+  /* listen to the socket */
+  if (listen(fd, MaxConnects) &lt; 0) /* listen for clients, up to MaxConnects */
+    report(&#34;listen&#34;, 1); /* terminate */
+
+  fprintf(stderr, &#34;Listening on port %i for clients...\n&#34;, PortNumber);
+  /* a server traditionally listens indefinitely */
+  while (1) {
+    struct sockaddr_in caddr; /* client address */
+    int len = sizeof(caddr);  /* address length could change */
+    
+    int client_fd = accept(fd, (struct sockaddr*) &amp;caddr, &amp;len);  /* accept blocks */
+    if (client_fd &lt; 0) {
+      report(&#34;accept&#34;, 0); /* don&#39;t terminated, though there&#39;s a problem */
+      continue;
+    }
+
+    /* read from client */
+    int i;
+    for (i = 0; i &lt; ConversationLen; i++) {
+      char buffer[BuffSize + 1];
+      memset(buffer, &#39;\0&#39;, sizeof(buffer)); 
+      int count = read(client_fd, buffer, sizeof(buffer));
+      if (count &gt; 0) {
+    puts(buffer);
+    write(client_fd, buffer, sizeof(buffer)); /* echo as confirmation */
+      }
+    }
+    close(client_fd); /* break connection */
+  }  /* while(1) */
+  return 0;
+}
+</code></pre><p>上面的服务器端程序执行典型的 4 个步骤来准备回应客户端的请求，然后接受其他的独立请求。这里每一个步骤都以服务器端程序调用的系统函数来命名。</p><ol><li><code>socket(…)</code>：为套接字连接获取一个文件描述符</li><li><code>bind(…)</code>：将套接字和服务器主机上的一个地址进行绑定</li><li><code>listen(…)</code>：监听客户端请求</li><li><code>accept(…)</code>：接受一个特定的客户端请求</li></ol><p>上面的 <code>socket</code> 调用的完整形式为：</p><pre tabindex=0><code>int sockfd = socket(AF_INET,      /* versus AF_LOCAL */
+                    SOCK_STREAM,  /* reliable, bidirectional */
+                    0);           /* system picks protocol (TCP) */
+</code></pre><p>第一个参数特别指定了使用的是一个网络套接字，而不是 IPC 套接字。对于第二个参数有多种选项，但 <code>SOCK_STREAM</code> 和 <code>SOCK_DGRAM</code>（数据报）是最为常用的。基于流的套接字支持可信通道，在这种通道中如果发生了信息的丢失或者更改，都将会被报告。这种通道是双向的，并且从一端到另外一端的有效载荷在大小上可以是任意的。相反的，基于数据报的套接字大多是不可信的，没有方向性，并且需要固定大小的载荷。<code>socket</code> 的第三个参数特别指定了协议。对于这里展示的基于流的套接字，只有一种协议选择：TCP，在这里表示的 <code>0</code>。因为对 <code>socket</code> 的一次成功调用将返回相似的文件描述符，套接字可以被读写，对应的语法和读写一个本地文件是类似的。</p><p>对 <code>bind</code> 的调用是最为复杂的，因为它反映出了在套接字 API 方面上的各种改进。我们感兴趣的点是这个调用将一个套接字和服务器端所在机器中的一个内存地址进行绑定。但对 <code>listen</code> 的调用就非常直接了：</p><pre tabindex=0><code>if (listen(fd, MaxConnects) &lt; 0)
+</code></pre><p>第一个参数是套接字的文件描述符，第二个参数则指定了在服务器端处理一个拒绝连接错误之前，有多少个客户端连接被允许连接。（在头文件 <code>sock.h</code> 中 <code>MaxConnects</code> 的值被设置为 <code>8</code>。）</p><p><code>accept</code> 调用默认将是一个阻塞等待：服务器端将不做任何事情直到一个客户端尝试连接它，然后进行处理。<code>accept</code> 函数返回的值如果是 <code>-1</code> 则暗示有错误发生。假如这个调用是成功的，则它将返回另一个文件描述符，这个文件描述符被用来指代另一个可读可写的套接字，它与 <code>accept</code> 调用中的第一个参数对应的接收套接字有所不同。服务器端使用这个可读可写的套接字来从客户端读取请求然后写回它的回应。接收套接字只被用于接受客户端的连接。</p><p>在设计上，服务器端可以一直运行下去。当然服务器端可以通过在命令行中使用 <code>Ctrl+C</code> 来终止它。</p><h4 id=示例-2-使用套接字的客户端>示例 2. 使用套接字的客户端</h4><pre tabindex=0><code>#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;netinet/tcp.h&gt;
+#include &lt;netdb.h&gt;
+#include &#34;sock.h&#34;
+
+const char* books[] = {&#34;War and Peace&#34;,
+               &#34;Pride and Prejudice&#34;,
+               &#34;The Sound and the Fury&#34;};
+
+void report(const char* msg, int terminate) {
+  perror(msg);
+  if (terminate) exit(-1); /* failure */
+}
+
+int main() {
+  /* fd for the socket */
+  int sockfd = socket(AF_INET,      /* versus AF_LOCAL */
+              SOCK_STREAM,  /* reliable, bidirectional */
+              0);           /* system picks protocol (TCP) */
+  if (sockfd &lt; 0) report(&#34;socket&#34;, 1); /* terminate */
+
+  /* get the address of the host */
+  struct hostent* hptr = gethostbyname(Host); /* localhost: 127.0.0.1 */ 
+  if (!hptr) report(&#34;gethostbyname&#34;, 1); /* is hptr NULL? */
+  if (hptr-&gt;h_addrtype != AF_INET)       /* versus AF_LOCAL */
+    report(&#34;bad address family&#34;, 1);
+  
+  /* connect to the server: configure server&#39;s address 1st */
+  struct sockaddr_in saddr;
+  memset(&amp;saddr, 0, sizeof(saddr));
+  saddr.sin_family = AF_INET;
+  saddr.sin_addr.s_addr = 
+     ((struct in_addr*) hptr-&gt;h_addr_list[0])-&gt;s_addr;
+  saddr.sin_port = htons(PortNumber); /* port number in big-endian */
+  
+  if (connect(sockfd, (struct sockaddr*) &amp;saddr, sizeof(saddr)) &lt; 0)
+    report(&#34;connect&#34;, 1);
+  
+  /* Write some stuff and read the echoes. */
+  puts(&#34;Connect to server, about to write some stuff...&#34;);
+  int i;
+  for (i = 0; i &lt; ConversationLen; i++) {
+    if (write(sockfd, books[i], strlen(books[i])) &gt; 0) {
+      /* get confirmation echoed from server and print */
+      char buffer[BuffSize + 1];
+      memset(buffer, &#39;\0&#39;, sizeof(buffer));
+      if (read(sockfd, buffer, sizeof(buffer)) &gt; 0)
+    puts(buffer);
+    }
+  }
+  puts(&#34;Client done, about to exit...&#34;);
+  close(sockfd); /* close the connection */
+  return 0;
+}
+</code></pre><p>客户端程序的设置代码和服务器端类似。两者主要的区别既不是在于监听也不在于接收，而是连接：</p><pre tabindex=0><code>if (connect(sockfd, (struct sockaddr*) &amp;saddr, sizeof(saddr)) &lt; 0)
+</code></pre><p>对 <code>connect</code> 的调用可能因为多种原因而导致失败，例如客户端拥有错误的服务器端地址或者已经有太多的客户端连接上了服务器端。假如 <code>connect</code> 操作成功，客户端将在一个 <code>for</code> 循环中，写入它的请求然后读取返回的响应。在会话后，服务器端和客户端都将调用 <code>close</code> 去关闭这个可读可写套接字，尽管任何一边的关闭操作就足以关闭它们之间的连接。此后客户端可以退出了，但正如前面提到的那样，服务器端可以一直保持开放以处理其他事务。</p><p>从上面的套接字示例中，我们看到了请求信息被回显给客户端，这使得客户端和服务器端之间拥有进行丰富对话的可能性。也许这就是套接字的主要魅力。在现代系统中，客户端应用（例如一个数据库客户端）和服务器端通过套接字进行通信非常常见。正如先前提及的那样，本地 IPC 套接字和网络套接字只在某些实现细节上面有所不同，一般来说，IPC 套接字有着更低的消耗和更好的性能。它们的通信 API 基本是一样的。</p><h3 id=信号>信号</h3><p>信号会中断一个正在执行的程序，在这种意义下，就是用信号与这个程序进行通信。大多数的信号要么可以被忽略（阻塞）或者被处理（通过特别设计的代码）。<code>SIGSTOP</code> （暂停）和 <code>SIGKILL</code>（立即停止）是最应该提及的两种信号。这种符号常量有整数类型的值，例如 <code>SIGKILL</code> 对应的值为 <code>9</code>。</p><p>信号可以在与用户交互的情况下发生。例如，一个用户从命令行中敲了 <code>Ctrl+C</code> 来终止一个从命令行中启动的程序；<code>Ctrl+C</code> 将产生一个 <code>SIGTERM</code> 信号。<code>SIGTERM</code> 意即终止，它可以被阻塞或者被处理，而不像 <code>SIGKILL</code> 信号那样。一个进程也可以通过信号和另一个进程通信，这样使得信号也可以作为一种 IPC 机制。</p><p>考虑一下一个多进程应用，例如 Nginx 网络服务器是如何被另一个进程优雅地关闭的。<code>kill</code> 函数：</p><pre tabindex=0><code>int kill(pid_t pid, int signum); /* declaration */
+</code></pre><p>可以被一个进程用来终止另一个进程或者一组进程。假如 <code>kill</code> 函数的第一个参数是大于 <code>0</code> 的，那么这个参数将会被认为是目标进程的 <code>pid</code>（进程 ID），假如这个参数是 <code>0</code>，则这个参数将会被视作信号发送者所属的那组进程。</p><p><code>kill</code> 的第二个参数要么是一个标准的信号数字（例如 <code>SIGTERM</code> 或 <code>SIGKILL</code>），要么是 <code>0</code> ，这将会对信号做一次询问，确认第一个参数中的 <code>pid</code> 是否是有效的。这样优雅地关闭一个多进程应用就可以通过向组成该应用的一组进程发送一个终止信号来完成，具体来说就是调用一个 <code>kill</code> 函数，使得这个调用的第二个参数是 <code>SIGTERM</code> 。（Nginx 主进程可以通过调用 <code>kill</code> 函数来终止其他工人进程，然后再停止自己。）就像许多库函数一样，<code>kill</code> 函数通过一个简单的可变语法拥有更多的能力和灵活性。</p><h4 id=示例-3-一个多进程系统的优雅停止>示例 3. 一个多进程系统的优雅停止</h4><pre tabindex=0><code>#include &lt;stdio.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/wait.h&gt;
+
+void graceful(int signum) {
+  printf(&#34;\tChild confirming received signal: %i\n&#34;, signum);
+  puts(&#34;\tChild about to terminate gracefully...&#34;);
+  sleep(1);
+  puts(&#34;\tChild terminating now...&#34;);
+  _exit(0); /* fast-track notification of parent */
+}
+
+void set_handler() {
+  struct sigaction current;
+  sigemptyset(&amp;current.sa_mask);         /* clear the signal set */
+  current.sa_flags = 0;                  /* enables setting sa_handler, not sa_action */
+  current.sa_handler = graceful;         /* specify a handler */
+  sigaction(SIGTERM, &amp;current, NULL);    /* register the handler */
+}
+
+void child_code() {
+  set_handler();
+
+  while (1) {   /` loop until interrupted `/
+    sleep(1);
+    puts(&#34;\tChild just woke up, but going back to sleep.&#34;);
+  }
+}
+
+void parent_code(pid_t cpid) {
+  puts(&#34;Parent sleeping for a time...&#34;);
+  sleep(5);
+
+  /* Try to terminate child. */
+  if (-1 == kill(cpid, SIGTERM)) {
+    perror(&#34;kill&#34;);
+    exit(-1);
+  }
+  wait(NULL); /` wait for child to terminate `/
+  puts(&#34;My child terminated, about to exit myself...&#34;);
+}
+
+int main() {
+  pid_t pid = fork();
+  if (pid &lt; 0) {
+    perror(&#34;fork&#34;);
+    return -1; /* error */
+  }
+  if (0 == pid)
+    child_code();
+  else
+    parent_code(pid);
+  return 0;  /* normal */
+}
+</code></pre><p>上面的停止程序模拟了一个多进程系统的优雅退出，在这个例子中，这个系统由一个父进程和一个子进程组成。这次模拟的工作流程如下：</p><ul><li>父进程尝试去 <code>fork</code> 一个子进程。假如这个 <code>fork</code> 操作成功了，每个进程就执行它自己的代码：子进程就执行函数 <code>child_code</code>，而父进程就执行函数 <code>parent_code</code>。</li><li>子进程将会进入一个潜在的无限循环，在这个循环中子进程将睡眠一秒，然后打印一个信息，接着再次进入睡眠状态，以此循环往复。来自父进程的一个 <code>SIGTERM</code> 信号将引起子进程去执行一个信号处理回调函数 <code>graceful</code>。这样这个信号就使得子进程可以跳出循环，然后进行子进程和父进程之间的优雅终止。在终止之前，进程将打印一个信息。</li><li>在 <code>fork</code> 一个子进程后，父进程将睡眠 5 秒，使得子进程可以执行一会儿；当然在这个模拟中，子进程大多数时间都在睡眠。然后父进程调用 <code>SIGTERM</code> 作为第二个参数的 <code>kill</code> 函数，等待子进程的终止，然后自己再终止。</li></ul><p>下面是一次运行的输出：</p><pre tabindex=0><code>% ./shutdown
+Parent sleeping for a time...
+        Child just woke up, but going back to sleep.
+        Child just woke up, but going back to sleep.
+        Child just woke up, but going back to sleep.
+        Child just woke up, but going back to sleep.
+        Child confirming received signal: 15  ## SIGTERM is 15
+        Child about to terminate gracefully...
+        Child terminating now...
+My child terminated, about to exit myself...
+</code></pre><p>对于信号的处理，上面的示例使用了 <code>sigaction</code> 库函数（POSIX 推荐的用法）而不是传统的 <code>signal</code> 函数，<code>signal</code> 函数有移植性问题。下面是我们主要关心的代码片段：</p><ul><li>假如对 <code>fork</code> 的调用成功了，父进程将执行 <code>parent_code</code> 函数，而子进程将执行 <code>child_code</code> 函数。在给子进程发送信号之前，父进程将会等待 5 秒：</li></ul><pre tabindex=0><code>puts(&#34;Parent sleeping for a time...&#34;);
+sleep(5);
+if (-1 == kill(cpid, SIGTERM)) {
+...sleepkillcpidSIGTERM...
+</code></pre><p>假如 <code>kill</code> 调用成功了，父进程将在子进程终止时做等待，使得子进程不会变成一个僵尸进程。在等待完成后，父进程再退出。</p><ul><li><code>child_code</code> 函数首先调用 <code>set_handler</code> 然后进入它的可能永久睡眠的循环。下面是我们将要查看的 <code>set_handler</code> 函数：</li></ul><pre tabindex=0><code>void set_handler() {
+  struct sigaction current;            /* current setup */
+  sigemptyset(&amp;current.sa_mask);       /* clear the signal set */
+  current.sa_flags = 0;                /* for setting sa_handler, not sa_action */
+  current.sa_handler = graceful;       /* specify a handler */
+  sigaction(SIGTERM, &amp;current, NULL);  /* register the handler */
+}
+</code></pre><p>上面代码的前三行在做相关的准备。第四个语句将为 <code>graceful</code> 设定为句柄，它将在调用 <code>_exit</code> 来停止之前打印一些信息。第 5 行和最后一行的语句将通过调用 <code>sigaction</code> 来向系统注册上面的句柄。<code>sigaction</code> 的第一个参数是 <code>SIGTERM</code> ，用作终止；第二个参数是当前的 <code>sigaction</code> 设定，而最后的参数（在这个例子中是 <code>NULL</code> ）可被用来保存前面的 <code>sigaction</code> 设定，以备后面的可能使用。</p><p>使用信号来作为 IPC 的确是一个很轻量的方法，但确实值得尝试。通过信号来做 IPC 显然可以被归入 IPC 工具箱中。</p><h3 id=这个系列的总结>这个系列的总结</h3><p>在这个系列中，我们通过三篇有关 IPC 的文章，用示例代码介绍了如下机制：</p><ul><li>共享文件</li><li>共享内存（通过信号量）</li><li>管道（命名和无名）</li><li>消息队列</li><li>套接字</li><li>信号</li></ul><p>甚至在今天，在以线程为中心的语言，例如 Java、C# 和 Go 等变得越来越流行的情况下，IPC 仍然很受欢迎，因为相比于使用多线程，通过多进程来实现并发有着一个明显的优势：默认情况下，每个进程都有它自己的地址空间，除非使用了基于共享内存的 IPC 机制（为了达到安全的并发，竞争条件在多线程和多进程的时候必须被加上锁），在多进程中可以排除掉基于内存的竞争条件。对于任何一个写过即使是基本的通过共享变量来通信的多线程程序的人来说，他都会知道想要写一个清晰、高效、线程安全的代码是多么具有挑战性。使用单线程的多进程的确是很有吸引力的，这是一个切实可行的方式，使用它可以利用好今天多处理器的机器，而不需要面临基于内存的竞争条件的风险。</p><p>当然，没有一个简单的答案能够回答上述 IPC 机制中的哪一个更好。在编程中每一种 IPC 机制都会涉及到一个取舍问题：是追求简洁，还是追求功能强大。以信号来举例，它是一个相对简单的 IPC 机制，但并不支持多个进程之间的丰富对话。假如确实需要这样的对话，另外的选择可能会更合适一些。带有锁的共享文件则相对直接，但是当要处理大量共享的数据流时，共享文件并不能很高效地工作。管道，甚至是套接字，有着更复杂的 API，可能是更好的选择。让具体的问题去指导我们的选择吧。</p><p>尽管所有的示例代码（可以在<a href=http://condor.depaul.edu/mkalin>我的网站</a>上获取到）都是使用 C 写的，其他的编程语言也经常提供这些 IPC 机制的轻量包装。这些代码示例都足够短小简单，希望这样能够鼓励你去进行实验。</p><hr><p>via: <a href=https://opensource.com/article/19/4/interprocess-communication-linux-networking>https://opensource.com/article/19/4/interprocess-communication-linux-networking</a></p><p>作者：<a href=https://opensource.com/users/mkalindepauledu>Marty Kalin</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/FSSlc>FSSlc</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ipc/ rel=tag>IPC</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/ rel=tag>进程间通信</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

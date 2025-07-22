@@ -1,0 +1,92 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Linux 中使用旧相机作为网络摄像头 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Linux 中使用旧相机作为网络摄像头"><meta property="og:description" content="我用 gphoto2 给我的旧单反相机带来了新的生命，把它变成了 Linux 电脑的网络摄像头。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15648-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-03-21T23:36:00+00:00"><meta property="article:modified_time" content="2023-03-21T23:36:00+00:00"><meta itemprop=name content="如何在 Linux 中使用旧相机作为网络摄像头"><meta itemprop=description content="我用 gphoto2 给我的旧单反相机带来了新的生命，把它变成了 Linux 电脑的网络摄像头。"><meta itemprop=datePublished content="2023-03-21T23:36:00+00:00"><meta itemprop=dateModified content="2023-03-21T23:36:00+00:00"><meta itemprop=wordCount content="565"><meta itemprop=keywords content="相机,摄像头,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Linux 中使用旧相机作为网络摄像头</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-03-21T23:36:00Z>March 21, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202303/21/233633z1qxdoq1shrx1xmc.jpg alt></p><blockquote><p>我用 gphoto2 给我的旧单反相机带来了新的生命，把它变成了 Linux 电脑的网络摄像头。</p></blockquote><p>今年，在我基本上放弃了 MacBook，转而使用 NixOS 机器之后，我开始在与人进行视频通话时被要求“打开摄像头”。这是一个问题，因为我没有网络摄像头。我考虑购买一个，但后来我意识到我有一台完好无损的 2008 年产的佳能 EOS Rebel XS 数码单反相机放在书架上。这台相机有一个 mini-USB 接口，所以我自然而然地思考：一台数码单反相机、一个 mini-USB 接口和一台台式电脑，是否意味着我能拥有一个网络摄像头？</p><p>只有一个问题。我的佳能 EOS Rebel XS 不能录制视频。它可以拍摄一些漂亮的照片，仅此而已。所以这结束了？</p><p>还是有别的办法？</p><p>恰好有一个叫做 <a href=http://gphoto.org/>gphoto2</a> 的神奇的开源软件。一旦安装，它允许你从计算机控制各种支持的相机，并拍摄照片和视频。</p><h3 id=支持的相机>支持的相机</h3><p>首先，了解你的设备是否得到支持：</p><pre tabindex=0><code>$ gphoto2 --list-cameras
+</code></pre><h3 id=拍摄图像>拍摄图像</h3><p>你可以用它拍照：</p><pre tabindex=0><code>$ gphoto2 --capture-image-and-download
+</code></pre><p>快门触发，图像会保存到你当前的工作目录中。</p><h3 id=录制视频>录制视频</h3><p>我意识到了这里的潜力，所以尽管我的相机没有视频功能，我还是决定尝试 <code>gphoto2 --capture-movie</code> 命令。不知怎么，尽管我的相机不支持视频功能，<code>gphoto2</code> 仍然能够生成一个 MJPEG 文件！</p><p>在我的相机上，我需要将其置于“实时预览”模式下，然后 <code>gphoto2</code> 才能录制视频。这包括将相机设置为纵向模式，然后按下 “ 设置 Set ” 按钮，使取景器关闭，相机屏幕显示图像。不幸的是，这还不足以将其用作网络摄像头。它仍然需要分配一个视频设备，例如 <code>/dev/video0</code>。</p><h3 id=安装-ffmpeg-和-v4l2loopback>安装 ffmpeg 和 v4l2loopback</h3><p>毫不奇怪，有一个开源的解决方案来解决这个问题。首先，使用你的包管理器安装 <code>gphoto2</code>、<code>ffmpeg</code> 和 <code>mpv</code>。例如，在 Fedora 、CentOS 、Mageia 和类似的 Linux 发行版上：</p><pre tabindex=0><code>$ sudo dnf install gphoto2 ffmpeg mpv
+</code></pre><p>在 Debian、Linux Mint 及其类似发行版:</p><pre tabindex=0><code>$ sudo apt install gphoto2 ffmpeg mpv
+</code></pre><p>我使用的是 NixOS，这是我的配置文件：</p><pre tabindex=0><code># configuration.nix
+...
+environment.systemPackages = with pkgs; [
+  ffmpeg
+  gphoto2
+  mpv
+...  
+]
+</code></pre><p>创建虚拟视频设备需要使用 <code>v4l2loopback</code> Linux 内核模块。在撰写本文时，该功能未包含在主线内核中，因此你需要自己下载和编译它：</p><pre tabindex=0><code>$ git clone https://github.com/umlaeute/v4l2loopback
+$ cd v4l2loopback
+$ make
+$ sudo make install
+$ sudo depmod -a
+</code></pre><p>如果你像我一样使用 NixOS ，你可以在 <code>configuration.nix</code> 中添加额外的模块包：</p><pre tabindex=0><code>[...]
+boot.extraModulePackages = with config.boot.kernelPackages;
+[ v4l2loopback.out ];
+boot.kernelModules = [
+  &#34;v4l2loopback&#34;
+];
+boot.extraModprobeConfig = &#39;&#39;
+  options v4l2loopback exclusive_caps=1 card_label=&#34;Virtual Camera&#34;
+&#39;&#39;;
+[...]
+</code></pre><p>在 NixOS 上, 运行 <code>sudo nixos-rebuild switch</code>，然后重启。</p><h3 id=创建一个视频设备>创建一个视频设备</h3><p>假设你的计算机当前没有 <code>/dev/video</code> 设备，你可以借助 <code>v4l2loopback</code> 在需要时创建一个。</p><p>运行以下命令，将 <code>gphoto2</code> 中的数据发送到 <code>ffmpeg</code>，使用设备如 <code>/dev/video0</code> 设备：</p><pre tabindex=0><code>$ gphoto2 --stdout --capture-movie |
+ ffmpeg -i - -vcodec rawvideo -pix_fmt yuv420p -f v4l2 /dev/video0
+</code></pre><p>你得到的输出是这样的：</p><pre tabindex=0><code>ffmpeg version 4.4.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11.3.0 (GCC)
+  configuration: --disable-static ...
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libavresample   4.  0.  0 /  4.  0.  0
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Capturing preview frames as movie to &#39;stdout&#39;. Press Ctrl-C to abort.[mjpeg @ 0x1dd0380] Format mjpeg detected only with low score of 25, misdetection possible!
+Input #0, mjpeg, from &#39;pipe:&#39;:
+  Duration: N/A, bitrate: N/A
+  Stream #0:0: Video: mjpeg (Baseline), yuvj422p(pc, bt470bg/unknown/unknown), 768x512 ...
+Stream mapping:
+  Stream #0:0 -&gt; #0:0 (mjpeg (native) -&gt; rawvideo (native))[swscaler @ 0x1e27340] deprecated pixel format used, make sure you did set range correctly
+Output #0, video4linux2,v4l2, to &#39;/dev/video0&#39;:
+  Metadata:
+    encoder         : Lavf58.76.100
+  Stream #0:0: Video: rawvideo (I420 / 0x30323449) ...
+    Metadata:
+      encoder         : Lavc58.134.100 rawvideoframe=  289 fps= 23 q=-0.0 size=N/A time=00:00:11.56 bitrate=N/A speed=0.907x
+</code></pre><p>要查看来自网络摄像头的视频，请使用 <code>mpv</code> 命令：</p><pre tabindex=0><code>$ mpv av://v4l2:/dev/video0 --profile=low-latency --untimed
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202303/21/233414pjm6que6y6zj6mlu.jpg alt="Streaming a live feed from the webcam"></p><h3 id=自动启动你的网络摄像头>自动启动你的网络摄像头</h3><p>每次想使用网络摄像头时都需要执行一次命令有点麻烦。幸运的是，你可以在启动时自动运行此命令。我将其实现为一个 <code>systemd</code> 服务：</p><pre tabindex=0><code># configuration.nix
+...
+  systemd.services.webcam = {
+    enable = true;
+    script = &#39;&#39;
+      ${pkgs.gphoto2}/bin/gphoto2 --stdout --capture-movie |
+        ${pkgs.ffmpeg}/bin/ffmpeg -i - \
+            -vcodec rawvideo -pix_fmt yuv420p -f v4l2  /dev/video0
+    &#39;&#39;;
+wantedBy = [ &#34;multi-user.target&#34; ];
+  };
+...
+</code></pre><p>在 NixOS 上，运行 <code>sudo nixos-rebuild switch</code>，然后重新启动你的计算机。你的网络摄像头已经开启并处于活动状态。</p><p>要检查是否存在任何问题，可以使用 <code>systemctl status webcam</code> 命令。它会告诉你服务最后一次运行的时间，并提供其以前输出的日志。这对于调试非常有用。</p><h3 id=迭代以使其变得更好>迭代以使其变得更好</h3><p>止步于此也许很诱人。但是，考虑到当前的全球危机，我们可能需要思考是否有必要一直开着网络摄像头。这让我感到不太理想，原因如下：</p><ul><li>这浪费电。</li><li>这类事情涉及隐私问题。</li></ul><p>我的摄像头有一个镜头盖，所以说实话，第二个原因并不真的让我感到困扰。当我不使用网络摄像头时，我总是可以把镜头盖上。然而，让一个耗电量大的单反相机整天开着（更不用说需要解码视频所需的 CPU 开销），对我的电费并没有任何好处。</p><p>理想情况是：</p><ul><li>我一直把相机插在电脑上，但是关闭的。</li><li>当我想使用网络摄像头时，我按下相机的电源按钮将其打开。</li><li>我的计算机会检测到相机并启动 systemd 服务。</li><li>使用网络摄像头完成后，我再次将其关闭。</li></ul><p>为了实现这一点，你需要使用一个自定义的 udev 规则。</p><p>udev 规则可以告诉你的计算机，当它发现某个设备已经可用时执行某个任务。这可以是外部硬盘甚至是非 USB 设备。在这种情况下，你需要通过其 USB 连接识别相机。</p><p>首先，指定 udev 规则被触发时要运行的命令。你可以用一个 shell 脚本来完成（<code>systemctl restart webcam</code> 应该可以工作）。我运行的是 NixOS，所以我只需要创建一个派生包（一个 Nix 包），它会重新启动 systemd 服务：</p><pre tabindex=0><code># start-webcam.nix
+with import &lt;nixpkgs&gt; { };
+writeShellScriptBin &#34;start-webcam&#34; &#39;&#39;
+  systemctl restart webcam
+  # debugging example
+  # echo &#34;hello&#34; &amp;&gt; /home/tom/myfile.txt
+  # If myfile.txt gets created then we know the udev rule has triggered properly&#39;&#39;
+</code></pre><p>接下来，实际定义 udev 规则。查找摄像头的设备和厂商 ID。使用 <code>lsusb</code> 命令可以完成此操作。该命令可能已经安装在你的发行版上，但我不经常使用它，因此我只需要根据需要使用 <code>nix-shell</code> 安装它：</p><pre tabindex=0><code>$ nix-shell -p usbutils
+</code></pre><p>无论你的计算机上已经安装了它，还是刚刚安装，请运行 <code>lsusb</code> ：</p><pre tabindex=0><code>$ lsusb
+Bus 002 Device 008: ID 04a9:317b Canon, Inc. Canon Digital Camera[...]
+</code></pre><p>在此输出中，厂商 ID 为 <code>04a9</code>，设备 ID 为 <code>317b</code>。这已足以创建 udev 规则：</p><pre tabindex=0><code>ACTION==&#34;add&#34;, SUBSYSTEM==&#34;usb&#34;,
+ATTR{idVendor}==&#34;04a9&#34;,
+ATTR{idProduct}==&#34;317b&#34;,
+RUN+=&#34;/usr/local/bin/start-webcam.sh&#34;
+</code></pre><p>或者，如果你使用的是 NixOS：</p><pre tabindex=0><code># configuration.nix[...]let
+  startWebcam = import ./start-webcam.nix;[...]
+services.udev.extraRules = &#39;&#39;
+  ACTION==&#34;add&#34;,  \
+  SUBSYSTEM==&#34;usb&#34;, \
+  ATTR{idVendor}==&#34;04a9&#34;, \
+  ATTR{idProduct}==&#34;317b&#34;,  \
+  RUN+=&#34;${startWebcam}/bin/start-webcam&#34;&#39;&#39;;[...]
+</code></pre><p>最后，在你的 <code>start-webcam</code> systemd 服务中删除 <code>wantedBy = ["multi-user.target"];</code> 这一行。（如果保留它，则无论相机是否开启，该服务都会在下次重启时自动启动。）</p><h3 id=重复使用旧技术>重复使用旧技术</h3><p>我希望这篇文章能让你在放弃一些旧技术之前三思而后行。Linux 可以为技术注入活力，无论是你的电脑还是数码相机或其他外围设备等简单的东西。</p><hr><p>via: <a href=https://opensource.com/article/22/12/old-camera-webcam-linux>https://opensource.com/article/22/12/old-camera-webcam-linux</a></p><p>作者：<a href=https://opensource.com/users/tomoliver>Tom Oliver</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/Pabloxllwe>Pabloxllwe</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%9B%B8%E6%9C%BA/ rel=tag>相机</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%91%84%E5%83%8F%E5%A4%B4/ rel=tag>摄像头</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

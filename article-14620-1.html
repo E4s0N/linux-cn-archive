@@ -1,0 +1,75 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 XML 和 Java 构建树莓派打印机的用户界面 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 XML 和 Java 构建树莓派打印机的用户界面"><meta property="og:description" content="使用 TotalCross 来快速构建嵌入式系统程序的用户界面。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14620-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-05-21T11:07:14+00:00"><meta property="article:modified_time" content="2022-05-21T11:07:14+00:00"><meta itemprop=name content="用 XML 和 Java 构建树莓派打印机的用户界面"><meta itemprop=description content="使用 TotalCross 来快速构建嵌入式系统程序的用户界面。"><meta itemprop=datePublished content="2022-05-21T11:07:14+00:00"><meta itemprop=dateModified content="2022-05-21T11:07:14+00:00"><meta itemprop=wordCount content="429"><meta itemprop=keywords content="嵌入式,用户界面,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 XML 和 Java 构建树莓派打印机的用户界面</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-05-21T11:07:14Z>May 21, 2022</time></div></div></header><div class="content post__content clearfix"><blockquote><p>使用 TotalCross 来快速构建嵌入式系统程序的用户界面。</p></blockquote><p><img src=/data/attachment/album/202205/21/110711zv3t7n1o7hllhodt.jpg alt title="Tips and gears turning"></p><p>从头开始构建 GUI 是一个非常耗时的过程，以硬编码的方式处理所有的位置和对齐对于一些程序员来说确实很困难。所以在本文中，我将演示如何使用 XML 加快这一过程。</p><p>本项目使用 <a href=https://opensource.com/article/20/7/totalcross-cross-platform-development>TotalCross</a> 作为目标框架。TotalCross 是一个开源的跨平台软件开发工具包（SDK），旨在更快地为嵌入式设备创建 GUI。TotalCross 无需在设备上运行 Java 即可提供 Java 的开发优势，因为它使用自己的字节码和虚拟机（ TC 字节码 TC bytecode 和 TCVM）来增强性能。</p><p>我还使用了 Knowcode-XML，这是一个用于 TotalCross 框架的开源 XML 解析器，它可以将 XML 文件转换为 TotalCross 组件。</p><h3 id=项目需求>项目需求</h3><p>要重现此项目，你需要：</p><ul><li><a href=https://github.com/TotalCross/knowcode-xml>KnowCode-XML</a></li><li><a href=https://code.visualstudio.com/>VSCode</a> 或 <a href=https://opensource.com/article/20/6/open-source-alternatives-vs-code>VSCodium</a></li><li><a href=https://developer.android.com/studio>一个 Android 开发环境</a></li><li><a href="https://marketplace.visualstudio.com/items?itemName=totalcross.vscode-totalcross">用于 VSCode 的 TotalCross 插件</a></li><li>适用于你的开发平台（<a href=https://opensource.com/article/19/11/install-java-linux>Linux</a>、<a href=https://opensource.com/article/20/7/install-java-mac>Mac</a> 或 <a href=http://adoptopenjdk.net>Windows</a>）的 Java，需要 Java 11（或更高版本）</li><li><a href=https://opensource.com/life/16/7/stumbling-git>Git</a></li></ul><h3 id=制作嵌入式应用程序>制作嵌入式应用程序</h3><p>该应用程序由一个具有扫描、打印和复印等基本打印功能的嵌入式 GUI 组成。</p><p><img src=/data/attachment/album/202205/21/110714mpcujqtoju8lbo31.png alt=打印机初始化画面 title="printer init screen"></p><p>构建这个 GUI 需要几个步骤，包括使用 Android-XML 生成 GUI，然后使用 Knowcode-XML 解析器在 TotalCross 框架上运行它。</p><h4 id=1生成-android-xml>1、生成 Android XML</h4><p>要创建 XML 文件，首先构建一个简单的 Android 屏幕，然后对其进行自定义。如果你不知道如何编写 Android-XML，或者你只是想简单尝试一下，你可以从这个 <a href=https://github.com/TotalCross/embedded-samples/tree/main/printer-application/src/main/resources/layout>GitHub 项目</a> 中下载这个应用程序的 XML。该项目还包含渲染 GUI 要用到的图片。</p><h4 id=2调整-xml>2、调整 XML</h4><p>生成 XML 文件后，你需要进行一些微调以确保所有内容都已经对齐、比例正确并且图像的路径正确。</p><p>将 XML 布局添加到 <code>Layouts</code> 文件夹，将所有资源添加到 <code>Drawable</code> 文件夹。然后你就可以开始自定义 XML 了。</p><p>例如，如果想要更改 XML 对象的背景，可以更改 <code>android:background</code> 属性：</p><pre tabindex=0><code>android:background=&#34;@drawable/scan&#34;
+</code></pre><p>你也可以使用 <code>tools:layout_editor_absoluteX</code> 和 <code>tools:layout_editor_absoluteY</code> 更改对象的位置：</p><pre tabindex=0><code>tools:layout_editor_absoluteX=&#34;830dp&#34;
+tools:layout_editor_absoluteY=&#34;511dp&#34;
+</code></pre><p>或者使用 <code>android:layout_width</code> 和 <code>android:layout_height</code> 更改对象的大小：</p><pre tabindex=0><code>android:layout_width=&#34;70dp&#34;
+android:layout_height=&#34;70dp&#34;
+</code></pre><p>如果要在对象上放置文本，可以使用 <code>android:textSize</code>、<code>android:text</code>、<code>android:textStyle</code> 和 <code>android:textColor</code>：</p><pre tabindex=0><code>android:textStyle=&#34;bold&#34;
+android:textColor=&#34;#000000&#34;
+android:textSize=&#34;20dp&#34;
+android:text=&#34;2:45PM&#34;
+</code></pre><p>下面是一个完整的 XML 对象的示例：</p><pre tabindex=0><code>    &lt;ImageButton
+           android:id=&#34;@+id/ImageButton&#34;
+           android:layout_width=&#34;70dp&#34;
+           android:layout_height=&#34;70dp&#34;
+           tools:layout_editor_absoluteX=&#34;830dp&#34;
+           tools:layout_editor_absoluteY=&#34;511dp&#34;
+           android:background=&#34;@drawable/home_config&#34; /&gt;
+</code></pre><h4 id=3在-totalcross-上运行-gui>3、在 TotalCross 上运行 GUI</h4><p>完成所有 XML 调整后，就可以在 TotalCross 上运行它了。在 TotalCross 扩展（LCTT 译注：在 VSCode 里面）上创建一个新项目，并将 <code>XML</code> 和 <code>Drawable</code> 文件夹添加到 <code>Main</code> 文件夹里。如果你仍然不确定如何创建 TotalCross 项目，请参阅我们的 <a href="https://totalcross.com/get-started/?utm_source=opensource&amp;utm_medium=article&amp;utm_campaign=printer">入门指南</a>。</p><p>配置好环境后，使用 <code>totalcross.knowcode.parse.XmlContainerFactory</code> 和 <code>import totalcross.knowcode.parse.XmlContainerLayout</code> 在 TotalCross 框架上使用 XML GUI。 你可以在其 <a href=https://github.com/TotalCross/knowcode-xml>GitHub 页面</a> 上找到更多关于使用 KnowCode-XML 的信息。</p><h4 id=4添加过渡效果>4、添加过渡效果</h4><p>这个项目的平滑过渡效果是由 <code>SlidingNavigator</code> 类创建的，它使用 TotalCross 的 <code>ControlAnimation</code> 类从一个屏幕滑到另一个屏幕。</p><p>在 <code>XMLpresenter</code> 类上调用 <code>SlidingNavigator</code>：</p><pre tabindex=0><code>new SlidingNavigator(this).present(HomePresenter.class);
+</code></pre><p>在 <code>SlidingNavigator</code> 类上实现 <code>present</code> 函数：</p><pre tabindex=0><code>public void present(Class&lt;? extends XMLPresenter&gt; presenterClass)
+         throws InstantiationException, IllegalAccessException {
+      final XMLPresenter presenter = cache.containsKey(presenterClass) ? cache.get(presenterClass)
+            : presenterClass.newInstance();
+      if (!cache.containsKey(presenterClass)) {
+         cache.put(presenterClass, presenter);
+      }
+
+      if (presenters.isEmpty()) {
+         window.add(presenter.content, LEFT, TOP, FILL, FILL);
+      } else {
+         XMLPresenter previous = presenters.lastElement();
+
+         window.add(presenter.content, AFTER, TOP, SCREENSIZE, SCREENSIZE, previous.content);
+</code></pre><p>使用动画控件中的 <code>PathAnimation</code> 来创建从一个屏幕到另一个屏幕的滑动动画：</p><pre tabindex=0><code>         PathAnimation.create(previous.content, -Settings.screenWidth, 0, new ControlAnimation.AnimationFinished() {
+            @Override
+            public void onAnimationFinished(ControlAnimation anim) {
+               window.remove(previous.content);
+            }
+         }, 1000).with(PathAnimation.create(presenter.content, 0, 0, new ControlAnimation.AnimationFinished() {
+            @Override
+            public void onAnimation Finished(Control Animation anim) {
+               presenter.content.setRect(LEFT, TOP, FILL, FILL);
+            }
+         }, 1000)).start();
+      }
+      presenter.setNavigator(this);
+      presenters.push(presenter);
+      presenter.bind2();
+      if (presenter.isFirstPresent) {
+         presenter.onPresent();
+         presenter.isFirstPresent = false;
+      }
+</code></pre><h4 id=5加载环形进度条>5、加载环形进度条</h4><p>打印机应用程序的另一个不错的功能是显示进度的加载屏幕动画。它包括文本和旋转动画。</p><p><img src=/data/attachment/album/202205/21/110714hkiski2ksyx2iw5s.png alt=加载环形进度条 title="Loading Spinner"></p><p>通过添加定时器和定时器监听器来更新进度标签，然后调用函数 <code>spinner.start()</code> 来实现此功能。所有的动画都是由 TotalCross 和 KnowCode 自动生成的：</p><pre tabindex=0><code>public void startSpinner() {
+        time = content.addTimer(500);
+        content.addTimerListener((e) -&gt; {
+            try {
+                progress(); // Updates the Label
+            } catch (InstantiationException | IllegalAccessException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        });
+        Spinner spinner = (Spinner) ((XmlContainerLayout) content).getControlByID(&#34;@+id/spinner&#34;);
+        spinner.start();
+    }
+</code></pre><p>这里的环形进度条被实例化为对 XML 文件中描述的 <code>XmlContainerLayout</code> <code>spinner</code> 的引用：</p><pre tabindex=0><code>&lt;ProgressBar
+android:id=&#34;@+id/spinner&#34;
+android:layout_width=&#34;362dp&#34;
+android:layout_height=&#34;358dp&#34;
+tools:layout_editor_absoluteX=&#34;296dp&#34;
+tools:layout_editor_absoluteY=&#34;198dp&#34;
+   android:indeterminateTint=&#34;#2B05C7&#34;
+style=&#34;?android:attr/progressBarStyle&#34; /&gt;
+</code></pre><h4 id=6构建应用程序>6、构建应用程序</h4><p>是时候构建应用程序了。你可以在 <code>pom.xml</code> 中查看和更改 目标系统 target systems 。 请确保 <code>Linux Arm</code> 目标可用。</p><p>如果你使用的是 VSCode，请按下键盘上的 <code>F1</code> 键，选择 <code>TotalCross: Package</code> 并等待完成。 然后就可以在 <code>Target</code> 文件夹中看到安装文件了。</p><h4 id=7在树莓派上部署和运行应用程序>7、在树莓派上部署和运行应用程序</h4><p>要使用 SSH 协议在 <a href=https://www.raspberrypi.org/products/raspberry-pi-4-model-b/>树莓派</a> 上部署应用程序，请按键盘上的 <code>F1</code>。选择 <code>TotalCross: Deploy&amp;Run</code> 并提供有关你的 SSH 连接的信息，如：用户名、IP地址、密码和应用程序路径。</p><p><img src=/data/attachment/album/202205/21/110715hiug3itlwq34yyyy.png alt=TotalCross：部署与运行 title="TotalCross: Deploy&amp;Run"></p><p><img src=/data/attachment/album/202205/21/110715fr9p99wawpbwbzz7.png alt="配置 SSH 用户名" title="SSH user"></p><p><img src=/data/attachment/album/202205/21/110715e0u2jzzxnnthpzjv.png alt="配置 IP 地址" title="IP address"></p><p><img src=/data/attachment/album/202205/21/110715jhshrzwa17hpvkzx.png alt=输入密码 title=Password></p><p><img src=/data/attachment/album/202205/21/110715vki6souu3eoxuvva.png alt=配置路径 title=Path></p><h3 id=总结>总结</h3><p>KnowCode 让使用 Java 创建和管理应用程序屏幕变得更加容易。Knowcode-XML 将你的 XML 转换为 TotalCross GUI 界面，然后生成二进制文件以在你的树莓派上运行。</p><p>将 KnowCode 技术与 TotalCross 相结合，使你能够更快地创建嵌入式应用程序。 你可以访问我们在 GitHub 上的 <a href=https://github.com/TotalCross/embedded-samples>嵌入式示例</a> 并编辑你自己的应用程序，了解你还可以做什么。</p><p>如果你有问题、需要帮助，或者只是想与其他嵌入式 GUI 开发人员互动，请随时加入我们的 <a href=https://t.me/totalcrosscommunity>Telegram</a> 小组，讨论任何框架上的嵌入式应用程序。</p><hr><p>via: <a href=https://opensource.com/article/21/3/raspberry-pi-totalcross>https://opensource.com/article/21/3/raspberry-pi-totalcross</a></p><p>作者：<a href=https://opensource.com/users/edsonhtj>Edson Holanda Teixeira Junior</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/CoWave-Fall>CoWave-Fall</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/ rel=tag>嵌入式</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%94%A8%E6%88%B7%E7%95%8C%E9%9D%A2/ rel=tag>用户界面</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

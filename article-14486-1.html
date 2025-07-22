@@ -1,0 +1,47 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 终端管理你的日历 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 终端管理你的日历"><meta property="og:description" content="KDE 很适合在 Linux 上进行基于终端的日程安排。konsolekalendar 命令让你从终端查看和管理 iCal 日历。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14486-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-04-18T16:14:27+00:00"><meta property="article:modified_time" content="2022-04-18T16:14:27+00:00"><meta itemprop=name content="在 Linux 终端管理你的日历"><meta itemprop=description content="KDE 很适合在 Linux 上进行基于终端的日程安排。konsolekalendar 命令让你从终端查看和管理 iCal 日历。"><meta itemprop=datePublished content="2022-04-18T16:14:27+00:00"><meta itemprop=dateModified content="2022-04-18T16:14:27+00:00"><meta itemprop=wordCount content="270"><meta itemprop=keywords content="iCal,日历,终端,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 终端管理你的日历</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-04-18T16:14:27Z>April 18, 2022</time></div></div></header><div class="content post__content clearfix"><blockquote><p>KDE 很适合在 Linux 上进行基于终端的日程安排。konsolekalendar 命令让你从终端查看和管理 iCal 日历。</p></blockquote><p><img src=/data/attachment/album/202204/18/161418rsp7x2evo6zl766v.jpg alt title="Calendar close up snapshot"></p><p>我是一个 <a href=https://opensource.com/article/17/5/7-cool-kde-tweaks-will-improve-your-life>KDE 用户</a>，多年来我一直在 Plasma 桌面上进行着看似无尽的探索。如果你在公开场合问我，我可能会声称自己对我每天使用的桌面了如指掌。但实际上，我只是刚刚触及到表面而已。似乎每天我都能学到一个新的 KDE 技巧，让我的生活变得更轻松或更有趣，我最新的发现是 <code>konsolekalendar</code> 命令，它让你从终端查看和管理 iCal 日历。</p><h3 id=akonadi>Akonadi</h3><p>Akonadi 项目是一个底层 KDE 框架，帮助 Plasma 桌面跟踪所有的个人信息管理器（PIM）数据。它主要是为开发者服务的，包括很多可以让程序员用来创建应用的库，通过这些程序你可以访问你的联系人、笔记、电子邮件、日历等等。Akonadi 中包括一些终端命令，比如 <code>akonadictl</code> 可以启动和停止 Akonadi 服务，但它们大多是为了排除故障。然而，<code>konsolekalendar</code> 是一个面向用户的命令，可以让你完全访问 Kontact 套件的所有数据，包括 KMail、Notes 和日历。</p><p>如果你正在运行 KDE 的 Plasma 桌面，那么你已经安装了 Kontact 套件。</p><p><img src=/data/attachment/album/202204/18/161429yz84an34z95cu3il.jpg alt="Kontact UI" title="Kontact UI"></p><p>你也安装好了 Akonadi 和它的工具，所以你所需要的基于终端的日历完成了!</p><h3 id=从终端查看你的日历>从终端查看你的日历</h3><p>由于 <a href=https://opensource.com/article/21/1/nextcloud-productivity>NextCloud</a> 和 <a href=https://radicale.org/v3.html>Radicale</a> 等项目的存在，你可以托管自己的 iCal 日历服务，或者你可能已经在流行的供应商（例如，Google）那里拥有一个 iCal 账户。当你使用 Kontact 管理日历时，你订阅了一个日历对象（用 Akonadi 的术语说是一个“ 集合 collection ”）。当你对你的本地日历进行更新时，这些变化会被送回你的 iCal 服务器以同步你的日历服务器和客户端。</p><p>无论你是否使用过 Kontact 的日历功能，你在 Kontact 中都有一些默认的日历对象。你有一个叫<strong>个人日历</strong>和<strong>生日和纪念日</strong>的日历对象。</p><p>以下是如何显示当天的日历（默认为<strong>个人日历</strong>）：</p><pre tabindex=0><code>$ konsolekalendar
+Date:   Saturday, January 15, 2022
+        10:00 AM - 11:00 AM
+Summary: Covid booster shot
+UID: 8d8a1e38-c88c-4d84-99e5-23...
+----------------------------------
+Date:   Saturday, January 15, 2022
+        12:00 PM - 01:00 PM
+Summary: Lunch
+UID: 7aa89a...
+----------------------------------
+Date:   Saturday, January 15, 2022
+        01:00 PM - 04:45 PM
+Summary: Afternoon coding
+UID: 9cde38b...
+----------------------------------
+Date:   Saturday, January 15, 2022
+        06:00 PM - 10:00 PM
+Summary: Planescape game
+UID: c73f7e98-722f-48a2-8006-66...
+----------------------------------
+</code></pre><h3 id=添加一个事件>添加一个事件</h3><p>要查看你订阅的所有日历，请使用 <code>--list-calendars</code> 选项：</p><pre tabindex=0><code>$ konsolekalendar --list-calendars
+----------------------------------
+3  - (Read only) Birthdays &amp; Anniversaries
+11 - Personal Calendar
+60 - (Read only) Open Invitations
+61 - (Read only) Declined Invitations
+66 - Dnd
+67 - Work
+68 - Museum
+</code></pre><p>左边的数字是日历的 ID。要添加一个事件到一个特定的日历，请使用 <code>--calendar</code> 选项，然后是日历 ID：</p><pre tabindex=0><code>$ konsolekalendar --add --calendar 66 \
+--date 2022-01-16 \
+--time 20:00 --end-time 23:59 \
+--summary &#34;Another game&#34; \
+--description &#34;Remember to bring dice&#34; \
+Success: &#34;Another game&#34; inserted
+</code></pre><h3 id=删除一个事件>删除一个事件</h3><p>你也可以删除事件。每个事件都有一个唯一的 ID（UID），在每个事件列表的底部提供：</p><pre tabindex=0><code>$ konsolekalendar --list
+Date:   Saturday, January 15, 2022
+        06:00 PM - 10:00 PM
+Summary: Planescape game
+UID: c73f7e98-722f-48a2-8006-66aa8ddcf789
+</code></pre><p>要删除一个事件，请使用 <code>--delete</code> 选项，同时使用 <code>--uid</code> 选项：</p><pre tabindex=0><code>$ konsolekalendar --delete \
+--uid c73f7e98-722f-48a2-8006-66aa8ddcf789
+</code></pre><h3 id=终端中的-akonadi>终端中的 Akonadi</h3><p>你用 <code>konsolekalendar</code> 所做的一切都会立即在 Akonadi 中执行，并在 Kontact 中得到同样快的反映。使用一个并不意味着你必须放弃另一个。由于它们共享 Akonadi 后端，两者查看和编辑相同的数据。<code>konsolekalendar</code> 命令是一项正在进行的工作。未来的计划包括与 Kontact 的笔记和日记部分的整合，而且还有很多比本文所涉及的更多的选项。如果你在使用 KDE 桌面，试试 <code>konsolekalendar</code>，体验一下终端的 PIM！</p><hr><p>via: <a href=https://opensource.com/article/22/2/manage-calendar-linux-konsolekalender-kde>https://opensource.com/article/22/2/manage-calendar-linux-konsolekalender-kde</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ical/ rel=tag>iCal</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%97%A5%E5%8E%86/ rel=tag>日历</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%BB%88%E7%AB%AF/ rel=tag>终端</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

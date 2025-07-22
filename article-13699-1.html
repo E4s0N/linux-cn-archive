@@ -1,0 +1,98 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 commons-cli 解析 Java 中的命令行选项 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 commons-cli 解析 Java 中的命令行选项"><meta property="og:description" content="让用户用命令行选项调整你的 Java 应用程序运行方式。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13699-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-08-19T11:59:15+00:00"><meta property="article:modified_time" content="2021-08-19T11:59:15+00:00"><meta itemprop=name content="使用 commons-cli 解析 Java 中的命令行选项"><meta itemprop=description content="让用户用命令行选项调整你的 Java 应用程序运行方式。"><meta itemprop=datePublished content="2021-08-19T11:59:15+00:00"><meta itemprop=dateModified content="2021-08-19T11:59:15+00:00"><meta itemprop=wordCount content="435"><meta itemprop=keywords content="Java,命令行,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 commons-cli 解析 Java 中的命令行选项</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-08-19T11:59:15Z>August 19, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>让用户用命令行选项调整你的 Java 应用程序运行方式。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202108/19/115907lvjwc1ce5avumaau.jpg alt title="Learning and studying technology is the key to success"></p><p>通常向终端中输入命令时，无论是启动 GUI 应用程序还是仅启动终端应用程序，都可以使用 命令行选项 options or switches or flags （<strong>以下简称选项</strong>）来修改应用程序的运行方式。这是 <a href=https://opensource.com/article/19/7/what-posix-richard-stallman-explains>POSIX 规范</a> 设定的标准，因此能够检测和解析选项对 Java 程序员而言是很有用的技能。</p><p>Java 中有若干种解析选项的方法，其中我最喜欢用的是 <a href=https://commons.apache.org/proper/commons-cli/usage.html>Apache Commons CLI</a> 库，简称 <strong>commons-cli</strong>。</p><h3 id=安装-commons-cli>安装 commons-cli</h3><p>如果你使用类似 <a href=https://maven.apache.org/>Maven</a> 之类的项目管理系统以及 集成开发环境 Integrated Development Environment （简称 IDE），可以在项目属性（比如 <code>pom.xml</code> 配置文件或者 Eclipse 和 NetBeans 的配置选项卡）中安装 Apache Commons CLI 库。</p><p>而如果你采用手动方式管理库，则可以从 Apache 网站下载 <a href=https://commons.apache.org/proper/commons-cli/download_cli.cgi>该库的最新版本</a>。下载到本地的是几个捆绑在一起的 JAR 文件，你只需要其中的一个文件 <code>commons-cli-X.Y.jar</code>（其中 X 和 Y 代指最新版本号）。把这个 JAR 文件或手动或使用 IDE 添加到项目，就可以在代码中使用了。</p><h3 id=将库导入至-java-代码>将库导入至 Java 代码</h3><p>在使用 <code>commons-cli</code> 库之前，必须首先导入它。对于本次选项解析的简单示例而言，可以先在 <code>Main.java</code> 文件中简单写入以下标准代码：</p><pre tabindex=0><code>package com.opensource.myoptparser;
+
+import org.apache.commons.cli.*;
+
+public class Main {
+    public static void main(String[] args) {
+    // code 
+    }
+}
+</code></pre><p>至此在 Java 中解析选项的准备工作已经做好了。</p><h3 id=在-java-中定义布尔选项>在 Java 中定义布尔选项</h3><p>要实现解析选项，首先要定义应用程序可接收的有效选项。使用 <code>Option</code>（注意是单数）类来创建选项对象，使用 <code>Options</code>（注意是复数）类来追踪项目中创建的所有选项。</p><p>首先为选项创建一个组，按照惯例命名为 <code>options</code>：</p><pre tabindex=0><code>    //code
+    Options options = new Options();
+</code></pre><p>接下来，通过列出短选项（即选项名简写）、长选项（即全写）、默认布尔值（LCTT 译注：设置是否需要选项参数，指定为 <code>false</code> 时此选项不带参，即为布尔选项）和帮助信息来定义选项，然后设置该选项是否为必需项（LCTT 译注：下方创建 <code>alpha</code> 对象的代码中未手动设置此项），最后将该选项添加到包含所有选项的 <code>options</code> 组对象中。在下面几行代码中，我只创建了一个选项，命名为 <code>alpha</code>：</p><pre tabindex=0><code>    //define options
+    Option alpha = new Option(&#34;a&#34;, &#34;alpha&#34;, false, &#34;Activate feature alpha&#34;);
+    options.addOption(alpha);
+</code></pre><h3 id=在-java-中定义带参选项>在 Java 中定义带参选项</h3><p>有时用户需要通过选项提供 <code>true</code> 或 <code>false</code> 以外的信息，比如给出配置文件、输入文件或诸如日期、颜色这样的设置项值。这种情况可以使用 <code>builder</code> 方法，根据选项名简写为其创建属性（例如，<code>-c</code> 是短选项，<code>--config</code> 是长选项）。完成定义后，再将定义好的选项添加到 <code>options</code> 组中：</p><pre tabindex=0><code>    Option config = Option.builder(&#34;c&#34;).longOpt(&#34;config&#34;)
+        .argName(&#34;config&#34;)
+        .hasArg()
+        .required(true)
+        .desc(&#34;set config file&#34;).build();
+    options.addOption(config);
+</code></pre><p><code>builder</code> 函数可以用来设置短选项、长选项、是否为必需项（本段代码中必需项设置为 <code>true</code>，也就意味着用户启动程序时必须提供此选项，否则应用程序无法运行）、帮助信息等。</p><h3 id=使用-java-解析选项>使用 Java 解析选项</h3><p>定义并添加所有可能用到的选项后，需要对用户提供的参数进行迭代处理，检测是否有参数同预设的有效短选项列表中的内容相匹配。为此要创建命令行 <code>CommandLine</code> 本身的一个实例，其中包含用户提供的所有参数（包含有效选项和无效选项）。为了处理这些参数，还要创建一个 <code>CommandLineParser</code> 对象，我在代码中将其命名为 <code>parser</code>。最后，还可以创建一个 <code>HelpFormatter</code> 对象（我将其命名为 <code>helper</code>），当参数中缺少某些必需项或者用户使用 <code>--help</code> 或 <code>-h</code> 选项时，此对象可以自动向用户提供一些有用的信息。</p><pre tabindex=0><code>    // define parser
+    CommandLine cmd;
+    CommandLineParser parser = new BasicParser();
+    HelpFormatter helper = new HelpFormatter();
+</code></pre><p>最后，添加一些条件判断来分析用户提供的选项，我们假设这些选项已经作为命令行输入被获取并存储在 <code>cmd</code> 变量中。这个示例应用程序有两种不同类型的选项，但对这两种类型都可以使用 <code>.hasOption</code> 方法加上短选项名称来检测选项是否存在。检测到一个存在的选项后，就可以对数据做进一步操作了。</p><pre tabindex=0><code>try {
+    cmd = parser.parse(options, args);
+    if(cmd.hasOption(&#34;a&#34;)) {
+    System.out.println(&#34;Alpha activated&#34;);
+    }
+
+    if (cmd.hasOption(&#34;c&#34;)) {
+    String opt_config = cmd.getOptionValue(&#34;config&#34;);
+    System.out.println(&#34;Config set to &#34; + opt_config);
+    }
+} catch (ParseException e) {
+    System.out.println(e.getMessage());
+    helper.printHelp(&#34;Usage:&#34;, options);
+    System.exit(0);
+}
+</code></pre><p>解析过程有可能会产生错误，因为有时可能缺少某些必需项如本例中的 <code>-c</code> 或 <code>--config</code> 选项。这时程序会打印一条帮助信息，并立即结束运行。考虑到此错误（Java 术语中称为异常），在 <code>main</code> 方法的开头要添加语句声明可能的异常：</p><pre tabindex=0><code>public static void main(String[] args) throws ParseException {
+</code></pre><p>示例程序至此就大功告成了。</p><h3 id=测试代码>测试代码</h3><p>你可以通过调整传递给代码的默认参数来在 IDE 中测试应用程序，或者创建一个 JAR 文件并在终端运行测试。这个过程可能会因 IDE 的不同而不同。具体请参阅相应的 IDE 文档，以及我写过的关于如何创建 JAR 文件的文章，或者参考 Daniel Oh 的关于如何使用 <a href=https://developers.redhat.com/blog/2021/04/08/build-even-faster-quarkus-applications-with-fast-jar>Maven</a> 执行同样操作的文章。</p><p>首先，省略必需项 <code>-c</code> 或 <code>--config</code> 选项，检测解析器的异常处理：</p><pre tabindex=0><code>$ java -jar dist/myapp.jar                 
+Missing required option: c
+usage: Usage:
+ -a,--alpha             Activate feature alpha
+ -c,--config &amp;lt;config&amp;gt;   Set config file
+</code></pre><p>然后提供输入选项再进行测试：</p><pre tabindex=0><code>java -jar dist/myantapp.jar --config foo -a
+Alpha activated
+Config set to foo
+</code></pre><h3 id=选项解析>选项解析</h3><p>为用户提供选项功能对任何应用程序来说都是很重要的。有了 Java 和 Apache Commons，要实现这个功能并不难。</p><p>以下是完整的演示代码，供读者参考：</p><pre tabindex=0><code>package com.opensource.myapp;
+
+import org.apache.commons.cli.*;
+
+public class Main {
+    
+    /**
+     * @param args the command line arguments
+     * @throws org.apache.commons.cli.ParseException
+     */ 
+    public static void main(String[] args) throws ParseException {
+        // define options
+        Options options = new Options();
+        
+        Option alpha = new Option(&#34;a&#34;, &#34;alpha&#34;, false, &#34;Activate feature alpha&#34;);
+        options.addOption(alpha);
+        
+        Option config = Option.builder(&#34;c&#34;).longOpt(&#34;config&#34;)
+                .argName(&#34;config&#34;)
+                .hasArg()
+                .required(true)
+                .desc(&#34;Set config file&#34;).build();
+        options.addOption(config);
+     
+        // define parser
+        CommandLine cmd;
+        CommandLineParser parser = new BasicParser();
+        HelpFormatter helper = new HelpFormatter();
+
+        try {
+            cmd = parser.parse(options, args);
+            if(cmd.hasOption(&#34;a&#34;)) {
+                System.out.println(&#34;Alpha activated&#34;);
+            }
+          
+            if (cmd.hasOption(&#34;c&#34;)) {
+                String opt_config = cmd.getOptionValue(&#34;config&#34;);
+                System.out.println(&#34;Config set to &#34; + opt_config);
+            }
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            helper.printHelp(&#34;Usage:&#34;, options);
+            System.exit(0);
+        }
+    }
+}
+</code></pre><h3 id=使用-java-和选项>使用 Java 和选项</h3><p>选项使用户可以调整命令的工作方式。使用 Java 时解析选项的方法有很多，其中之一的 <code>commons-cli</code> 是一个强大而灵活的开源解决方案。记得在你的下一个 Java 项目中尝试一下哦。</p><hr><p>via: <a href=https://opensource.com/article/21/8/java-commons-cli>https://opensource.com/article/21/8/java-commons-cli</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/unigeorge>unigeorge</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/java/ rel=tag>Java</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/ rel=tag>命令行</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

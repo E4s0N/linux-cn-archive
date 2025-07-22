@@ -1,0 +1,108 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在Linux命令行中创建以及展示演示稿 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在Linux命令行中创建以及展示演示稿"><meta property="og:description" content="你在准备一场演讲的时候，脑海可能会先被图文并茂、形象华丽的演示图稿所占据。诚然，没有人会否认一份生动形象的演讲稿所带来的积极作用。然而，并非所有的演讲都需要TED Talk的质量。更多时候，演讲稿只为传达特定的信息。 而这个，使用文本信息足以完成。在这种情况下，你的时间可以更好的花在信息的搜集和核实上面，而不是在谷歌图片搜索（Google Image）上寻找好看的图片。 在Linux的世界里，有几个不同的方式供你选择来做演讲。比如带有大量多媒体展示、视觉冲击效果极佳的Impress.js，专为LaTex用户提供的Beamer，等等。而如果你苦"><meta property="og:type" content="article"><meta property="og:url" content="/article-4858-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-02-09T21:55:00+00:00"><meta property="article:modified_time" content="2015-02-09T21:55:00+00:00"><meta itemprop=name content="如何在Linux命令行中创建以及展示演示稿"><meta itemprop=description content="你在准备一场演讲的时候，脑海可能会先被图文并茂、形象华丽的演示图稿所占据。诚然，没有人会否认一份生动形象的演讲稿所带来的积极作用。然而，并非所有的演讲都需要TED Talk的质量。更多时候，演讲稿只为传达特定的信息。 而这个，使用文本信息足以完成。在这种情况下，你的时间可以更好的花在信息的搜集和核实上面，而不是在谷歌图片搜索（Google Image）上寻找好看的图片。 在Linux的世界里，有几个不同的方式供你选择来做演讲。比如带有大量多媒体展示、视觉冲击效果极佳的Impress.js，专为LaTex用户提供的Beamer，等等。而如果你苦"><meta itemprop=datePublished content="2015-02-09T21:55:00+00:00"><meta itemprop=dateModified content="2015-02-09T21:55:00+00:00"><meta itemprop=wordCount content="372"><meta itemprop=keywords content="mdp,演示,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在Linux命令行中创建以及展示演示稿</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-02-09T21:55:00Z>February 09, 2015</time></div></div></header><div class="content post__content clearfix"><p>你在准备一场演讲的时候，脑海可能会先被图文并茂、形象华丽的演示图稿所占据。诚然，没有人会否认一份生动形象的演讲稿所带来的积极作用。然而，并非所有的演讲都需要TED Talk的质量。更多时候，演讲稿只为传达特定的信息。 而这个，使用文本信息足以完成。在这种情况下，你的时间可以更好的花在信息的搜集和核实上面，而不是在谷歌图片搜索（Google Image）上寻找好看的图片。</p><p>在Linux的世界里，有几个不同的方式供你选择来做演讲。比如带有大量多媒体展示、视觉冲击效果极佳的<a href=http://bartaz.github.io/impress.js/>Impress.js</a>，专为LaTex用户提供的Beamer，等等。而如果你苦于寻找一种简单的方式来创建并且展示文本演示稿，<a href=https://github.com/visit1985/mdp>mdp</a> 就能帮你实现。</p><h3 id=什么是mdp>什么是Mdp？</h3><p>mdp是Linux下一款基于ncurses的命令行演示工具。我喜欢mdp在于它对<a href=http://daringfireball.net/projects/markdown/>markdown</a>的支持，使得我很容易以熟悉的markdown格式来创建幻灯片。自然，它还可以很轻松地用HTML格式来发布幻灯片。另一个好处是它支持UTF-8字符编码，这让非英语字符（如希腊或西里尔字母）的展示也变得很方便。</p><h3 id=在linux中安装mdp>在Linux中安装Mdp</h3><p>mdp的依赖需求很少（如 ncursesw），这使得安装非常简单。</p><h4 id=debianubuntu或者它们的衍生版>Debian、Ubuntu或者它们的衍生版</h4><pre tabindex=0><code>$ sudo apt-get install git gcc make libncursesw5-dev
+$ git clone https://github.com/visit1985/mdp.git
+$ cd mdp
+$ make
+$ sudo make install 
+</code></pre><h4 id=fedora或者centosrhel>Fedora或者CentOS/RHEL</h4><pre tabindex=0><code>$ sudo yum install git gcc make ncurses-devel
+$ git clone https://github.com/visit1985/mdp.git
+$ cd mdp
+$ make
+$ sudo make install 
+</code></pre><h4 id=arch-linux>Arch Linux</h4><p>Arch Linux可以通过<a href=https://aur.archlinux.org/packages/mdp-git/>AUR</a>轻松安装mdp。</p><h3 id=在命令行中创建演示稿>在命令行中创建演示稿</h3><p>安装mdp完毕，你可以使用你喜欢的文本编辑器来轻松创建一个演示稿。如果你熟悉markdown的话，很快就可以驾驭mdp。而对于那些不熟悉markdown的人来说，学习mdp最好的方式就是从一个实例着手。</p><p>这里有一份6页的演示稿样本可供参考。</p><pre tabindex=0><code>%title: Sample Presentation made with mdp (Xmodulo.com)
+%author: Dan Nanni
+%date: 2015-01-28
+
+-&gt; This is a slide title &lt;-
+=========
+
+-&gt; mdp is a command-line based presentation tool with markdown support. &lt;-
+
+*_Features_*
+
+* Multi-level headers
+* Code block formatting
+* Nested quotes
+* Nested list
+* Text highlight and underline
+* Citation
+* UTF-8 special characters
+
+-------------------------------------------------
+
+-&gt; # Example of nested list &lt;-
+
+This is an example of multi-level headers and a nested list.
+
+# first-level title
+
+second-level
+------------
+
+- *item 1*
+    - sub-item 1
+        - sub-sub-item 1
+        - sub-sub-item 2
+        - sub-sub-item 3
+    - sub-item 2
+
+-------------------------------------------------
+
+-&gt; # Example of code block formatting &lt;-
+
+This example shows how to format a code snippet.
+
+    1  /* Hello World program */
+    2
+    3  #include &lt;stdio.h&gt;
+    4
+    5  int main()
+    6  {
+    7     printf(&#34;Hello World&#34;);
+    8     return 0;
+    9  }
+
+This example shows inline code: `sudo reboot`
+
+-------------------------------------------------
+
+-&gt; # Example of nested quotes &lt;-
+
+This is an example of nested quotes.
+
+# three-level nested quotes
+
+&gt; This is the first-level quote.
+&gt;&gt; This is the second-level quote
+&gt;&gt; and continues.
+&gt;&gt;&gt; *This is the third-level quote, and so on.*
+
+-------------------------------------------------
+
+-&gt; # Example of citations &lt;-
+
+This example shows how to place a citation inside a presentation.
+
+This tutorial is published at [Xmodulo](http://xmodulo.com)
+
+You are welcome to connect with me at [LinkedIn](http://www.linkedin.com/in/xmodulo)
+
+Pretty cool, huh?
+
+-------------------------------------------------
+
+-&gt; # Example of UTF-8 special characters &lt;-
+
+This example shows UTF-8 special characters.
+
+ae = ä, oe = ö, ue = ü, ss = ß
+alpha = ?, beta = ?, upsilon = ?, phi = ?
+Omega = ?, Delta = ?, Sigma = ?
+
+???????????
+?rectangle?
+???????????
+</code></pre><h3 id=在命令行中展示演示稿>在命令行中展示演示稿</h3><p>当你把以上代码保存为slide.md的文本文件后，你可以运行以下命令来展示演示稿：</p><pre tabindex=0><code>$ mdp slide.md 
+</code></pre><p>你可以通过按键 回车/空格/下翻页/向下光标键 (下一张幻灯)、回退/上翻页/向上光标键 (上一张幻灯)、Home (幻灯首页)、 End (幻灯末页)或者 数字N (第N页幻灯)来操作你的演示稿。</p><p>演示稿的标题将在每页幻灯的顶部展示，而你的名字和页码则会出现在幻灯的底部。</p><p><img src=/data/attachment/album/201502/09/215556hzo7l1ee5lon38p8.jpg alt></p><p>这是嵌套列表和多层次标题的实例效果。</p><p><img src=/data/attachment/album/201502/09/215600vgi14kkcby4qy6qy.jpg alt></p><p>这是代码片段和内联代码的实例效果。</p><p><img src=/data/attachment/album/201502/09/215603oim6ti0v0tpp000n.jpg alt></p><p>这是嵌套引用的实例效果。</p><p><img src=/data/attachment/album/201502/09/215605g70g8b0wl7aeby8g.jpg alt></p><p>这是放置引文的实例效果。</p><p><img src=/data/attachment/album/201502/09/215608bcpwb8oo363655c5.jpg alt></p><p>这是UTF-8编码特殊字符支持的实例效果。</p><p><img src=/data/attachment/album/201502/09/215610yb9jvyh2y6bz6tb7.jpg alt></p><h3 id=总结>总结</h3><p>在本教程中，我演示了在命令行中如何使用mdp来创建并且展示一个演示稿。mdp的markdown兼容性让我们省去了学习其它新格式的麻烦，这相对于另一种名为<a href=http://www.ngolde.de/tpp.html>tpp</a>的演示工具来说是一个优势。拘于mdp的局限性，它可能无法作为你的默认演示工具。但是，值得肯定的是它一定能在某个场合下派上用场。你觉得mdp怎么样呢？你还喜欢其它的什么东西吗？</p><hr><p>via: <a href=http://xmodulo.com/presentation-command-line-linux.html>http://xmodulo.com/presentation-command-line-linux.html</a></p><p>作者：<a href=http://xmodulo.com/author/nanni>Dan Nanni</a> 译者：<a href=https://github.com/soooogreen>soooogreen</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/mdp/ rel=tag>mdp</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%BC%94%E7%A4%BA/ rel=tag>演示</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

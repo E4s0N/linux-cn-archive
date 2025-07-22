@@ -1,0 +1,75 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何使用 Ansible 打补丁以及安装应用 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何使用 Ansible 打补丁以及安装应用"><meta property="og:description" content="使用 Ansible IT 自动化引擎节省更新的时间。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9659-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-05-20T03:59:00+00:00"><meta property="article:modified_time" content="2018-05-20T03:59:00+00:00"><meta itemprop=name content="如何使用 Ansible 打补丁以及安装应用"><meta itemprop=description content="使用 Ansible IT 自动化引擎节省更新的时间。"><meta itemprop=datePublished content="2018-05-20T03:59:00+00:00"><meta itemprop=dateModified content="2018-05-20T03:59:00+00:00"><meta itemprop=wordCount content="302"><meta itemprop=keywords content="Ansible,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何使用 Ansible 打补丁以及安装应用</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-05-20T03:59:00Z>May 20, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>使用 Ansible IT 自动化引擎节省更新的时间。</p></blockquote><p><img src=/data/attachment/album/201805/20/035937k1jc6t90wi80je66.jpg alt></p><p>你有没有想过，如何打补丁、重启系统，然后继续工作？</p><p>如果你的回答是肯定的，那就需要了解一下 <a href=https://www.ansible.com/overview/how-ansible-works>Ansible</a> 了。它是一个配置管理工具，对于一些复杂的有时候需要几个小时才能完成的系统管理任务，又或者对安全性有比较高要求的时候，使用 Ansible 能够大大简化工作流程。</p><p>以我作为系统管理员的经验，打补丁是一项最有难度的工作。每次遇到 公共漏洞批露 Common Vulnearbilities and Exposure （CVE）通知或者 信息保障漏洞预警 Information Assurance Vulnerability Alert （IAVA）时都必须要高度关注安全漏洞，否则安全部门将会严肃追究自己的责任。</p><p>使用 Ansible 可以通过运行<a href=https://docs.ansible.com/ansible/latest/list_of_packaging_modules.html>封装模块</a>以缩短打补丁的时间，下面以 <a href=https://docs.ansible.com/ansible/latest/yum_module.html>yum 模块</a>更新系统为例，使用 Ansible 可以执行安装、更新、删除、从其它地方安装（例如持续集成/持续开发中的 <code>rpmbuild</code>）。以下是系统更新的任务：</p><pre tabindex=0><code>  - name: update the system
+    yum:
+      name: &#34;*&#34;
+      state: latest
+</code></pre><p>在第一行，我们给这个任务命名，这样可以清楚 Ansible 的工作内容。第二行表示使用 <code>yum</code> 模块在CentOS虚拟机中执行更新操作。第三行 <code>name: "*"</code> 表示更新所有程序。最后一行 <code>state: latest</code> 表示更新到最新的 RPM。</p><p>系统更新结束之后，需要重新启动并重新连接：</p><pre tabindex=0><code>  - name: restart system to reboot to newest kernel
+    shell: &#34;sleep 5 &amp;&amp; reboot&#34;
+    async: 1
+    poll: 0
+
+  - name: wait for 10 seconds
+    pause:
+      seconds: 10
+
+  - name: wait for the system to reboot
+    wait_for_connection:
+      connect_timeout: 20
+      sleep: 5
+      delay: 5
+      timeout: 60
+
+  - name: install epel-release
+    yum:
+      name: epel-release
+      state: latest
+</code></pre><p><code>shell</code> 模块中的命令让系统在 5 秒休眠之后重新启动，我们使用 <code>sleep</code> 来保持连接不断开，使用 <code>async</code> 设定最大等待时长以避免发生超时，<code>poll</code> 设置为 0 表示直接执行不需要等待执行结果。暂停 10 秒钟以等待虚拟机恢复，使用 <code>wait_for_connection</code> 在虚拟机恢复连接后尽快连接。随后由 <code>install epel-release</code> 任务检查 RPM 的安装情况。你可以对这个剧本执行多次来验证它的幂等性，唯一会显示造成影响的是重启操作，因为我们使用了 <code>shell</code> 模块。如果不想造成实际的影响，可以在使用 <code>shell</code> 模块的时候 <code>changed_when: False</code>。</p><p>现在我们已经知道如何对系统进行更新、重启虚拟机、重新连接、安装 RPM 包。下面我们通过 <a href=https://github.com/ansible/lightbulb/tree/master/examples/nginx-role>Ansible Lightbulb</a> 来安装 NGINX:</p><pre tabindex=0><code>  - name: Ensure nginx packages are present
+    yum:
+      name: nginx, python-pip, python-devel, devel
+      state: present
+    notify: restart-nginx-service
+
+  - name: Ensure uwsgi package is present
+    pip:
+      name: uwsgi
+      state: present
+    notify: restart-nginx-service
+
+  - name: Ensure latest default.conf is present
+    template:
+      src: templates/nginx.conf.j2
+      dest: /etc/nginx/nginx.conf
+      backup: yes
+    notify: restart-nginx-service
+
+  - name: Ensure latest index.html is present
+    template:
+      src: templates/index.html.j2
+      dest: /usr/share/nginx/html/index.html
+
+  - name: Ensure nginx service is started and enabled
+    service:
+      name: nginx
+      state: started
+      enabled: yes
+
+  - name: Ensure proper response from localhost can be received
+    uri:
+      url: &#34;http://localhost:80/&#34;
+      return_content: yes
+    register: response
+    until: &#39;nginx_test_message in response.content&#39;
+    retries: 10
+    delay: 1
+</code></pre><p>以及用来重启 nginx 服务的操作文件：</p><pre tabindex=0><code># 安装 nginx 的操作文件
+  - name: restart-nginx-service
+    service:
+      name: nginx
+      state: restarted
+</code></pre><p>在这个角色里，我们使用 RPM 安装了 <code>nginx</code>、<code>python-pip</code>、<code>python-devel</code>、<code>devel</code>，用 PIP 安装了 <code>uwsgi</code>，接下来使用 <code>template</code> 模块复制 <code>nginx.conf</code> 和 <code>index.html</code> 以显示页面，并确保服务在系统启动时启动。然后就可以使用 <code>uri</code> 模块检查到页面的连接了。</p><p>这个是一个系统更新、系统重启、安装 RPM 包的剧本示例，后续可以继续安装 nginx，当然这里可以替换成任何你想要的角色和应用程序。</p><pre tabindex=0><code>  - hosts: all
+    roles:
+      - centos-update
+      - nginx-simple
+</code></pre><p>这只是关于如何更新系统、重启以及后续工作的示例。简单起见，我只添加了不带<a href=https://docs.ansible.com/ansible/latest/playbooks_variables.html>变量</a>的包，当你在操作大量主机的时候，你就需要修改其中的一些设置了：</p><ul><li><a href=https://docs.ansible.com/ansible/latest/playbooks_async.html>async & poll</a></li><li><a href=https://docs.ansible.com/ansible/latest/playbooks_delegation.html#rolling-update-batch-size>serial</a></li><li><a href=https://docs.ansible.com/ansible/latest/intro_configuration.html#forks>forks</a></li></ul><p>这是由于在生产环境中如果你想逐一更新每一台主机的系统，你需要花相当一段时间去等待主机重启才能够继续下去。</p><hr><p>via: <a href=https://opensource.com/article/18/3/ansible-patch-systems>https://opensource.com/article/18/3/ansible-patch-systems</a></p><p>作者：<a href=https://opensource.com/users/jlozadad>Jonathan Lozada De La Matta</a> 译者：<a href=https://github.com/HankChow>HankChow</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ansible/ rel=tag>Ansible</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

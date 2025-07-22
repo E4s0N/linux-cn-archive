@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 GitLab CI 中使用 Docker 构建 Go 项目 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 GitLab CI 中使用 Docker 构建 Go 项目"><meta property="og:description" content="这篇文章是我在 CI 环境（特别是在 Gitlab 中）的 Docker 容器中构建 Go 项目的研究总结。我发现很难解决私有依赖问题（来自 Node/.NET 背景），因此这是我写这篇文章的主要原因。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9625-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-05-10T11:51:00+00:00"><meta property="article:modified_time" content="2018-05-10T11:51:00+00:00"><meta itemprop=name content="在 GitLab CI 中使用 Docker 构建 Go 项目"><meta itemprop=description content="这篇文章是我在 CI 环境（特别是在 Gitlab 中）的 Docker 容器中构建 Go 项目的研究总结。我发现很难解决私有依赖问题（来自 Node/.NET 背景），因此这是我写这篇文章的主要原因。"><meta itemprop=datePublished content="2018-05-10T11:51:00+00:00"><meta itemprop=dateModified content="2018-05-10T11:51:00+00:00"><meta itemprop=wordCount content="237"><meta itemprop=keywords content="Go,CI,Docker,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 GitLab CI 中使用 Docker 构建 Go 项目</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-05-10T11:51:00Z>May 10, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201805/10/115107wk2k2tmtvm1xkvt1.jpg alt></p><h3 id=介绍>介绍</h3><p>这篇文章是我在 CI 环境（特别是在 Gitlab 中）的 Docker 容器中构建 Go 项目的研究总结。我发现很难解决私有依赖问题（来自 Node/.NET 背景），因此这是我写这篇文章的主要原因。如果 Docker 镜像上存在任何问题或提交请求，请随时与我们联系。</p><h3 id=dep>dep</h3><p>由于 dep 是现在管理 Go 依赖关系的最佳选择，因此在构建前之前运行 <code>dep ensure</code>。</p><p>注意：我个人不会将我的 <code>vendor/</code> 文件夹提交到源码控制，如果你这样做，我不确定这个步骤是否可以跳过。</p><p>使用 Docker 构建的最好方法是使用 <code>dep ensure -vendor-only</code>。 <a href=https://github.com/golang/dep/blob/master/docs/FAQ.md#how-do-i-use-dep-with-docker>见这里</a>。</p><h3 id=docker-构建镜像>Docker 构建镜像</h3><p>我第一次尝试使用 <code>golang:1.10</code>，但这个镜像没有：</p><ul><li>curl</li><li>git</li><li>make</li><li>dep</li><li>golint</li></ul><p>我已经创建好了用于构建的镜像（<a href=https://github.com/sjdweb/go-docker-build/blob/master/Dockerfile>github</a> / <a href=https://hub.docker.com/r/sjdweb/go-docker-build/>dockerhub</a>），我会保持更新，但我不提供任何担保，因此你应该创建并管理自己的 Dockerhub。</p><h3 id=内部依赖关系>内部依赖关系</h3><p>我们完全有能力创建一个有公共依赖关系的项目。但是如果你的项目依赖于另一个私人 Gitlab 仓库呢？</p><p>在本地运行 <code>dep ensure</code> 应该可以和你的 git 设置一起工作，但是一旦在 CI 上不适用，构建就会失败。</p><h4 id=gitlab-权限模型>Gitlab 权限模型</h4><p>这是在 <a href=https://docs.gitlab.com/ce/user/project/new_ci_build_permissions_model.html>Gitlab 8.12 中添加的</a>，这个我们最关心的有用的功能是在构建期提供的 <code>CI_JOB_TOKEN</code> 环境变量。</p><p>这基本上意味着我们可以像这样克隆<a href=https://docs.gitlab.com/ce/user/project/new_ci_build_permissions_model.html#dependent-repositories>依赖仓库</a>：</p><pre tabindex=0><code>git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/myuser/mydependentrepo
+</code></pre><p>然而，我们希望使这更友好一点，因为 <code>dep</code> 在试图拉取代码时不会奇迹般地添加凭据。</p><p>我们将把这一行添加到 <code>.gitlab-ci.yml</code> 的 <code>before_script</code> 部分。</p><pre tabindex=0><code>before_script:
+  - echo -e &#34;machine gitlab.com\nlogin gitlab-ci-token\npassword ${CI_JOB_TOKEN}&#34; &gt; ~/.netrc
+</code></pre><p>使用 <code>.netrc</code> 文件可以指定哪个凭证用于哪个服务器。这种方法可以避免每次从 Git 中拉取（或推送）时输入用户名和密码。密码以明文形式存储，因此你不应在自己的计算机上执行此操作。这实际用于 Git 在背后使用 <code>cURL</code>。 <a href=https://github.com/bagder/everything-curl/blob/master/usingcurl-netrc.md>在这里阅读更多</a>。</p><h3 id=项目文件>项目文件</h3><h4 id=makefile>Makefile</h4><p>虽然这是可选的，但我发现它使事情变得更容易。</p><p>配置这些步骤意味着在 CI 脚本（和本地）中，我们可以运行 <code>make lint</code>、<code>make build</code> 等，而无需每次重复步骤。</p><pre tabindex=0><code>GOFILES = $(shell find . -name &#39;*.go&#39; -not -path &#39;./vendor/*&#39;)
+GOPACKAGES = $(shell go list ./...  | grep -v /vendor/)
+
+default: build
+
+workdir:
+    mkdir -p workdir
+
+build: workdir/scraper
+
+workdir/scraper: $(GOFILES)
+    GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o workdir/scraper .
+
+test: test-all
+
+test-all:
+    @go test -v $(GOPACKAGES)
+
+lint: lint-all
+
+lint-all:
+    @golint -set_exit_status $(GOPACKAGES)
+</code></pre><h4 id=gitlab-ciyml>.gitlab-ci.yml</h4><p>这是 Gitlab CI 魔术发生的地方。你可能想使用自己的镜像。</p><pre tabindex=0><code>image: sjdweb/go-docker-build:1.10
+
+stages:
+  - test
+  - build
+
+before_script:
+  - cd $GOPATH/src
+  - mkdir -p gitlab.com/$CI_PROJECT_NAMESPACE
+  - cd gitlab.com/$CI_PROJECT_NAMESPACE
+  - ln -s $CI_PROJECT_DIR
+  - cd $CI_PROJECT_NAME
+  - echo -e &#34;machine gitlab.com\nlogin gitlab-ci-token\npassword ${CI_JOB_TOKEN}&#34; &gt; ~/.netrc
+  - dep ensure -vendor-only
+
+lint_code:
+  stage: test
+  script:
+    - make lint
+
+unit_tests:
+  stage: test
+  script:
+    - make test
+
+build:
+  stage: build
+  script:
+    - make
+</code></pre><h3 id=缺少了什么>缺少了什么</h3><p>我通常会用我的二进制文件构建 Docker 镜像，并将其推送到 Gitlab 容器注册库中。</p><p>你可以看到我正在构建二进制文件并退出，你至少需要将该二进制文件（例如生成文件）存储在某处。</p><hr><p>via: <a href=https://seandrumm.co.uk/blog/building-go-projects-with-docker-on-gitlab-ci/>https://seandrumm.co.uk/blog/building-go-projects-with-docker-on-gitlab-ci/</a></p><p>作者：<a href=https://seandrumm.co.uk/>SEAN DRUMM</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/go/ rel=tag>Go</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ci/ rel=tag>CI</a></li><li class=tags__item><a class="tags__link btn" href=/tags/docker/ rel=tag>Docker</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

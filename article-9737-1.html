@@ -1,0 +1,115 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 RHEL 中使用订阅管理器启用软件仓库 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 RHEL 中使用订阅管理器启用软件仓库"><meta property="og:description" content="了解如何在 RHEL 中使用订阅管理器来启用软件仓库。 这篇文章还包括了将系统注册到 Red Hat 的步骤、添加订阅和发生错误时的解决方案。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9737-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-06-12T10:21:12+00:00"><meta property="article:modified_time" content="2018-06-12T10:21:12+00:00"><meta itemprop=name content="如何在 RHEL 中使用订阅管理器启用软件仓库"><meta itemprop=description content="了解如何在 RHEL 中使用订阅管理器来启用软件仓库。 这篇文章还包括了将系统注册到 Red Hat 的步骤、添加订阅和发生错误时的解决方案。"><meta itemprop=datePublished content="2018-06-12T10:21:12+00:00"><meta itemprop=dateModified content="2018-06-12T10:21:12+00:00"><meta itemprop=wordCount content="552"><meta itemprop=keywords content="RedHat,RHEL,订阅,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 RHEL 中使用订阅管理器启用软件仓库</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-06-12T10:21:12Z>June 12, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>了解如何在 RHEL 中使用订阅管理器来启用软件仓库。 这篇文章还包括了将系统注册到 Red Hat 的步骤、添加订阅和发生错误时的解决方案。</p></blockquote><p><img src=/data/attachment/album/201806/12/102117vbr929yzx2m8hmpf.png alt="Enable repository using subscription-manager"></p><p>在本文中，我们将逐步介绍如何在刚安装的 RHEL 服务器中启用 Red Hat 软件仓库。</p><p>可以利用 <code>subscription-manager</code> 命令启用软件仓库，如下所示：</p><pre tabindex=0><code>root@kerneltalks # subscription-manager repos --enable rhel-6-server-rhv-4-agent-beta-debug-rpms
+Error: &#39;rhel-6-server-rhv-4-agent-beta-debug-rpms&#39; does not match a valid repository ID. Use &#34;subscription-manager repos --list&#34; to see valid repositories.
+</code></pre><p>当您的订阅没有配置好时，您会看到上述错误。让我们一步一步地通过 <code>subscription-manager</code> 来启用软件仓库。</p><h3 id=步骤-1使用-red-hat-注册您的系统>步骤 1：使用 Red Hat 注册您的系统</h3><p>这里假设您已经安装了新系统并且尚未在 Red Hat 上注册。如果您已经注册了该系统，那么您可以忽略此步骤。</p><p>您可以使用下面的命令来检查您的系统是否已在 Red Hat 注册了该订阅：</p><pre tabindex=0><code># subscription-manager version
+server type: This system is currently not registered.
+subscription management server: Unknown
+subscription management rules: Unknown
+subscription-manager: 1.18.10-1.el6
+python-rhsm: 1.18.6-1.el6
+</code></pre><p>在这里输出的第一行中，您可以看到该系统未注册。那么，让我们开始注册系统。您需要在 <code>subscription-manager</code> 命令中使用 <code>register</code> 选项。在这一步需要使用您的 Red Hat 帐户凭证。</p><pre tabindex=0><code>root@kerneltalks # subscription-manager register
+Registering to: subscription.rhsm.redhat.com:443/subscription
+Username: admin@kerneltalks.com
+Password:
+Network error, unable to connect to server. Please see /var/log/rhsm/rhsm.log for more information.
+</code></pre><p>如果您遇到上述错误，那么表明您的服务器无法连接到 RedHat。检查您的网络连接，或者您能<a href=https://kerneltalks.com/howto/how-to-configure-nameserver-in-linux/>解决网站名称解析的问题</a>。有时候，即使你能够 ping 通订阅服务器，你也会看到这个错误。这可能是因为您的环境中有代理服务器。在这种情况下，您需要将其详细信息添加到文件 <code>/etc/rhsm/rhsm.conf</code> 中。以下详细的代理信息应根据你的环境填充：</p><pre tabindex=0><code># an http proxy server to use
+ proxy_hostname =
+
+# port for http proxy server
+ proxy_port =
+
+# user name for authenticating to an http proxy, if needed
+ proxy_user =
+
+# password for basic http proxy auth, if needed
+ proxy_password =
+</code></pre><p>一旦你完成了这些，通过使用下面的命令重新检查 <code>subscription-manager</code> 是否获得了新的代理信息：</p><pre tabindex=0><code>root@kerneltalks # subscription-manager config
+[server]
+ hostname = [subscription.rhsm.redhat.com]
+ insecure = [0]
+ port = [443]
+ prefix = [/subscription]
+ proxy_hostname = [kerneltalksproxy.abc.com]
+ proxy_password = [asdf]
+ proxy_port = [3456]
+ proxy_user = [user2]
+ server_timeout = [180]
+ ssl_verify_depth = [3]
+
+[rhsm]
+ baseurl = [https://cdn.redhat.com]
+ ca_cert_dir = [/etc/rhsm/ca/]
+ consumercertdir = [/etc/pki/consumer]
+ entitlementcertdir = [/etc/pki/entitlement]
+ full_refresh_on_yum = [0]
+ manage_repos = [1]
+ pluginconfdir = [/etc/rhsm/pluginconf.d]
+ plugindir = [/usr/share/rhsm-plugins]
+ productcertdir = [/etc/pki/product]
+ repo_ca_cert = /etc/rhsm/ca/redhat-uep.pem
+ report_package_profile = [1]
+
+[rhsmcertd]
+ autoattachinterval = [1440]
+ certcheckinterval = [240]
+
+[logging]
+ default_log_level = [INFO]
+
+[] - Default value in use
+</code></pre><p>现在，请尝试重新注册您的系统。</p><pre tabindex=0><code>root@kerneltalks # subscription-manager register
+Registering to: subscription.rhsm.redhat.com:443/subscription
+Username: admin@kerneltalks.com
+Password:
+You must first accept Red Hat&#39;s Terms and conditions. Please visit https://www.redhat.com/wapps/tnc/termsack?event[]=signIn . You may have to log out of and back into the Customer Portal in order to see the terms.
+</code></pre><p>如果您是第一次将服务器添加到 Red Hat 帐户，您将看到上述错误。转到该 <a href="https://www.redhat.com/wapps/tnc/termsack?event%5B%5D=signIn">URL</a>并接受条款。回到终端，然后再试一次。</p><pre tabindex=0><code>oot@kerneltalks # subscription-manager register
+Registering to: subscription.rhsm.redhat.com:443/subscription
+Username: admin@kerneltalks.com
+Password:
+The system has been registered with ID: xxxxb2-xxxx-xxxx-xxxx-xx8e199xxx
+</code></pre><p>Bingo！系统现在已在 Red Hat 上注册。你可以再次用 <code>version</code> 选项来验证它。</p><pre tabindex=0><code>#subscription-managerversionservertype:RedHatSubscriptionManagementsubscriptionmanagementserver:2.0.43-1subscriptionmanagementrules:5.26subscription-manager:1.18.10-1.el6python-rhsm:1.18.6-1.el6&#34; decode=&#34;true&#34;  ]root@kerneltalks # subscription-manager version
+server type: Red Hat Subscription Management
+subscription management server: 2.0.43-1
+subscription management rules: 5.26
+subscription-manager: 1.18.10-1.el6
+python-rhsm: 1.18.6-1.el6
+</code></pre><h3 id=步骤-2将订阅添加到您的服务器>步骤 2：将订阅添加到您的服务器</h3><p>首先尝试列出软件仓库。您将无法列出任何内容，因为我们尚未在我们的服务器中添加任何订阅。</p><pre tabindex=0><code>root@kerneltalks # subscription-manager repos --list
+This system has no repositories available through subscriptions.
+</code></pre><p>正如您所看到 <code>subscription-manager</code> 找不到任何软件仓库，您需要将订阅添加到您的服务器上。一旦订阅被添加，<code>subscription-manager</code> 将能够列出下列的软件仓库。</p><p>要添加订阅，请先使用以下命令检查服务器的所有可用订阅：</p><pre tabindex=0><code>root@kerneltalks # subscription-manager list --available
++-------------------------------------------+
+Available Subscriptions
++-------------------------------------------+
+Subscription Name: Red Hat Enterprise Linux for Virtual Datacenters, Standard
+Provides: Red Hat Beta
+Red Hat Software Collections (for RHEL Server)
+Red Hat Enterprise Linux Atomic Host Beta
+Oracle Java (for RHEL Server)
+Red Hat Enterprise Linux Server
+dotNET on RHEL (for RHEL Server)
+Red Hat Enterprise Linux Atomic Host
+Red Hat Software Collections Beta (for RHEL Server)
+Red Hat Developer Tools Beta (for RHEL Server)
+Red Hat Developer Toolset (for RHEL Server)
+Red Hat Developer Tools (for RHEL Server)
+SKU: RH00050
+Contract: xxxxxxxx
+Pool ID: 8a85f98c6011059f0160110a2ae6000f
+Provides Management: Yes
+Available: Unlimited
+Suggested: 0
+Service Level: Standard
+Service Type: L1-L3
+Subscription Type: Stackable (Temporary)
+Ends: 12/01/2018
+System Type: Virtual
+</code></pre><p>您将获得可用于您的服务器的此类订阅的软件仓库列表。您需要阅读它提供的内容并记下对您有用或需要的订阅的 <code>Pool ID</code>。</p><p>现在，使用 pool ID 将订阅添加到您的服务器。</p><pre tabindex=0><code># subscription-manager attach --pool=8a85f98c6011059f0160110a2ae6000f
+Successfully attached a subscription for: Red Hat Enterprise Linux for Virtual Datacenters, Standard
+</code></pre><p>如果您不确定选择哪一个，则可以使用下面的命令自动地添加最适合您的服务器的订阅：</p><pre tabindex=0><code>root@kerneltalks # subscription-manager attach --auto
+Installed Product Current Status:
+Product Name: Red Hat Enterprise Linux Server
+Status: Subscribed
+</code></pre><p>接下来是最后一步启用软件仓库。</p><h3 id=步骤-3启用软件仓库>步骤 3：启用软件仓库</h3><p>现在您将能够启用软件仓库，该软件仓库在您的附加订阅下可用。</p><pre tabindex=0><code>root@kerneltalks # subscription-manager repos --enable rhel-6-server-rhv-4-agent-beta-debug-rpms
+Repository &#39;rhel-6-server-rhv-4-agent-beta-debug-rpms&#39; is enabled for this system.
+</code></pre><p>到这里，您已经完成了。您可以<a href=https://kerneltalks.com/howto/how-to-list-yum-repositories-in-rhel-centos/>用 yum 命令列出软件仓库</a>并确认。</p><hr><p>via: <a href=https://kerneltalks.com/howto/how-to-enable-repository-using-subscription-manager-in-rhel/>https://kerneltalks.com/howto/how-to-enable-repository-using-subscription-manager-in-rhel/</a></p><p>作者：<a href=https://kerneltalks.com>kerneltalks</a> 译者：<a href=https://github.com/S9mtAt>S9mtAt</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/redhat/ rel=tag>RedHat</a></li><li class=tags__item><a class="tags__link btn" href=/tags/rhel/ rel=tag>RHEL</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%AE%A2%E9%98%85/ rel=tag>订阅</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

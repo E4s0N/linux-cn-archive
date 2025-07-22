@@ -1,0 +1,48 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux 中的“大内存页”（hugepage）是个什么？ - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux 中的“大内存页”（hugepage）是个什么？"><meta property="og:description" content="学习 Linux 中的大内存页（hugepage）。理解什么是“大内存页”，如何进行配置，如何查看当前状态以及如何禁用它。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9450-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-03-16T08:28:00+00:00"><meta property="article:modified_time" content="2018-03-16T08:28:00+00:00"><meta itemprop=name content="Linux 中的“大内存页”（hugepage）是个什么？"><meta itemprop=description content="学习 Linux 中的大内存页（hugepage）。理解什么是“大内存页”，如何进行配置，如何查看当前状态以及如何禁用它。"><meta itemprop=datePublished content="2018-03-16T08:28:00+00:00"><meta itemprop=dateModified content="2018-03-16T08:28:00+00:00"><meta itemprop=wordCount content="324"><meta itemprop=keywords content="内存,hugepage,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux 中的“大内存页”（hugepage）是个什么？</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-03-16T08:28:00Z>March 16, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>学习 Linux 中的 大内存页 hugepage 。理解什么是“大内存页”，如何进行配置，如何查看当前状态以及如何禁用它。</p></blockquote><p><img src=/data/attachment/album/201803/16/002941pnzzezyqqqowny8u.png alt="Huge Pages in Linux"></p><p>本文中我们会详细介绍 大内存页 huge page ，让你能够回答：Linux 中的“大内存页”是什么？在 RHEL6、RHEL7、Ubuntu 等 Linux 中，如何启用/禁用“大内存页”？如何查看“大内存页”的当前值？</p><p>首先让我们从“大内存页”的基础知识开始讲起。</p><h3 id=linux-中的大内存页是个什么玩意>Linux 中的“大内存页”是个什么玩意？</h3><p>“大内存页”有助于 Linux 系统进行虚拟内存管理。顾名思义，除了标准的 4KB 大小的页面外，它们还能帮助管理内存中的巨大的页面。使用“大内存页”，你最大可以定义 1GB 的页面大小。</p><p>在系统启动期间，你能用“大内存页”为应用程序预留一部分内存。这部分内存，即被“大内存页”占用的这些存储器永远不会被交换出内存。它会一直保留其中，除非你修改了配置。这会极大地提高像 Oracle 数据库这样的需要海量内存的应用程序的性能。</p><h3 id=为什么使用大内存页>为什么使用“大内存页”？</h3><p>在虚拟内存管理中，内核维护一个将虚拟内存地址映射到物理地址的表，对于每个页面操作，内核都需要加载相关的映射。如果你的内存页很小，那么你需要加载的页就会很多，导致内核会加载更多的映射表。而这会降低性能。</p><p>使用“大内存页”，意味着所需要的页变少了。从而大大减少由内核加载的映射表的数量。这提高了内核级别的性能最终有利于应用程序的性能。</p><p>简而言之，通过启用“大内存页”，系统具只需要处理较少的页面映射表，从而减少访问/维护它们的开销！</p><h3 id=如何配置大内存页>如何配置“大内存页”？</h3><p>运行下面命令来查看当前“大内存页”的详细内容。</p><pre tabindex=0><code>root@kerneltalks # grep Huge /proc/meminfo
+AnonHugePages:         0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+</code></pre><p>从上面输出可以看到，每个页的大小为 2MB（<code>Hugepagesize</code>），并且系统中目前有 <code>0</code> 个“大内存页”（<code>HugePages_Total</code>）。这里“大内存页”的大小可以从 <code>2MB</code> 增加到 <code>1GB</code>。</p><p>运行下面的脚本可以知道系统当前需要多少个巨大页。该脚本取之于 Oracle。</p><pre tabindex=0><code>#!/bin/bash
+#
+# hugepages_settings.sh
+#
+# Linux bash script to compute values for the
+# recommended HugePages/HugeTLB configuration
+#
+# Note: This script does calculation for all shared memory
+# segments available when the script is run, no matter it
+# is an Oracle RDBMS shared memory segment or not.
+# Check for the kernel version
+KERN=`uname -r | awk -F. &#39;{ printf(&#34;%d.%d\n&#34;,$1,$2); }&#39;`
+# Find out the HugePage size
+HPG_SZ=`grep Hugepagesize /proc/meminfo | awk {&#39;print $2&#39;}`
+# Start from 1 pages to be on the safe side and guarantee 1 free HugePage
+NUM_PG=1
+# Cumulative number of pages required to handle the running shared memory segments
+for SEG_BYTES in `ipcs -m | awk {&#39;print $5&#39;} | grep &#34;[0-9][0-9]*&#34;`
+do
+   MIN_PG=`echo &#34;$SEG_BYTES/($HPG_SZ*1024)&#34; | bc -q`
+   if [ $MIN_PG -gt 0 ]; then
+      NUM_PG=`echo &#34;$NUM_PG+$MIN_PG+1&#34; | bc -q`
+   fi
+done
+# Finish with results
+case $KERN in
+   &#39;2.4&#39;) HUGETLB_POOL=`echo &#34;$NUM_PG*$HPG_SZ/1024&#34; | bc -q`;
+          echo &#34;Recommended setting: vm.hugetlb_pool = $HUGETLB_POOL&#34; ;;
+   &#39;2.6&#39; | &#39;3.8&#39; | &#39;3.10&#39; | &#39;4.1&#39; ) echo &#34;Recommended setting: vm.nr_hugepages = $NUM_PG&#34; ;;
+    *) echo &#34;Unrecognized kernel version $KERN. Exiting.&#34; ;;
+esac
+# End
+</code></pre><p>将它以 <code>hugepages_settings.sh</code> 为名保存到 <code>/tmp</code> 中，然后运行之：</p><pre tabindex=0><code>root@kerneltalks # sh /tmp/hugepages_settings.sh
+Recommended setting: vm.nr_hugepages = 124
+</code></pre><p>你的输出类似如上结果，只是数字会有一些出入。</p><p>这意味着，你系统需要 124 个每个 2MB 的“大内存页”！若你设置页面大小为 4MB，则结果就变成了 62。你明白了吧？</p><h3 id=配置内核中的大内存页>配置内核中的“大内存页”</h3><p>本文最后一部分内容是配置上面提到的 <a href=https://kerneltalks.com/linux/how-to-tune-kernel-parameters-in-linux/>内核参数</a> ，然后重新加载。将下面内容添加到 <code>/etc/sysctl.conf</code> 中，然后输入 <code>sysctl -p</code> 命令重新加载配置。</p><pre tabindex=0><code>vm.nr_hugepages=126
+</code></pre><p>注意我们这里多加了两个额外的页，因为我们希望在实际需要的页面数量之外多一些额外的空闲页。</p><p>现在，内核已经配置好了，但是要让应用能够使用这些“大内存页”还需要提高内存的使用阀值。新的内存阀值应该为 126 个页 x 每个页 2 MB = 252 MB，也就是 258048 KB。</p><p>你需要编辑 <code>/etc/security/limits.conf</code> 中的如下配置：</p><pre tabindex=0><code>soft memlock 258048
+hard memlock 258048
+</code></pre><p>某些情况下，这些设置是在指定应用的文件中配置的，比如 Oracle DB 就是在 <code>/etc/security/limits.d/99-grid-oracle-limits.conf</code> 中配置的。</p><p>这就完成了！你可能还需要重启应用来让应用来使用这些新的巨大页。</p><p>（LCTT 译注：此外原文有误，“透明大内存页”和“大内存页”不同，而且，在 Redhat 系统中，“大内存页” 不是默认启用的，而“透明大内存页”是启用的。因此这个段落删除了。）</p><hr><p>via: <a href=https://kerneltalks.com/services/what-is-huge-pages-in-linux/>https://kerneltalks.com/services/what-is-huge-pages-in-linux/</a></p><p>作者：<a href=https://kerneltalks.com>Shrikant Lavhate</a> 译者：<a href=https://github.com/lujun9972>lujun9972</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%86%85%E5%AD%98/ rel=tag>内存</a></li><li class=tags__item><a class="tags__link btn" href=/tags/hugepage/ rel=tag>hugepage</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

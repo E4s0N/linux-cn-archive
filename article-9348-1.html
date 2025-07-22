@@ -1,0 +1,94 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>ncurses 入门指南 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="ncurses 入门指南"><meta property="og:description" content="怎样使用 curses 来绘制终端屏幕？"><meta property="og:type" content="article"><meta property="og:url" content="/article-9348-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-02-16T00:20:00+00:00"><meta property="article:modified_time" content="2018-02-16T00:20:00+00:00"><meta itemprop=name content="ncurses 入门指南"><meta itemprop=description content="怎样使用 curses 来绘制终端屏幕？"><meta itemprop=datePublished content="2018-02-16T00:20:00+00:00"><meta itemprop=dateModified content="2018-02-16T00:20:00+00:00"><meta itemprop=wordCount content="423"><meta itemprop=keywords content="curses,ncurses,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>ncurses 入门指南</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-02-16T00:20:00Z>February 16, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>怎样使用 curses 来绘制终端屏幕？</p></blockquote><p><img src=/data/attachment/album/201802/14/232431itpppd60pa60ps4w.jpg alt></p><p>虽然图形界面非常酷，但是不是所有的程序都需要点击式的界面。例如，令人尊敬的 Vi 编辑器在第一个 GUI 出现之前在纯文本终端运行了很久。</p><p>Vi 编辑器是一个在“文本”模式下绘制的 面向屏幕 screen-oriented 程序的例子。它使用了一个叫 curses 的库。这个库提供了一系列的编程接口来操纵终端屏幕。curses 库产生于 BSD UNIX，但是 Linux 系统通过 ncurses 库提供这个功能。</p><p>[要了解 ncurses “过去曾引起的风暴”，参见 <a href=http://www.linuxjournal.com/article/1124>ncurses: Portable Screen-Handling for Linux</a>, September 1, 1995, by Eric S. Raymond.]</p><p>使用 curses 创建程序实际上非常简单。在这个文章中，我展示了一个利用 curses 来在终端屏幕上绘图的示例程序。</p><h3 id=谢尔宾斯基三角形>谢尔宾斯基三角形</h3><p>简单展示一些 curses 函数的一个方法是生成 谢尔宾斯基三角形 Sierpinski&rsquo;s Triangle 。如果你对生成谢尔宾斯基三角形的这种方法不熟悉的话，这里是一些产生谢尔宾斯基三角形的规则：</p><ol><li>设置定义三角形的三个点。</li><li>随机选择任意的一个点 <code>(x,y)</code>。</li></ol><p>然后：</p><ol><li>在三角形的顶点中随机选择一个点。</li><li>将新的 <code>x,y</code> 设置为先前的 <code>x,y</code> 和三角顶点的中间点。</li><li>重复（上述步骤）。</li></ol><p>所以我按照这些指令写了这个程序，程序使用 curses 函数来向终端屏幕绘制谢尔宾斯基三角形：</p><pre tabindex=0><code>/* triangle.c */
+
+#include &lt;curses.h&gt;
+#include &lt;stdlib.h&gt;
+
+#include &#34;getrandom_int.h&#34;
+
+#define ITERMAX 10000
+
+int main(void)
+{
+  long iter;
+  int yi, xi;
+  int y[3], x[3];
+  int index;
+  int maxlines, maxcols;
+
+  /* initialize curses */
+
+  initscr();
+  cbreak();
+  noecho();
+
+  clear();
+
+  /* initialize triangle */
+
+  maxlines = LINES - 1;
+  maxcols = COLS - 1;
+
+  y[0] = 0;
+  x[0] = 0;
+
+  y[1] = maxlines;
+  x[1] = maxcols / 2;
+
+  y[2] = 0;
+  x[2] = maxcols;
+
+  mvaddch(y[0], x[0], &#39;0&#39;);
+  mvaddch(y[1], x[1], &#39;1&#39;);
+  mvaddch(y[2], x[2], &#39;2&#39;);
+
+  /* initialize yi,xi with random values */
+
+  yi = getrandom_int() % maxlines;
+  xi = getrandom_int() % maxcols;
+
+  mvaddch(yi, xi, &#39;.&#39;);
+
+  /* iterate the triangle */
+
+  for (iter = 0; iter &lt; ITERMAX; iter++) {
+      index = getrandom_int() % 3;
+
+      yi = (yi + y[index]) / 2;
+      xi = (xi + x[index]) / 2;
+
+      mvaddch(yi, xi, &#39;*&#39;);
+      refresh();
+  }
+
+  /* done */
+
+  mvaddstr(maxlines, 0, &#34;Press any key to quit&#34;);
+
+  refresh();
+
+  getch();
+  endwin();
+
+  exit(0);
+}
+</code></pre><p>让我一边解释一边浏览这个程序。首先，<code>getrandom_int()</code> 函数是我对 Linux 系统调用 <code>getrandom()</code> 的包装器。它保证返回一个正整数（<code>int</code>）值。（LCTT 译注：<code>getrandom()</code> 系统调用按照字节返回随机值到一个变量中，值是随机的，不保证正负，使用 <code>stdlib.h</code> 的 <code>random()</code> 函数可以达到同样的效果）另外，按照上面的规则，你应该能够辨认出初始化和迭代谢尔宾斯基三角形的代码。除此之外，我们来看看我用来在终端上绘制三角形的 curses 函数。</p><p>大多数 curses 程序以这四条指令开头。 <code>initscr()</code> 函数获取包括大小和特征在内的终端类型，并设置终端支持的 curses 环境。<code>cbreak()</code> 函数禁用行缓冲并设置 curses 每次只接受一个字符。<code>noecho()</code> 函数告诉 curses 不要把输入回显到屏幕上。而 <code>clear()</code> 函数清空了屏幕：</p><pre tabindex=0><code>  initscr();
+  cbreak();
+  noecho();
+
+  clear();
+</code></pre><p>之后程序设置了三个定义三角的顶点。注意这里使用的 <code>LINES</code> 和 <code>COLS</code>，它们是由 <code>initscr()</code> 来设置的。这些值告诉程序在终端的行数和列数。屏幕坐标从 <code>0</code> 开始，所以屏幕左上角是 <code>0</code> 行 <code>0</code> 列。屏幕右下角是 <code>LINES - 1</code> 行，<code>COLS - 1</code> 列。为了便于记忆，我的程序里把这些值分别设为了变量 <code>maxlines</code> 和 <code>maxcols</code>。</p><p>在屏幕上绘制文字的两个简单方法是 <code>addch()</code> 和 <code>addstr()</code> 函数。也可以使用相关的 <code>mvaddch()</code> 和 <code>mvaddstr()</code> 函数可以将字符放到一个特定的屏幕位置。我的程序在很多地方都用到了这些函数。首先程序绘制三个定义三角的点并标记为 <code>'0'</code>，<code>'1'</code> 和 <code>'2'</code>：</p><pre tabindex=0><code>  mvaddch(y[0], x[0], &#39;0&#39;);
+  mvaddch(y[1], x[1], &#39;1&#39;);
+  mvaddch(y[2], x[2], &#39;2&#39;);
+</code></pre><p>为了绘制任意的一个初始点，程序做了类似的一个调用：</p><pre tabindex=0><code>  mvaddch(yi, xi, &#39;.&#39;);
+</code></pre><p>还有为了在谢尔宾斯基三角形递归中绘制连续的点：</p><pre tabindex=0><code>      mvaddch(yi, xi, &#39;*&#39;);
+</code></pre><p>当程序完成之后，将会在屏幕左下角（在 <code>maxlines</code> 行，<code>0</code> 列）显示一个帮助信息：</p><pre tabindex=0><code>  mvaddstr(maxlines, 0, &#34;Press any key to quit&#34;);
+</code></pre><p>注意 curses 在内存中维护了一个版本的屏幕显示，并且只有在你要求的时候才会更新这个屏幕，这很重要。特别是当你想要向屏幕显示大量的文字的时候，这样程序会有更好的性能表现。这是因为 curses 只能更新在上次更新之后改变的这部分屏幕。想要让 curses 更新终端屏幕，请使用 <code>refresh()</code> 函数。</p><p>在我的示例程序中，我选择在“绘制”每个谢尔宾斯基三角形中的连续点时更新屏幕。通过这样做，用户可以观察三角形中的每次迭代。（LCTT 译注：由于 CPU 太快，迭代过程执行就太快了，所以其实很难直接看到迭代过程）</p><p>在退出之前，我使用 <code>getch()</code> 函数等待用户按下一个键。然后我调用 <code>endwin()</code> 函数退出 curses 环境并返回终端程序到一般控制。</p><pre tabindex=0><code>  getch();
+  endwin();
+</code></pre><h3 id=编译和示例输出>编译和示例输出</h3><p>现在你已经有了你的第一个 curses 示例程序，是时候编译运行它了。记住 Linux 操作系统通过 ncurses 库来实现 curses 功能，所以你需要在编译的时候通过 <code>-lncurses</code>来链接——例如：</p><pre tabindex=0><code>$ ls
+getrandom_int.c  getrandom_int.h  triangle.c
+
+$ gcc -Wall -lncurses -o triangle triangle.c getrandom_int.c
+</code></pre><p>（LCTT 译注：此处命令行有问题，<code>-lncurses</code> 选项在我的 Ubuntu 16.04 系统 + gcc 4.9.3 环境下，必须放在命令行最后，否则找不到库文件，链接时会出现未定义的引用。）</p><p>在标准的 80x24 终端运行这个 <code>triangle</code> 程序并没什么意思。在那样的分辨率下你不能看见谢尔宾斯基三角形的很多细节。如果你运行终端窗口并设置非常小的字体大小，你可以更加容易地看到谢尔宾斯基三角形的不规则性质。在我的系统上，输出如图 1。</p><p><img src=/data/attachment/album/201802/14/232441hbttkoalfofoiyl9.png alt></p><p><em>图 1. triangle 程序的输出</em></p><p>虽然迭代具有随机性，但是每次谢尔宾斯基三角形的运行看起来都会很一致。唯一的不同是最初绘制到屏幕的一些点的位置不同。在这个例子中，你可以看到三角形开始的一个小圆点，在点 1 附近。看起来程序接下来选择了点 2，然后你可以看到在圆点和“2”之间的星号。并且看起来程序随机选择了点 2 作为下一个随机数，因为你可以看到在第一个星号和“2”之间的星号。从这里开始，就不能继续分辨三角形是怎样被画出来的了，因为所有的连续点都属于三角形区域。</p><h3 id=开始学习-ncurses>开始学习 ncurses</h3><p>这个程序是一个怎样使用 curses 函数绘制字符到屏幕的简单例子。按照你的程序的需要，你可以通过 curses 做得更多。在下一篇文章中，我将会展示怎样使用 curses 让用户和屏幕交互。如果你对于学习 curses 有兴趣，我建议你去读位于 Linux 文档计划 Linux Documentation Project 的 Pradeep Padala 写的 <a href=http://tldp.org/HOWTO/NCURSES-Programming-HOWTO>NCURSES Programming HOWTO</a>。</p><h3 id=关于作者>关于作者</h3><p>Jim Hall 是一个自由及开源软件的倡议者，他最有名的工作是 FreeDOS 计划，也同样致力于开源软件的可用性。Jim 是在明尼苏达州的拉姆齐县的首席信息官。</p><hr><p>via: <a href=http://www.linuxjournal.com/content/getting-started-ncurses>http://www.linuxjournal.com/content/getting-started-ncurses</a></p><p>作者：<a href=http://www.linuxjournal.com/users/jim-hall>Jim Hall</a> 译者：<a href=https://github.com/leemeans>leemeans</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/curses/ rel=tag>curses</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ncurses/ rel=tag>ncurses</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

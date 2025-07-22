@@ -1,0 +1,77 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Linux 命令行工具来了解你的 NVMe 驱动器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Linux 命令行工具来了解你的 NVMe 驱动器"><meta property="og:description" content="nvme-cli 命令拥有诸多实用的选项，且它是控制和管理数据一种很好的方式。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13822-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-09-26T10:24:47+00:00"><meta property="article:modified_time" content="2021-09-26T10:24:47+00:00"><meta itemprop=name content="使用 Linux 命令行工具来了解你的 NVMe 驱动器"><meta itemprop=description content="nvme-cli 命令拥有诸多实用的选项，且它是控制和管理数据一种很好的方式。"><meta itemprop=datePublished content="2021-09-26T10:24:47+00:00"><meta itemprop=dateModified content="2021-09-26T10:24:47+00:00"><meta itemprop=wordCount content="431"><meta itemprop=keywords content="NVMe,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Linux 命令行工具来了解你的 NVMe 驱动器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-09-26T10:24:47Z>September 26, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>nvme-cli 命令拥有诸多实用的选项，且它是控制和管理数据一种很好的方式。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202109/26/102441ux8cy36gy1vggykz.jpg alt title="Command line prompt"></p><p>NVMe 是指 非易失性内存规范 Non-Volatile Memory Express ，它规范了软件和存储通过 PCIe 和其他协议（包括 TCP）进行通信的方式。它是由非营利组织领导的 <a href=https://nvmexpress.org/>开放规范</a>，并定义了几种形式的固态存储。</p><p>我的笔记本电脑有一个 NVMe 驱动器，我的台式机也有。而且它们的速度很快。我喜欢我的电脑启动的速度，以及它们读写数据的速度。几乎没有延迟。</p><p>没过多久，我就对驱动这种超高速存储的技术产生了好奇，所以我做了一些调查。我了解到，NVMe 驱动器消耗的电力更少，而提供的数据访问速度甚至比 SATA 的 SSD 驱动器快得多。这很有趣，但我想知道更多关于我的特定 NVMe 驱动器的信息，我想知道它们与其他驱动器有何区别。我可以安全地擦除驱动器吗？我怎样才能检查它的完整性？</p><p>带着这些问题我在互联网上搜索，发现了一个开源项目，其中有一系列管理 NVMe 驱动器的工具。它被称为 <a href=https://github.com/linux-nvme/nvme-cli>nvme-cli</a>。</p><h3 id=安装-nvme-cli>安装 nvme-cli</h3><p>你可以从你的发行版的包管理器中安装 <code>nvme-cli</code>。例如，在 Fedora、CentOS 或类似系统上：</p><pre tabindex=0><code>$ sudo dnf install nvme-cli
+</code></pre><p>在 Debian、Mint、Elementary 和类似系统上:</p><pre tabindex=0><code>$ sudo apt install nvme-cli
+</code></pre><h3 id=探索-nvme-驱动器>探索 NVMe 驱动器</h3><p>在安装 <code>nvme-cli</code> 后，我想探索我的驱动器。<code>nvme-cli</code> 没有手册页，但你可以通过输入 <code>nvme help</code> 获得很多帮助：</p><pre tabindex=0><code>$ nvme help
+nvme-1.14
+usage: nvme &lt;command&gt; [&lt;device&gt;] [&lt;args&gt;]
+
+The &#39;&lt;device&gt;&#39; may be either an NVMe character device (ex: /dev/nvme0) or an
+nvme block device (ex: /dev/nvme0n1).
+
+The following are all implemented sub-commands:
+ list List all NVMe devices and namespaces on machine
+ list-subsys List nvme subsystems
+ id-ctrl Send NVMe Identify Controller
+ id-ns Send NVMe Identify Namespace, display structure
+ id-ns-granularity Send NVMe Identify Namespace Granularity List, display structure
+ list-ns Send NVMe Identify List, display structure
+ list-ctrl Send NVMe Identify Controller List, display structure
+ nvm-id-ctrl Send NVMe Identify Controller NVM Command Set, display structure
+ primary-ctrl-caps Send NVMe Identify Primary Controller Capabilities
+[...]
+</code></pre><h3 id=列出所有的-nvme-驱动器>列出所有的 NVMe 驱动器</h3><p><code>sudo nvme list</code> 命令列出你机器上所有的 NVMe 设备和命名空间。我用它在 <code>/dev/nvme0n1</code> 找到了一个 NVMe 驱动器。下面是命令输出结果：</p><pre tabindex=0><code>$ sudo nvme list
+
+Node SN Model Namespace Usage Format FW Rev
+
+--------------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+
+/dev/nvme0n1    S42GMY9M141281 SAMSUNG MZVLB256HAHQ-000L7 1
+
+214.68 GB / 256.06 GB 512  B + 0 B 0L2QEXD7
+</code></pre><p>我有一个名为 <code>nvme0n1</code> 的驱动器。它列出了序列号、品牌、容量、固件版本等等。</p><p>通过使用 <code>id-ctrl</code> 子命令，你可以得到更多关于该硬盘和它所支持的特性的信息：</p><pre tabindex=0><code>$ sudo nvme id-ctrl /dev/nvme0n1
+NVME Identify Controller:
+vid : 0x144d
+ssvid : 0x144d
+sn : S42GMY9M141281
+mn : SAMSUNG MZVLB256HAHQ-000L7
+fr : 0L2QEXD7
+rab : 2
+ieee : 002538
+cmic : 0
+mdts : 9
+cntlid : 0x4
+ver : 0x10200
+rtd3r : 0x186a0
+rtd3e : 0x7a1200
+[...]
+</code></pre><h3 id=驱动器健康>驱动器健康</h3><p>你可以通过 <code>smart-log</code> 子命令来了解硬盘的整体健康状况：</p><pre tabindex=0><code>$ sudo nvme smart-log /dev/nvme0n1
+Smart Log for NVME device:nvme0n1 namespace-id:ffffffff
+critical_warning : 0
+temperature : 21 C
+available_spare : 100%
+available_spare_threshold : 10%
+percentage_used : 2%
+endurance group critical warning summary: 0
+data_units_read : 5,749,452
+data_units_written : 10,602,948
+host_read_commands : 77,809,121
+host_write_commands : 153,405,213
+controller_busy_time : 756
+power_cycles : 1,719
+power_on_hours : 1,311
+unsafe_shutdowns : 129
+media_errors : 0
+num_err_log_entries : 1,243
+Warning Temperature Time : 0
+Critical Composite Temperature Time : 0
+Temperature Sensor 1 : 21 C
+Temperature Sensor 2 : 22 C
+Thermal Management T1 Trans Count : 0
+Thermal Management T2 Trans Count : 0
+Thermal Management T1 Total Time : 0
+Thermal Management T2 Total Time : 0
+</code></pre><p>这为你提供了硬盘的当前温度、到目前为止的使用时间、不安全的关机次数等等。</p><h3 id=格式化一个-nvme-驱动器>格式化一个 NVMe 驱动器</h3><p>你可以用 <code>nvme-cli</code> 格式化一个 NVMe 驱动器，但要注意。这将删除驱动器上的所有数据！如果你的硬盘上有重要的数据，你必须在这样做之前将其备份，否则你<strong>将会</strong>丢失数据。子命令是 <code>format</code>：</p><pre tabindex=0><code>$ sudo nvme format /dev/nvme0nX
+</code></pre><p>（为了安全起见，我用 <code>X</code> 替换了驱动器的实际位置，以防止复制粘贴的错误。将 <code>X</code> 改为 <code>1</code> 或 <code>nvme list</code> 结果中列出的实际位置。）</p><h3 id=安全地擦除-nvme-驱动器>安全地擦除 NVMe 驱动器</h3><p>当你准备出售或处理你的 NVMe 电脑时，你可能想安全地擦除驱动器。这里的警告与格式化过程中的警告相同。首先要备份重要的数据，因为这个命令会删除这些数据！</p><pre tabindex=0><code>$ sudo nvme sanitize /dev/nvme0nX
+</code></pre><h3 id=尝试-nvme-cli>尝试 nvme-cli</h3><p><code>nvme-cli</code> 命令是在 <a href=https://github.com/linux-nvme/nvme-cli/blob/master/LICENSE>GPLv2</a> 许可下发布的。它是一个强大的命令，有很多有用的选项，用来有效地控制和管理数据。</p><hr><p>via: <a href=https://opensource.com/article/21/9/nvme-cli>https://opensource.com/article/21/9/nvme-cli</a></p><p>作者：<a href=https://opensource.com/users/don-watkins>Don Watkins</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/turbokernel>turbokernel</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/nvme/ rel=tag>NVMe</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

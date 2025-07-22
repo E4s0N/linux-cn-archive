@@ -1,0 +1,514 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Textual：为 Python 增加漂亮的文本用户界面（TUI） - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Textual：为 Python 增加漂亮的文本用户界面（TUI）"><meta property="og:description" content="如果你的代码是用 Python 编写的，你应该使用 Textual 来帮助你编写 TUI（文本用户界面）。"><meta property="og:type" content="article"><meta property="og:url" content="/article-16557-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-01-15T11:04:38+00:00"><meta property="article:modified_time" content="2024-01-15T11:04:38+00:00"><meta itemprop=name content="Textual：为 Python 增加漂亮的文本用户界面（TUI）"><meta itemprop=description content="如果你的代码是用 Python 编写的，你应该使用 Textual 来帮助你编写 TUI（文本用户界面）。"><meta itemprop=datePublished content="2024-01-15T11:04:38+00:00"><meta itemprop=dateModified content="2024-01-15T11:04:38+00:00"><meta itemprop=wordCount content="1962"><meta itemprop=keywords content="Textual,TUI,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Textual：为 Python 增加漂亮的文本用户界面（TUI）</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2024-01-15T11:04:38Z>January 15, 2024</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202401/15/110359fptrxpqffztniz45.jpg alt></p><h3 id=快速入门使用-textual>快速入门使用 Textual</h3><p>Python 在 Linux 上有像 <a href=https://docs.python.org/3/library/tkinter.html>TkInter</a> 这样的优秀 GUI（图形用户界面）开发库，但如果你不能运行图形应用程序怎么办？</p><p>文本终端，并非只在 Linux 上有，而且 BSD 和其它的出色的类 Unix 操作系统上也有。如果你的代码是用 Python 编写的，你应该使用 <a href=https://textual.textualize.io/>Textual</a> 来帮助你编写 TUI（文本用户界面）。在这个快速介绍中，我将向你展示两个你可以用 Textual 做的示例，并且介绍它未来可能的应用方向。</p><p>所以 Textual 是什么？</p><blockquote><p>Textual 是一个为 Python 构建的快速应用程序开发框架，由 <a href=http://Textualize.io>Textualize.io</a> 构建。它可以让你用简单的 Python API 构建复杂的用户界面，并运行在终端或网络浏览器上！</p></blockquote><h4 id=你需要的跟进这个教程的工具>你需要的跟进这个教程的工具</h4><p>你需要有以下条件：</p><ol><li>具备基础的编程经验，最好熟练使用 Python。</li><li>理解基础的面向对象概念，比如类和继承。</li><li>一台安装了 Linux 与 Python 3.9+ 的机器</li><li>一款好的编辑器（Vim 或者 PyCharm 是不错的选择）</li></ol><p>我尽可能简单化代码，以便你能轻松理解。此外，我强烈建议你下载代码，或至少按照接下来的说明安装相关程序。</p><h4 id=安装步骤>安装步骤</h4><p>首先创建一个虚拟环境：</p><pre tabindex=0><code>python3 -m venv ~/virtualenv/Textualize
+</code></pre><p>现在，你可以克隆 Git 仓库并创建一个可以编辑的发布版本：</p><pre tabindex=0><code>. ~/virtualenv/Textualize/bin/activate
+pip install --upgrade pip
+pip install --upgrade wheel
+pip install --upgrade build
+pip install --editable .
+</code></pre><p>或者直接从 <a href=http://Pypi.org>Pypi.org</a> 安装：</p><pre tabindex=0><code>. ~/virtualenv/Textualize/bin/activate
+pip install --upgrade KodegeekTextualize
+</code></pre><h3 id=我们的首个程序日志浏览器>我们的首个程序：日志浏览器</h3><p><img src=/data/attachment/album/202401/15/110439y6oo97pb89989wwh.svg alt></p><p>这个 <em>日志浏览器</em> 就是一款简单的应用，能执行用户 <em><a href=https://manpages.org/bash>PATH</a></em> 路径上的一系列 UNIX 命令，并在任务执行完毕后捕获输出。</p><p>以下是该应用的代码：</p><pre tabindex=0><code>import shutil
+from textual import on
+from textual.app import ComposeResult, App
+from textual.widgets import Footer, Header, Button, SelectionList
+from textual.widgets.selection_list import Selection
+from textual.screen import ModalScreen
+# Operating system commands are hardcoded
+OS_COMMANDS = {
+    &#34;LSHW&#34;: [&#34;lshw&#34;, &#34;-json&#34;, &#34;-sanitize&#34;, &#34;-notime&#34;, &#34;-quiet&#34;],
+    &#34;LSCPU&#34;: [&#34;lscpu&#34;, &#34;--all&#34;, &#34;--extended&#34;, &#34;--json&#34;],
+    &#34;LSMEM&#34;: [&#34;lsmem&#34;, &#34;--json&#34;, &#34;--all&#34;, &#34;--output-all&#34;],
+    &#34;NUMASTAT&#34;: [&#34;numastat&#34;, &#34;-z&#34;]
+}
+
+class LogScreen(ModalScreen):
+    # ... Code of the full separate screen omitted, will be explained next
+    def __init__(self, name = None, ident = None, classes = None, selections = None):
+        super().__init__(name, ident, classes)
+        pass
+
+class OsApp(App):
+    BINDINGS = [
+        (&#34;q&#34;, &#34;quit_app&#34;, &#34;Quit&#34;),
+    ]
+    CSS_PATH = &#34;os_app.tcss&#34;
+    ENABLE_COMMAND_PALETTE = False  # Do not need the command palette
+
+    def action_quit_app(self):
+        self.exit(0)
+
+    def compose(self) -&gt; ComposeResult:
+        # Create a list of commands, valid commands are assumed to be on the PATH variable.
+        selections = [Selection(name.title(), &#39; &#39;.join(cmd), True) for name, cmd in OS_COMMANDS.items() if shutil.which(cmd[0].strip())]
+        yield Header(show_clock=False)
+        sel_list = SelectionList(*selections, id=&#39;cmds&#39;)
+        sel_list.tooltip = &#34;Select one more more command to execute&#34;
+        yield sel_list
+        yield Button(f&#34;Execute {len(selections)} commands&#34;, id=&#34;exec&#34;, variant=&#34;primary&#34;)
+        yield Footer()
+
+    @on(SelectionList.SelectedChanged)
+    def on_selection(self, event: SelectionList.SelectedChanged) -&gt; None:
+        button = self.query_one(&#34;#exec&#34;, Button)
+        selections = len(event.selection_list.selected)
+        if selections:
+            button.disabled = False
+        else:
+            button.disabled = True
+        button.label = f&#34;Execute {selections} commands&#34;
+
+    @on(Button.Pressed)
+    def on_button_click(self):
+        selection_list = self.query_one(&#39;#cmds&#39;, SelectionList)
+        selections = selection_list.selected
+        log_screen = LogScreen(selections=selections)
+        self.push_screen(log_screen)
+
+def main():
+    app = OsApp()
+    app.title = f&#34;Output of multiple well known UNIX commands&#34;.title()
+    app.sub_title = f&#34;{len(OS_COMMANDS)} commands available&#34;
+    app.run()
+
+if __name__ == &#34;__main__&#34;:
+    main()
+</code></pre><p>现在我们逐条梳理一下程序的代码：</p><ol><li>每个应用都扩展自 <code>App</code> 类。其中最重要的有 <code>compose</code> 与 <code>mount</code> 等方法。但在当前应用中，我们只实现了 <a href=https://textual.textualize.io/tutorial/#composing-the-widgets>compose</a>。</li><li>在 <code>compose</code> 方法中，你会返回一系列 组件 Widget ，并按顺序添加到主屏幕中。每一个组件都有定制自身外观的选项。</li><li>你可以设定单字母的 绑定 binding ，比如此处我们设定了 <code>q</code> 键来退出应用（参见 <code>action_quit_app</code> 函数和 <code>BINDINGS</code> 列表）。</li><li>利用 <code>SelectionList</code> 组件，我们展示了待运行的命令列表。然后，你可以通过 <code>@on(SelectionList.SelectedChanged)</code> 注解以及 <code>on_selection</code> 方法告知应用获取所选的内容。</li><li>对于无选定元素的应对很重要，我们会根据运行的命令数量来决定是否禁用 “exec” 按钮。</li><li>我们使用类似的监听器（ <code>@on(Button.Pressed)</code> ）来执行命令。我们做的就是将我们的选择送到一个新的屏幕，该屏幕会负责执行命令并收集结果。</li></ol><p>你注意到 <code>CSS_PATH = "os_app.tcss"</code> 这个变量了吗？Textual 允许你使用 CSS 来控制单个或多个组件的外观（色彩、位置、尺寸）：</p><pre tabindex=0><code>Screen {
+        layout: vertical;
+}
+
+Header {
+        dock: top;
+}
+
+Footer {
+        dock: bottom;
+}
+
+SelectionList {
+        padding: 1;
+        border: solid $accent;
+        width: 1fr;
+        height: 80%;
+}
+
+Button {
+        width: 1fr
+}
+</code></pre><p>引自 Textual 官方网站：</p><blockquote><p>Textual 中使用的 CSS 是互联网上常见 CSS 的简化版本，容易上手。</p></blockquote><p><em>这真是太棒了</em>，只需要用一哥独立的 <a href=https://textual.textualize.io/guide/styles/>样式表</a>，就可以轻松调整应用的样式。</p><p>好，我们现在来看看如何在新屏幕上展示结果。</p><h4 id=在新屏幕上展示结果>在新屏幕上展示结果</h4><p><img src=/data/attachment/album/202401/15/110439yqdsozs9m2qhms2m.svg alt></p><p>以下是在新屏幕上处理输出的代码：</p><pre tabindex=0><code>import asyncio
+from typing import List
+from textual import on, work
+from textual.reactive import reactive
+from textual.screen import ModalScreen
+from textual.widgets import Button, Label, Log
+from textual.worker import Worker
+from textual.app import ComposeResult
+
+class LogScreen(ModalScreen):
+    count = reactive(0)
+    MAX_LINES = 10_000
+    ENABLE_COMMAND_PALETTE = False
+    CSS_PATH = &#34;log_screen.tcss&#34;
+
+    def __init__(
+            self,
+            name: str | None = None,
+            ident: str | None = None,
+            classes: str | None = None,
+            selections: List = None
+    ):
+        super().__init__(name, ident, classes)
+        self.selections = selections
+
+    def compose(self) -&gt; ComposeResult:
+        yield Label(f&#34;Running {len(self.selections)} commands&#34;)
+        event_log = Log(
+            id=&#39;event_log&#39;,
+            max_lines=LogScreen.MAX_LINES,
+            highlight=True
+        )
+        event_log.loading = True
+        yield event_log
+        button = Button(&#34;Close&#34;, id=&#34;close&#34;, variant=&#34;success&#34;)
+        button.disabled = True
+        yield button
+
+    async def on_mount(self) -&gt; None:
+        event_log = self.query_one(&#39;#event_log&#39;, Log)
+        event_log.loading = False
+        event_log.clear()
+        lst = &#39;\n&#39;.join(self.selections)
+        event_log.write(f&#34;Preparing:\n{lst}&#34;)
+        event_log.write(&#34;\n&#34;)
+
+        for command in self.selections:
+            self.count += 1
+            self.run_process(cmd=command)
+
+    def on_worker_state_changed(self, event: Worker.StateChanged) -&gt; None:
+        if self.count == 0:
+            button = self.query_one(&#39;#close&#39;, Button)
+            button.disabled = False
+        self.log(event)
+
+    @work(exclusive=False)
+    async def run_process(self, cmd: str) -&gt; None:
+        event_log = self.query_one(&#39;#event_log&#39;, Log)
+        event_log.write_line(f&#34;Running: {cmd}&#34;)
+        # Combine STDOUT and STDERR output
+        proc = await asyncio.create_subprocess_shell(
+            cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.STDOUT
+        )
+        stdout, _ = await proc.communicate()
+        if proc.returncode != 0:
+            raise ValueError(f&#34;&#39;{cmd}&#39; finished with errors ({proc.returncode})&#34;)
+        stdout = stdout.decode(encoding=&#39;utf-8&#39;, errors=&#39;replace&#39;)
+        if stdout:
+            event_log.write(f&#39;\nOutput of &#34;{cmd}&#34;:\n&#39;)
+            event_log.write(stdout)
+        self.count -= 1
+
+    @on(Button.Pressed, &#34;#close&#34;)
+    def on_button_pressed(self, _) -&gt; None:
+        self.app.pop_screen()
+</code></pre><p>你会注意到：</p><ol><li><code>LogScreen</code> 类扩展自 <code>ModalScreen</code> 类， 该类负责处理模态模式的屏幕。</li><li>这个屏幕同样有一个 <code>compose</code> 方法，我们在这里添加了组件以展示 Unix 命令的内容。</li><li>我们创建了一个叫做 <code>mount</code> 的新方法。一旦你用 <code>compose</code> 编排好组件，你就可以运行代码来获取数据，并再进一步定制它们的外观。</li><li>我们使用 <a href=https://docs.python.org/3/library/asyncio.html>asyncio</a> 运行命令，这样我们就能让 TUI 主工作线程在每个命令的结果出来时就及时更新内容。</li><li>对于“工作线程”，请注意 <code>run_process</code> 方法上的 <code>@work(exclusive=False)</code> 注解，该方法用于运行命令并捕获 STDOUT + STDERR 输出。使用 <a href=https://textual.textualize.io/guide/workers/>工作线程</a> 来管理并发并不复杂，尽管它们在手册中确实有专门的章节。这主要是因为运行的外部命令可能会执行很长时间。</li><li>在 <code>run_process</code> 中，我们通过调用 <code>write</code> 以命令的输出内容来更新 <code>event_log</code>。</li><li>最后，<code>on_button_pressed</code> 把我们带回到前一屏幕（从堆栈中移除屏幕）。</li></ol><p>这个小应用向你展示了如何一份不到 200 行的代码来编写一个简单的前端，用来运行非 Python 代码。</p><p>现在我们来看一个更复杂的例子，这个例子用到了我们还未探索过的 Textual 的新特性。</p><h3 id=示例二展示赛事成绩的表格>示例二：展示赛事成绩的表格</h3><p><img src=/data/attachment/album/202401/15/110439oercynysjncnku7y.svg alt="通过 Textual 创建的表格应用"></p><p>本示例将展示如何使用 <code>DataTable</code> 组件在表格中展示赛事成绩。你能通过这个应用实现：</p><ul><li>通过列来排序表格</li><li>选择表格中的行，完整窗口展示赛事细节，我们将使用我们在日志浏览器中看到的 “推送屏幕” 技巧。</li><li>能进行表格搜索，查看选手详情，或执行其他操作如退出应用。</li></ul><p>下面，我们来看看应用代码：</p><pre tabindex=0><code>#!/usr/bin/env python
+&#34;&#34;&#34;
+Author: Jose Vicente Nunez
+&#34;&#34;&#34;
+from typing import Any, List
+
+from rich.style import Style
+from textual import on
+from textual.app import ComposeResult, App
+from textual.command import Provider
+from textual.screen import ModalScreen, Screen
+from textual.widgets import DataTable, Footer, Header
+
+MY_DATA = [
+    (&#34;level&#34;, &#34;name&#34;, &#34;gender&#34;, &#34;country&#34;, &#34;age&#34;),
+    (&#34;Green&#34;, &#34;Wai&#34;, &#34;M&#34;, &#34;MYS&#34;, 22),
+    (&#34;Red&#34;, &#34;Ryoji&#34;, &#34;M&#34;, &#34;JPN&#34;, 30),
+    (&#34;Purple&#34;, &#34;Fabio&#34;, &#34;M&#34;, &#34;ITA&#34;, 99),
+    (&#34;Blue&#34;, &#34;Manuela&#34;, &#34;F&#34;, &#34;VEN&#34;, 25)
+]
+
+class DetailScreen(ModalScreen):
+    ENABLE_COMMAND_PALETTE = False
+    CSS_PATH = &#34;details_screen.tcss&#34;
+
+    def __init__(
+            self,
+            name: str | None = None,
+            ident: str | None = None,
+            classes: str | None = None,
+            row: List[Any] | None = None,
+    ):
+        super().__init__(name, ident, classes)
+        # Rest of screen code will be show later
+
+class CustomCommand(Provider):
+
+    def __init__(self, screen: Screen[Any], match_style: Style | None = None):
+        super().__init__(screen, match_style)
+        self.table = None
+        # Rest of provider code will be show later
+
+class CompetitorsApp(App):
+    BINDINGS = [
+        (&#34;q&#34;, &#34;quit_app&#34;, &#34;Quit&#34;),
+    ]
+    CSS_PATH = &#34;competitors_app.tcss&#34;
+    # Enable the command palette, to add our custom filter commands
+    ENABLE_COMMAND_PALETTE = True
+    # Add the default commands and the TablePopulateProvider to get a row directly by name
+    COMMANDS = App.COMMANDS | {CustomCommand}
+
+    def action_quit_app(self):
+        self.exit(0)
+
+    def compose(self) -&gt; ComposeResult:
+        yield Header(show_clock=True)
+
+        table = DataTable(id=f&#39;competitors_table&#39;)
+        table.cursor_type = &#39;row&#39;
+        table.zebra_stripes = True
+        table.loading = True
+        yield table
+        yield Footer()
+
+    def on_mount(self) -&gt; None:
+        table = self.get_widget_by_id(f&#39;competitors_table&#39;, expect_type=DataTable)
+        columns = [x.title() for x in MY_DATA[0]]
+        table.add_columns(*columns)
+        table.add_rows(MY_DATA[1:])
+        table.loading = False
+        table.tooltip = &#34;Select a row to get more details&#34;
+
+    @on(DataTable.HeaderSelected)
+    def on_header_clicked(self, event: DataTable.HeaderSelected):
+        table = event.data_table
+        table.sort(event.column_key)
+
+    @on(DataTable.RowSelected)
+    def on_row_clicked(self, event: DataTable.RowSelected) -&gt; None:
+        table = event.data_table
+        row = table.get_row(event.row_key)
+        runner_detail = DetailScreen(row=row)
+        self.show_detail(runner_detail)
+
+    def show_detail(self, detailScreen: DetailScreen):
+        self.push_screen(detailScreen)
+
+def main():
+    app = CompetitorsApp()
+    app.title = f&#34;Summary&#34;.title()
+    app.sub_title = f&#34;{len(MY_DATA)} users&#34;
+    app.run()
+
+if __name__ == &#34;__main__&#34;:
+    main()
+</code></pre><p>有哪些部分值得我们关注呢？</p><ol><li><code>compose</code> 方法中添加了 <a href=https://textual.textualize.io/widgets/header/>表头</a>，“命令面板” 就位于此处，我们的表格（<a href=https://textual.textualize.io/widgets/data_table/#guide>DataTable</a>）也在这里。表格数据在 <code>mount</code> 方法中填充。</li><li>我们设定了预期的绑定（<code>BINDINGS</code>），并指定了外部的 CSS 文件来设置样式（<code>CSS_PATH</code>）。</li><li>默认情况下，我们无需任何设置便能使用 <a href=https://textual.textualize.io/guide/command_palette/>命令面板</a>，但在此我们显式启用了它（<code>ENABLE_COMMAND_PALETTE = True</code>）。</li><li>我们的应用有一个自定义表格搜索功能。当用户输入一名选手的名字后，应用会显示可能的匹配项，用户可以点击匹配项查看该选手的详细信息。这需要告诉应用我们有一个定制的命令提供者（<code>COMMANDS = App.COMMANDS | {CustomCo_ mmand}</code>），即类 <code>CustomCommand(Provider)</code>。</li><li>如果用户点击了表头，表格内容会按照该列进行排序。这是通过 <code>on_header_clicked</code> 方法实现的，该方法上具有 <code>@on(DataTable.HeaderSelected)</code> 注解。</li><li>类似地，当选中表格中的一行时， <code>on_row_clicked</code> 方法会被调用，这得益于它拥有 <code>@on(DataTable.RowSelected)</code> 注解。当方法接受选中的行后，它会推送一个新的屏幕，显示选中行的详细信息（<code>class DetailScreen(ModalScreen)</code>）。</li></ol><p>现在，我们详细地探讨一下如何显示选手的详细信息。</p><h4 id=利用多屏展示复杂视图>利用多屏展示复杂视图</h4><p><img src=/data/attachment/album/202401/15/110439ot0st0qqqzc395am.svg alt></p><p>当用户选择表格中的一行，<code>on_row_clicked</code> 方法就会被调用。它收到的是一个 <code>DataTable.RowSelected</code> 类型的事件。从这里我们会用选中的行的内容构建一个 <code>DetailScreen(ModalScreen)</code> 类的实例：</p><pre tabindex=0><code>from typing import Any, List
+from textual import on
+from textual.app import ComposeResult
+from textual.screen import ModalScreen
+from textual.widgets import Button, MarkdownViewer
+
+MY_DATA = [
+    (&#34;level&#34;, &#34;name&#34;, &#34;gender&#34;, &#34;country&#34;, &#34;age&#34;),
+    (&#34;Green&#34;, &#34;Wai&#34;, &#34;M&#34;, &#34;MYS&#34;, 22),
+    (&#34;Red&#34;, &#34;Ryoji&#34;, &#34;M&#34;, &#34;JPN&#34;, 30),
+    (&#34;Purple&#34;, &#34;Fabio&#34;, &#34;M&#34;, &#34;ITA&#34;, 99),
+    (&#34;Blue&#34;, &#34;Manuela&#34;, &#34;F&#34;, &#34;VEN&#34;, 25)
+]
+
+class DetailScreen(ModalScreen):
+    ENABLE_COMMAND_PALETTE = False
+    CSS_PATH = &#34;details_screen.tcss&#34;
+
+    def __init__(
+            self,
+            name: str | None = None,
+            ident: str | None = None,
+            classes: str | None = None,
+            row: List[Any] | None = None,
+    ):
+        super().__init__(name, ident, classes)
+        self.row: List[Any] = row
+
+    def compose(self) -&gt; ComposeResult:
+        self.log.info(f&#34;Details: {self.row}&#34;)
+        columns = MY_DATA[0]
+        row_markdown = &#34;\n&#34;
+        for i in range(0, len(columns)):
+            row_markdown += f&#34;* **{columns[i].title()}:** {self.row[i]}\n&#34;
+        yield MarkdownViewer(f&#34;&#34;&#34;## User details:
+        {row_markdown}
+        &#34;&#34;&#34;)
+        button = Button(&#34;Close&#34;, variant=&#34;primary&#34;, id=&#34;close&#34;)
+        button.tooltip = &#34;Go back to main screen&#34;
+        yield button
+
+    @on(Button.Pressed, &#34;#close&#34;)
+    def on_button_pressed(self, _) -&gt; None:
+        self.app.pop_screen()
+</code></pre><p>这个类的职责很直接：</p><ol><li><code>compose</code> 方法取得此行数据，并利用一个 <a href=https://textual.textualize.io/widget_gallery/#markdownviewer>支持 Markdown 渲染的组件</a> 来展示内容。它的便利之处在于，它会为我们自动生成一个内容目录。</li><li>当用户点击 “close” 后，方法 <code>on_button_pressed</code> 会引导应用回到原始屏幕。注解 <code>@on(Button.Pressed, "#close")</code> 用来接收按键被点击的事件。</li></ol><p>最后，我们来详细讲解一下那个多功能的搜索栏（也叫做命令面板）。</p><h4 id=命令面板的搜索功能>命令面板的搜索功能</h4><p><img src=/data/attachment/album/202401/15/110440xepv8skxe8ueuu8e.svg alt></p><p>任何使用了表头的 Textual 应用都默认开启了 <a href=https://textual.textualize.io/guide/command_palette/>命令面板</a>。有意思的是，你可以在 <code>CompetitorsApp</code> 类中添加自定义的命令，这会增加到默认命令集之上：</p><pre tabindex=0><code>COMMANDS = App.COMMANDS | {CustomCommand}
+</code></pre><p>然后是执行大部分任务的 <code>CustomCommand(Provider)</code> 类：</p><pre tabindex=0><code>from functools import partial
+from typing import Any, List
+from rich.style import Style
+from textual.command import Provider, Hit
+from textual.screen import ModalScreen, Screen
+from textual.widgets import DataTable
+from textual.app import App
+
+class CustomCommand(Provider):
+
+    def __init__(self, screen: Screen[Any], match_style: Style | None = None):
+        super().__init__(screen, match_style)
+        self.table = None
+
+    async def startup(self) -&gt; None:
+        my_app = self.app
+        my_app.log.info(f&#34;Loaded provider: CustomCommand&#34;)
+        self.table = my_app.query(DataTable).first()
+
+    async def search(self, query: str) -&gt; Hit:
+        matcher = self.matcher(query)
+
+        my_app = self.screen.app
+        assert isinstance(my_app, CompetitorsApp)
+
+        my_app.log.info(f&#34;Got query: {query}&#34;)
+        for row_key in self.table.rows:
+            row = self.table.get_row(row_key)
+            my_app.log.info(f&#34;Searching {row}&#34;)
+            searchable = row[1]
+            score = matcher.match(searchable)
+            if score &gt; 0:
+                runner_detail = DetailScreen(row=row)
+                yield Hit(
+                    score,
+                    matcher.highlight(f&#34;{searchable}&#34;),
+                    partial(my_app.show_detail, runner_detail),
+                    help=f&#34;Show details about {searchable}&#34;
+                )
+
+class DetailScreen(ModalScreen):
+        def __init__(
+            self,
+            name: str | None = None,
+            ident: str | None = None,
+            classes: str | None = None,
+            row: List[Any] | None = None,
+    ):
+        super().__init__(name, ident, classes)
+        # Code of this class explained on the previous section
+
+class CompetitorsApp(App):
+    # Add the default commands and the TablePopulateProvider to get a row directly by name
+    COMMANDS = App.COMMANDS | {CustomCommand}
+    # Most of the code shown before, only displaying relevant code
+    def show_detail(self, detailScreen: DetailScreen):
+        self.push_screen(detailScreen)
+</code></pre><ol><li>所有继承自 <code>Provider</code> 的类需实现 <code>search</code> 方法。在我们的例子中，我们还覆盖了 <code>startup</code> 方法，为了获取到我们应用表格（和其内容）的引用，这里使用到了 <code>App.query(DataTable).first()</code>。在类的生命周期中， <code>startup</code> 方法只会被调用一次。</li><li>在 <code>search</code> 方法内，我们使用 <code>Provider.matcher</code> 对每个表格行的第二列（即名字）进行模糊搜索，以与用户在 TUI 中输入的词条进行比较。<code>matcher.match(searchable)</code> 返回一个整型的评分，大于零说明匹配成功。</li><li>在 <code>search</code> 方法中，如果评分大于零，则返回一个 <code>Hit</code> 对象，以告知命令面板搜索查询是否成功。</li><li>每个 <code>Hit</code> 都有以下信息：评分（用于在命令面板中对匹配项排序）、高亮显示的搜索词、一个可调用对象的引用（在我们的案例中，它是一个可以将表格行推送到新屏幕的函数）。</li><li><code>Provider</code> 类的所有方法都是异步的。这使你能释放主线程，只有当响应准备好后才返回结果，这个过程不会冻结用户界面。</li></ol><p>理解了这些信息，我们就可以现在展示赛手的详细信息了。</p><p>尽管这个架构的追踪功能相对直观，但是组件间传递的消息复杂性不可忽视。幸运的是，Textual 提供了有效的调试工具帮助我们理解背后的工作原理。</p><h3 id=textual-应用的问题排查>Textual 应用的问题排查</h3><p>对于 Python 的 Textual 应用进行 <a href=https://github.com/josevnz/tutorials/blob/main/docs/PythonDebugger/README.md>调试</a> 相较而言更具挑战性。这是因为其中有一些操作可能是异步的，而在解决组件问题时设置断点可能颇为复杂。</p><p>根据具体情况，你可以使用一些工具。但首先，确保你已经安装了 textual 的开发工具：</p><pre tabindex=0><code>pip install textual-dev==1.3.0
+</code></pre><h4 id=确保你能捕捉到正确的按键>确保你能捕捉到正确的按键</h4><p>不确定 Textual 应用是否能捕捉到你的按键操作？运行 keys 应用：</p><pre tabindex=0><code>textual keys
+</code></pre><p>这让你能够验证一下你的按键组合，并确认在 Textual 中产生了哪些事件。</p><h4 id=图片比千言万语更直观>图片比千言万语更直观</h4><p>如果说你在布局设计上遇到了问题，想向他人展示你当前的困境，Textual 为你的运行应用提供了截图功能：</p><pre tabindex=0><code>textual run --screenshot 5 ./kodegeek_textualize/log_scroller.py
+</code></pre><p>就像你所看到的，我是通过这种方式为这篇教程创建了插图。</p><h4 id=捕获事件并输出定制消息>捕获事件并输出定制消息</h4><p>在 Textual 中，每一个应用实例都有一个日志记录器，可以使用如下方式访问：</p><pre tabindex=0><code>my_app = self.screen.app
+my_app.log.info(f&#34;Loaded provider: CustomCommand&#34;)
+</code></pre><p>想要查看这些消息，首先需要开启一个控制台：</p><pre tabindex=0><code>. ~/virtualenv/Textualize/bin/activate
+textual console
+</code></pre><p>然后在另一个终端运行你的应用程序：</p><pre tabindex=0><code>. ~/virtualenv/Textualize/bin/activate
+textual run --dev ./kodegeek_textualize/log_scroller.py
+</code></pre><p>在运行控制台的终端中，你可以看到实时的事件和消息输出：</p><pre tabindex=0><code>▌Textual Development Console v0.46.0
+▌Run a Textual app with textual run --dev my_app.py to connect.
+▌Press Ctrl+C to quit.
+─────────────────────────────────────────────────────────────────────────────── Client &#39;127.0.0.1&#39; connected ────────────────────────────────────────────────────────────────────────────────
+[20:29:43] SYSTEM                                                                                                                                                                 app.py:2188
+Connected to devtools ( ws://127.0.0.1:8081 )
+[20:29:43] SYSTEM                                                                                                                                                                 app.py:2192
+---
+[20:29:43] SYSTEM                                                                                                                                                                 app.py:2194
+driver=&lt;class &#39;textual.drivers.linux_driver.LinuxDriver&#39;&gt;
+[20:29:43] SYSTEM                                                                                                                                                                 app.py:2195
+loop=&lt;_UnixSelectorEventLoop running=True closed=False debug=False&gt;
+[20:29:43] SYSTEM                                                                                                                                                                 app.py:2196
+features=frozenset({&#39;debug&#39;, &#39;devtools&#39;})
+[20:29:43] SYSTEM                                                                                                                                                                 app.py:2228
+STARTED FileMonitor({PosixPath(&#39;/home/josevnz/TextualizeTutorial/docs/Textualize/kodegeek_textualize/os_app.tcss&#39;)})
+[20:29:43] EVENT
+</code></pre><p>此外，以开发者模式运行的另一大好处是，如果你更改了 CSS，应用会尝试重新渲染，而无需重启程序。</p><h3 id=如何编写单元测试>如何编写单元测试</h3><p>为你全新开发的 Textual 应用编写 <a href=https://docs.python.org/3/library/unittest.html>单元测试</a>，应该如何操作呢？</p><p>在 <a href=https://textual.textualize.io/guide/testing/>官方文档</a> 展示了几种用于测试我们应用的方式。</p><p>我将采用 <a href=https://docs.python.org/3/library/unittest.html>unittest</a> 进行测试。为了处理异步例程，我们会需要特别的类 <code>unittest.IsolatedAsyncioTestCase</code> ：</p><pre tabindex=0><code>import unittest
+from textual.widgets import Log, Button
+from kodegeek_textualize.log_scroller import OsApp
+
+class LogScrollerTestCase(unittest.IsolatedAsyncioTestCase):
+    async def test_log_scroller(self):
+        app = OsApp()
+        self.assertIsNotNone(app)
+        async with app.run_test() as pilot:
+            # Execute the default commands
+            await pilot.click(Button)
+            await pilot.pause()
+            event_log = app.screen.query(Log).first()  # We pushed the screen, query nodes from there
+            self.assertTrue(event_log.lines)
+            await pilot.click(&#34;#close&#34;)  # Close the new screen, pop the original one
+            await pilot.press(&#34;q&#34;)  # Quit the app by pressing q
+
+
+if __name__ == &#39;__main__&#39;:
+    unittest.main()
+</code></pre><p>现在让我们详细看看 <code>test_log_scroller</code> 方法中的操作步骤：</p><ol><li>通过 <code>app.run_test()</code> 获取一个 <code>Pilot</code> 实例。然后点击主按钮，运行包含默认指令的查询，随后等待所有事件的处理。</li><li>从我们新推送出的屏幕中获取 <code>Log</code>，确保我们已获得几行返回的内容，即它并非空的。</li><li>关闭新屏幕并重新呈现旧屏幕。</li><li>最后，按下 <code>q</code>，退出应用。</li></ol><p>可以测试表格吗？</p><pre tabindex=0><code>import unittest
+from textual.widgets import DataTable, MarkdownViewer
+from kodegeek_textualize.table_with_detail_screen import CompetitorsApp
+
+
+class TableWithDetailTestCase(unittest.IsolatedAsyncioTestCase):
+    async def test_app(self):
+        app = CompetitorsApp()
+        self.assertIsNotNone(app)
+        async with app.run_test() as pilot:
+
+            &#34;&#34;&#34;
+            Test the command palette
+            &#34;&#34;&#34;
+            await pilot.press(&#34;ctrl+\\&#34;)
+            for char in &#34;manuela&#34;.split():
+                await pilot.press(char)
+            await pilot.press(&#34;enter&#34;)
+            markdown_viewer = app.screen.query(MarkdownViewer).first()
+            self.assertTrue(markdown_viewer.document)
+            await pilot.click(&#34;#close&#34;)  # Close the new screen, pop the original one
+
+            &#34;&#34;&#34;
+            Test the table
+            &#34;&#34;&#34;
+            table = app.screen.query(DataTable).first()
+            coordinate = table.cursor_coordinate
+            self.assertTrue(table.is_valid_coordinate(coordinate))
+            await pilot.press(&#34;enter&#34;)
+            await pilot.pause()
+            markdown_viewer = app.screen.query(MarkdownViewer).first()
+            self.assertTrue(markdown_viewer)
+            # Quit the app by pressing q
+            await pilot.press(&#34;q&#34;)
+
+
+if __name__ == &#39;__main__&#39;:
+    unittest.main()
+</code></pre><p>如果你运行所有的测试，你将看到如下类似的输出：</p><pre tabindex=0><code>(Textualize) [josevnz@dmaf5 Textualize]$ python -m unittest tests/*.py
+..
+----------------------------------------------------------------------
+Ran 2 tests in 2.065s
+
+OK
+</code></pre><p>这是测试 TUI 的一个不错的方式，对吧？</p><h3 id=打包-textual-应用>打包 Textual 应用</h3><p>打包 Textual 应用与打包常规 Python 应用并没有太大区别。你需要记住，需要包含那些控制应用外观的 CSS 文件：</p><pre tabindex=0><code>. ~/virtualenv/Textualize/bin/activate
+python -m build
+pip install dist/KodegeekTextualize-*-py3-none-any.whl
+</code></pre><p>这个教程的 <a href=https://tutorials.kodegeek.com/Textualize/pyproject.toml>pyproject.toml</a> 文件是一个打包应用的良好起点，告诉你需要做什么。</p><pre tabindex=0><code>[build-system]
+requires = [
+    &#34;setuptools &gt;= 67.8.0&#34;,
+    &#34;wheel&gt;=0.42.0&#34;,
+    &#34;build&gt;=1.0.3&#34;,
+    &#34;twine&gt;=4.0.2&#34;,
+    &#34;textual-dev&gt;=1.2.1&#34;
+]
+build-backend = &#34;setuptools.build_meta&#34;
+
+[project]
+name = &#34;KodegeekTextualize&#34;
+version = &#34;0.0.3&#34;
+authors = [
+    {name = &#34;Jose Vicente Nunez&#34;, email = &#34;kodegeek.com@protonmail.com&#34;},
+]
+description = &#34;Collection of scripts that show how to use several features of textualize&#34;
+readme = &#34;README.md&#34;
+requires-python = &#34;&gt;=3.9&#34;
+keywords = [&#34;running&#34;, &#34;race&#34;]
+classifiers = [
+    &#34;Environment :: Console&#34;,
+    &#34;Development Status :: 4 - Beta&#34;,
+    &#34;Programming Language :: Python :: 3&#34;,
+    &#34;Intended Audience :: End Users/Desktop&#34;,
+    &#34;Topic :: Utilities&#34;
+]
+dynamic = [&#34;dependencies&#34;]
+
+[project.scripts]
+log_scroller = &#34;kodegeek_textualize.log_scroller:main&#34;
+table_detail = &#34;kodegeek_textualize.table_with_detail_screen:main&#34;
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = [&#34;.&#34;]
+exclude = [&#34;test*&#34;]
+
+[tool.setuptools.package-data]
+kodegeek_textualize = [&#34;*.txt&#34;, &#34;*.tcss&#34;, &#34;*.csv&#34;]
+img = [&#34;*.svg&#34;]
+
+[tool.setuptools.dynamic]
+dependencies = {file = [&#34;requirements.txt&#34;]}
+</code></pre><h3 id=未来计划>未来计划</h3><p>这个简短的教程只覆盖了 Textual 的部分方面。还有很多需要探索和学习的内容：</p><ul><li>强烈建议你查看 <a href=https://textual.textualize.io/tutorial/>官方教程</a>。有大量的示例和指向参考 <a href=https://textual.textualize.io/api/>API</a> 的链接。</li><li>Textual 可以使用来自 <a href=https://github.com/Textualize/rich>Rich</a> 项目的组件，这个项目是一切的起源。我认为其中一些甚至可能所有这些组件在某些时候都会合并到 Textual 中。Textual 框架对于使用高级 API 的复杂应用更能胜任，但 Rich 也有很多漂亮的功能。</li><li>创建你自己的组件！同样，在设计 TUI 时，<a href=https://textual.textualize.io/how-to/design-a-layout/>拿一张纸，画出你希望这些组件如何布局的</a>，这会为你后期省去很多时间和麻烦。</li><li>调试 Python 应用可能会有点复杂。有时你可能需要 <a href=https://github.com/josevnz/DebuggingApplications/blob/main/StracePythonWireshark/README.md>混合使用不同的工具</a> 来找出应用的问题所在。</li><li>异步 IO 是一个复杂的话题，你应该 <a href=https://docs.python.org/3/library/asyncio-dev.html>阅读开发者文档</a> 来了解更多可能的选择。</li><li>Textual 被其他项目所使用。其中一个非常易于使用的项目是 <a href=https://github.com/Textualize/trogon>Trogon</a>。<a href=https://github.com/josevnz/CLIWithClickAndTrogon/blob/main/README.md>它会让你的 CLI 可以自我发现</a>。</li><li><a href=https://github.com/Textualize/textual-web>Textual-web</a> 是个很有前景的项目，能让你在浏览器上运行 Textual 应用。尽管它不如 Textual 成熟，但它的进化速度非常快。</li><li>最后，<a href=https://www.textualize.io/projects/>查看这些外部项目</a>。在项目组合中有许多有用的开源应用。</li></ul><p><em>（题图：DA/f11b0eb0-8e16-4cbe-986a-0fe978f6732a）</em></p><hr><p>via: <a href=https://fedoramagazine.org/crash-course-on-using-textual/>https://fedoramagazine.org/crash-course-on-using-textual/</a></p><p>作者：<a href=https://fedoramagazine.org/author/josevnz/>Jose Nunez</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://linux.cn/lctt/ChatGPT>ChatGPT</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/textual/ rel=tag>Textual</a></li><li class=tags__item><a class="tags__link btn" href=/tags/tui/ rel=tag>TUI</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

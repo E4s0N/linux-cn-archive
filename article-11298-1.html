@@ -1,0 +1,46 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何升级 Linux Mint 19.1 为 Linux Mint 19.2 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何升级 Linux Mint 19.1 为 Linux Mint 19.2"><meta property="og:description" content="Linux Mint 19.2 “Tina” 在 2019 年 8 月 2 日发布，它是一个基于 Ubuntu 18.04 LTS (Bionic Beaver) 的长期支持版本。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11298-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-09-02T23:15:38+00:00"><meta property="article:modified_time" content="2019-09-02T23:15:38+00:00"><meta itemprop=name content="如何升级 Linux Mint 19.1 为 Linux Mint 19.2"><meta itemprop=description content="Linux Mint 19.2 “Tina” 在 2019 年 8 月 2 日发布，它是一个基于 Ubuntu 18.04 LTS (Bionic Beaver) 的长期支持版本。"><meta itemprop=datePublished content="2019-09-02T23:15:38+00:00"><meta itemprop=dateModified content="2019-09-02T23:15:38+00:00"><meta itemprop=wordCount content="368"><meta itemprop=keywords content="Mint,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何升级 Linux Mint 19.1 为 Linux Mint 19.2</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-09-02T23:15:38Z>September 02, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201909/02/231523na40npunm88z68ka.jpg alt></p><p>Linux Mint 19.2 “Tina” 在 2019 年 8 月 2 日发布，它是一个基于 Ubuntu 18.04 LTS (Bionic Beaver) 的长期支持版本。它将被支持到 2023 年。它带来更新的软件和精细的改进和很多新的特色来使你的桌面使用地更舒适。</p><p>Linux Mint 19.2 特色有 Cinnamon 4.2 、Linux 内核 4.15 和 Ubuntu 18.04 基础软件包。</p><p><strong>注意：</strong> 不要忘记备份你的重要数据。如果一些东西出错，在最新的安装后，你可以从备份中恢复数据。</p><p>备份可以通过 rsnapshot 或 timeshift 完成。</p><p>Linux Mint 19.2 “Tina” 发布日志可以在下面的链接中找到。</p><ul><li><a href=https://www.linuxtechnews.com/linux-mint-19-2-tina-released-check-what-is-new-feature/>Linux Mint 19.2 (Tina) 发布日志</a></li></ul><p>这里有三种方法，能让我们升级为 Linux Mint 19.2 “Tina”。</p><ul><li>使用本地方法升级 Linux Mint 19.2 (Tina)</li><li>使用 Mintupgrade 实用程序方法升级 Linux Mint 19.2 (Tina)</li><li>使用 GUI 升级 Linux Mint 19.2 (Tina)</li></ul><h3 id=如何从-linux-mint-191-tessa-升级为-linux-mint-192-tina>如何从 Linux Mint 19.1 (Tessa) 升级为 Linux Mint 19.2 (Tina)？</h3><p>升级 Linux Mint 系统是一项简单轻松的任务。有三种方法可以完成。</p><h3 id=方法-1使用本地方法升级-linux-mint-192-tina>方法-1：使用本地方法升级 Linux Mint 19.2 (Tina)</h3><p>这是执行升级 Linux Mint 系统的本地和标准的方法之一。为做到这点，遵循下面的程序步骤。</p><p>确保你当前 Linux Mint 系统是最新的。使用下面的命令来更新你现在的软件为最新可用版本。</p><h4 id=步骤-1>步骤-1：</h4><p>通过运行下面的命令来刷新存储库索引。</p><pre tabindex=0><code>$ sudo apt update
+</code></pre><p>运行下面的命令来在系统上安装可用的更新。</p><pre tabindex=0><code>$ sudo apt upgrade
+</code></pre><p>运行下面的命令来在版本中执行可用的次要更新。</p><pre tabindex=0><code>$ sudo apt full-upgrade
+</code></pre><p>默认情况下，它将通过上面的命令来移除过时的软件包。但是，我建议你运行下面的命令。</p><pre tabindex=0><code>$ sudo apt autoremove
+$ sudo apt clean
+</code></pre><p>如果安装一个新的内核，你可能需要重启系统。如果是这样，运行下面的命令。</p><pre tabindex=0><code>$ sudo shutdown -r now
+</code></pre><p>最后检查当前安装的版本。</p><pre tabindex=0><code>$ lsb_release -a
+
+No LSB modules are available.
+Distributor ID: Linux Mint
+Description:    Linux Mint 19.1 (Tessa)
+Release:        19.1
+Codename:       Tessa
+</code></pre><h4 id=步骤-2更新修改-etcaptsourceslist-文件>步骤-2：更新/修改 /etc/apt/sources.list 文件</h4><p>在重启后，修改 <code>sources.list</code> 文件，并从 Linux Mint 19.1 (Tessa) 指向 Linux Mint 19.2 (Tina)。</p><p>首先，使用 <code>cp</code> 命令备份下面的配置文件。</p><pre tabindex=0><code>$ sudo cp  /etc/apt/sources.list /root
+$ sudo cp -r /etc/apt/sources.list.d/ /root
+</code></pre><p>修改 <code>sources.list</code> 文件，并指向 Linux Mint 19.2 (Tina)。</p><pre tabindex=0><code>$ sudo sed -i &#39;s/tessa/tina/g&#39; /etc/apt/sources.list
+$ sudo sed -i &#39;s/tessa/tina/g&#39; /etc/apt/sources.list.d/*
+</code></pre><p>通过运行下面的命令来刷新存储库索引。</p><pre tabindex=0><code>$ sudo apt update
+</code></pre><p>运行下面的命令来在系统上安装可用的更新。在升级过程中，你可用需要确认服务重启和配置文件替换，因此，只需遵循屏幕上的指令。</p><p>升级可能花费一些时间，具体依赖于更新的数量和你的网络速度。</p><pre tabindex=0><code>$ sudo apt upgrade
+</code></pre><p>运行下面的命令来执行一次完整的系统升级。</p><pre tabindex=0><code>$ sudo apt full-upgrade
+</code></pre><p>默认情况下，上面的命令将移除过时的软件包。但是，我建议你再次运行下面的命令。</p><pre tabindex=0><code>$ sudo apt autoremove
+$ sudo apt clean
+</code></pre><p>最后重启系统来启动 Linux Mint 19.2 (Tina)。</p><pre tabindex=0><code>$ sudo shutdown -r now
+</code></pre><p>升级后的 Linux Mint 版本可以通过运行下面的命令验证。</p><pre tabindex=0><code>$ lsb_release -a
+
+No LSB modules are available.
+Distributor ID: Linux Mint
+Description:    Linux Mint 19.2 (Tina)
+Release:        19.2
+Codename:       Tina
+</code></pre><h3 id=方法-2使用-mintupgrade-实用程序升级-linux-mint-192-tina>方法-2：使用 Mintupgrade 实用程序升级 Linux Mint 19.2 (Tina)</h3><p>这是 Mint 官方实用程序，它允许我们对 Linux Mint 系统执行平滑升级。</p><p>使用下面的命令来安装 mintupgrade 软件包。</p><pre tabindex=0><code>$ sudo apt install mintupgrade
+</code></pre><p>确保你已经安装 mintupgrade 软件包的最新版本。</p><pre tabindex=0><code>$ apt version mintupgrade
+</code></pre><p>以一个普通用户来运行下面的命令以模拟一次升级，遵循屏幕上的指令。</p><pre tabindex=0><code>$ mintupgrade check
+</code></pre><p>使用下面的命令来下载需要的软件包来升级为 Linux Mint 19.2 (Tina) ，遵循屏幕上的指令。</p><pre tabindex=0><code>$ mintupgrade download
+</code></pre><p>运行下面的命令来运用升级，最新屏幕上的指令。</p><pre tabindex=0><code>$ mintupgrade upgrade
+</code></pre><p>在成功升级后，重启系统，并检查升级后的版本。</p><pre tabindex=0><code>$ lsb_release -a
+
+No LSB modules are available.
+Distributor ID: Linux Mint
+Description:    Linux Mint 19.2 (Tina)
+Release:        19.2
+Codename:       Tina
+</code></pre><h3 id=方法-3使用-gui-升级-linux-mint-192-tina>方法-3：使用 GUI 升级 Linux Mint 19.2 (Tina)</h3><p>或者，我们可以通过 GUI 执行升级。</p><h4 id=步骤-1-1>步骤-1：</h4><p>通过 Timeshift 创建一个系统快照。如果一些东西出错，你可以简单地恢复你的操作系统到它先前状态。</p><h4 id=步骤-2>步骤-2:</h4><p>打开更新管理器，单击刷新按钮来检查 mintupdate 和 mint-upgrade-info 的任何新版本。如果有这些软件包的更新，应用它们。</p><p>通过单击 “编辑-> 升级到 Linux Mint 19.2 Tina”来启动系统升级。</p><p><img src=/data/attachment/album/201909/02/231542ack7q7p664umkqfc.png alt></p><p>遵循屏幕上的指令。如果被询问是否保留或替换配置文件，选择替换它们。</p><p><img src=/data/attachment/album/201909/02/231545kolm8bkwolba6aau.png alt></p><h4 id=步骤-3>步骤-3:</h4><p>在升级完成后，重启你的电脑。</p><hr><p>via: <a href=https://www.2daygeek.com/upgrade-linux-mint-19-1-tessa-to-linux-mint-19-2-tina/>https://www.2daygeek.com/upgrade-linux-mint-19-1-tessa-to-linux-mint-19-2-tina/</a></p><p>作者：<a href=http://www.2daygeek.com/author/2daygeek/>2daygeek</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/robsean>robsean</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/mint/ rel=tag>Mint</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

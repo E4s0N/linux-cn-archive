@@ -1,0 +1,77 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>git stash 命令实用指南 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="git stash 命令实用指南"><meta property="og:description" content="学习如何使用 git stash 命令，以及何时应该使用它。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13293-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-04-12T23:28:39+00:00"><meta property="article:modified_time" content="2021-04-12T23:28:39+00:00"><meta itemprop=name content="git stash 命令实用指南"><meta itemprop=description content="学习如何使用 git stash 命令，以及何时应该使用它。"><meta itemprop=datePublished content="2021-04-12T23:28:39+00:00"><meta itemprop=dateModified content="2021-04-12T23:28:39+00:00"><meta itemprop=wordCount content="525"><meta itemprop=keywords content="git,暂存,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>git stash 命令实用指南</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-04-12T23:28:39Z>April 12, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>学习如何使用 <code>git stash</code> 命令，以及何时应该使用它。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202104/12/232830chuyr6lkzevrfuzr.jpg alt title="young woman working on a laptop"></p><p>版本控制是软件开发人员日常生活中不可分割的一部分。很难想象有哪个团队在开发软件时不使用版本控制工具。同样也很难想象有哪个开发者没有使用过（或没有听说过）Git。在 2018 年 Stackoverflow 开发者调查中，74298 名参与者中有 87.2% 的人 <a href=https://insights.stackoverflow.com/survey/2018#work-_-version-control>使用 Git</a> 进行版本控制。</p><p>Linus Torvalds 在 2005 年创建了 Git 用于开发 Linux 内核。本文将介绍 <code>git stash</code> 命令，并探讨一些有用的暂存变更的选项。本文假定你对 <a href=https://opensource.com/downloads/cheat-sheet-git>Git 概念</a> 有基本的了解，并对工作树、暂存区和相关命令有良好的理解。</p><h3 id=为什么-git-stash-很重要>为什么 git stash 很重要？</h3><p>首先要明白为什么在 Git 中暂存变更很重要。假设 Git 没有暂存变更的命令。当你正在一个有两个分支（A 和 B）的仓库上工作时，这两个分支已经分叉了一段时间，并且有不同的头。当你正在处理 A 分支的一些文件时，你的团队要求你修复 B 分支的一个错误。你迅速将你的修改保存到 A 分支（但没有提交），并尝试用 <code>git checkout B</code> 来签出 B 分支。Git 会立即中止了这个操作，并抛出错误：“你对以下文件的本地修改会被该签出覆盖……请在切换分支之前提交你的修改或将它们暂存起来。”</p><p>在这种情况下，有几种方法可以启用分支切换：</p><ul><li>在分支 A 中创建一个提交，提交并推送你的修改，以修复 B 中的错误，然后再次签出 A，并运行 <code>git reset HEAD^</code> 来恢复你的修改。</li><li>手动保留不被 Git 跟踪的文件中的改动。</li></ul><p>第二种方法是个馊主意。第一种方法虽然看起来很传统，但却不太灵活，因为保存未完成工作的修改会被当作一个检查点，而不是一个仍在进行中的补丁。这正是设计 <code>git stash</code> 的场景。</p><p><code>git stash</code> 将未提交的改动保存在本地，让你可以进行修改、切换分支以及其他 Git 操作。然后，当你需要的时候，你可以重新应用这些存储的改动。暂存是本地范围的，不会被 <code>git push</code> 推送到远程。</p><h3 id=如何使用-git-stash>如何使用 git stash</h3><p>下面是使用 <code>git stash</code> 时要遵循的顺序：</p><ol><li>将修改保存到分支 A。</li><li>运行 <code>git stash</code>。</li><li>签出分支 B。</li><li>修正 B 分支的错误。</li><li>提交并（可选）推送到远程。</li><li>查看分支 A</li><li>运行 <code>git stash pop</code> 来取回你的暂存的改动。</li></ol><p><code>git stash</code> 将你对工作目录的修改存储在本地（在你的项目的 <code>.git</code> 目录内，准确的说是 <code>/.git/refs/stash</code>），并允许你在需要时检索这些修改。当你需要在不同的上下文之间切换时，它很方便。它允许你保存以后可能需要的更改，是让你的工作目录干净同时保持更改完整的最快方法。</p><h3 id=如何创建一个暂存>如何创建一个暂存</h3><p>暂存你的变化的最简单的命令是 <code>git stash</code>：</p><pre tabindex=0><code>$ git stash
+Saved working directory and index state WIP on master; d7435644 Feat: configure graphql endpoint
+</code></pre><p>默认情况下，<code>git stash</code> 存储（或称之为“暂存”）未提交的更改（已暂存和未暂存的文件），并忽略未跟踪和忽略的文件。通常情况下，你不需要暂存未跟踪和忽略的文件，但有时它们可能会干扰你在代码库中要做的其他事情。</p><p>你可以使用附加选项让 <code>git stash</code> 来处理未跟踪和忽略的文件：</p><ul><li><code>git stash -u</code> 或 <code>git stash --includ-untracked</code> 储存未追踪的文件。</li><li><code>git stash -a</code> 或 <code>git stash --all</code> 储存未跟踪的文件和忽略的文件。</li></ul><p>要存储特定的文件，你可以使用 <code>git stash -p</code> 或 <code>git stash -patch</code> 命令：</p><pre tabindex=0><code>$ git stash --patch
+diff --git a/.gitignore b/.gitignore
+index 32174593..8d81be6e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -3,6 +3,7 @@
+ # dependencies
+ node_modules/
+ /.pnp
++f,fmfm
+ .pnp.js
+
+ # testing
+(1/1) Stash this hunk [y,n,q,a,d,e,?]?
+</code></pre><h3 id=列出你的暂存>列出你的暂存</h3><p>你可以用 <code>git stash list</code> 命令查看你的暂存。暂存是后进先出（LIFO）方式保存的：</p><pre tabindex=0><code>$ git stash list
+stash@{0}: WIP on master: d7435644 Feat: configure graphql endpoint
+</code></pre><p>默认情况下，暂存会显示在你创建它的分支和提交的顶部，被标记为 <code>WIP</code>。然而，当你有多个暂存时，这种有限的信息量并没有帮助，因为很难记住或单独检查它们的内容。要为暂存添加描述，可以使用命令 <code>git stash save &lt;description></code>：</p><pre tabindex=0><code>$ git stash save &#34;remove semi-colon from schema&#34;
+Saved working directory and index state On master: remove semi-colon from schema
+
+$ git stash list
+stash@{0}: On master: remove semi-colon from schema
+stash@{1}: WIP on master: d7435644 Feat: configure graphql endpoint
+</code></pre><h3 id=检索暂存起来的变化>检索暂存起来的变化</h3><p>你可以用 <code>git stash apply</code> 和 <code>git stash pop</code> 这两个命令来重新应用暂存的变更。这两个命令都会重新应用最新的暂存（即 <code>stash@{0}</code>）中的改动。<code>apply</code> 会重新应用变更；而 <code>pop</code> 则会将暂存的变更重新应用到工作副本中，并从暂存中删除。如果你不需要再次重新应用被暂存的更改，则首选 <code>pop</code>。</p><p>你可以通过传递标识符作为最后一个参数来选择你想要弹出或应用的储藏：</p><pre tabindex=0><code>$ git stash pop stash@{1}
+</code></pre><p>或</p><pre tabindex=0><code>$ git stash apply stash@{1}
+</code></pre><h3 id=清理暂存>清理暂存</h3><p>删除不再需要的暂存是好的习惯。你必须用以下命令手动完成：</p><ul><li><code>git stash clear</code> 通过删除所有的暂存库来清空该列表。</li><li><code>git stash drop &lt;stash_id></code> 从暂存列表中删除一个特定的暂存。</li></ul><h3 id=检查暂存的差异>检查暂存的差异</h3><p>命令 <code>git stash show &lt;stash_id></code> 允许你查看一个暂存的差异：</p><pre tabindex=0><code>$ git stash show stash@{1}
+console/console-init/ui/.graphqlrc.yml        |   4 +-
+console/console-init/ui/generated-frontend.ts | 742 +++++++++---------
+console/console-init/ui/package.json          |   2 +-
+</code></pre><p>要获得更详细的差异，需要传递 <code>--patch</code> 或 <code>-p</code> 标志：</p><pre tabindex=0><code>$ git stash show stash@{0} --patch
+diff --git a/console/console-init/ui/package.json b/console/console-init/ui/package.json
+index 755912b97..5b5af1bd6 100644
+--- a/console/console-init/ui/package.json
++++ b/console/console-init/ui/package.json
+@@ -1,5 +1,5 @@
+ {
+- &#34;name&#34;: &#34;my-usepatternfly&#34;,
++ &#34;name&#34;: &#34;my-usepatternfly-2&#34;,
+  &#34;version&#34;: &#34;0.1.0&#34;,
+  &#34;private&#34;: true,
+  &#34;proxy&#34;: &#34;http://localhost:4000&#34;
+diff --git a/console/console-init/ui/src/AppNavHeader.tsx b/console/console-init/ui/src/AppNavHeader.tsx
+index a4764d2f3..da72b7e2b 100644
+--- a/console/console-init/ui/src/AppNavHeader.tsx
++++ b/console/console-init/ui/src/AppNavHeader.tsx
+@@ -9,8 +9,8 @@ import { css } from &#34;@patternfly/react-styles&#34;;
+
+interface IAppNavHeaderProps extends PageHeaderProps {
+- toolbar?: React.ReactNode;
+- avatar?: React.ReactNode;
++ toolbar?: React.ReactNode;
++ avatar?: React.ReactNode;
+}
+
+export class AppNavHeader extends React.Component&amp;lt;IAppNavHeaderProps&amp;gt;{
+  render()
+</code></pre><h3 id=签出到新的分支>签出到新的分支</h3><p>你可能会遇到这样的情况：一个分支和你的暂存中的变更有分歧，当你试图重新应用暂存时，会造成冲突。一个简单的解决方法是使用 <code>git stash branch &lt;new_branch_name stash_id></code> 命令，它将根据创建暂存时的提交创建一个新分支，并将暂存中的修改弹出：</p><pre tabindex=0><code>$ git stash branch test_2 stash@{0}
+Switched to a new branch &#39;test_2&#39;
+On branch test_2
+Changes not staged for commit:
+(use &#34;git add &lt;file&gt;...&#34; to update what will be committed)
+(use &#34;git restore &lt;file&gt;...&#34; to discard changes in working directory)
+modified: .graphqlrc.yml
+modified: generated-frontend.ts
+modified: package.json
+no changes added to commit (use &#34;git add&#34; and/or &#34;git commit -a&#34;)
+Dropped stash@{0} (fe4bf8f79175b8fbd3df3c4558249834ecb75cd1)
+</code></pre><h3 id=在不打扰暂存参考日志的情况下进行暂存>在不打扰暂存参考日志的情况下进行暂存</h3><p>在极少数情况下，你可能需要创建一个暂存，同时保持暂存参考日志（<code>reflog</code>）的完整性。这些情况可能出现在你需要一个脚本作为一个实现细节来暂存的时候。这可以通过 <code>git stash create</code> 命令来实现；它创建了一个暂存条目，并返回它的对象名，而不将其推送到暂存参考日志中：</p><pre tabindex=0><code>$ git stash create &#34;sample stash&#34;
+63a711cd3c7f8047662007490723e26ae9d4acf9
+</code></pre><p>有时，你可能会决定将通过 <code>git stash create</code> 创建的暂存条目推送到暂存参考日志：</p><pre tabindex=0><code>$ git stash store -m &#34;sample stash testing..&#34; &#34;63a711cd3c7f8047662007490723e26ae9d4acf9&#34;
+$ git stash list
+stash @{0}: sample stash testing..
+</code></pre><h3 id=结论>结论</h3><p>我希望你觉得这篇文章很有用，并学到了新的东西。如果我遗漏了任何有用的使用暂存的选项，请在评论中告诉我。</p><hr><p>via: <a href=https://opensource.com/article/21/4/git-stash>https://opensource.com/article/21/4/git-stash</a></p><p>作者：<a href=https://opensource.com/users/rkpattnaik780>Ramakrishna Pattnaik</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/git/ rel=tag>git</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%9A%82%E5%AD%98/ rel=tag>暂存</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

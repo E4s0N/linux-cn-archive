@@ -1,0 +1,90 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何列出所有的 Bash Shell 内置命令 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何列出所有的 Bash Shell 内置命令"><meta property="og:description" content="shell 内置命令就是一个命令或一个函数，从 shell 中调用，它直接在 shell 中执行。 bash shell 直接执行该命令而无需调用其他程序。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9343-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-02-13T10:17:00+00:00"><meta property="article:modified_time" content="2018-02-13T10:17:00+00:00"><meta itemprop=name content="如何列出所有的 Bash Shell 内置命令"><meta itemprop=description content="shell 内置命令就是一个命令或一个函数，从 shell 中调用，它直接在 shell 中执行。 bash shell 直接执行该命令而无需调用其他程序。"><meta itemprop=datePublished content="2018-02-13T10:17:00+00:00"><meta itemprop=dateModified content="2018-02-13T10:17:00+00:00"><meta itemprop=wordCount content="609"><meta itemprop=keywords content="命令,内置,shell,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何列出所有的 Bash Shell 内置命令</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-02-13T10:17:00Z>February 13, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201802/13/012025cjjsb4449jus4u6j.jpg alt></p><p>内置命令包含在 bash shell 本身里面。我该如何在 Linux / Apple OS X / *BSD / Unix 类操作系统列出所有的内置 bash 命令，而不用去读大篇的 bash 操作说明页？</p><p>shell 内置命令就是一个命令或一个函数，从 shell 中调用，它直接在 shell 中执行。 bash shell 直接执行该命令而无需调用其他程序。你可以使用 <code>help</code> 命令查看 Bash 内置命令的信息。以下是几种不同类型的内置命令。</p><h3 id=内置命令的类型>内置命令的类型</h3><ol><li>Bourne Shell 内置命令：内置命令继承自 Bourne Shell。</li><li>Bash 内置命令：特定于 Bash 的内置命令表。</li><li>修改 Shell 行为：修改 shell 属性和可选行为的内置命令。</li><li>特别的内置命令：由 POSIX 特别分类的内置命令。</li></ol><h3 id=如何查看所有-bash-内置命令>如何查看所有 bash 内置命令</h3><p>有以下的命令：</p><pre tabindex=0><code>$ help
+$ help | less
+$ help | grep read 
+</code></pre><p>样例输出：</p><pre tabindex=0><code>GNU bash, version 4.1.5(1)-release (x86_64-pc-linux-gnu)
+These shell commands are defined internally.  Type `help&#39; to see this list.
+Type `help name&#39; to find out more about the function `name&#39;.
+Use `info bash&#39; to find out more about the shell in general.
+Use `man -k&#39; or `info&#39; to find out more about commands not in this list.
+
+A star (*) next to a name means that the command is disabled.
+
+ job_spec [&amp;]                            history [-c] [-d offset] [n] or hist&gt;
+ (( expression ))                        if COMMANDS; then COMMANDS; [ elif C&gt;
+ . filename [arguments]                  jobs [-lnprs] [jobspec ...] or jobs &gt;
+ :                                       kill [-s sigspec | -n signum | -sigs&gt;
+ [ arg... ]                              let arg [arg ...]
+ [[ expression ]]                        local [option] name[=value] ...
+ alias [-p] [name[=value] ... ]          logout [n]
+ bg [job_spec ...]                       mapfile [-n count] [-O origin] [-s c&gt;
+ bind [-lpvsPVS] [-m keymap] [-f filen&gt;  popd [-n] [+N | -N]
+ break [n]                               printf [-v var] format [arguments]
+ builtin [shell-builtin [arg ...]]       pushd [-n] [+N | -N | dir]
+ caller [expr]                           pwd [-LP]
+ case WORD in [PATTERN [| PATTERN]...)&gt;  read [-ers] [-a array] [-d delim] [-&gt;
+ cd [-L|-P] [dir]                        readarray [-n count] [-O origin] [-s&gt;
+ command [-pVv] command [arg ...]        readonly [-af] [name[=value] ...] or&gt;
+ compgen [-abcdefgjksuv] [-o option]  &gt;  return [n]
+ complete [-abcdefgjksuv] [-pr] [-DE] &gt;  select NAME [in WORDS ... ;] do COMM&gt;
+ compopt [-o|+o option] [-DE] [name ..&gt;  set [--abefhkmnptuvxBCHP] [-o option&gt;
+ continue [n]                            shift [n]
+ coproc [NAME] command [redirections]    shopt [-pqsu] [-o] [optname ...]
+ declare [-aAfFilrtux] [-p] [name[=val&gt;  source filename [arguments]
+ dirs [-clpv] [+N] [-N]                  suspend [-f]
+ disown [-h] [-ar] [jobspec ...]         test [expr]
+ echo [-neE] [arg ...]                   time [-p] pipeline
+ enable [-a] [-dnps] [-f filename] [na&gt;  times
+ eval [arg ...]                          trap [-lp] [[arg] signal_spec ...]
+ exec [-cl] [-a name] [command [argume&gt;  true
+ exit [n]                                type [-afptP] name [name ...]
+ export [-fn] [name[=value] ...] or ex&gt;  typeset [-aAfFilrtux] [-p] name[=val&gt;
+ false                                   ulimit [-SHacdefilmnpqrstuvx] [limit&gt;
+ fc [-e ename] [-lnr] [first] [last] o&gt;  umask [-p] [-S] [mode]
+ fg [job_spec]                           unalias [-a] name [name ...]
+ for NAME [in WORDS ... ] ; do COMMAND&gt;  unset [-f] [-v] [name ...]
+ for (( exp1; exp2; exp3 )); do COMMAN&gt;  until COMMANDS; do COMMANDS; done
+ function name { COMMANDS ; } or name &gt;  variables - Names and meanings of so&gt;
+ getopts optstring name [arg]            wait [id]
+ hash [-lr] [-p pathname] [-dt] [name &gt;  while COMMANDS; do COMMANDS; done
+ help [-dms] [pattern ...]               { COMMANDS ; }
+</code></pre><p>另外一种选择是使用下列命令：</p><pre tabindex=0><code>compgen -b
+compgen -b | more
+</code></pre><h3 id=查看-bash-的内置命令信息>查看 Bash 的内置命令信息</h3><p>运行以下得到详细信息：</p><pre tabindex=0><code>help command
+help read
+</code></pre><p>要仅得到所有带简短描述的内置命令的列表，执行如下:</p><pre tabindex=0><code>$ help -d
+</code></pre><h3 id=查找内置命令的语法和其他选项>查找内置命令的语法和其他选项</h3><p>使用下列语法去找出更多的相关内置命令：</p><pre tabindex=0><code>help name 
+help cd 
+help fg 
+help for 
+help read 
+help :
+</code></pre><p>样例输出：</p><pre tabindex=0><code>:: :
+ Null command.
+ 
+ No effect; the command does nothing.
+ 
+ Exit Status:
+ Always succeeds
+</code></pre><h3 id=找出一个命令是内部的内置还是外部的>找出一个命令是内部的（内置）还是外部的</h3><p>使用 <code>type</code> 命令或 <code>command</code> 命令：</p><pre tabindex=0><code>type -a command-name-here 
+type -a cd 
+type -a uname 
+type -a : 
+type -a ls
+</code></pre><p>或者：</p><pre tabindex=0><code>type -a cd uname : ls uname
+</code></pre><p>样例输出：</p><pre tabindex=0><code>cd is a shell builtin
+uname is /bin/uname
+: is a shell builtin
+ls is aliased to `ls --color=auto&#39;
+ls is /bin/ls
+l is a function
+l ()
+{
+ ls --color=auto
+}
+</code></pre><p>或者：</p><pre tabindex=0><code>command -V ls 
+command -V cd 
+command -V foo
+</code></pre><p><a href=https://www.cyberciti.biz/media/new/faq/2013/03/View-list-bash-built-ins-command-info-on-Linux-or-Unix.jpg><img src=/data/attachment/album/201802/13/012043plctt333wtncllco.jpg alt="View list bash built-ins command info on Linux or Unix"></a></p><h3 id=关于作者>关于作者</h3><p>作者是 nixCraft 网站的发起人和经验丰富的系统管理员，以及 Linux 操作系统/Unix shell 脚本编程培训师。他与全球客户以及包括 IT、教育、国防和空间研究以及非营利部门在内的各个行业合作。可以在 <a href=https://twitter.com/nixcraft>Twitter</a>、<a href=https://facebook.com/nixcraft>Facebook</a>、 <a href=https://plus.google.com/+CybercitiBiz>Google+</a> 上关注他。</p><hr><p>via: <a href=https://www.cyberciti.biz/faq/linux-unix-bash-shell-list-all-builtin-commands/>https://www.cyberciti.biz/faq/linux-unix-bash-shell-list-all-builtin-commands/</a></p><p>作者：<a href=https://www.cyberciti.biz>Vivek Gite</a> 译者：<a href=https://github.com/KarenMrzhang>KarenMrzhang</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4/ rel=tag>命令</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%86%85%E7%BD%AE/ rel=tag>内置</a></li><li class=tags__item><a class="tags__link btn" href=/tags/shell/ rel=tag>shell</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

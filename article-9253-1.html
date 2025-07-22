@@ -1,0 +1,75 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>让 history 命令显示日期和时间 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="让 history 命令显示日期和时间"><meta property="og:description" content="默认情况下 history 命令直接显示用户执行的命令而不会输出运行命令时的日期和时间，即使 history 命令记录了这个时间。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9253-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-01-18T11:20:07+00:00"><meta property="article:modified_time" content="2018-01-18T11:20:07+00:00"><meta itemprop=name content="让 history 命令显示日期和时间"><meta itemprop=description content="默认情况下 history 命令直接显示用户执行的命令而不会输出运行命令时的日期和时间，即使 history 命令记录了这个时间。"><meta itemprop=datePublished content="2018-01-18T11:20:07+00:00"><meta itemprop=dateModified content="2018-01-18T11:20:07+00:00"><meta itemprop=wordCount content="434"><meta itemprop=keywords content="history,历史,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>让 history 命令显示日期和时间</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-01-18T11:20:07Z>January 18, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201801/18/111938vf1fnfzfrofnsrfs.jpg alt></p><p>我们都对 <code>history</code> 命令很熟悉。它将终端上 bash 执行过的所有命令存储到 <code>.bash_history</code> 文件中，来帮助我们复查用户之前执行过的命令。</p><p>默认情况下 <code>history</code> 命令直接显示用户执行的命令而不会输出运行命令时的日期和时间，即使 <code>history</code> 命令记录了这个时间。</p><p>运行 <code>history</code> 命令时，它会检查一个叫做 <code>HISTTIMEFORMAT</code> 的环境变量，这个环境变量指明了如何格式化输出 <code>history</code> 命令中记录的这个时间。</p><p>若该值为 null 或者根本没有设置，则它跟大多数系统默认显示的一样，不会显示日期和时间。</p><p><code>HISTTIMEFORMAT</code> 使用 <code>strftime</code> 来格式化显示时间（<code>strftime</code> - 将日期和时间转换为字符串）。<code>history</code> 命令输出日期和时间能够帮你更容易地追踪问题。</p><ul><li><code>%T</code>： 替换为时间（<code>%H:%M:%S</code>）。</li><li><code>%F</code>： 等同于 <code>%Y-%m-%d</code> （ISO 8601:2000 标准日期格式）。</li></ul><p>下面是 <code>history</code> 命令默认的输出。</p><pre tabindex=0><code># history
+ 1 yum install -y mysql-server mysql-client
+ 2 service mysqld start
+ 3 sysdig proc.name=sshd
+ 4 sysdig -c topprocs_net
+ 5 sysdig proc.name=sshd
+ 6 sysdig proc.name=sshd | more
+ 7 sysdig fd.name=/var/log/auth.log | more
+ 8 sysdig fd.name=/var/log/mysqld.log
+ 9 sysdig -cl
+ 10 sysdig -i httplog
+ 11 sysdig -i proc_exec_time
+ 12 sysdig -i topprocs_cpu
+ 13 sysdig -c topprocs_cpu
+ 14 sysdig -c tracers_2_statsd
+ 15 sysdig -c topfiles_bytes
+ 16 sysdig -c topprocs_cpu
+ 17 sysdig -c topprocs_cpu &#34;fd.name contains sshd&#34;
+ 18 sysdig -c topprocs_cpu &#34;proc.name contains sshd&#34;
+ 19 csysdig
+ 20 sysdig -c topprocs_cpu
+ 21 rpm --import https://s3.amazonaws.com/download.draios.com/DRAIOS-GPG-KEY.public
+ 22 curl -s -o /etc/yum.repos.d/draios.repo http://download.draios.com/stable/rpm/draios.repo
+ 23 yum install -y epel-release
+ 24 yum update
+ 25 yum makecache
+ 26 yum -y install kernel-devel-$(uname -r)
+ 27 yum -y install sysdig
+ 28 sysdig
+ 29 yum install httpd mysql
+ 30 service httpd start
+</code></pre><p>根据需求，有三种不同的设置环境变量的方法。</p><ul><li>临时设置当前用户的环境变量</li><li>永久设置当前/其他用户的环境变量</li><li>永久设置所有用户的环境变量</li></ul><p><strong>注意：</strong> 不要忘了在最后那个单引号前加上空格，否则输出会很混乱的。</p><h3 id=方法-1>方法 1：</h3><p>运行下面命令为为当前用户临时设置 <code>HISTTIMEFORMAT</code> 变量。这会一直生效到下次重启。</p><pre tabindex=0><code># export HISTTIMEFORMAT=&#39;%F %T &#39;
+</code></pre><h3 id=方法-2>方法 2：</h3><p>将 <code>HISTTIMEFORMAT</code> 变量加到 <code>.bashrc</code> 或 <code>.bash_profile</code> 文件中，让它永久生效。</p><pre tabindex=0><code># echo &#39;HISTTIMEFORMAT=&#34;%F %T &#34;&#39; &gt;&gt; ~/.bashrc
+或
+# echo &#39;HISTTIMEFORMAT=&#34;%F %T &#34;&#39; &gt;&gt; ~/.bash_profile
+</code></pre><p>运行下面命令来让文件中的修改生效。</p><pre tabindex=0><code># source ~/.bashrc
+或
+# source ~/.bash_profile
+</code></pre><h3 id=方法-3>方法 3：</h3><p>将 <code>HISTTIMEFORMAT</code> 变量加入 <code>/etc/profile</code> 文件中，让它对所有用户永久生效。</p><pre tabindex=0><code># echo &#39;HISTTIMEFORMAT=&#34;%F %T &#34;&#39; &gt;&gt; /etc/profile
+</code></pre><p>运行下面命令来让文件中的修改生效。</p><pre tabindex=0><code># source /etc/profile
+</code></pre><p>输出结果为：</p><pre tabindex=0><code># history
+ 1 2017-08-16 15:30:15 yum install -y mysql-server mysql-client
+ 2 2017-08-16 15:30:15 service mysqld start
+ 3 2017-08-16 15:30:15 sysdig proc.name=sshd
+ 4 2017-08-16 15:30:15 sysdig -c topprocs_net
+ 5 2017-08-16 15:30:15 sysdig proc.name=sshd
+ 6 2017-08-16 15:30:15 sysdig proc.name=sshd | more
+ 7 2017-08-16 15:30:15 sysdig fd.name=/var/log/auth.log | more
+ 8 2017-08-16 15:30:15 sysdig fd.name=/var/log/mysqld.log
+ 9 2017-08-16 15:30:15 sysdig -cl
+ 10 2017-08-16 15:30:15 sysdig -i httplog
+ 11 2017-08-16 15:30:15 sysdig -i proc_exec_time
+ 12 2017-08-16 15:30:15 sysdig -i topprocs_cpu
+ 13 2017-08-16 15:30:15 sysdig -c topprocs_cpu
+ 14 2017-08-16 15:30:15 sysdig -c tracers_2_statsd
+ 15 2017-08-16 15:30:15 sysdig -c topfiles_bytes
+ 16 2017-08-16 15:30:15 sysdig -c topprocs_cpu
+ 17 2017-08-16 15:30:15 sysdig -c topprocs_cpu &#34;fd.name contains sshd&#34;
+ 18 2017-08-16 15:30:15 sysdig -c topprocs_cpu &#34;proc.name contains sshd&#34;
+ 19 2017-08-16 15:30:15 csysdig
+ 20 2017-08-16 15:30:15 sysdig -c topprocs_cpu
+ 21 2017-08-16 15:30:15 rpm --import https://s3.amazonaws.com/download.draios.com/DRAIOS-GPG-KEY.public
+ 22 2017-08-16 15:30:15 curl -s -o /etc/yum.repos.d/draios.repo http://download.draios.com/stable/rpm/draios.repo
+ 23 2017-08-16 15:30:15 yum install -y epel-release
+ 24 2017-08-16 15:30:15 yum update
+ 25 2017-08-16 15:30:15 yum makecache
+ 26 2017-08-16 15:30:15 yum -y install kernel-devel-$(uname -r)
+ 27 2017-08-16 15:30:15 yum -y install sysdig
+ 28 2017-08-16 15:30:15 sysdig
+ 29 2017-08-16 15:30:15 yum install httpd mysql
+ 30 2017-08-16 15:30:15 service httpd start
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/display-date-time-linux-bash-history-command/>https://www.2daygeek.com/display-date-time-linux-bash-history-command/</a></p><p>作者：<a href=https://www.2daygeek.com/author/2daygeek/>2daygeek</a> 译者：<a href=https://github.com/lujun9972>lujun9972</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/history/ rel=tag>history</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8E%86%E5%8F%B2/ rel=tag>历史</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

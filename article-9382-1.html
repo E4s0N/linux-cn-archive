@@ -1,0 +1,82 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Python 中最快解压 zip 文件的方法 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Python 中最快解压 zip 文件的方法"><meta property="og:description" content="一步一步地做这个任务的这个过程感觉挺好的。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9382-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-02-28T09:27:00+00:00"><meta property="article:modified_time" content="2018-02-28T09:27:00+00:00"><meta itemprop=name content="Python 中最快解压 zip 文件的方法"><meta itemprop=description content="一步一步地做这个任务的这个过程感觉挺好的。"><meta itemprop=datePublished content="2018-02-28T09:27:00+00:00"><meta itemprop=dateModified content="2018-02-28T09:27:00+00:00"><meta itemprop=wordCount content="340"><meta itemprop=keywords content="zip,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Python 中最快解压 zip 文件的方法</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-02-28T09:27:00Z>February 28, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201802/24/213511kqgmemzlqmcbw15n.jpg alt></p><p>假设现在的上下文（LCTT 译注：context，计算机术语，此处意为业务情景）是这样的：一个 zip 文件被上传到一个<a href=https://symbols.mozilla.org>Web 服务</a>中，然后 Python 需要解压这个 zip 文件然后分析和处理其中的每个文件。这个特殊的应用查看每个文件各自的名称和大小，并和已经上传到 AWS S3 上的文件进行比较，如果文件（和 AWS S3 上的相比）有所不同或者文件本身更新，那么就将它上传到 AWS S3。</p><p><a href=https://cdn-2916.kxcdn.com/cache/e6/dc/e6dc20acd37d94239edbbc0727721e4a.png><img src=/data/attachment/album/201802/24/213540t8v50jgvvtt8vqgg.png alt="Uploads today"></a></p><p>挑战在于这些 zip 文件太大了。它们的平均大小是 560MB 但是其中一些大于 1GB。这些文件中大多数是文本文件，但是其中同样也有一些巨大的二进制文件。不同寻常的是，每个 zip 文件包含 100 个文件但是其中 1-3 个文件却占据了多达 95% 的 zip 文件大小。</p><p>最开始我尝试在内存中解压文件，并且每次只处理一个文件。在各种内存爆炸和 EC2 耗尽内存的情况下，这个方法壮烈失败了。我觉得这个原因是这样的。最开始你有 1GB 文件在内存中，然后你现在解压每个文件，在内存中大约就要占用 2-3GB。所以，在很多次测试之后，解决方案是将这些 zip 文件复制到磁盘上（在临时目录 <code>/tmp</code> 中），然后遍历这些文件。这次情况好多了但是我仍然注意到了整个解压过程花费了巨量的时间。<strong>是否可能有方法优化呢？</strong></p><h3 id=原始函数>原始函数</h3><p>首先是下面这些模拟对 zip 文件中文件实际操作的普通函数：</p><pre tabindex=0><code>def _count_file(fn):
+ with open(fn, &#39;rb&#39;) as f:
+   return _count_file_object(f)
+
+def _count_file_object(f):
+ # Note that this iterates on &#39;f&#39;.
+ # You *could* do &#39;return len(f.read())&#39;
+ # which would be faster but potentially memory
+ # inefficient and unrealistic in terms of this
+ # benchmark experiment.
+ total = 0
+ for line in f:
+   total += len(line)
+ return total
+</code></pre><p>这里是可能最简单的另一个函数：</p><pre tabindex=0><code>def f1(fn, dest):
+ with open(fn, &#39;rb&#39;) as f:
+   zf = zipfile.ZipFile(f)
+   zf.extractall(dest)
+
+ total = 0
+ for root, dirs, files in os.walk(dest):
+   for file_ in files:
+     fn = os.path.join(root, file_)
+     total += _count_file(fn)
+ return total
+</code></pre><p>如果我更仔细地分析一下，我将会发现这个函数花费时间 40% 运行 <code>extractall</code>，60% 的时间在遍历各个文件并读取其长度。</p><h3 id=第一步尝试>第一步尝试</h3><p>我的第一步尝试是使用线程。先创建一个 <code>zipfile.ZipFile</code> 的实例，展开其中的每个文件名，然后为每一个文件开始一个线程。每个线程都给它一个函数来做“实质工作”（在这个基准测试中，就是遍历每个文件然后获取它的名称）。实际业务中的函数进行的工作是复杂的 S3、Redis 和 PostgreSQL 操作，但是在我的基准测试中我只需要制作一个可以找出文件长度的函数就好了。线程池函数：</p><pre tabindex=0><code>def f2(fn, dest):
+
+    def unzip_member(zf, member, dest):
+        zf.extract(member, dest)
+        fn = os.path.join(dest, member.filename)
+        return _count_file(fn)
+
+    with open(fn, &#39;rb&#39;) as f:
+        zf = zipfile.ZipFile(f)
+        futures = []
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            for member in zf.infolist():
+                futures.append(
+                    executor.submit(
+                        unzip_member,
+                        zf,
+                        member,
+                        dest,
+                    )
+                )
+            total = 0
+            for future in concurrent.futures.as_completed(futures):
+                total += future.result()
+    return total
+</code></pre><p><strong>结果：加速 ~10%</strong></p><h3 id=第二步尝试>第二步尝试</h3><p>所以可能是 GIL（LCTT 译注：Global Interpreter Lock，一种全局锁，CPython 中的一个概念）阻碍了我。最自然的想法是尝试使用多线程在多个 CPU 上分配工作。但是这样做有缺点，那就是你不能传递一个非可 pickle 序列化的对象（LCTT 译注：意为只有可 pickle 序列化的对象可以被传递），所以你只能发送文件名到之后的函数中：</p><pre tabindex=0><code>def unzip_member_f3(zip_filepath, filename, dest):
+    with open(zip_filepath, &#39;rb&#39;) as f:
+        zf = zipfile.ZipFile(f)
+        zf.extract(filename, dest)
+    fn = os.path.join(dest, filename)
+    return _count_file(fn)
+
+
+
+def f3(fn, dest):
+    with open(fn, &#39;rb&#39;) as f:
+        zf = zipfile.ZipFile(f)
+        futures = []
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            for member in zf.infolist():
+                futures.append(
+                    executor.submit(
+                        unzip_member_f3,
+                        fn,
+                        member.filename,
+                        dest,
+                    )
+                )
+            total = 0
+            for future in concurrent.futures.as_completed(futures):
+                total += future.result()
+    return total
+</code></pre><p><strong>结果: 加速 ~300%</strong></p><h3 id=这是作弊>这是作弊</h3><p>使用处理器池的问题是这样需要存储在磁盘上的原始 <code>.zip</code> 文件。所以为了在我的 web 服务器上使用这个解决方案，我首先得要将内存中的 zip 文件保存到磁盘，然后调用这个函数。这样做的代价我不是很清楚但是应该不低。</p><p>好吧，再翻翻看又没有损失。可能，解压过程加速到足以弥补这样做的损失了吧。</p><p>但是一定记住！这个优化取决于使用所有可用的 CPU。如果一些其它的 CPU 需要执行在 <code>gunicorn</code> 中的其它事务呢？这时，这些其它进程必须等待，直到有 CPU 可用。由于在这个服务器上有其他的事务正在进行，我不是很确定我想要在进程中接管所有其他 CPU。</p><h3 id=结论>结论</h3><p>一步一步地做这个任务的这个过程感觉挺好的。你被限制在一个 CPU 上但是表现仍然特别好。同样地，一定要看看在<code>f1</code> 和 <code>f2</code> 两段代码之间的不同之处！利用 <code>concurrent.futures</code> 池类你可以获取到允许使用的 CPU 的个数，但是这样做同样给人感觉不是很好。如果你在虚拟环境中获取的个数是错的呢？或者可用的个数太低以致无法从负载分配获取好处并且现在你仅仅是为了移动负载而支付营运开支呢？</p><p>我将会继续使用 <code>zipfile.ZipFile(file_buffer).extractall(temp_dir)</code>。这个工作这样做已经足够好了。</p><h3 id=想试试手吗>想试试手吗？</h3><p>我使用一个 <code>c5.4xlarge</code> EC2 服务器来进行我的基准测试。文件可以从此处下载：</p><pre tabindex=0><code>wget https://www.peterbe.com/unzip-in-parallel/hack.unzip-in-parallel.py
+wget https://www.peterbe.com/unzip-in-parallel/symbols-2017-11-27T14_15_30.zip
+</code></pre><p>这里的 <code>.zip</code> 文件有 34MB。和在服务器上的相比已经小了很多。</p><p><code>hack.unzip-in-parallel.py</code> 文件里是一团糟。它包含了大量可怕的修正和丑陋的代码，但是这只是一个开始。</p><hr><p>via: <a href=https://www.peterbe.com/plog/fastest-way-to-unzip-a-zip-file-in-python>https://www.peterbe.com/plog/fastest-way-to-unzip-a-zip-file-in-python</a></p><p>作者：<a href=https://www.peterbe.com/>Peterbe</a> 译者：<a href=https://github.com/leemeans>Leemeans</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/zip/ rel=tag>zip</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

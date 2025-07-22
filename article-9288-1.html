@@ -1,0 +1,66 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Linux/Unix/Windows 中发现隐藏的进程和端口 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Linux/Unix/Windows 中发现隐藏的进程和端口"><meta property="og:description" content="绝大多数的 Rootkit 工具或者恶意软件借助内核来实现进程隐藏，这些进程只在内核内部可见。你可以使用 unhide 或者诸如 rkhunter 等工具，扫描 rootkit 程序 、后门程序以及一些可能存在的本地漏洞。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9288-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-01-28T22:27:00+00:00"><meta property="article:modified_time" content="2018-01-28T22:27:00+00:00"><meta itemprop=name content="如何在 Linux/Unix/Windows 中发现隐藏的进程和端口"><meta itemprop=description content="绝大多数的 Rootkit 工具或者恶意软件借助内核来实现进程隐藏，这些进程只在内核内部可见。你可以使用 unhide 或者诸如 rkhunter 等工具，扫描 rootkit 程序 、后门程序以及一些可能存在的本地漏洞。"><meta itemprop=datePublished content="2018-01-28T22:27:00+00:00"><meta itemprop=dateModified content="2018-01-28T22:27:00+00:00"><meta itemprop=wordCount content="485"><meta itemprop=keywords content="进程,隐藏,unhide,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Linux/Unix/Windows 中发现隐藏的进程和端口</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-01-28T22:27:00Z>January 28, 2018</time></div></div></header><div class="content post__content clearfix"><p><code>unhide</code> 是一个小巧的网络取证工具，能够发现那些借助 rootkit、LKM 及其它技术隐藏的进程和 TCP/UDP 端口。这个工具在 Linux、UNIX 类、MS-Windows 等操作系统下都可以工作。根据其 man 页面的说明：</p><blockquote><p>Unhide 通过下述三项技术来发现隐藏的进程。</p><ol><li>进程相关的技术，包括将 <code>/proc</code> 目录与 <a href=https://www.cyberciti.biz/faq/show-all-running-processes-in-linux/ title="Linux / Unix ps command">/bin/ps</a> 命令的输出进行比较。</li><li>系统相关的技术，包括将 <a href=https://www.cyberciti.biz/faq/show-all-running-processes-in-linux/ title="Linux / Unix ps command">/bin/ps</a> 命令的输出结果同从系统调用方面得到的信息进行比较。</li><li>穷举法相关的技术，包括对所有的进程 ID 进行暴力求解，该技术仅限于在基于 Linux2.6 内核的系统中使用。</li></ol></blockquote><p>绝大多数的 Rootkit 工具或者恶意软件借助内核来实现进程隐藏，这些进程只在内核内部可见。你可以使用 <code>unhide</code> 或者诸如 <a href=https://www.cyberciti.biz/faq/howto-check-linux-rootkist-with-detectors-software/>rkhunter 等工具，扫描 rootkit 程序 、后门程序以及一些可能存在的本地漏洞</a>。</p><p><img src=/data/attachment/album/201801/28/222715iwpb9s492l6bbj5p.jpg alt></p><p>这篇文章描述了如何安装 unhide 并搜索隐藏的进程和 TCP/UDP 端口。</p><h3 id=如何安装-unhide>如何安装 unhide</h3><p>首先建议你在只读介质上运行这个工具。如果使用的是 Ubuntu 或者 Debian 发行版，输入下述的 <a href=https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html title="See Linux/Unix apt-get command examples for more info">apt-get</a>/<a href=//www.cyberciti.biz/faq/ubuntu-lts-debian-linux-apt-command-examples/ title="See Linux/Unix apt command examples for more info">apt</a> 命令以安装 Unhide：</p><pre tabindex=0><code>$ sudo apt-get install unhide
+</code></pre><p>一切顺利的话你的命令行会输出以下内容：</p><pre tabindex=0><code>[sudo] password for vivek: 
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Suggested packages:
+  rkhunter
+The following NEW packages will be installed:
+  unhide
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 46.6 kB of archives.
+After this operation, 136 kB of additional disk space will be used.
+Get:1 http://in.archive.ubuntu.com/ubuntu artful/universe amd64 unhide amd64 20130526-1 [46.6 kB]
+Fetched 46.6 kB in 0s (49.0 kB/s)
+Selecting previously unselected package unhide.
+(Reading database ... 205367 files and directories currently installed.)
+Preparing to unpack .../unhide_20130526-1_amd64.deb ...
+Unpacking unhide (20130526-1) ...
+Setting up unhide (20130526-1) ...
+Processing triggers for man-db (2.7.6.1-2) ...
+</code></pre><h3 id=如何在-rhelcentosoraclescientificfedora-上安装-unhide>如何在 RHEL/CentOS/Oracle/Scientific/Fedora 上安装 unhide</h3><p>输入下列 yum Type the following yum command (first turn on EPLE repo on a CentOS/RHEL version 6.x or version 7.x):</p><p>输入以下的 <a href=https://www.cyberciti.biz/faq/rhel-centos-fedora-linux-yum-command-howto/ title="See Linux/Unix yum command examples for more info">yum</a> 命令（CentOS/RHEL <a href=https://www.cyberciti.biz/faq/fedora-sl-centos-redhat6-enable-epel-repo/>6.x</a> 或 <a href=https://www.cyberciti.biz/faq/installing-rhel-epel-repo-on-centos-redhat-7-x/>7.x</a> 上首先打开 EPEL 仓库）：</p><pre tabindex=0><code>$ sudo yum install unhide
+</code></pre><p>在 Fedora 上则使用以下 dnf 命令：</p><pre tabindex=0><code>$ sudo dnf install unhide
+</code></pre><h3 id=如何在-arch-上安装-unhide>如何在 Arch 上安装 unhide</h3><p>键入以下 pacman 命令安装：</p><pre tabindex=0><code>$ sudo pacman -S unhide
+</code></pre><h3 id=如何在-freebsd-上安装-unhide>如何在 FreeBSD 上安装 unhide</h3><p>可以通过以下的命令使用 port 来安装 unhide：</p><pre tabindex=0><code># cd /usr/ports/security/unhide/
+# make install clean
+</code></pre><p>或者可以通过二进制文件安装 hide，使用 pkg 命令安装：</p><pre tabindex=0><code># pkg install unhide
+</code></pre><h3 id=如何使用-unhide-工具>如何使用 unhide 工具？</h3><p>unhide 的语法是：</p><pre tabindex=0><code>unhide [options] test_list
+</code></pre><p><code>test_list</code> 参数可以是以下测试列表中的一个或者多个标准测试：</p><ol><li>brute</li><li>proc</li><li>procall</li><li>procfs</li><li>quick</li><li>reverse</li><li>sys</li></ol><p>或基本测试：</p><ol><li>checkbrute</li><li>checkchdir</li><li>checkgetaffinity</li><li>checkgetparam</li><li>checkgetpgid</li><li>checkgetprio</li><li>checkRRgetinterval</li><li>checkgetsched</li><li>checkgetsid</li><li>checkkill</li><li>checknoprocps</li><li>checkopendir</li><li>checkproc</li><li>checkquick</li><li>checkreaddir</li><li>checkreverse</li><li>checksysinfo</li><li>checksysinfo2</li><li>checksysinfo3</li></ol><p>你可以通过以下示例命令使用 <code>unhide</code>：</p><pre tabindex=0><code># unhide proc
+# unhide sys
+# unhide quick
+</code></pre><p>示例输出：</p><pre tabindex=0><code>Unhide 20130526
+Copyright © 2013 Yago Jesus &amp; Patrick Gouin
+License GPLv3+ : GNU GPL version 3 or later
+http://www.unhide-forensics.info
+
+NOTE : This version of unhide is for systems using Linux &gt;= 2.6 
+
+Used options: 
+[*]Searching for Hidden processes through  comparison of results of system calls, proc, dir and ps
+</code></pre><h3 id=如何使用-unhide-tcp-工具辨明-tcpudp-端口的身份>如何使用 unhide-tcp 工具辨明 TCP/UDP 端口的身份</h3><p>以下是来自 man 页面的介绍：</p><blockquote><p><code>unhide-tcp</code> 取证工具通过对所有可用的 TCP/IP 端口进行暴力求解的方式，辨别所有正在监听，却没有列入 <a href=https://www.cyberciti.biz/tips/linux-display-open-ports-owner.html title="Linux netstat command">/bin/netstat</a> 或者 <a href=https://www.cyberciti.biz/tips/linux-investigate-sockets-network-connections.html>/bin/ss</a> 命令输出的 TCP/IP 端口身份。</p><p>注一：对于 FreeBSD、OpenBSD系统，一般使用 netstat 命令取代在这些操作系统上不存在的 iproute2，此外，sockstat 命令也用于替代 fuser。</p><p>注二：如果操作系统不支持 iproute2 命令，在使用 <code>unhide</code> 时需要在命令上加上 <code>-n</code> 或者 <code>-s</code> 选项。</p></blockquote><pre tabindex=0><code># unhide-tcp
+</code></pre><p>示例输出：</p><pre tabindex=0><code>Unhide 20100201
+http://www.security-projects.com/?Unhide
+
+Starting TCP checking
+
+Starting UDP checking
+</code></pre><p>上述操作中，没有发现隐藏的端口。</p><p>但在下述示例中，我展示了一些有趣的事。</p><pre tabindex=0><code># unhide-tcp
+</code></pre><p>示例输出：</p><pre tabindex=0><code>Unhide 20100201
+http://www.security-projects.com/?Unhide
+
+
+Starting TCP checking
+
+Found Hidden port that not appears in netstat: 1048
+Found Hidden port that not appears in netstat: 1049
+Found Hidden port that not appears in netstat: 1050
+Starting UDP checking
+</code></pre><p>可以看到 <code>netstat -tulpn</code> 和 <code>ss</code> 命令确实没有反映出这三个隐藏的端口：</p><pre tabindex=0><code># netstat -tulpn | grep 1048
+# ss -lp
+# ss -l | grep 1048
+</code></pre><p>通过下述的 man 命令可以更多地了解 <code>unhide</code>：</p><pre tabindex=0><code>$ man unhide
+$ man unhide-tcp
+</code></pre><h3 id=windows-用户如何安装使用-unhide>Windows 用户如何安装使用 unhide</h3><p>你可以通过这个<a href=http://www.unhide-forensics.info/?Windows:Download>页面</a>获取 Windows 版本的 unhide。</p><hr><p>via: <a href=https://www.cyberciti.biz/tips/linux-unix-windows-find-hidden-processes-tcp-udp-ports.html>https://www.cyberciti.biz/tips/linux-unix-windows-find-hidden-processes-tcp-udp-ports.html</a></p><p>作者：<a href=https://www.cyberciti.biz>Vivek Gite</a> 译者：<a href=https://github.com/ljgibbslf>ljgibbslf</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BF%9B%E7%A8%8B/ rel=tag>进程</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E9%9A%90%E8%97%8F/ rel=tag>隐藏</a></li><li class=tags__item><a class="tags__link btn" href=/tags/unhide/ rel=tag>unhide</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

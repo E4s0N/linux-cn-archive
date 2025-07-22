@@ -1,0 +1,48 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux date命令 - 显示和设置系统日期与时间 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux date命令 - 显示和设置系统日期与时间"><meta property="og:description" content="操作系统上的时间也许只是当做一个时钟。特别在控制台下, 我们通常并不认为时间有什么重要的。但是对于管理员，这种认识是错误的。你知道错误的日期和时间会导致你不能编译程序么?
+因为日期和时间很重要，这或许就  &mldr;
+"><meta property="og:type" content="article"><meta property="og:url" content="/article-2406-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2013-12-23T17:01:00+00:00"><meta property="article:modified_time" content="2013-12-23T17:01:00+00:00"><meta itemprop=name content="Linux date命令 - 显示和设置系统日期与时间"><meta itemprop=description content="操作系统上的时间也许只是当做一个时钟。特别在控制台下, 我们通常并不认为时间有什么重要的。但是对于管理员，这种认识是错误的。你知道错误的日期和时间会导致你不能编译程序么?
+因为日期和时间很重要，这或许就  &mldr;
+"><meta itemprop=datePublished content="2013-12-23T17:01:00+00:00"><meta itemprop=dateModified content="2013-12-23T17:01:00+00:00"><meta itemprop=wordCount content="244"><meta itemprop=keywords content="Linux,date,命令,日期,时间,技巧,教程,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux date命令 - 显示和设置系统日期与时间</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2013-12-23T17:01:00Z>December 23, 2013</time></div></div></header><div class="content post__content clearfix"><p>操作系统上的时间也许只是当做一个时钟。特别在控制台下, 我们通常并不认为时间有什么重要的。但是对于管理员，这种认识是错误的。你知道错误的日期和时间会导致你不能编译程序么?</p><p><img src=https://img.linux.net.cn/data/attachment/album/201312/23/133720ehtmbelwmwsdk59b.png alt></p><p>因为日期和时间很重要，这或许就是开发网络时间协议(NTP:Network Time Protocol)的原因。让我们了解下date命令是如何工作的。</p><h3 id=显示系统日期>显示系统日期</h3><p>要显示系统日期,只要输入:</p><pre tabindex=0><code>$ date
+Thu Dec 5 22:55:41 WIB 2013
+</code></pre><h3 id=格式化显示日期>格式化显示日期</h3><p>日期有很多格式。如果你不喜欢默认的格式，你可以换一种格式。你可能会想"为什么我需要改变格式? 默认的输出对我足够了。"</p><p>是的，你说的对，但是当你在编程时，默认输出或许无法满足你的需求，因此需要一些自定义输出。</p><h3 id=rfc-2822-的日期与时间输出格式>RFC 2822 的日期与时间输出格式</h3><pre tabindex=0><code>$ date -R
+Thu, 05 Dec 2013 23:40:53 +0700
+</code></pre><p><strong>RFC 2822</strong> 的格式像这样 : <strong>星期, 日-月-年, 小时:分钟:秒 时区</strong></p><p>时区 +0700 等同于 GMT +7。</p><p>默认上<strong>date</strong>使用的是定义在**/etc/localtime<strong>的时区。有效时区数据定义在</strong>/usr/share/timezones**。</p><h3 id=显示或者设置协调世界时>显示或者设置协调世界时</h3><p>在 <a href=http://en.wikipedia.org/wiki/Coordinated_Universal_Time>Wikipedia</a>上, UTC 意思是</p><blockquote><p>世界上主要的时钟和时间的标准。这是格林位置标准时间几个非常相近的替代者之一。</p></blockquote><p>以UTC形式显示日期和时间, 使用 -u 参数</p><pre tabindex=0><code>$ date -u
+Thu Dec 5 16:45:58:UTC 2013
+</code></pre><h3 id=使用格式化选项>使用格式化选项</h3><p>要自定义你的日期格式, <strong>使用加号 (+)</strong></p><pre tabindex=0><code>$ date +”Day : %d Month : %m Year : %Y”
+Day: 05 Month: 12 Year: 2013
+</code></pre><pre tabindex=0><code>$ date +%D
+12/05/13
+</code></pre><p><strong>%D</strong> 格式是 <strong>年/月/日 的格式</strong>.</p><p>如果你想的话，你可以输出日期的名字。下面是一些例子:</p><pre tabindex=0><code>$ date +”%a %b %d %y”
+Fri 06 Dec 2013
+
+$ date +”%A %B %d %Y”
+Friday December 06 2013
+
+$ date +”%A %B %d %Y %T”
+Friday December 06 2013 00:30:37
+
+$ date +”%A %B-%d-%Y %c”
+Friday December-06-2013 12:30:37 AM WIB
+</code></pre><p>还有很多的日期格式。只要输入:</p><pre tabindex=0><code>$ date –help
+</code></pre><p>或者</p><pre tabindex=0><code>$ man date
+</code></pre><p>来显示date命令的语法和参数。</p><p>基本上，date命令会翻译所有所有的百分号(%)开头的格式和输出在引号("")内所有的内容。</p><h3 id=设置系统日期和时间>设置系统日期和时间</h3><p>通常地，你希望你的系统日期和时间是自动设置的。如果由于一些原因，你想要手动修改它，我们可以使用这个命令。</p><pre tabindex=0><code># date –set=”20140125 09:17:00”
+</code></pre><p>这会<strong>设置</strong>你当前的系统日期和时间到<strong>一月 25, 2014 and 09:17:00 AM。请注意</strong>,你<strong>必须</strong>拥有root特权来这么做。不然你会得到这样一个错误。</p><pre tabindex=0><code>date: cannot set date: Operation not permitted
+Sat Jan 25 09:17:00 WIB 2014
+</code></pre><h3 id=重置你的时间>重置你的时间</h3><p>如果你希望重置你的系统日期和时间到原始值，你可以用这个技巧。</p><pre tabindex=0><code># hwclock
+Fri 06 Dec 2013 03:44:10 AM WIB -0.314082 seconds
+</code></pre><p>这回设置你的系统日期和时间到hwclock命令的输出的样子。</p><h3 id=在脚本中使用date命令>在脚本中使用date命令</h3><p>还记得我之前说为什么你需要改变date的输出么?一个答案是你或许需要编程。让我们看下bash脚本下的一个例子。</p><pre tabindex=0><code>$ vi display.date
+
+#! /bin/bash
+DATETIME=$(date +”DATE: %a %b-%d-%Y TIME: %T WEEK NUMBER: %W”)
+echo $DATETIME
+</code></pre><p>保存并运行它:</p><pre tabindex=0><code>$ ./display.date
+DATE : Fri Dec-06-2013 TIME: 03:08:19 WEEK Number :40
+</code></pre><p>如果你发现权限拒绝错误信息,输入:</p><pre tabindex=0><code>$ chmod 755 display.date
+</code></pre><h3 id=在备份流程中使用date>在备份流程中使用date</h3><p>另外一个例子是子你备份流程中使用date。</p><pre tabindex=0><code>$ date +%F
+2013-12-06
+
+$ tar zcfv /daily_backup/backup-`date +%F`.tar.gz /home/pungki/Documents
+</code></pre><p>它会压缩文件夹**/home/pungki/Documents<strong>到一个位于</strong>/daily_backup folder<strong>的文件</strong>backup-2013-12-06.tar.gz**中。（译注：通过“<code>命令</code>”来在命令行内嵌其它命令，这个字符不是单引号，而是和波浪号~同一个键位的那个符号。）</p><h3 id=总结>总结</h3><p>date可能被认为在某些方面不重要。但是date扮演了一个重要的角色。要想知道关于date命令更多的细节，在你的控制台下输入man date访问man页面。</p><hr><p>via: <a href=http://linoxide.com/linux-command/date-command-linux/>http://linoxide.com/linux-command/date-command-linux/</a></p><p>译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/linux/ rel=tag>Linux</a></li><li class=tags__item><a class="tags__link btn" href=/tags/date/ rel=tag>date</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4/ rel=tag>命令</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%97%A5%E6%9C%9F/ rel=tag>日期</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%97%B6%E9%97%B4/ rel=tag>时间</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8A%80%E5%B7%A7/ rel=tag>技巧</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%99%E7%A8%8B/ rel=tag>教程</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

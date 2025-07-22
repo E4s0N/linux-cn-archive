@@ -1,0 +1,52 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Docker：使用多阶段构建镜像 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Docker：使用多阶段构建镜像"><meta property="og:description" content="多阶段构建是 Docker 17.05 及更高版本提供的新功能。这对致力于优化 Dockerfile 的人来说，使得 Dockerfile 易于阅读和维护。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9133-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-12-11T22:32:57+00:00"><meta property="article:modified_time" content="2017-12-11T22:32:57+00:00"><meta itemprop=name content="Docker：使用多阶段构建镜像"><meta itemprop=description content="多阶段构建是 Docker 17.05 及更高版本提供的新功能。这对致力于优化 Dockerfile 的人来说，使得 Dockerfile 易于阅读和维护。"><meta itemprop=datePublished content="2017-12-11T22:32:57+00:00"><meta itemprop=dateModified content="2017-12-11T22:32:57+00:00"><meta itemprop=wordCount content="284"><meta itemprop=keywords content="Docker,容器,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Docker：使用多阶段构建镜像</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-12-11T22:32:57Z>December 11, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201712/11/223241y0thlaabla8ahh7z.jpg alt></p><p>多阶段构建是 Docker 17.05 及更高版本提供的新功能。这对致力于优化 Dockerfile 的人来说，使得 Dockerfile 易于阅读和维护。</p><blockquote><p>致谢: 特别感谢 <a href=https://twitter.com/alexellisuk>Alex Ellis</a> 授权使用他的关于 Docker 多阶段构建的博客文章 <a href=http://blog.alexellis.io/mutli-stage-docker-builds/>Builder pattern vs. Multi-stage builds in Docker</a> 作为以下示例的基础。</p></blockquote><h3 id=在多阶段构建之前>在多阶段构建之前</h3><p>关于构建镜像最具挑战性的事情之一是保持镜像体积小巧。 Dockerfile 中的每条指令都会在镜像中增加一层，并且在移动到下一层之前，需要记住清除不需要的构件。要编写一个非常高效的 Dockerfile，你通常需要使用 shell 技巧和其它方式来尽可能地减少层数，并确保每一层都具有上一层所需的构件，而其它任何东西都不需要。</p><p>实际上最常见的是，有一个 Dockerfile 用于开发（其中包含构建应用程序所需的所有内容），而另一个裁剪过的用于生产环境，它只包含您的应用程序以及运行它所需的内容。这被称为“构建器模式”。但是维护两个 Dockerfile 并不理想。</p><p>下面分别是一个 <code>Dockerfile.build</code> 和遵循上面的构建器模式的 <code>Dockerfile</code> 的例子：</p><p><code>Dockerfile.build</code>：</p><pre tabindex=0><code>FROM golang:1.7.3
+WORKDIR /go/src/github.com/alexellis/href-counter/
+RUN go get -d -v golang.org/x/net/html
+COPY app.go .
+RUN go get -d -v golang.org/x/net/html \
+  &amp;&amp; CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+</code></pre><p>注意这个例子还使用 Bash 的 <code>&&</code> 运算符人为地将两个 <code>RUN</code> 命令压缩在一起，以避免在镜像中创建额外的层。这很容易失败，难以维护。例如，插入另一个命令时，很容易忘记继续使用 <code>\</code> 字符。</p><p><code>Dockerfile</code>：</p><pre tabindex=0><code>FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY app .
+CMD [&#34;./app&#34;]
+</code></pre><p><code>build.sh</code>：</p><pre tabindex=0><code>#!/bin/sh
+echo Building alexellis2/href-counter:build
+
+docker build --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy \
+    -t alexellis2/href-counter:build . -f Dockerfile.build
+
+docker create --name extract alexellis2/href-counter:build
+docker cp extract:/go/src/github.com/alexellis/href-counter/app ./app
+docker rm -f extract
+
+echo Building alexellis2/href-counter:latest
+
+docker build --no-cache -t alexellis2/href-counter:latest .
+rm ./app
+</code></pre><p>当您运行 <code>build.sh</code> 脚本时，它会构建第一个镜像，从中创建一个容器，以便将该构件复制出来，然后构建第二个镜像。 这两个镜像会占用您的系统的空间，而你仍然会一个 <code>app</code> 构件存放在你的本地磁盘上。</p><p>多阶段构建大大简化了这种情况！</p><h3 id=使用多阶段构建>使用多阶段构建</h3><p>在多阶段构建中，您需要在 Dockerfile 中多次使用 <code>FROM</code> 声明。每次 <code>FROM</code> 指令可以使用不同的基础镜像，并且每次 <code>FROM</code> 指令都会开始新阶段的构建。您可以选择将构件从一个阶段复制到另一个阶段，在最终镜像中，不会留下您不需要的所有内容。为了演示这是如何工作的，让我们调整前一节中的 Dockerfile 以使用多阶段构建。</p><p><code>Dockerfile</code>：</p><pre tabindex=0><code>FROM golang:1.7.3
+WORKDIR /go/src/github.com/alexellis/href-counter/
+RUN go get -d -v golang.org/x/net/html
+COPY app.go .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=0 /go/src/github.com/alexellis/href-counter/app .
+CMD [&#34;./app&#34;]
+</code></pre><p>您只需要单一个 Dockerfile。 不需要另外的构建脚本。只需运行 <code>docker build</code> 即可。</p><pre tabindex=0><code>$ docker build -t alexellis2/href-counter:latest .
+</code></pre><p>最终的结果是和以前体积一样小的生产镜像，复杂性显著降低。您不需要创建任何中间镜像，也不需要将任何构件提取到本地系统。</p><p>它是如何工作的呢？第二条 <code>FROM</code> 指令以 <code>alpine:latest</code> 镜像作为基础开始新的建造阶段。<code>COPY --from=0</code> 这一行将刚才前一个阶段产生的构件复制到这个新阶段。Go SDK 和任何中间构件都被留在那里，而不会保存到最终的镜像中。</p><h3 id=命名您的构建阶段>命名您的构建阶段</h3><p>默认情况下，这些阶段没有命名，您可以通过它们的整数来引用它们，从第一个 <code>FROM</code> 指令的 0 开始。但是，你可以通过在 <code>FROM</code> 指令中使用 <code>as &lt;NAME></code> 来为阶段命名。以下示例通过命名阶段并在 <code>COPY</code> 指令中使用名称来改进前一个示例。这意味着，即使您的 <code>Dockerfile</code> 中的指令稍后重新排序，<code>COPY</code> 也不会出问题。</p><pre tabindex=0><code>FROM golang:1.7.3 as builder
+WORKDIR /go/src/github.com/alexellis/href-counter/
+RUN go get -d -v golang.org/x/net/html
+COPY app.go    .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /go/src/github.com/alexellis/href-counter/app .
+CMD [&#34;./app&#34;]
+</code></pre><hr><p>via: <a href=https://docs.docker.com/engine/userguide/eng-image/multistage-build/>https://docs.docker.com/engine/userguide/eng-image/multistage-build/</a></p><p>作者：<a href=https://docs.docker.com/engine/userguide/eng-image/multistage-build/>docker</a> 译者：<a href=https://github.com/iron0x>iron0x</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/docker/ rel=tag>Docker</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%B9%E5%99%A8/ rel=tag>容器</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

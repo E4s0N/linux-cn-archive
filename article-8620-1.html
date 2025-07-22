@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 LXD 2.3 及以上版本中管理网络 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 LXD 2.3 及以上版本中管理网络"><meta property="og:description" content="当 LXD 2.0 随着 Ubuntu 16.04 一起发布时，LXD 联网就简单了。直到 LXD 2.3，LXD 终于发展了自己的网络管理 API ，并有相应的命令行工具。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8620-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-06-18T11:37:00+00:00"><meta property="article:modified_time" content="2017-06-18T11:37:00+00:00"><meta itemprop=name content="在 LXD 2.3 及以上版本中管理网络"><meta itemprop=description content="当 LXD 2.0 随着 Ubuntu 16.04 一起发布时，LXD 联网就简单了。直到 LXD 2.3，LXD 终于发展了自己的网络管理 API ，并有相应的命令行工具。"><meta itemprop=datePublished content="2017-06-18T11:37:00+00:00"><meta itemprop=dateModified content="2017-06-18T11:37:00+00:00"><meta itemprop=wordCount content="451"><meta itemprop=keywords content="LXD,容器,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 LXD 2.3 及以上版本中管理网络</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-06-18T11:37:00Z>June 18, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201706/18/074013zftpxooxnyh3h1yc.jpg alt></p><h3 id=介绍>介绍</h3><p>当 LXD 2.0 随着 Ubuntu 16.04 一起发布时，LXD 联网就简单了。要么你可以使用 <code>lxd init</code> 来配置，为你的容器自己提供一个 “lxdbr0” 网桥，要么使用一个已存在的物理接口。</p><p>虽然这确实有效，但是有点混乱，因为大部分的桥接配置发生在 Ubuntu 打包的 LXD 之外。那些脚本只能支持一个桥接，并且没有通过 API 暴露，这使得远程配置有点痛苦。</p><p>直到 LXD 2.3，LXD 终于发展了自己的网络管理 API ，并有相应的命令行工具。这篇文章试图来简述这些新的功能。</p><h3 id=基础联网>基础联网</h3><p>在初始情况下，LXD 2.3 没有定义任何网络。<code>lxd init</code> 会为你设置一个，并且默认情况下将所有新的容器连接到它，但是让我们亲手尝试看下究竟发生了些什么。</p><p>要创建一个新的带有随机 IPv4 和 IP6 子网，并启用 NAT 的网络，只需要运行：</p><pre tabindex=0><code>stgraber@castiana:~$ lxc network create testbr0
+Network testbr0 created
+</code></pre><p>你可以如下查看它的配置：</p><pre tabindex=0><code>stgraber@castiana:~$ lxc network show testbr0
+name: testbr0
+config:
+ ipv4.address: 10.150.19.1/24
+ ipv4.nat: &#34;true&#34;
+ ipv6.address: fd42:474b:622d:259d::1/64
+ ipv6.nat: &#34;true&#34;
+managed: true
+type: bridge
+usedby: []
+</code></pre><p>如果你不想要那些自动配置的子网，你可以这么做：</p><pre tabindex=0><code>stgraber@castiana:~$ lxc network create testbr0 ipv6.address=none ipv4.address=10.0.3.1/24 ipv4.nat=true
+Network testbr0 created
+</code></pre><p>那就会这样：</p><pre tabindex=0><code>stgraber@castiana:~$ lxc network show testbr0
+name: testbr0
+config:
+ ipv4.address: 10.0.3.1/24
+ ipv4.nat: &#34;true&#34;
+ ipv6.address: none
+managed: true
+type: bridge
+usedby: []
+</code></pre><p>如果你的容器没有使用它，那么创建的网络对你也没什么用。要将你新创建的网络连接到所有容器，你可以这么做：</p><pre tabindex=0><code>stgraber@castiana:~$ lxc network attach-profile testbr0 default eth0
+</code></pre><p>要将一个网络连接到一个已存在的容器中，你可以这么做：</p><pre tabindex=0><code>stgraber@castiana:~$ lxc network attach my-container default eth0
+</code></pre><p>现在，假设你已经在机器中安装了 openvswitch，并且要将这个网桥转换成 OVS 网桥，只需更改为正确的驱动：</p><pre tabindex=0><code>stgraber@castiana:~$ lxc network set testbr0 bridge.driver openvswitch
+</code></pre><p>如果你想要一次性做一系列修改。<code>lxc network edit</code> 可以让你在编辑器中交互编辑网络配置。</p><h3 id=静态租约及端口安全>静态租约及端口安全</h3><p>使用 LXD 管理 DHCP 服务器的一个好处是可以使得管理 DHCP 租约很简单。你所需要的是一个容器特定的网卡设备以及正确的属性设置。</p><pre tabindex=0><code>root@yak:~# lxc init ubuntu:16.04 c1
+Creating c1
+root@yak:~# lxc network attach testbr0 c1 eth0
+root@yak:~# lxc config device set c1 eth0 ipv4.address 10.0.3.123
+root@yak:~# lxc start c1
+root@yak:~# lxc list c1
++------+---------+-------------------+------+------------+-----------+
+| NAME |  STATE  |        IPV4       | IPV6 |    TYPE    | SNAPSHOTS |
++------+---------+-------------------+------+------------+-----------+
+|  c1  | RUNNING | 10.0.3.123 (eth0) |      | PERSISTENT | 0         |
++------+---------+-------------------+------+------------+-----------+
+</code></pre><p>IPv6 也是相同的方法，但是换成 <code>ipv6.address</code> 属性。</p><p>相似地，如果你想要阻止你的容器更改它的 MAC 地址或者为其他 MAC 地址转发流量（比如嵌套），你可以用下面的命令启用端口安全：</p><pre tabindex=0><code>root@yak:~# lxc config device set c1 eth0 security.mac_filtering true
+</code></pre><h3 id=dns>DNS</h3><p>LXD 在网桥上运行 DNS 服务器。除了设置网桥的 DNS 域（ <code>dns.domain</code> 网络属性）之外，还支持 3 种不同的操作模式（<code>dns.mode</code>）：</p><ul><li><code>managed</code> ：每个容器都会有一条 DNS 记录，匹配它的名字以及已知的 IP 地址。容器无法通过 DHCP 改变这条记录。</li><li><code>dynamic</code> ：允许容器通过 DHCP 在 DNS 中自行注册。因此，在 DHCP 协商期间容器发送的任何主机名最终都出现在 DNS 中。</li><li><code>none</code> ： 针对那些没有任何本地 DNS 记录的递归 DNS 服务器。</li></ul><p>默认的模式是 <code>managed</code>，并且典型的是最安全以及最方便的，因为它为容器提供了 DNS 记录，但是不允许它们通过 DHCP 发送虚假主机名嗅探其他的记录。</p><h3 id=使用隧道>使用隧道</h3><p>除了这些，LXD 还支持使用 GRE 或者 VXLAN 隧道连接到其他主机。</p><p>LXD 网络可以连接任何数量的隧道，从而轻松地创建跨多个主机的网络。这对于开发、测试和演示非常有用，生产环境通常更喜欢使用 VLAN 进行分割。</p><p>所以说，你想在主机 “edfu” 上有一个运行 IPv4 和 IPv6 的基础 “testbr0” 网络，并希望在主机 “djanet” 上使用它来生成容器。最简单的方法是使用组播 VXLAN 隧道。这种类型的隧道仅在两个主机位于同一物理段上时才起作用。</p><pre tabindex=0><code>root@edfu:~# lxc network create testbr0 tunnel.lan.protocol=vxlan
+Network testbr0 created
+root@edfu:~# lxc network attach-profile testbr0 default eth0
+</code></pre><p>它在主机 “edfu” 上定义了一个 “testbr0” 桥接，并为其他主机能加入它设置了一个组播 VXLAN。在这个设置中，“edfu” 为这个网络扮演了一个路由器角色，提供 DHCP、DNS 等等，其他主机只是通过隧道转发流量。</p><pre tabindex=0><code>root@djanet:~# lxc network create testbr0 ipv4.address=none ipv6.address=none tunnel.lan.protocol=vxlan
+Network testbr0 created
+root@djanet:~# lxc network attach-profile testbr0 default eth0
+</code></pre><p>现在你可以在任何一台主机上启动容器，并看到它们从同一个地址池中获取 IP，通过隧道直接互相通讯。</p><p>如先前所述，这个使用了组播，它通常在跨越路由器时无法很好工作。在这些情况下，你可以用单播模式使用 VXLAN 或者 GRE 隧道。</p><p>要使用 GRE 加入另一台主机，首先配置服务主机：</p><pre tabindex=0><code>root@edfu:~# lxc network set testbr0 tunnel.nuturo.protocol gre
+root@edfu:~# lxc network set testbr0 tunnel.nuturo.local 172.17.16.2
+root@edfu:~# lxc network set testbr0 tunnel.nuturo.remote 172.17.16.9
+</code></pre><p>接着是“客户端”主机：</p><pre tabindex=0><code>root@nuturo:~# lxc network create testbr0 ipv4.address=none ipv6.address=none tunnel.edfu.protocol=gre tunnel.edfu.local=172.17.16.9 tunnel.edfu.remote=172.17.16.2
+Network testbr0 created
+root@nuturo:~# lxc network attach-profile testbr0 default eth0
+</code></pre><p>如果你像使用 VXLAN，只要这么做：</p><pre tabindex=0><code>root@edfu:~# lxc network set testbr0 tunnel.edfu.id 10
+root@edfu:~# lxc network set testbr0 tunnel.edfu.protocol vxlan
+</code></pre><p>还有：</p><pre tabindex=0><code>root@nuturo:~# lxc network set testbr0 tunnel.edfu.id 10
+root@nuturo:~# lxc network set testbr0 tunnel.edfu.protocol vxlan
+</code></pre><p>这里需要隧道 id 以防与已经配置的多播 VXLAN 隧道冲突。</p><p>这就是如何使用最近的 LXD 简化跨主机联网了！</p><h3 id=总结>总结</h3><p>LXD 使得从简单的单主机网络到数千个容器的非常复杂的跨主机网络的定义变得更加容易。它也使为一些容器定义一个新网络或者给容器添加第二个设备，并连接到隔离的私有网络变得很简单。</p><p>虽然这篇文章介绍了支持的大部分功能，但仍有一些可以微调 LXD 网络体验的窍门。可以在这里找到完整的列表：<a href=https://github.com/lxc/lxd/blob/master/doc/configuration.md#network-configuration>https://github.com/lxc/lxd/blob/master/doc/configuration.md</a> 。</p><h3 id=额外信息>额外信息</h3><ul><li>LXD 主站：<a href=https://linuxcontainers.org/lxd>https://linuxcontainers.org/lxd</a></li><li>Github 地址： <a href=https://github.com/lxc/lxd>https://github.com/lxc/lxd</a></li><li>邮件列表支持：<a href=https://lists.linuxcontainers.org/>https://lists.linuxcontainers.org</a></li><li>IRC 频道：#lxcontainers on irc.freenode.net</li><li>在线尝试 LXD：<a href=https://linuxcontainers.org/lxd/try-it>https://linuxcontainers.org/lxd/try-it</a></li></ul><hr><p>via: <a href=https://www.stgraber.org/2016/10/27/network-management-with-lxd-2-3/>https://www.stgraber.org/2016/10/27/network-management-with-lxd-2-3/</a></p><p>作者：<a href=https://www.stgraber.org/author/stgraber/>Stéphane Graber</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/lxd/ rel=tag>LXD</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%B9%E5%99%A8/ rel=tag>容器</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

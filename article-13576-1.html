@@ -1,0 +1,156 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 Groovy 解析 JSON 配置文件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 Groovy 解析 JSON 配置文件"><meta property="og:description" content="抛开关于是否使用 JSON 作为配置格式的争论，只需学习如何用 Groovy 来解析它。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13576-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-07-12T23:24:38+00:00"><meta property="article:modified_time" content="2021-07-12T23:24:38+00:00"><meta itemprop=name content="用 Groovy 解析 JSON 配置文件"><meta itemprop=description content="抛开关于是否使用 JSON 作为配置格式的争论，只需学习如何用 Groovy 来解析它。"><meta itemprop=datePublished content="2021-07-12T23:24:38+00:00"><meta itemprop=dateModified content="2021-07-12T23:24:38+00:00"><meta itemprop=wordCount content="560"><meta itemprop=keywords content="JSON,Groovy,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 Groovy 解析 JSON 配置文件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-07-12T23:24:38Z>July 12, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>抛开关于是否使用 JSON 作为配置格式的争论，只需学习如何用 Groovy 来解析它。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202107/12/232406vpp4qrv6ee5a3erz.jpg alt title="Looking back with binoculars"></p><p>应用程序通常包括某种类型的默认或“开箱即用”的状态或配置，以及某种让用户根据自己的需要定制配置的方式。</p><p>例如，<a href=https://www.libreoffice.org/discover/writer/>LibreOffice Writer</a> 通过其菜单栏上的<strong>工具 > 选项</strong>，可以访问诸如用户数据、字体、语言设置等（以及更多的）设置。一些应用程序（如 LibreOffice）提供了一个点选式的用户界面来管理这些设置。有些，像 <a href=https://gitlab.gnome.org/GNOME/tracker>Tracker</a>（GNOME 的“任务”，用于索引文件）使用 XML 文件。还有一些，特别是基于 JavaScript 的应用，使用 JSON，尽管它有许多人抗议（例如，<a href=https://www.lucidchart.com/techblog/2018/07/16/why-json-isnt-a-good-configuration-language/>这位作者</a> 和 <a href=https://medium.com/trabe/stop-using-json-config-files-ab9bc55d82fa>这位其他作者</a>）。</p><p>在这篇文章中，我将回避关于是否使用 JSON 作为配置文件格式的争论，并解释如何使用 <a href=https://groovy-lang.org/>Groovy 编程语言</a> 来解析这类信息。Groovy 以 Java 为基础，但有一套不同的设计重点，使 Groovy 感觉更像 Python。</p><h3 id=安装-groovy>安装 Groovy</h3><p>由于 Groovy 是基于 Java 的，它也需要安装 Java。你可能会在你的 Linux 发行版的软件库中找到最近的、合适的 Java 和 Groovy 版本。或者，你可以按照其网站上的 <a href=https://groovy.apache.org/download.html>说明</a> 安装 Groovy。 Linux 用户的一个不错的选择是 <a href=https://sdkman.io/>SDKMan</a>，你可以使用它来获取 Java、Groovy 和许多其他相关工具的多个版本。 对于本文，我将使用我的发行版的 OpenJDK11 和 SDKMan 的 Groovy 3.0.7。</p><h3 id=演示的-json-配置文件>演示的 JSON 配置文件</h3><p>在这个演示中，我从 <a href=https://www.drupal.org/node/2008800>Drupal</a> 中截取了这个 JSON 文件，它是 Drupal CMS 使用的主要配置文件，并将其保存在文件 <code>config.json</code> 中：</p><pre tabindex=0><code>{
+ &#34;vm&#34;: {
+  &#34;ip&#34;: &#34;192.168.44.44&#34;,
+  &#34;memory&#34;: &#34;1024&#34;,
+  &#34;synced_folders&#34;: [
+   {
+    &#34;host_path&#34;: &#34;data/&#34;,
+    &#34;guest_path&#34;: &#34;/var/www&#34;,
+    &#34;type&#34;: &#34;default&#34;
+   }
+  ],
+  &#34;forwarded_ports&#34;: []
+ },
+ &#34;vdd&#34;: {
+  &#34;sites&#34;: {
+   &#34;drupal8&#34;: {
+    &#34;account_name&#34;: &#34;root&#34;,
+    &#34;account_pass&#34;: &#34;root&#34;,
+    &#34;account_mail&#34;: &#34;box@example.com&#34;,
+    &#34;site_name&#34;: &#34;Drupal 8&#34;,
+    &#34;site_mail&#34;: &#34;box@example.com&#34;,
+    &#34;vhost&#34;: {
+     &#34;document_root&#34;: &#34;drupal8&#34;,
+     &#34;url&#34;: &#34;drupal8.dev&#34;,
+     &#34;alias&#34;: [&#34;www.drupal8.dev&#34;]
+    }
+   },
+   &#34;drupal7&#34;: {
+    &#34;account_name&#34;: &#34;root&#34;,
+    &#34;account_pass&#34;: &#34;root&#34;,
+    &#34;account_mail&#34;: &#34;box@example.com&#34;,
+    &#34;site_name&#34;: &#34;Drupal 7&#34;,
+    &#34;site_mail&#34;: &#34;box@example.com&#34;,
+    &#34;vhost&#34;: {
+     &#34;document_root&#34;: &#34;drupal7&#34;,
+     &#34;url&#34;: &#34;drupal7.dev&#34;,
+     &#34;alias&#34;: [&#34;www.drupal7.dev&#34;]
+    }
+   }
+  }
+ }
+}
+</code></pre><p>这是一个漂亮的、复杂的 JSON 文件，有几层结构，如：</p><pre tabindex=0><code>&lt;&gt;.vdd.sites.drupal8.account_name
+</code></pre><p>和一些列表，如：</p><pre tabindex=0><code>&lt;&gt;.vm.synced_folders
+</code></pre><p>这里，<code>&lt;></code> 代表未命名的顶层。让我们看看 Groovy 是如何处理的。</p><h3 id=用-groovy-解析-json>用 Groovy 解析 JSON</h3><p>Groovy 自带的 <code>groovy.json</code> 包，里面有各种很酷的东西。其中最好的部分是 <code>JsonSlurper</code> 类，它包括几个 <code>parse()</code> 方法，可以将 JSON 转换为 Groovy 的 <code>Map</code>，一种根据键值存储的数据结构。</p><p>下面是一个简短的 Groovy 程序，名为 <code>config1.groovy</code>，它创建了一个 <code>JsonSlurper</code> 实例，然后调用其中的 <code>parse()</code> 方法来解析文件中的 JSON，并将其转换名为 <code>config</code> 的 <code>Map</code> 实例，最后将该 map 输出：</p><pre tabindex=0><code>import groovy.json.JsonSlurper
+
+def jsonSlurper = new JsonSlurper()
+
+def config = jsonSlurper.parse(new File(&#39;config.json&#39;))
+
+println &#34;config = $config&#34;
+</code></pre><p>在终端的命令行上运行这个程序：</p><pre tabindex=0><code>$ groovy config1.groovy
+config = [vm:[ip:192.168.44.44, memory:1024, synced_folders:[[host_path:data/, guest_path:/var/www, type:default]], forwarded_ports:[]], vdd:[sites:[drupal8:[account_name:root, account_pass:root, account_mail:box@example.com, site_name:Drupal 8, site_mail:box@example.com, vhost:[document_root:drupal8, url:drupal8.dev, alias:[www.drupal8.dev]]], drupal7:[account_name:root, account_pass:root, account_mail:box@example.com, site_name:Drupal 7, site_mail:box@example.com, vhost:[document_root:drupal7, url:drupal7.dev, alias:[www.drupal7.dev]]]]]]
+$
+</code></pre><p>输出显示了一个有两个键的顶层映射：<code>vm</code> 和 <code>vdd</code>。每个键都引用了它自己的值的映射。注意 <code>forwarded_ports</code> 键所引用的空列表。</p><p>这很容易，但它所做的只是把东西打印出来。你是如何获得各种组件的呢？下面是另一个程序，显示如何访问存储在 <code>config.vm.ip</code> 的值：</p><pre tabindex=0><code>import groovy.json.JsonSlurper
+
+def jsonSlurper = new JsonSlurper()
+
+def config = jsonSlurper.parse(new File(&#39;config.json&#39;))
+
+println &#34;config.vm.ip = ${config.vm.ip}&#34;
+</code></pre><p>运行它：</p><pre tabindex=0><code>$ groovy config2.groovy
+config.vm.ip = 192.168.44.44
+$
+</code></pre><p>是的，这也很容易。 这利用了 Groovy 速记，这意味着：</p><pre tabindex=0><code>config.vm.ip
+</code></pre><p>在 Groovy 中等同于：</p><pre tabindex=0><code>config[&#39;vm&#39;][&#39;ip&#39;]
+</code></pre><p>当 <code>config</code> 和 <code>config.vm</code> 都是 <code>Map</code> 的实例，并且都等同于在 Java 中的:</p><pre tabindex=0><code>config.get(&#34;vm&#34;).get(&#34;ip&#34;)
+</code></pre><p>仅仅是处理 JSON 就这么多了。如果你想有一个标准的配置并让用户覆盖它呢？在这种情况下，你可能想在程序中硬编码一个 JSON 配置，然后读取用户配置并覆盖任何标准配置的设置。</p><p>假设上面的配置是标准的，而用户只想覆盖其中的一点，只想覆盖 <code>vm</code> 结构中的 <code>ip</code> 和 <code>memory</code> 值，并把它放在 <code>userConfig.json</code> 文件中:</p><pre tabindex=0><code>{
+ &#34;vm&#34;: {
+  &#34;ip&#34;: &#34;201.201.201.201&#34;,
+  &#34;memory&#34;: &#34;4096&#34;,
+ }
+}
+</code></pre><p>你可以用这个程序来做：</p><pre tabindex=0><code>import groovy.json.JsonSlurper
+
+def jsonSlurper = new JsonSlurper()
+
+// 使用 parseText() 来解析一个字符串，而不是从文件中读取。
+// 这给了我们一个“标准配置”
+def standardConfig = jsonSlurper.parseText(&#34;&#34;&#34;
+{
+ &#34;vm&#34;: {
+  &#34;ip&#34;: &#34;192.168.44.44&#34;,
+  &#34;memory&#34;: &#34;1024&#34;,
+  &#34;synced_folders&#34;: [
+   {
+    &#34;host_path&#34;: &#34;data/&#34;,
+    &#34;guest_path&#34;: &#34;/var/www&#34;,
+    &#34;type&#34;: &#34;default&#34;
+   }
+  ],
+  &#34;forwarded_ports&#34;: []
+ },
+ &#34;vdd&#34;: {
+  &#34;sites&#34;: {
+   &#34;drupal8&#34;: {
+    &#34;account_name&#34;: &#34;root&#34;,
+    &#34;account_pass&#34;: &#34;root&#34;,
+    &#34;account_mail&#34;: &#34;box@example.com&#34;,
+    &#34;site_name&#34;: &#34;Drupal 8&#34;,
+    &#34;site_mail&#34;: &#34;box@example.com&#34;,
+    &#34;vhost&#34;: {
+     &#34;document_root&#34;: &#34;drupal8&#34;,
+     &#34;url&#34;: &#34;drupal8.dev&#34;,
+     &#34;alias&#34;: [&#34;www.drupal8.dev&#34;]
+    }
+   },
+   &#34;drupal7&#34;: {
+    &#34;account_name&#34;: &#34;root&#34;,
+    &#34;account_pass&#34;: &#34;root&#34;,
+    &#34;account_mail&#34;: &#34;box@example.com&#34;,
+    &#34;site_name&#34;: &#34;Drupal 7&#34;,
+    &#34;site_mail&#34;: &#34;box@example.com&#34;,
+    &#34;vhost&#34;: {
+     &#34;document_root&#34;: &#34;drupal7&#34;,
+     &#34;url&#34;: &#34;drupal7.dev&#34;,
+     &#34;alias&#34;: [&#34;www.drupal7.dev&#34;]
+    }
+   }
+  }
+ }
+}
+&#34;&#34;&#34;)
+
+// 打印标准配置
+println &#34;standardConfig = $standardConfig&#34;
+
+//读入并解析用户配置信息
+def userConfig = jsonSlurper.parse(new File(&#39;userConfig.json&#39;))
+
+// 打印出用户配置信息
+println &#34;userConfig = $userConfig&#34;
+
+// 一个将用户配置与标准配置合并的函数
+def mergeMaps(Map input, Map merge) {
+  merge.each { k, v -&amp;gt;
+    if (v instanceof Map)
+      mergeMaps(input[k], v)
+    else
+      input[k] = v
+  }
+}
+
+// 合并配置并打印出修改后的标准配置
+mergeMaps(standardConfig, userConfig)
+
+println &#34;modified standardConfig $standardConfig&#34;
+</code></pre><p>以下列方式运行：</p><pre tabindex=0><code>$ groovy config3.groovy
+standardConfig = [vm:[ip:192.168.44.44, memory:1024, synced_folders:[[host_path:data/, guest_path:/var/www, type:default]], forwarded_ports:[]], vdd:[sites:[drupal8:[account_name:root, account_pass:root, account_mail:box@example.com, site_name:Drupal 8, site_mail:box@example.com, vhost:[document_root:drupal8, url:drupal8.dev, alias:[www.drupal8.dev]]], drupal7:[account_name:root, account_pass:root, account_mail:box@example.com, site_name:Drupal 7, site_mail:box@example.com, vhost:[document_root:drupal7, url:drupal7.dev, alias:[www.drupal7.dev]]]]]]
+userConfig = [vm:[ip:201.201.201.201, memory:4096]]
+modified standardConfig [vm:[ip:201.201.201.201, memory:4096, synced_folders:[[host_path:data/, guest_path:/var/www, type:default]], forwarded_ports:[]], vdd:[sites:[drupal8:[account_name:root, account_pass:root, account_mail:box@example.com, site_name:Drupal 8, site_mail:box@example.com, vhost:[document_root:drupal8, url:drupal8.dev, alias:[www.drupal8.dev]]], drupal7:[account_name:root, account_pass:root, account_mail:box@example.com, site_name:Drupal 7, site_mail:box@example.com, vhost:[document_root:drupal7, url:drupal7.dev, alias:[www.drupal7.dev]]]]]]
+$
+</code></pre><p>以 <code>modified standardConfig</code> 开头的一行显示，<code>vm.ip</code> and <code>vm.memory</code> 的值被覆盖了。</p><p>眼尖的读者会注意到，我没有检查畸形的 JSON，也没有仔细确保用户的配置是有意义的（不创建新字段，提供合理的值，等等）。所以用这个递归方法来合并两个映射在现实中可能并不那么实用。</p><p>好吧，我必须为家庭作业留下 <em>一些</em> 东西，不是吗？</p><h3 id=groovy-资源>Groovy 资源</h3><p>Apache Groovy 网站有很多很棒的 <a href=http://groovy-lang.org/documentation.html>文档</a>。另一个很棒的 Groovy 资源是 <a href=https://blog.mrhaki.com/>Mr. Haki</a>。学习 Groovy 的一个非常好的理由是继续学习 <a href=https://grails.org/>Grails</a>，它是一个非常高效的全栈 Web 框架，建立在 Hibernate、Spring Boot 和 Micronaut 等优秀组件之上。</p><hr><p>via: <a href=https://opensource.com/article/21/6/groovy-parse-json>https://opensource.com/article/21/6/groovy-parse-json</a></p><p>作者：<a href=https://opensource.com/users/clhermansen>Chris Hermansen</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/json/ rel=tag>JSON</a></li><li class=tags__item><a class="tags__link btn" href=/tags/groovy/ rel=tag>Groovy</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

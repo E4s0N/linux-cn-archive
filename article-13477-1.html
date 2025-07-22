@@ -1,0 +1,34 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Python 3.9 如何修复装饰器并改进字典 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Python 3.9 如何修复装饰器并改进字典"><meta property="og:description" content="探索最近版本的 Python 的一些有用的特性。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13477-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-06-12T11:53:21+00:00"><meta property="article:modified_time" content="2021-06-12T11:53:21+00:00"><meta itemprop=name content="Python 3.9 如何修复装饰器并改进字典"><meta itemprop=description content="探索最近版本的 Python 的一些有用的特性。"><meta itemprop=datePublished content="2021-06-12T11:53:21+00:00"><meta itemprop=dateModified content="2021-06-12T11:53:21+00:00"><meta itemprop=wordCount content="132"><meta itemprop=keywords content="Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Python 3.9 如何修复装饰器并改进字典</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-06-12T11:53:21Z>June 12, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>探索最近版本的 Python 的一些有用的特性。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202106/12/115315xrnd4evse8uzpi8i.jpg alt title="Python in a coffee cup."></p><p>这是 Python 3.x 首发特性系列文章中的第十篇，其中一些版本已经发布了一段时间。Python 3.9 在 2020 年首次发布，具有很酷的新特性，但仍未被充分利用。下面是其中的三个。</p><h3 id=添加字典>添加字典</h3><p>假设你有一个 <code>defaults</code> 字典，而你想更新它的参数。在 Python 3.9 之前，最好的办法是复制 <code>defaults</code> 字典，然后使用 <code>.update()</code> 方法。</p><p>Python 3.9 为字典引入了联合运算符：</p><pre tabindex=0><code>defaults = dict(who=&#34;someone&#34;, where=&#34;somewhere&#34;)
+params = dict(where=&#34;our town&#34;, when=&#34;today&#34;)
+defaults | params
+</code></pre><pre tabindex=0><code>    {&#39;who&#39;: &#39;someone&#39;, &#39;where&#39;: &#39;our town&#39;, &#39;when&#39;: &#39;today&#39;}
+</code></pre><p>注意，顺序很重要。在这种情况下，正如预期，来自 <code>params</code> 的 <code>where</code> 值覆盖了默认值。</p><h3 id=删除前缀>删除前缀</h3><p>如果你用 Python 做临时的文本解析或清理，你会写出这样的代码：</p><pre tabindex=0><code>def process_pricing_line(line):
+    if line.startswith(&#34;pricing:&#34;):
+        return line[len(&#34;pricing:&#34;):]
+    return line
+process_pricing_line(&#34;pricing:20&#34;)
+</code></pre><pre tabindex=0><code>    &#39;20&#39;
+</code></pre><p>这样的代码很容易出错。例如，如果字符串被错误地复制到下一行，价格就会变成 <code>0</code> 而不是 <code>20</code>，而且会悄悄地发生。</p><p>从 Python 3.9 开始，字符串有了一个 <code>.lstrip()</code> 方法：</p><pre tabindex=0><code>&#34;pricing:20&#34;.lstrip(&#34;pricing:&#34;)
+</code></pre><pre tabindex=0><code>    &#39;20&#39;
+</code></pre><h3 id=任意的装饰器表达式>任意的装饰器表达式</h3><p>以前，关于装饰器中允许哪些表达式的规则没有得到充分的说明，而且很难理解。例如：虽然</p><pre tabindex=0><code>@item.thing
+def foo():
+    pass
+</code></pre><p>是有效的，而且：</p><pre tabindex=0><code>@item.thing()
+def foo():
+    pass
+</code></pre><p>是有效的，相似地：</p><pre tabindex=0><code>@item().thing
+def foo():
+    pass
+</code></pre><p>产生一个语法错误。</p><p>从 Python 3.9 开始，任何表达式作为装饰器都是有效的：</p><pre tabindex=0><code>from unittest import mock
+
+item = mock.MagicMock()
+
+@item().thing
+def foo():
+    pass
+print(item.return_value.thing.call_args[0][0])
+</code></pre><pre tabindex=0><code>    &lt;function foo at 0x7f3733897040&gt;
+</code></pre><p>虽然在装饰器中保持简单的表达式仍然是一个好主意，但现在是人类的决定，而不是 Python 分析器的选择。</p><h3 id=欢迎来到-2020-年>欢迎来到 2020 年</h3><p>Python 3.9 大约在一年前发布，但在这个版本中首次出现的一些特性非常酷，而且没有得到充分利用。如果你还没使用，那么将它们添加到你的工具箱中。</p><hr><p>via: <a href=https://opensource.com/article/21/5/python-39-features>https://opensource.com/article/21/5/python-39-features</a></p><p>作者：<a href=https://opensource.com/users/moshez>Moshe Zadka</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,63 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Linux 中查找服务的端口号 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Linux 中查找服务的端口号"><meta property="og:description" content="由于某些原因，你可能经常需要查找端口名称和端口号。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11066-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-07-06T13:36:13+00:00"><meta property="article:modified_time" content="2019-07-06T13:36:13+00:00"><meta itemprop=name content="如何在 Linux 中查找服务的端口号"><meta itemprop=description content="由于某些原因，你可能经常需要查找端口名称和端口号。"><meta itemprop=datePublished content="2019-07-06T13:36:13+00:00"><meta itemprop=dateModified content="2019-07-06T13:36:13+00:00"><meta itemprop=wordCount content="289"><meta itemprop=keywords content="端口,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Linux 中查找服务的端口号</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-07-06T13:36:13Z>July 06, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201907/06/133619g0ncdadqaci0nebs.png alt="Find The Port Number Of A Service In Linux OS"></p><p>由于某些原因，你可能经常需要查找端口名称和端口号。如果是这样，你很幸运。今天，在这个简短的教程中，我们将看到在 Linux 系统中最简单、最快捷的查找服务端口号的方法。可能有很多方法可以做到，但我目前只知道以下三种方法。请继续阅读。</p><h3 id=在-linux-中查找服务的端口号>在 Linux 中查找服务的端口号</h3><h4 id=方法1使用-grep-命令>方法1：使用 grep 命令</h4><p>要使用 <code>grep</code> 命令在 Linux 中查找指定服务的默认端口号，只需运行：</p><pre tabindex=0><code>$ grep &lt;port&gt; /etc/services
+</code></pre><p>例如，要查找 SSH 服务的默认端口，只需运行：</p><pre tabindex=0><code>$ grep ssh /etc/services
+</code></pre><p>就这么简单。此命令应该适用于大多数 Linux 发行版。以下是我的 Arch Linux 测试机中的示例输出：</p><pre tabindex=0><code>ssh 22/tcp
+ssh 22/udp
+ssh 22/sctp
+sshell 614/tcp
+sshell 614/udp
+netconf-ssh 830/tcp
+netconf-ssh 830/udp
+sdo-ssh 3897/tcp
+sdo-ssh 3897/udp
+netconf-ch-ssh 4334/tcp
+snmpssh 5161/tcp
+snmpssh-trap 5162/tcp
+tl1-ssh 6252/tcp
+tl1-ssh 6252/udp
+ssh-mgmt 17235/tcp
+ssh-mgmt 17235/udp
+</code></pre><p>正如你在上面的输出中所看到的，SSH 服务的默认端口号是 22。</p><p>让我们找到 Apache Web 服务器的端口号。为此，命令是：</p><pre tabindex=0><code>$ grep http /etc/services
+# http://www.iana.org/assignments/port-numbers
+http 80/tcp www www-http # WorldWideWeb HTTP
+http 80/udp www www-http # HyperText Transfer Protocol
+http 80/sctp # HyperText Transfer Protocol
+https 443/tcp # http protocol over TLS/SSL
+https 443/udp # http protocol over TLS/SSL
+https 443/sctp # http protocol over TLS/SSL
+gss-http 488/tcp
+gss-http 488/udp
+webcache 8080/tcp http-alt # WWW caching service
+webcache 8080/udp http-alt # WWW caching service
+[...]
+</code></pre><p>FTP 端口号是什么？这很简单！</p><pre tabindex=0><code>$ grep ftp /etc/services
+ftp-data 20/tcp
+ftp-data 20/udp
+# 21 is registered to ftp, but also used by fsp
+ftp 21/tcp
+ftp 21/udp fsp fspd
+tftp 69/tcp
+[...]
+</code></pre><h4 id=方法-2使用-getent-命令>方法 2：使用 getent 命令</h4><p>如你所见，上面的命令显示指定搜索词 “ssh”、“http” 和 “ftp” 的所有端口名称和数字。这意味着，你将获得与给定搜索词匹配的所有端口名称的相当长的输出。</p><p>但是，你可以使用 <code>getent</code> 命令精确输出结果，如下所示：</p><pre tabindex=0><code>$ getent services ssh
+ssh 22/tcp
+
+$ getent services http
+http 80/tcp www www-http
+
+$ getent services ftp
+ftp 21/tcp
+</code></pre><p>如果你不知道端口名称，但是知道端口号，那么你只需将端口名称替换为数字：</p><pre tabindex=0><code>$ getent services 80
+http 80/tcp
+</code></pre><p>要显示所有端口名称和端口号，只需运行：</p><pre tabindex=0><code>$ getent services
+</code></pre><h4 id=方法-3使用-whatportis-程序>方法 3：使用 Whatportis 程序</h4><p>Whatportis 是一个简单的 Python 脚本，来用于查找端口名称和端口号。与上述命令不同，此程序以漂亮的表格形式输出。</p><p>确保已安装 pip 包管理器。如果没有，请参考以下链接。</p><ul><li><a href=https://www.ostechnix.com/manage-python-packages-using-pip/>如何使用 pip 管理 Python 包</a></li></ul><p>安装 pip 后，运行以下命令安装 Whatportis 程序。</p><pre tabindex=0><code>$ pip install whatportis
+</code></pre><p>现在，你可以找到与服务关联的端口，如下所示。</p><pre tabindex=0><code>$ whatportis ssh
+
+$ whatportis ftp
+
+$ whatportis http
+</code></pre><p>我的 CentOS 7 服务器的示例输出：</p><p><img src=/data/attachment/album/201907/06/133620yv57vvj0qqvv3quz.png alt></p><p><em>在 Linux 中查找服务的端口号</em></p><p>如果你不知道服务的确切名称，请使用 <code>–like</code> 标志来显示相关结果。</p><pre tabindex=0><code>$ whatportis mysql --like
+</code></pre><p>上述命令帮助你查找与服务关联的端口。你还可以找到与端口号相关联的服务，如下所示。</p><pre tabindex=0><code>$ whatportis 993
+</code></pre><p>你甚至可以以 JSON 格式显示结果。</p><pre tabindex=0><code>$ whatportis 993 --json
+</code></pre><p><img src=/data/attachment/album/201907/06/133621hdxbewr4refgzbe5.png alt></p><p>有关更多详细信息，请参阅 GitHub 仓库。</p><ul><li><a href=https://github.com/ncrocfer/whatportis>Whatportis GitHub 仓库</a></li></ul><p>就是这些了。你现在知道了如何使用三种简单方法在 Linux 中查找端口名称和端口号。如果你知道任何其他方法/命令，请在下面的评论栏告诉我。我会查看并更相应地更新本指南。</p><hr><p>via: <a href=https://www.ostechnix.com/how-to-find-the-port-number-of-a-service-in-linux/>https://www.ostechnix.com/how-to-find-the-port-number-of-a-service-in-linux/</a></p><p>作者：<a href=https://www.ostechnix.com/author/sk/>sk</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%AB%AF%E5%8F%A3/ rel=tag>端口</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

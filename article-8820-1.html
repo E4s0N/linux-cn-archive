@@ -1,0 +1,118 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>六个优雅的 Linux 命令行技巧 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="六个优雅的 Linux 命令行技巧"><meta property="og:description" content="使用 Linux 命令工作可以获得许多乐趣，但是如果您使用一些命令，它们可以减少您的工作或以有趣的方式显示信息时，您将获得更多的乐趣。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8820-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-08-30T08:13:00+00:00"><meta property="article:modified_time" content="2017-08-30T08:13:00+00:00"><meta itemprop=name content="六个优雅的 Linux 命令行技巧"><meta itemprop=description content="使用 Linux 命令工作可以获得许多乐趣，但是如果您使用一些命令，它们可以减少您的工作或以有趣的方式显示信息时，您将获得更多的乐趣。"><meta itemprop=datePublished content="2017-08-30T08:13:00+00:00"><meta itemprop=dateModified content="2017-08-30T08:13:00+00:00"><meta itemprop=wordCount content="823"><meta itemprop=keywords content="命令行,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>六个优雅的 Linux 命令行技巧</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-08-30T08:13:00Z>August 30, 2017</time></div></div></header><div class="content post__content clearfix"><blockquote><p>一些非常有用的命令能让命令行的生活更满足</p></blockquote><p><img src=/data/attachment/album/201708/29/231508v5fzz98954s9ffd4.jpg alt="command key keyboard"></p><p>使用 Linux 命令工作可以获得许多乐趣，但是如果您使用一些命令，它们可以减少您的工作或以有趣的方式显示信息时，您将获得更多的乐趣。在今天的文章中，我们将介绍六个命令，它们可能会使你用在命令行上的时间更加值当。</p><h3 id=watch>watch</h3><p><code>watch</code> 命令会重复运行您给出的任何命令，并显示输出。默认情况下，它每两秒运行一次命令。命令的每次运行都将覆盖上一次运行时显示的内容，因此您始终可以看到最新的数据。</p><p>您可能会在等待某人登录时使用它。在这种情况下，您可以使用 <code>watch who</code> 命令或者 <code>watch -n 15 who</code> 命令使每 15 秒运行一次，而不是两秒一次。另外终端窗口的右上角会显示日期和时间。</p><pre tabindex=0><code>$ watch -n 5 who
+Every 5.0s: who                               stinkbug: Wed Aug 23 14:52:15 2017
+
+shs      pts/0        2017-08-23 14:45 (192.168.0.11)
+zoe      pts/1        2017-08-23 08:15 (192.168.0.19)
+</code></pre><p>您也可以使用它来查看日志文件。如果您显示的数据没有任何变化，则只有窗口角落里的日期和时间会发生变化。</p><pre tabindex=0><code>$ watch tail /var/log/syslog
+Every 2.0s: tail /var/log/syslog              stinkbug: Wed Aug 23 15:16:37 2017
+
+Aug 23 14:45:01 stinkbug CRON[7214]: (root) CMD (command -v debian-sa1 &gt; /dev/nu
+ll &amp;&amp; debian-sa1 1 1)
+Aug 23 14:45:17 stinkbug systemd[1]: Started Session 179 of user shs.
+Aug 23 14:55:01 stinkbug CRON[7577]: (root) CMD (command -v debian-sa1 &gt; /dev/nu
+ll &amp;&amp; debian-sa1 1 1)
+Aug 23 15:05:01 stinkbug CRON[7582]: (root) CMD (command -v debian-sa1 &gt; /dev/nu
+ll &amp;&amp; debian-sa1 1 1)
+Aug 23 15:08:48 stinkbug systemd[1]: Starting Cleanup of Temporary Directories...
+Aug 23 15:08:48 stinkbug systemd-tmpfiles[7584]: [/usr/lib/tmpfiles.d/var.conf:1
+4] Duplicate line for path &#34;/var/log&#34;, ignoring.
+Aug 23 15:08:48 stinkbug systemd[1]: Started Cleanup of Temporary Directories.
+Aug 23 15:13:41 stinkbug systemd[1]: Started Session 182 of user shs.
+Aug 23 15:14:29 stinkbug systemd[1]: Started Session 183 of user shs.
+Aug 23 15:15:01 stinkbug CRON[7828]: (root) CMD (command -v debian-sa1 &gt; /dev/nu
+ll &amp;&amp; debian-sa1 1 1)
+</code></pre><p>这里的输出和使用命令 <code>tail -f /var/log/syslog</code> 的输出相似。</p><h3 id=look>look</h3><p>这个命令的名字 <code>look</code> 可能会让我们以为它和 <code>watch</code> 做类似的事情，但其实是不同的。<code>look</code> 命令用于搜索以某个特定字符串开头的单词。</p><pre tabindex=0><code>$ look ecl
+eclectic
+eclectic&#39;s
+eclectically
+eclecticism
+eclecticism&#39;s
+eclectics
+eclipse
+eclipse&#39;s
+eclipsed
+eclipses
+eclipsing
+ecliptic
+ecliptic&#39;s
+</code></pre><p><code>look</code> 命令通常有助于单词的拼写，它使用 <code>/usr/share/dict/words</code> 文件，除非你使用如下的命令指定了文件名：</p><pre tabindex=0><code>$ look esac .bashrc
+esac
+esac
+esac
+</code></pre><p>在这种情况下，它的作用就像跟在一个 <code>awk</code> 命令后面的 <code>grep</code> ，只打印匹配行上的第一个单词。</p><h3 id=man--k>man -k</h3><p><code>man -k</code> 命令列出包含指定单词的手册页。它的工作基本上和 <code>apropos</code> 命令一样。</p><pre tabindex=0><code>$ man -k logrotate
+dh_installlogrotate (1) - install logrotate config files
+logrotate (8)        - rotates, compresses, and mails system logs
+logrotate.conf (5)   - rotates, compresses, and mails system logs
+</code></pre><h3 id=help>help</h3><p>当你完全绝望的时候，您可能会试图使用此命令，<code>help</code> 命令实际上是显示一个 shell 内置命令的列表。最令人惊讶的是它有相当多的参数变量。你可能会看到这样的东西，然后开始想知道这些内置功能可以为你做些什么：</p><pre tabindex=0><code>$ help
+GNU bash, version 4.4.7(1)-release (i686-pc-linux-gnu)
+These shell commands are defined internally.  Type `help&#39; to see this list.
+Type `help name&#39; to find out more about the function `name&#39;.
+Use `info bash&#39; to find out more about the shell in general.
+Use `man -k&#39; or `info&#39; to find out more about commands not in this list.
+
+A star (*) next to a name means that the command is disabled.
+
+ job_spec [&amp;]                            history [-c] [-d offset] [n] or hist&gt;
+ (( expression ))                        if COMMANDS; then COMMANDS; [ elif C&gt;
+ . filename [arguments]                  jobs [-lnprs] [jobspec ...] or jobs &gt;
+ :                                       kill [-s sigspec | -n signum | -sigs&gt;
+ [ arg... ]                              let arg [arg ...]
+ [[ expression ]]                        local [option] name[=value] ...
+ alias [-p] [name[=value] ... ]          logout [n]
+ bg [job_spec ...]                       mapfile [-d delim] [-n count] [-O or&gt;
+ bind [-lpsvPSVX] [-m keymap] [-f file&gt;  popd [-n] [+N | -N]
+ break [n]                               printf [-v var] format [arguments]
+ builtin [shell-builtin [arg ...]]       pushd [-n] [+N | -N | dir]
+ caller [expr]                           pwd [-LP]
+ case WORD in [PATTERN [| PATTERN]...)&gt;  read [-ers] [-a array] [-d delim] [-&gt;
+ cd [-L|[-P [-e]] [-@]] [dir]            readarray [-n count] [-O origin] [-s&gt;
+ command [-pVv] command [arg ...]        readonly [-aAf] [name[=value] ...] o&gt;
+ compgen [-abcdefgjksuv] [-o option] [&gt;  return [n]
+ complete [-abcdefgjksuv] [-pr] [-DE] &gt;  select NAME [in WORDS ... ;] do COMM&gt;
+ compopt [-o|+o option] [-DE] [name ..&gt;  set [-abefhkmnptuvxBCHP] [-o option-&gt;
+ continue [n]                            shift [n]
+ coproc [NAME] command [redirections]    shopt [-pqsu] [-o] [optname ...]
+ declare [-aAfFgilnrtux] [-p] [name[=v&gt;  source filename [arguments]
+ dirs [-clpv] [+N] [-N]                  suspend [-f]
+ disown [-h] [-ar] [jobspec ... | pid &gt;  test [expr]
+ echo [-neE] [arg ...]                   time [-p] pipeline
+ enable [-a] [-dnps] [-f filename] [na&gt;  times
+ eval [arg ...]                          trap [-lp] [[arg] signal_spec ...]
+ exec [-cl] [-a name] [command [argume&gt;  true
+ exit [n]                                type [-afptP] name [name ...]
+ export [-fn] [name[=value] ...] or ex&gt;  typeset [-aAfFgilnrtux] [-p] name[=v&gt;
+ false                                   ulimit [-SHabcdefiklmnpqrstuvxPT] [l&gt;
+ fc [-e ename] [-lnr] [first] [last] o&gt;  umask [-p] [-S] [mode]
+ fg [job_spec]                           unalias [-a] name [name ...]
+ for NAME [in WORDS ... ] ; do COMMAND&gt;  unset [-f] [-v] [-n] [name ...]
+ for (( exp1; exp2; exp3 )); do COMMAN&gt;  until COMMANDS; do COMMANDS; done
+ function name { COMMANDS ; } or name &gt;  variables - Names and meanings of so&gt;
+ getopts optstring name [arg]            wait [-n] [id ...]
+ hash [-lr] [-p pathname] [-dt] [name &gt;  while COMMANDS; do COMMANDS; done
+ help [-dms] [pattern ...]               { COMMANDS ; }
+</code></pre><h3 id=stat--c>stat -c</h3><p><code>stat</code> 命令用于显示文件的大小、所有者、用户组、索引节点号、权限、修改和访问时间等重要的统计信息。这是一个非常有用的命令，可以显示比 <code>ls -l</code> 更多的细节。</p><pre tabindex=0><code>$ stat .bashrc
+  File: .bashrc
+  Size: 4048            Blocks: 8          IO Block: 4096   regular file
+Device: 806h/2054d      Inode: 421481      Links: 1
+Access: (0644/-rw-r--r--)  Uid: ( 1000/     shs)   Gid: ( 1000/     shs)
+Access: 2017-08-23 15:13:41.781809933 -0400
+Modify: 2017-06-21 17:37:11.875157790 -0400
+Change: 2017-06-21 17:37:11.899157791 -0400
+ Birth: -
+</code></pre><p>使用 <code>-c</code> 选项，您可以指定要查看的字段。例如，如果您只想查看一个文件或一系列文件的文件名和访问权限，则可以这样做：</p><pre tabindex=0><code>$ stat -c &#39;%n %a&#39; .bashrc
+.bashrc 644
+</code></pre><p>在此命令中， <code>%n</code> 表示每个文件的名称，而 <code>%a</code> 表示访问权限。<code>%u</code> 表示数字类型的 UID，而 <code>%U</code> 表示用户名。</p><pre tabindex=0><code>$ stat -c &#39;%n %a&#39; bin/*
+bin/loop 700
+bin/move2nohup 700
+bin/nohup.out 600
+bin/show_release 700
+
+$ stat -c &#39;%n %a %U&#39; bin/*
+bin/loop 700 shs
+bin/move2nohup 700 shs
+bin/nohup.out 600 root
+bin/show_release 700 shs
+</code></pre><h3 id=tab>TAB</h3><p>如果你没有使用过 tab 键来补全文件名，你真的错过了一个非常有用的命令行技巧。tab 键提供文件名补全功能（包括使用 <code>cd</code> 时的目录）。它在出现歧义之前尽可能多的填充文件名（多个文件以相同的字母开头。如果您有一个名为 <code>bigplans</code> 的文件，另一个名为 <code>bigplans2017</code> 的文件会发生歧义，你将听到一个声音，然后需要决定是按下回车键还是输入 <code>2</code> 之后再按下 tab 键选择第二个文件。</p><p>（题图：<a href=https://www.flickr.com/photos/micahdowty/4630801442/in/photolist-84d4Wb-p29iHU-dscgLx-pXKT7a-pXKT7v-azMz3V-azMz7M-4Amp2h-6iyQ51-4nf4VF-5C1gt6-6P4PwG-po6JEA-p6C5Wg-6RcRbH-7GAmbK-dCkRnT-7ETcBp-4Xbhrw-dXrN8w-dXm83Z-dXrNvQ-dXrMZC-dXrMPN-pY4GdS-azMz8X-bfNoF4-azQe61-p1iUtm-87i3vj-7enNsv-6sqvJy-dXm8aD-6smkyX-5CFfGm-dXm8dD-6sqviw-6sqvVU-dXrMVd-6smkXc-dXm7Ug-deuxUg-6smker-Hd15p-6squyf-aGtnxn-6smjRX-5YtTUN-nynqYm-ea5o3c>Micah Elizabeth Scott</a> <a href=https://creativecommons.org/licenses/by/2.0/legalcode>(CC BY 2.0)</a>）</p><hr><p>via: <a href=https://www.networkworld.com/article/3219684/linux/half-a-dozen-clever-linux-command-line-tricks.html>https://www.networkworld.com/article/3219684/linux/half-a-dozen-clever-linux-command-line-tricks.html</a></p><p>作者：<a href=https://www.networkworld.com/author/Sandra-Henry_Stocker/>Sandra Henry-Stocker</a> 译者：<a href=https://github.com/firmianay>firmianay</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/ rel=tag>命令行</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

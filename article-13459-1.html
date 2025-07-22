@@ -1,0 +1,51 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用这个 Python 3.7 的特性来切片无限生成器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用这个 Python 3.7 的特性来切片无限生成器"><meta property="og:description" content="了解更多关于这个和其他两个未被充分利用但仍然有用的 Python 特性。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13459-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-06-05T23:10:07+00:00"><meta property="article:modified_time" content="2021-06-05T23:10:07+00:00"><meta itemprop=name content="用这个 Python 3.7 的特性来切片无限生成器"><meta itemprop=description content="了解更多关于这个和其他两个未被充分利用但仍然有用的 Python 特性。"><meta itemprop=datePublished content="2021-06-05T23:10:07+00:00"><meta itemprop=dateModified content="2021-06-05T23:10:07+00:00"><meta itemprop=wordCount content="163"><meta itemprop=keywords content="Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用这个 Python 3.7 的特性来切片无限生成器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-06-05T23:10:07Z>June 05, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>了解更多关于这个和其他两个未被充分利用但仍然有用的 Python 特性。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202106/05/230956bgcjacwcyujlndez.jpg alt title="Hands on a keyboard with a Python book "></p><p>这是关于 Python 3.x 首发特性系列文章的第八篇。<a href=https://opensource.com/downloads/cheat-sheet-python-37-beginners>Python 3.7</a> 于 2018 年首次发布，尽管它已经发布了几年，但它引入的许多特性都未被充分利用，而且相当酷。下面是其中的三个。</p><h3 id=注解推迟评估>注解推迟评估</h3><p>在 Python 3.7 中，只要激活了正确的 <code>__future__</code> 标志，注解在运行时就不会被评估：</p><pre tabindex=0><code>from __future__ import annotations
+
+def another_brick(wall: List[Brick], brick: Brick) -&gt; Education:
+    pass
+</code></pre><pre tabindex=0><code>another_brick.__annotations__
+</code></pre><pre tabindex=0><code>    {&#39;wall&#39;: &#39;List[Brick]&#39;, &#39;brick&#39;: &#39;Brick&#39;, &#39;return&#39;: &#39;Education&#39;}
+</code></pre><p>它使递归类型（指向自己的类）和其他有趣的事情成为了可能。然而，这意味着如果你想做自己的类型分析，你需要明确地使用 <code>ast</code>。</p><pre tabindex=0><code>import ast
+raw_type = another_brick.__annotations__[&#39;wall&#39;]
+[parsed_type] = ast.parse(raw_type).body
+</code></pre><pre tabindex=0><code>subscript = parsed_type.value
+f&#34;{subscript.value.id}[{subscript.slice.id}]&#34;
+</code></pre><pre tabindex=0><code>    &#39;List[Brick]&#39;
+</code></pre><h3 id=itertoolsislice-支持-index>itertools.islice 支持 <strong>index</strong></h3><p>Python 中的序列切片长期以来一直接受各种 <em>类 int 对象</em>（具有 <code>__index__()</code> 的对象）作为有效的切片部分。然而，直到 Python 3.7，<code>itertools.islice</code>，即核心 Python 中对无限生成器进行切片的唯一方法，才获得了这种支持。</p><p>例如，现在可以用 <code>numpy.short</code> 大小的整数来切片无限生成器：</p><pre tabindex=0><code>import numpy
+short_1 = numpy.short(1)
+short_3 = numpy.short(3)
+short_1, type(short_1)
+</code></pre><pre tabindex=0><code>    (1, numpy.int16)
+</code></pre><pre tabindex=0><code>import itertools
+list(itertools.islice(itertools.count(), short_1, short_3))
+</code></pre><pre tabindex=0><code>    [1, 2]
+</code></pre><h3 id=functoolssingledispatch-注解注册>functools.singledispatch() 注解注册</h3><p>如果你认为 <a href=https://opensource.com/article/19/5/python-singledispatch>singledispatch</a> 已经很酷了，你错了。现在可以根据注解来注册了：</p><pre tabindex=0><code>import attr
+import math
+from functools import singledispatch
+
+@attr.s(auto_attribs=True, frozen=True)
+class Circle:
+    radius: float
+       
+@attr.s(auto_attribs=True, frozen=True)
+class Square:
+    side: float
+
+@singledispatch
+def get_area(shape):
+    raise NotImplementedError(&#34;cannot calculate area for unknown shape&#34;,
+                              shape)
+
+@get_area.register
+def _get_area_square(shape: Square):
+    return shape.side ** 2
+
+@get_area.register
+def _get_area_circle(shape: Circle):
+    return math.pi * (shape.radius ** 2)
+
+get_area(Circle(1)), get_area(Square(1))
+</code></pre><pre tabindex=0><code>    (3.141592653589793, 1)
+</code></pre><h3 id=欢迎来到-2017-年>欢迎来到 2017 年</h3><p>Python 3.7 大约是四年前发布的，但是在这个版本中首次出现的一些特性非常酷，而且没有得到充分利用。如果你还没使用，那么将它们添加到你的工具箱中。</p><hr><p>via: <a href=https://opensource.com/article/21/5/python-37-features>https://opensource.com/article/21/5/python-37-features</a></p><p>作者：<a href=https://opensource.com/users/moshez>Moshe Zadka</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

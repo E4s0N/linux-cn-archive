@@ -1,0 +1,168 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 backupninja 为 Debian 定制备份计划 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 backupninja 为 Debian 定制备份计划"><meta property="og:description" content="backupninja是Debian系统（以及基于Debian的发行版）中一个强大的、高度可配置的备份软件。在前一篇文章中，我们探讨了如何安装backupninja以及如何设置两个备份操作并执行。然而，那些只是冰山一角。这一次，我们要讨论如何定制 Handler 和 Helper ，使用这些功能定制策略以完成任何备份需要。  回顾 backupninja backupninja的一个独特的地方是它可以完全抛弃/etc/backup.d中的纯文本配置文件和操作文件，软件自己会搞定。另外，我们可以编写自定义脚本（又叫 handler）放在/usr/share/backupninja 目录下来完成不同类型的备份操作。此"><meta property="og:type" content="article"><meta property="og:url" content="/article-5212-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-04-07T14:33:00+00:00"><meta property="article:modified_time" content="2015-04-07T14:33:00+00:00"><meta itemprop=name content="使用 backupninja 为 Debian 定制备份计划"><meta itemprop=description content="backupninja是Debian系统（以及基于Debian的发行版）中一个强大的、高度可配置的备份软件。在前一篇文章中，我们探讨了如何安装backupninja以及如何设置两个备份操作并执行。然而，那些只是冰山一角。这一次，我们要讨论如何定制 Handler 和 Helper ，使用这些功能定制策略以完成任何备份需要。  回顾 backupninja backupninja的一个独特的地方是它可以完全抛弃/etc/backup.d中的纯文本配置文件和操作文件，软件自己会搞定。另外，我们可以编写自定义脚本（又叫 handler）放在/usr/share/backupninja 目录下来完成不同类型的备份操作。此"><meta itemprop=datePublished content="2015-04-07T14:33:00+00:00"><meta itemprop=dateModified content="2015-04-07T14:33:00+00:00"><meta itemprop=wordCount content="478"><meta itemprop=keywords content="backupninja,备份,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 backupninja 为 Debian 定制备份计划</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-04-07T14:33:00Z>April 07, 2015</time></div></div></header><div class="content post__content clearfix"><p>backupninja是Debian系统（以及基于Debian的发行版）中一个强大的、高度可配置的备份软件。在<a href=http://linux.cn/article-5096-1.html>前一篇文章</a>中，我们探讨了如何安装backupninja以及如何设置两个备份操作并执行。然而，那些只是冰山一角。这一次，我们要讨论如何定制 Handler 和 Helper ，使用这些功能定制策略以完成任何备份需要。</p><p><img src=/data/attachment/album/201504/06/233831caluar044r42clla.jpg alt></p><h3 id=回顾-backupninja>回顾 backupninja</h3><p>backupninja的一个独特的地方是它可以完全抛弃/etc/backup.d中的纯文本配置文件和操作文件，软件自己会搞定。另外，我们可以编写自定义脚本（又叫 “handler”）放在/usr/share/backupninja 目录下来完成不同类型的备份操作。此外，可以通过ninjahelper的基于ncurses的交互式菜单（又叫“helper”）来指导我们创建一些配置文件，使得人工错误降到最低。</p><h3 id=创建定制的handler与helper>创建定制的Handler与Helper</h3><p>这一节的目标是创建一个脚本，将home目录以<strong>gzip</strong>或<strong>bzip2</strong>压缩包的形式备份起来，不包括音乐与视频文件。我们将这个文件命名为home，将它放在/usr/backup/ninja目录下。</p><p>尽管你可以使用默认的tar handler（参考 /usr/share/backupninja/tar 与 /usr/share/backupninja/tar.helper）来达到这个效果，但是我们使用这种方法来展示如何创建实用的 handler 脚本与基于 ncurses 的 helper。你可以根据你的需求来决定如何运用这里的方法。</p><p>由于 handlers 来源于主脚本，所以无需以#!/bin/bash开始的释伴行（shebang line）。</p><p>我们编写的 handler （/usr/share/backupninja/home）如下所示。已经详细注释了。getconf 函数用来读取备份操作的配置文件。如果你指定了一个变量的值，那么它会覆盖配置文件中对应变量的值：</p><pre tabindex=0><code>#/home 目录 handler 脚本
+
+# 每个备份文件会通过 FQDN 来鉴别主机
+getconf backupname
+
+# 备份文件的保存目录
+getconf backupdir
+
+# 默认压缩
+getconf compress
+
+# 包含 /home 目录
+getconf includes
+
+#不包含 *.mp3 与 *.mp4 文件
+getconf excludes
+
+# 要打包备份文件的默认扩展名
+getconf EXTENSION
+
+# tar 程序的绝对路径
+getconf TAR `which tar`
+
+# date 程序的绝对路径
+getconf DATE    `which date`
+
+# 日期格式
+DATEFORMAT=&#34;%Y-%m-%d&#34;
+
+# 如果备份目录不存在，以致命错误退出
+if [ ! -d &#34;$backupdir&#34; ]
+then
+   mkdir -p &#34;$backupdir&#34; || fatal &#34;Can not make directory $backupdir&#34;
+fi
+
+# 如果备份目录不可写，同样以致命错误退出
+if [ ! -w &#34;$backupdir&#34; ]
+then
+   fatal &#34;Directory $backupdir is not writable&#34;
+fi
+
+# 根据压缩格式选择对应的tar选项
+case $compress in
+   &#34;gzip&#34;)
+    compress_option=&#34;-z&#34;
+    EXTENSION=&#34;tar.gz&#34;
+    ;;
+   &#34;bzip&#34;)
+    compress_option=&#34;-j&#34;
+    EXTENSION=&#34;tar.bz2&#34;
+    ;;
+   &#34;none&#34;)
+    compress_option=&#34;&#34;
+    ;;
+   *)
+    warning &#34;Unknown compress filter ($tar_compress)&#34;
+    compress_option=&#34;&#34;
+    EXTENSION=&#34;tar.gz&#34;
+    ;;
+esac
+
+# 不包含一些文件类型/目录
+exclude_options=&#34;&#34;
+for i in $excludes
+do
+   exclude_options=&#34;$exclude_options --exclude $i&#34;
+done
+
+# 调试信息，执行备份操作
+debug &#34;Running backup: &#34; $TAR -c -p -v $compress_option $exclude_options \
+   -f &#34;$backupdir/$backupname-&#34;`$DATE &#34;+$DATEFORMAT&#34;`&#34;.$EXTENSION&#34; \
+   $includes
+
+# 将标准输出重定向到以.list为扩展的文件  
+# 将标准错误输出重定向到以.err为扩展的文件
+$TAR -c -p -v $compress_option $exclude_options \
+   -f &#34;$backupdir/$backupname-&#34;`$DATE &#34;+$DATEFORMAT&#34;`&#34;.$EXTENSION&#34; \
+   $includes \
+   &gt; &#34;$backupdir/$backupname-&#34;`$DATE &#34;+$DATEFORMAT&#34;`.list \
+   2&gt; &#34;$backupdir/$backupname-&#34;`$DATE &#34;+$DATEFORMAT&#34;`.err
+
+[ $? -ne 0 ] &amp;&amp; fatal &#34;Tar backup failed&#34;
+</code></pre><p>接下来我们将要创建helper文件（/usr/share/backupninja/home.helper）。这样，hendlers将会以菜单的形式在<strong>ninjahelper</strong>中显示：</p><pre tabindex=0><code># 备份操作描述，以下划线分割单词
+HELPERS=&#34;$HELPERS home:backup_of_home_directories&#34;
+
+home_wizard() {
+   home_title=&#34;Home action wizard&#34;
+
+   backupname=`hostname --fqdn`
+
+# 指定备份操作的时间
+   inputBox &#34;$home_title&#34; &#34;When to run this action?&#34; &#34;everyday at 01&#34;
+   [ $? = 1 ] &amp;&amp; return
+   home_when_run=&#34;when = $REPLY&#34;
+
+# 指定备份文件名
+   inputBox &#34;$home_title&#34; &#34;\&#34;Name\&#34; of backups&#34; &#34;$backupname&#34;
+   [ $? = 1 ] &amp;&amp; return
+   home_backupname=&#34;backupname = $REPLY&#34;
+   backupname=&#34;$REPLY&#34;
+
+# 指定保存备份文件的默认路径
+   inputBox &#34;$home_title&#34; &#34;Directory where to store the backups&#34; &#34;/var/backups/home&#34;
+   [ $? = 1 ] &amp;&amp; return
+   home_backupdir=&#34;backupdir = $REPLY&#34;
+
+# 指定复选框的默认值
+   radioBox &#34;$home_title&#34; &#34;Compression&#34; \
+    &#34;none&#34;  &#34;No compression&#34; off \
+    &#34;gzip&#34;  &#34;Compress with gzip&#34; on \
+    &#34;bzip&#34;  &#34;Compress with bzip&#34; off
+   [ $? = 1 ] &amp;&amp; return;
+   result=&#34;$REPLY&#34;
+   home_compress=&#34;compress = $REPLY &#34;
+
+   REPLY=
+   while [ -z &#34;$REPLY&#34; ]; do
+    formBegin &#34;$home_title: Includes&#34;
+        formItem &#34;Include:&#34; /home/gacanepa
+    formDisplay
+    [ $? = 0 ] || return 1
+    home_includes=&#34;includes = &#34;
+    for i in $REPLY; do
+        [ -n &#34;$i&#34; ] &amp;&amp; home_includes=&#34;$home_includes $i&#34;
+    done
+   done
+
+   REPLY=
+   while [ -z &#34;$REPLY&#34; ]; do
+    formBegin &#34;$home_title: Excludes&#34;
+        formItem &#34;Exclude:&#34; *.mp3
+        formItem &#34;Exclude:&#34; *.mp4
+        # 按需增加多个“Exclude”文本框指定其他不须包含的内容
+formItem &#34;Exclude:&#34;
+        formItem &#34;Exclude:&#34;
+    formDisplay
+    [ $? = 0 ] || return 1
+    home_excludes=&#34;excludes = &#34;
+    for i in $REPLY; do
+        [ -n &#34;$i&#34; ] &amp;&amp; home_excludes=&#34;$home_excludes $i&#34;
+    done
+   done
+
+# 保存配置
+   get_next_filename $configdirectory/10.home
+   cat &gt; $next_filename &lt;&lt;EOF
+$home_when_run
+$home_backupname
+$home_backupdir
+$home_compress
+$home_includes
+$home_excludes
+
+# tar 程序的路径，必须为GNU tar
+TAR    `which tar`
+DATE    `which date`
+DATEFORMAT  &#34;%Y-%m-%d&#34;
+EXTENSION    tar
+
+EOF
+# 将配置文件的权限改为600
+   chmod 600 $next_filename
+}
+</code></pre><h3 id=运行-ninjahelper>运行 ninjahelper</h3><p>当创建了名为home的handler脚本以及对应的home.helper后，运行ninjahelper命令创建一个新的备份操作。</p><pre tabindex=0><code>#ninjahelper
+</code></pre><p>选择 create a new backup action（创建一个新的备份操作）。</p><p><img src=/data/attachment/album/201504/06/233935we74l25w5ml5s7x7.jpg alt></p><p>接下来将看到可选的操作类型，这里选择“backup of home directories"（备份home目录）：</p><p><img src=/data/attachment/album/201504/06/233940bvqd0d47qzlo9vgd.jpg alt></p><p>然后会显示在helper中设置的默认值（这里只显示了3个）。可以编辑文本框中的值。注意，关于“when”变量的语法，参考文档的日程安排章节。</p><p><img src=/data/attachment/album/201504/06/233945yjnoo62fhoof6z7p.jpg alt></p><p><img src=/data/attachment/album/201504/06/233947bo7nt884j7c3nduo.jpg alt></p><p><img src=/data/attachment/album/201504/06/233949p0iiuus00ds3nniy.jpg alt></p><p>当完成备份操作的创建后，它会显示在ninjahelper的初始化菜单中：</p><p><img src=/data/attachment/album/201504/06/233953po2mww4vuukmwrvp.jpg alt></p><p>按回车键显示这个备份操作的选项。因为它非常简单，所以我们可以随便对它进行一些实验。</p><p>注意，“run this action now"（立即运行）选项会不顾日程表安排的时间而立即进行备份操作：</p><p><img src=/data/attachment/album/201504/06/233956di2fmc1xll9nm2mb.jpg alt></p><p>备份操作会发生一些错误，debug会提供一些有用的信息以帮助你定位错误并纠正。例如，当备份操作有错误并且没有被纠正，那么当它运行时将会打印出如下所示的错误信息。</p><p><img src=/data/attachment/album/201504/06/233959boptxgpz35dytbzo.jpg alt></p><p>上面的图片告诉我们，用于完成备份操作的连接没有建立，因为它所需要链接的远程主机似乎宕机了。另外，在helper文件中指定的目标目录不存在。当纠正这些问题后，重新开始备份操作。</p><p>需要牢记的事情：</p><ul><li>当你在/usr/share/backupninja 下新建了一个自定义脚本（如foobar）来处理特殊的备份操作时，那么你还需要编写与之对应的helper（foobar.helper）文件，ninjahelper 将通过它生成名为10.foobar（下一个操作为11，以此类推）的文件，保存在/etc/backup.d目录下，而这个文件才是备份操作的真正的配置文件。</li><li>可以通过ninjahelper设定好备份操作的执行时间，或按照“when”变量中设置的频率来执行。</li></ul><h3 id=总结>总结</h3><p>在这篇文章中，我们探讨了如何从头创建我们自己的备份操作，以及如何向ninjahelper添加相关的菜单以生成对应的配置文件。通过<a href=http://linux.cn/article-5096-1.html>上一篇</a>与这一篇文章，我希望我已经给出了足够好的理由让你继续研究，或者至少应该尝试一下。</p><hr><p>via: <a href=http://xmodulo.com/create-custom-backup-plan-debian.html>http://xmodulo.com/create-custom-backup-plan-debian.html</a></p><p>作者：<a href=http://xmodulo.com/author/gabriel>Gabriel Cánepa</a> 译者：<a href=https://github.com/SPccman>SPccman</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/backupninja/ rel=tag>backupninja</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%A4%87%E4%BB%BD/ rel=tag>备份</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

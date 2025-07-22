@@ -1,0 +1,62 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在Bash Shell脚本中显示对话框 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在Bash Shell脚本中显示对话框"><meta property="og:description" content="这个教程给出几个如何使用类似zenity和whiptail的工具在Bash Shell 脚本中提供消息/对话框的例子。使用这些工具，你的脚本能够告知用户当前程序运行的状态并能与用户进行交互。这两个工具的不同之处在于显示消息框或者对话框的方式。Zenity用GTK工具包创建图形用户界面，而whiptail则在终端窗口内创建消息框。 Zenity 工具 在Ubuntu中安装zenity，运行: sudo apt-get install zenity  用zenity创建消息框或者对话框的命令是不言自明的，我们会给你提供一些例子来参考。 创建消息框 zenity &ndash;info &ndash;title &#34;Information Box&#34; &ndash;text &#34;This"><meta property="og:type" content="article"><meta property="og:url" content="/article-5558-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-06-02T20:36:00+00:00"><meta property="article:modified_time" content="2015-06-02T20:36:00+00:00"><meta itemprop=name content="如何在Bash Shell脚本中显示对话框"><meta itemprop=description content="这个教程给出几个如何使用类似zenity和whiptail的工具在Bash Shell 脚本中提供消息/对话框的例子。使用这些工具，你的脚本能够告知用户当前程序运行的状态并能与用户进行交互。这两个工具的不同之处在于显示消息框或者对话框的方式。Zenity用GTK工具包创建图形用户界面，而whiptail则在终端窗口内创建消息框。 Zenity 工具 在Ubuntu中安装zenity，运行: sudo apt-get install zenity  用zenity创建消息框或者对话框的命令是不言自明的，我们会给你提供一些例子来参考。 创建消息框 zenity &ndash;info &ndash;title &#34;Information Box&#34; &ndash;text &#34;This"><meta itemprop=datePublished content="2015-06-02T20:36:00+00:00"><meta itemprop=dateModified content="2015-06-02T20:36:00+00:00"><meta itemprop=wordCount content="401"><meta itemprop=keywords content><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在Bash Shell脚本中显示对话框</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-06-02T20:36:00Z>June 02, 2015</time></div></div></header><div class="content post__content clearfix"><p>这个教程给出几个如何使用类似zenity和whiptail的工具在Bash Shell 脚本中提供消息/对话框的例子。使用这些工具，你的脚本能够告知用户当前程序运行的状态并能与用户进行交互。这两个工具的不同之处在于显示消息框或者对话框的方式。Zenity用GTK工具包创建图形用户界面，而whiptail则在终端窗口内创建消息框。</p><h3 id=zenity-工具>Zenity 工具</h3><p>在Ubuntu中安装zenity，运行:</p><pre tabindex=0><code>sudo apt-get install zenity
+</code></pre><p>用zenity创建消息框或者对话框的命令是不言自明的，我们会给你提供一些例子来参考。</p><h3 id=创建消息框>创建消息框</h3><pre tabindex=0><code>zenity --info --title &#34;Information Box&#34; --text &#34;This should be information&#34; --width=300 --height=200
+</code></pre><p><img src=/data/attachment/album/201506/02/203607qicgni62c99j21n1.png alt=消息框截图></p><p>创建 Yes/No 询问对话框</p><pre tabindex=0><code>zenity --question --text &#34;Do you want this?&#34; --ok-label &#34;Yeah&#34; --cancel-label=&#34;Nope&#34;
+</code></pre><p><img src=/data/attachment/album/201506/02/203608pcelm7ldms7meegs.png alt=问题截图></p><p>创建输入框并将输入值保存到变量中</p><pre tabindex=0><code>a=$(zenity --entry --title &#34;Entry box&#34; --text &#34;Please enter the value&#34; --width=300 --height=200)
+echo $a
+</code></pre><p><img src=/data/attachment/album/201506/02/203608bmjxlj08z1czkl7m.png alt=输入框截图></p><p>输入后，值会保存在变量 $a 中。</p><p>这是一个获取用户姓名并显示的实际事例。</p><pre tabindex=0><code>#!/bin/bash
+#
+# This script will ask for couple of parameters
+# and then continue to work depending on entered values
+#
+
+# Giving the option to user
+zenity --question --text &#34;Do you want to continue?&#34;
+
+# Checking if user wants to proceed
+[ $? -eq 0 ] || exit 1
+
+# Letting user input some values
+FIRSTNAME=$(zenity --entry --title &#34;Entry box&#34; --text &#34;Please, enter your first name.&#34; --width=300 --height=150)
+LASTNAME=$(zenity --entry --title &#34;Entry box&#34; --text &#34;Please, enter your last name.&#34; --width=300 --height=150)
+AGE=$(zenity --entry --title &#34;Entry box&#34; --text &#34;Please, enter your age.&#34; --width=300 --height=150)
+
+# Displaying entered values in information box
+zenity --info --title &#34;Information&#34; --text &#34;You are ${FIRSTNAME} ${LASTNAME} and you are ${AGE}(s) old.&#34; --width=300 --height=100
+</code></pre><p>这些是运行前面脚本的截图。</p><p><img src=/data/attachment/album/201506/02/203609r9k2k9yuuxu6b2nb.png alt=例1-问题-1></p><p>框1</p><p><img src=/data/attachment/album/201506/02/203609t4kkkpap7wr3x3vk.png alt=例1-输入框-1></p><p>输入框</p><p><img src=/data/attachment/album/201506/02/203610q32f72eddflulezu.png alt=例1-输入框-2></p><p>输入框</p><p><img src=/data/attachment/album/201506/02/203610bjii2js1i52g1wiy.png alt=例1-输入框-3></p><p>输入框</p><p><img src=/data/attachment/album/201506/02/203611rlt99g9bl19xt4j3.png alt=例1-信息></p><p>信息框</p><p>别忘了查看也许能帮助到你的有用的<a href=https://help.gnome.org/users/zenity/stable/>zenity 选项</a>。</p><h3 id=whiptail-工具>Whiptail 工具</h3><p>在Ubuntu上安装whiptail，运行</p><pre tabindex=0><code>sudo apt-get install whiptail
+</code></pre><p>用whiptail创建消息框或者对话框的命令也是无需解释的，我们会给你提供一些基本例子作为参考。</p><h3 id=创建消息框-1>创建消息框</h3><pre tabindex=0><code>whiptail --msgbox &#34;This is a message&#34; 10 40
+</code></pre><p><img src=/data/attachment/album/201506/02/203611yccjqvp03qqnqvsi.png alt=whiptail消息框截图></p><h3 id=创建-yesno-对话框>创建 Yes/No 对话框</h3><pre tabindex=0><code>whiptail --yes-button &#34;Yeah&#34; --no-button &#34;Nope&#34; --title &#34;Choose the answer&#34; --yesno &#34;Will you choose yes?&#34; 10 30
+</code></pre><p><img src=/data/attachment/album/201506/02/203612wvb7tazmkqhqvzns.png alt=whiptail对话框截图></p><h3 id=创建有缺省值的输入框>创建有缺省值的输入框</h3><pre tabindex=0><code>whiptail --inputbox &#34;Enter your number please.&#34; 10 30 &#34;10&#34;
+</code></pre><p><img src=/data/attachment/album/201506/02/203613sc4mox2gg4n4m0ws.png alt=whiptail输入框截图></p><p>尝试使用输入值要注意的一点是whiptail用stdout显示对话框，用stderr输出值。这样的话，如果你用 var=$(&mldr;)，你就根本不会看到对话框，也不能获得输入的值。解决方法是交换stdout和stderr。在whiptail命令后面添加 <strong>3>&amp;1 1>&amp;2 2>&amp;3</strong> 就可以做到。你想获取输入值的任何whiptail命令也是如此。</p><h3 id=创建菜单对话框>创建菜单对话框</h3><pre tabindex=0><code>whiptail --menu &#34;This is a menu. Choose an option:&#34; 20 50 10 1 &#34;first&#34; 2 &#34;second&#34; 3 &#34;third&#34;
+</code></pre><p><img src=/data/attachment/album/201506/02/203613plfmkfbo8sfss9kf.png alt=whiptail菜单截图></p><p>这是一个请求用户输入一个文件夹的路径并输出它的大小的 <strong>shell 脚本</strong>。</p><pre tabindex=0><code>#!/bin/bash
+#
+#
+
+# Since whiptail has to use stdout to display dialog, entered value will
+# be stored in stderr. To switch them and get the value to stdout you must
+# use 3&gt;&amp;1 1&gt;&amp;2 2&gt;&amp;3
+FOLDER_PATH=$(whiptail --title &#34;Get the size of folder&#34; \
+--inputbox &#34;Enter folder path:&#34; \
+10 30 \
+&#34;/home&#34; \
+3&gt;&amp;1 1&gt;&amp;2 2&gt;&amp;3)
+
+if [ -d $FOLDER_PATH ]
+then
+size=$(du -hs &#34;$FOLDER_PATH&#34; | awk &#39;{print $1}&#39;)
+whiptail --title &#34;Information&#34; \
+--msgbox &#34;Size of ${FOLDER_PATH} is ${size}&#34; \
+10 40
+elif [ -f $FOLDER_PATH ]
+then
+whiptail --title &#34;Warning!!!&#34; \
+--msgbox &#34;The path you entered is a path to a file not a folder!&#34; \
+10 40
+else
+whiptail --title &#34;Error!!!&#34;
+--msgbox &#34;Path you entered is not recognized. Please try again&#34; \
+10 40
+fi
+</code></pre><p>这是之前例子的一些截图：</p><p><img src=/data/attachment/album/201506/02/203614ikvw7a65ru9ic33c.png alt=例2-输入框></p><p>输入框</p><p><img src=/data/attachment/album/201506/02/203614u2gb5oz3ripncon2.png alt=例2-消息框></p><p>消息框</p><p>如果你在终端下工作，<a href=http://linux.die.net/man/1/whiptail>帮助手册</a>总是有用的。</p><h3 id=结论>结论</h3><p>选择合适的工具显示对话框取决于你期望在桌面机器还是服务器上运行你的脚本。桌面机器用户通常使用GUI窗口环境，也可能运行脚本并与显示的窗口进行交互。然而，如果你期望用户是在服务器上工作的，（在没有图形界面时，）你也许希望能确保总能显示，那就使用whiptail或者任何其它在纯终端窗口显示对话框的工具。</p><hr><p>via: <a href=http://linoxide.com/linux-shell-script/bash-shell-script-show-dialog-box/>http://linoxide.com/linux-shell-script/bash-shell-script-show-dialog-box/</a></p><p>作者：<a href=http://linoxide.com/author/ilijala/>Ilija Lazarevic</a> 译者：<a href=https://github.com/ictlyh>ictlyh</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

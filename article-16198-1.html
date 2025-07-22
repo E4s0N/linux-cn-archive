@@ -1,0 +1,114 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Git 仓库中，文件究竟被存储在哪里？ - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Git 仓库中，文件究竟被存储在哪里？"><meta property="og:description" content="我们知道它存储在 .git 目录中，但具体到 .git 中的哪个位置，各个版本的历史文件又被存储在哪里呢？"><meta property="og:type" content="article"><meta property="og:url" content="/article-16198-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-09-16T23:02:30+00:00"><meta property="article:modified_time" content="2023-09-16T23:02:30+00:00"><meta itemprop=name content="在 Git 仓库中，文件究竟被存储在哪里？"><meta itemprop=description content="我们知道它存储在 .git 目录中，但具体到 .git 中的哪个位置，各个版本的历史文件又被存储在哪里呢？"><meta itemprop=datePublished content="2023-09-16T23:02:30+00:00"><meta itemprop=dateModified content="2023-09-16T23:02:30+00:00"><meta itemprop=wordCount content="658"><meta itemprop=keywords content="Git,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Git 仓库中，文件究竟被存储在哪里？</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-09-16T23:02:30Z>September 16, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202309/16/230138n1j44qiabgplgbw4.jpg alt></p><p>大家好！今天我和一个朋友讨论 Git 的工作原理，我们感到奇怪，Git 是如何存储你的文件的？我们知道它存储在 <code>.git</code> 目录中，但具体到 <code>.git</code> 中的哪个位置，各个版本的历史文件又被存储在哪里呢？</p><p>以这个博客为例，其文件存储在一个 Git 仓库中，其中有一个文件名为 <code>content/post/2019-06-28-brag-doc.markdown</code>。这个文件在我的 <code>.git</code> 文件夹中具体的位置在哪里？过去的文件版本又被存储在哪里？那么，就让我们通过编写一些简短的 Python 代码来探寻答案吧。</p><h3 id=git-把文件存储在-gitobjects-之中>Git 把文件存储在 .git/objects 之中</h3><p>你的仓库中，每一个文件的历史版本都被储存在 <code>.git/objects</code> 中。比如，对于这个博客，<code>.git/objects</code> 包含了 2700 多个文件。</p><pre tabindex=0><code>$ find .git/objects/ -type f | wc -l
+2761
+</code></pre><blockquote><p>注意：<code>.git/objects</code> 包含的信息，不仅仅是 “仓库中每一个文件的所有先前版本”，但我们暂不详细讨论这一内容。</p></blockquote><p>这里是一个简短的 Python 程序（<a href=https://gist.github.com/jvns/ff884dceef7660402fe1eca697cfbf51>find-git-object.py</a>），它可以帮助我们定位在 <code>.git/objects</code> 中的特定文件的具体位置。</p><pre tabindex=0><code>import hashlib
+import sys
+
+def object_path(content):
+    header = f&#34;blob {len(content)}\0&#34;
+    data = header.encode() + content
+    sha1 = hashlib.sha1()
+    sha1.update(data)
+    digest = sha1.hexdigest()
+    return f&#34;.git/objects/{digest[:2]}/{digest[2:]}&#34;
+
+with open(sys.argv[1], &#34;rb&#34;) as f:
+    print(object_path(f.read()))
+</code></pre><p>此程序的主要操作如下：</p><ul><li>读取文件内容</li><li>计算一个头部（<code>blob 16673\0</code>），并将其与文件内容合并</li><li>计算出文件的 sha1 校验和（此处为 <code>e33121a9af82dd99d6d706d037204251d41d54</code>）</li><li>将这个 sha1 校验和转换为路径（如 <code>.git/objects/e3/3121a9af82dd99d6d706d037204251d41d54</code>）</li></ul><p>运行的方法如下：</p><pre tabindex=0><code>$ python3 find-git-object.py content/post/2019-06-28-brag-doc.markdown
+.git/objects/8a/e33121a9af82dd99d6d706d037204251d41d54
+</code></pre><h3 id=术语解释内容寻址存储>术语解释：“内容寻址存储”</h3><p>这种存储策略的术语为“ 内容寻址存储 content addressed storage ”，它指的是对象在数据库中的文件名与文件内容的哈希值相同。</p><p>内容寻址存储的有趣之处就是，假设我有两份或许多份内容完全相同的文件，在 Git 的数据库中，并不会因此占用额外空间。如果内容的哈希值是 <code>aabbbbbbbbbbbbbbbbbbbbbbbbb</code>，它们都会被存储在 <code>.git/objects/aa/bbbbbbbbbbbbbbbbbbbbb</code> 中。</p><h3 id=这些对象是如何进行编码的>这些对象是如何进行编码的？</h3><p>如果我尝试在 <code>.git/objects</code> 目录下查看这个文件，显示的内容似乎有一些奇怪：</p><pre tabindex=0><code>$ cat .git/objects/8a/e33121a9af82dd99d6d706d037204251d41d54
+x^A&lt;8D&gt;&lt;9B&gt;}s&lt;E3&gt;Ƒ&lt;C6&gt;&lt;EF&gt;o|&lt;8A&gt;^Q&lt;9D&gt;&lt;EC&gt;ju&lt;92&gt;&lt;E8&gt;&lt;DD&gt;&lt;9C&gt;&lt;9C&gt;*&lt;89&gt;j&lt;FD&gt;^...
+</code></pre><p>这是怎么回事呢？让我们来运行 <code>file</code> 命令检查一下：</p><pre tabindex=0><code>$ file .git/objects/8a/e33121a9af82dd99d6d706d037204251d41d54
+.git/objects/8a/e33121a9af82dd99d6d706d037204251d41d54: zlib compressed data
+</code></pre><p>原来，它是压缩的！我们可以编写一个小巧的 Python 程序—— <code>decompress.py</code>，然后用 <code>zlib</code> 模块去解压这些数据：</p><pre tabindex=0><code>import zlib
+import sys
+
+with open(sys.argv[1], &#34;rb&#34;) as f:
+    content = f.read()
+    print(zlib.decompress(content).decode())
+</code></pre><p>让我们来解压一下看看结果：</p><pre tabindex=0><code>$ python3 decompress.py .git/objects/8a/e33121a9af82dd99d6d706d037204251d41d54
+blob 16673---
+title: &#34;Get your work recognized: write a brag document&#34;
+date: 2019-06-28T18:46:02Z
+url: /blog/brag-documents/
+categories: []
+---
+... the entire blog post ...
+</code></pre><p>结果显示，这些数据的编码方式非常简单：首先有 <code>blob 16673\0</code> 标识，其后就是文件的全部内容。</p><h3 id=这里并没有差异性数据diff>这里并没有差异性数据（diff）</h3><p>这里有一件我第一次知道时让我感到惊讶的事：这里并没有任何差异性数据！那个文件是该篇博客文章的第 9 个版本，但 Git 在 <code>.git/objects</code> 目录中存储的版本是完整文件内容，而并非与前一版本的差异。</p><p>尽管 Git 实际上有时候会以差异性数据存储文件（例如，当你运行 <code>git gc</code> 时，为了提升效率，它可能会将多个不同的文件封装成 “打包文件”），但在我个人经验中，我从未需要关注这个细节，所以我们不在此深入讨论。然而，关于这种格式如何工作，Aditya Mukerjee 有篇优秀的文章 《<a href=https://codewords.recurse.com/issues/three/unpacking-git-packfiles>拆解 Git 的打包文件</a>》。</p><h3 id=博客文章的旧版本在哪>博客文章的旧版本在哪？</h3><p>你可能会好奇：如果在我修复了一些错别字之前，这篇博文已经存在了 8 个版本，那它们在 <code>.git/objects</code> 目录中的位置是哪里？我们如何找到它们呢？</p><p>首先，我们来使用 <code>git log</code> 命令来查找改动过这个文件的每一个提交：</p><pre tabindex=0><code>$ git log --oneline  content/post/2019-06-28-brag-doc.markdown
+c6d4db2d
+423cd76a
+7e91d7d0
+f105905a
+b6d23643
+998a46dd
+67a26b04
+d9999f17
+026c0f52
+72442b67
+</code></pre><p>然后，我们选择一个之前的提交，比如 <code>026c0f52</code>。提交也被存储在 <code>.git/objects</code> 中，我们可以尝试在那里找到它。但是失败了！因为 <code>ls .git/objects/02/6c*</code> 没有显示任何内容！如果有人告诉你，“我们知道有时 Git 会打包对象来节省空间，我们并不需过多关心它”，但现在，我们需要去面对这个问题了。</p><p>那就让我们去解决它吧。</p><h3 id=让我们开始解包一些对象>让我们开始解包一些对象</h3><p>现在我们需要从打包文件中解包出一些对象。我在 Stack Overflow 上查找了一下，看起来我们可以这样进行操作：</p><pre tabindex=0><code>$ mv .git/objects/pack/pack-adeb3c14576443e593a3161e7e1b202faba73f54.pack .
+$ git unpack-objects &lt; pack-adeb3c14576443e593a3161e7e1b202faba73f54.pack
+</code></pre><p>这种直接对库进行手术式的做法让人有些紧张，但如果我误操作了，我还可以从 Github 上重新克隆这个库，所以我并不太担心。</p><p>解包所有的对象文件后，我们得到了更多的对象：大约有 20000 个，而不是原来的大约 2700 个。看起来很酷。</p><pre tabindex=0><code>find .git/objects/ -type f | wc -l
+20138
+</code></pre><h3 id=我们回头再看看提交>我们回头再看看提交</h3><p>现在我们可以继续看看我们的提交 <code>026c0f52</code>。我们之前说过 <code>.git/objects</code> 中并不都是文件，其中一部分是提交！为了弄清楚我们的旧文章 <code>content/post/2019-06-28-brag-doc.markdown</code> 是在哪里被保存的，我们需要深入查看这个提交。</p><p>首先，我们需要在 <code>.git/objects</code> 中查看这个提交。</p><h3 id=查看提交的第一步找到提交>查看提交的第一步：找到提交</h3><p>经过解包后，我们现在可以在 <code>.git/objects/02/6c0f5208c5ea10608afc9252c4a56c1ac1d7e4</code> 中找到提交 <code>026c0f52</code>，我们可以用下面的方法去查看它：</p><pre tabindex=0><code>$ python3 decompress.py .git/objects/02/6c0f5208c5ea10608afc9252c4a56c1ac1d7e4
+commit 211tree 01832a9109ab738dac78ee4e95024c74b9b71c27
+parent 72442b67590ae1fcbfe05883a351d822454e3826
+author Julia Evans &lt;julia@jvns.ca&gt; 1561998673 -0400
+committer Julia Evans &lt;julia@jvns.ca&gt; 1561998673 -0400
+
+brag doc
+</code></pre><p>我们也可以用 <code>git cat-file -p 026c0f52</code> 命令来获取相同的信息，这个命令能起到相同的作用，但是它在格式化数据时做得更好一些。（<code>-p</code> 选项意味着它能够以更友好的方式进行格式化）</p><h3 id=查看提交的第二步找到树>查看提交的第二步：找到树</h3><p>这个提交包含一个<strong>树</strong>。树是什么呢？让我们看一下。树的 ID 是 <code>01832a9109ab738dac78ee4e95024c74b9b71c27</code>，我们可以使用先前的 <code>decompress.py</code> 脚本查看这个 Git 对象，尽管我不得不移除 <code>.decode()</code> 才能避免脚本崩溃。</p><pre tabindex=0><code>$ python3 decompress.py .git/objects/01/832a9109ab738dac78ee4e95024c74b9b71c27
+</code></pre><p>这个输出的格式有些难以阅读。主要的问题在于，该提交的哈希（<code>\xc3\xf7$8\x9b\x8dO\x19/\x18\xb7}|\xc7\xce\x8e…</code>）是原始字节，而没有进行十六进制的编码，因此我们看到 <code>\xc3\xf7$8\x9b\x8d</code> 而非 <code>c3f76024389b8d</code>。我打算切换至 <code>git cat-file -p</code> 命令，它能以更友好的方式显示数据，我不想自己编写一个解析器。</p><pre tabindex=0><code>$ git cat-file -p 01832a9109ab738dac78ee4e95024c74b9b71c27
+100644 blob c3f76024389b8d4f192f18b77d7cc7ce8e3a68ad	.gitignore
+100644 blob 7ebaecb311a05e1ca9a43f1eb90f1c6647960bc1	README.md
+100644 blob 0f21dc9bf1a73afc89634bac586271384e24b2c9	Rakefile
+100644 blob 00b9d54abd71119737d33ee5d29d81ebdcea5a37	config.yaml
+040000 tree 61ad34108a327a163cdd66fa1a86342dcef4518e	content &lt;-- 这是我们接下来的目标
+040000 tree 6d8543e9eeba67748ded7b5f88b781016200db6f	layouts
+100644 blob 22a321a88157293c81e4ddcfef4844c6c698c26f	mystery.rb
+040000 tree 8157dc84a37fca4cb13e1257f37a7dd35cfe391e	scripts
+040000 tree 84fe9c4cb9cef83e78e90a7fbf33a9a799d7be60	static
+040000 tree 34fd3aa2625ba784bced4a95db6154806ae1d9ee	themes
+</code></pre><p>这是我在这次提交时库的根目录中所有的文件。看起来我曾经不小心提交了一个名为 <code>mystery.rb</code> 的文件，后来我删除了它。</p><p>我们的文件在 <code>content</code> 目录中，接下来让我们看看那个树：<code>61ad34108a327a163cdd66fa1a86342dcef4518e</code></p><h3 id=查看提交的第三步又一棵树>查看提交的第三步：又一棵树</h3><pre tabindex=0><code>$ git cat-file -p 61ad34108a327a163cdd66fa1a86342dcef4518e
+040000 tree 1168078878f9d500ea4e7462a9cd29cbdf4f9a56    about
+100644 blob e06d03f28d58982a5b8282a61c4d3cd5ca793005    newsletter.markdown
+040000 tree 1f94b8103ca9b6714614614ed79254feb1d9676c    post &lt;-- 我们接下来的目标！
+100644 blob 2d7d22581e64ef9077455d834d18c209a8f05302    profiler-project.markdown
+040000 tree 06bd3cee1ed46cf403d9d5a201232af5697527bb    projects
+040000 tree 65e9357973f0cc60bedaa511489a9c2eeab73c29    talks
+040000 tree 8a9d561d536b955209def58f5255fc7fe9523efd    zines
+</code></pre><p>还未结束……</p><h3 id=查看提交的第四步更多的树>查看提交的第四步：更多的树……</h3><p>我们要寻找的文件位于 <code>post/</code> 目录，因此我们需要进一步探索：</p><pre tabindex=0><code>$ git cat-file -p 1f94b8103ca9b6714614614ed79254feb1d9676c
+.... 省略了大量行 ...
+100644 blob 170da7b0e607c4fd6fb4e921d76307397ab89c1e    2019-02-17-organizing-this-blog-into-categories.markdown
+100644 blob 7d4f27e9804e3dc80ab3a3912b4f1c890c4d2432    2019-03-15-new-zine--bite-size-networking-.markdown
+100644 blob 0d1b9fbc7896e47da6166e9386347f9ff58856aa    2019-03-26-what-are-monoidal-categories.markdown
+100644 blob d6949755c3dadbc6fcbdd20cc0d919809d754e56    2019-06-23-a-few-debugging-resources.markdown
+100644 blob 3105bdd067f7db16436d2ea85463755c8a772046    2019-06-28-brag-doc.markdown &lt;-- 我们找到了！！！
+</code></pre><p>在此，<code>2019-06-28-brag-doc.markdown</code> 之所以位于列表最后，是因为在发布时它是最新的博文。</p><h3 id=查看提交的第五步我们终于找到它>查看提交的第五步：我们终于找到它！</h3><p>经过努力，我们找到了博文历史版本所在的对象文件！太棒了！它的哈希值是 <code>3105bdd067f7db16436d2ea85463755c8a772046</code>，因此它位于 <code>git/objects/31/05bdd067f7db16436d2ea85463755c8a772046</code>。</p><p>我们可以使用 <code>decompress.py</code> 来查看它：</p><pre tabindex=0><code>$ python3 decompress.py .git/objects/31/05bdd067f7db16436d2ea85463755c8a772046 | head
+blob 15924---
+title: &#34;Get your work recognized: write a brag document&#34;
+date: 2019-06-28T18:46:02Z
+url: /blog/brag-documents/
+categories: []
+---
+... 文件的剩余部分在此 ...
+</code></pre><p>这就是博文的旧版本！如果我执行命令 <code>git checkout 026c0f52 content/post/2019-06-28-brag-doc.markdown</code> 或者 <code>git restore --source 026c0f52 content/post/2019-06-28-brag-doc.markdown</code>，我就会获取到这个版本。</p><h3 id=这样遍历树就是-git-log-的运行机制>这样遍历树就是 git log 的运行机制</h3><p>我们刚刚经历的整个过程（找到提交、逐层遍历目录树、搜索所需文件名）看似繁琐，但实际上当我们执行 <code>git log content/post/2019-06-28-brag-doc.markdown</code> 时，背后就是这样在运行。它需要逐个检查你历史记录中的每一个提交，在每个提交中核查 <code>content/post/2019-06-28-brag-doc.markdown</code> 的版本（例如在这个案例中为 <code>3105bdd067f7db16436d2ea85463755c8a772046</code>），并查看它是否自上一提交以来有所改变。</p><p>这就是为什么有时 <code>git log FILENAME</code> 会执行的有些缓慢 —— 我的这个仓库中有 3000 个提交，它需要对每个提交做大量的工作，来判断该文件是否在该提交中发生过变化。</p><h3 id=我有多少个历史版本的文件>我有多少个历史版本的文件？</h3><p>目前，我在我的博客仓库中跟踪了 1530 个文件：</p><pre tabindex=0><code>$ git ls-files | wc -l
+1530
+</code></pre><p>但历史文件有多少呢？我们可以列出 <code>.git/objects</code> 中所有的内容，看看有多少对象文件：</p><pre tabindex=0><code>$ find .git/objects/ -type f | grep -v pack | awk -F/ &#39;{print $3 $4}&#39; | wc -l
+20135
+</code></pre><p>但并不是所有这些都代表过去版本的文件 —— 正如我们之前所见，许多都是提交和目录树。不过，我们可以编写一个小小的 Python 脚本 <code>find-blobs.py</code>，遍历所有对象并检查是否以 <code>blob</code> 开头：</p><pre tabindex=0><code>import zlib
+import sys
+
+for line in sys.stdin:
+    line = line.strip()
+    filename = f&#34;.git/objects/{line[0:2]}/{line[2:]}&#34;
+    with open(filename, &#34;rb&#34;) as f:
+        contents = zlib.decompress(f.read())
+        if contents.startswith(b&#34;blob&#34;):
+            print(line)
+</code></pre><pre tabindex=0><code>$ find .git/objects/ -type f | grep -v pack | awk -F/ &#39;{print $3 $4}&#39; | python3 find-blobs.py | wc -l
+6713
+</code></pre><p>于是，看起来在我的 Git 仓库中存放的旧文件版本有 <code>6713 - 1530 = 5183</code> 个，Git 会为我保存这些文件，以备我想着要恢复它们时使用。太好了！</p><h3 id=就这些啦>就这些啦！</h3><p>在 <a href=https://gist.github.com/jvns/ff884dceef7660402fe1eca697cfbf51>这个 gist</a> 中附上了全部的此篇文章所用代码，其实没多少。</p><p>我以为我已经对 Git 的工作方式了如指掌，但我以前从未真正涉及过打包文件，所以这次探索很有趣。我也很少思考当我让 <code>git log</code> 跟踪一个文件的历史时，它实际上有多大的工作量，因此也很开心能深入研究这个。</p><p>作为一个有趣的后续：我提交这篇博文后，Git 就警告我仓库中的对象太多（我猜 20,000 太多了！），并运行 <code>git gc</code> 将它们全部压缩成打包文件。所以现在我的 <code>.git/objects</code> 目录已经被压缩得十分小了：</p><pre tabindex=0><code>$ find .git/objects/ -type f | wc -l
+14
+</code></pre><p><em>（题图：MJ/319a396c-6f3f-4891-b051-261312c8ea9a）</em></p><hr><p>via: <a href=https://jvns.ca/blog/2023/09/14/in-a-git-repository--where-do-your-files-live-/>https://jvns.ca/blog/2023/09/14/in-a-git-repository--where-do-your-files-live-/</a></p><p>作者：<a href=https://jvns.ca/>Julia Evans</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：ChatGPT 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/git/ rel=tag>Git</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

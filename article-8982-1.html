@@ -1,0 +1,99 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Docker 快速入门之 Dockerfile - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Docker 快速入门之 Dockerfile"><meta property="og:description" content="本文从一个具体的例子出发，讲述了如何利用 Dockerfile 构建镜像，然后解释了 Dockerfile 文件中的指令的语法，有关更多内容可访问官方文档。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8982-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-10-20T22:28:00+00:00"><meta property="article:modified_time" content="2017-10-20T22:28:00+00:00"><meta itemprop=name content="Docker 快速入门之 Dockerfile"><meta itemprop=description content="本文从一个具体的例子出发，讲述了如何利用 Dockerfile 构建镜像，然后解释了 Dockerfile 文件中的指令的语法，有关更多内容可访问官方文档。"><meta itemprop=datePublished content="2017-10-20T22:28:00+00:00"><meta itemprop=dateModified content="2017-10-20T22:28:00+00:00"><meta itemprop=wordCount content="526"><meta itemprop=keywords content="容器,Docker,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Docker 快速入门之 Dockerfile</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-10-20T22:28:00Z>October 20, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201710/20/222828ouudmzdmouzrfmyd.jpg alt=docker></p><p>在<a href=/article-8932-1.html>之前的文章</a>中我们提到可以通过容器创建一个我们自定义过的镜像，那么我们是否可以直接通过基础的镜像直接自定义镜像呢？答案当然是可以的，在 Docker 中我们可以从名为 <code>Dockerfile</code> 的文件中读取指令并且自动构建镜像。在本文中，将介绍 Dockerfile 的基本语法以及基本知识。</p><h3 id=1dockerfile-是什么>1、Dockerfile 是什么？</h3><p>Dockerfile 其实是一份文本文档，里面包含了用户可以用来操作镜像的一些指令。通过顺序执行这些指令，最后得到一个自定义的镜像，这有点类似于我们的 shell 脚本。</p><h3 id=2dockerfile-示例>2、Dockerfile 示例</h3><p>接下来先看一个 Dockerfile 示例：</p><pre tabindex=0><code>FROM centos
+LABEL maintainer=&#34;Locez &lt;locez@locez.com&gt;&#34;
+ENV TEST=&#34;This is a test env&#34;
+COPY nginx.repo /etc/yum.repos.d/nginx.repo
+RUN yum update -y &amp;&amp; \
+        yum install -y nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY index.html /usr/share/nginx/html/index.html
+COPY index_files/ /usr/share/nginx/html/index_files/
+EXPOSE 80
+CMD [&#34;/usr/sbin/nginx&#34;,&#34;-g&#34;,&#34;daemon off;&#34;]
+</code></pre><p>在上面我们可以看到 Dockerfile 中的一些指令，通过名称我们也可以猜到这些指令大概是干嘛的，其中有一些对文件的操作，因此我们先来看看用于存放 Dockerfile 的这个目录的目录结构:</p><pre tabindex=0><code># tree .
+.
+├── Dockerfile
+├── index_files
+│   ├── 145049z4og8xyjhx4xy8go.jpg
+│   ├── 222746e5vh38d7ey3leyps.jpg
+│   ├── 88x31.png
+│   ├── archlinux-splash.png
+│   ├── bdshare.css
+│   ├── Best-Linux-Markdown-Editors.png
+│   ├── core.js
+│   ├── docker-icon.jpg
+│   ├── hadoop-pic1.png
+│   ├── jquery_002.js
+│   ├── jquery.css
+│   ├── jquery.js
+│   ├── MathJax.js
+│   ├── pic.gif
+│   ├── raspberrypiraspberry-pi-logo.jpg
+│   ├── script.js
+│   ├── scrollup.png
+│   ├── share.js
+│   ├── style.css
+│   └── z_stat.js
+├── index.html
+├── nginx.conf
+└── nginx.repo
+
+1 directory, 24 files
+</code></pre><h3 id=构建镜像>构建镜像</h3><p>在当前目录下执行以下命令构建镜像:</p><pre tabindex=0><code># docker build -t locez/nginx .
+Sending build context to Docker daemon 1.851 MB
+Step 1/10 : FROM centos
+ ---&gt; 196e0ce0c9fb
+Step 2/10 : LABEL maintainer &#34;Locez &lt;locez@locez.com&gt;&#34;
+ ---&gt; Using cache
+ ---&gt; 9bba3042bcdb
+Step 3/10 : ENV TEST &#34;This is a test env&#34;
+ ---&gt; Using cache
+ ---&gt; c0ffe95ea0c5
+Step 4/10 : COPY nginx.repo /etc/yum.repos.d/nginx.repo
+ ---&gt; Using cache
+ ---&gt; bb6ee4c30d56
+Step 5/10 : RUN yum update -y &amp;&amp;        yum install -y nginx
+ ---&gt; Using cache
+ ---&gt; 6d46b41099c3
+Step 6/10 : COPY nginx.conf /etc/nginx/nginx.conf
+ ---&gt; Using cache
+ ---&gt; cfe908390aae
+Step 7/10 : COPY index.html /usr/share/nginx/html/index.html
+ ---&gt; Using cache
+ ---&gt; 21729476079d
+Step 8/10 : COPY index_files/ /usr/share/nginx/html/index_files/
+ ---&gt; Using cache
+ ---&gt; 662f06ec7b46
+Step 9/10 : EXPOSE 80
+ ---&gt; Using cache
+ ---&gt; 30db5a889d0a
+Step 10/10 : CMD /usr/sbin/nginx -g daemon off;
+ ---&gt; Using cache
+ ---&gt; d29b9d4036d2
+Successfully built d29b9d4036d2
+</code></pre><p>然后用该镜像启动容器：</p><pre tabindex=0><code># docker run -d -it --rm --name test-nginx -p 8080:80 locez/nginx
+e06fd991ca1b202e08cf1578f8046355fcbba10dd9a90e11d43282f3a1e36d29
+</code></pre><p>用浏览器访问 <code>http://localhost:8080/</code> 即可看到部署的内容。</p><h3 id=3-dockerfile-指令解释>3 Dockerfile 指令解释</h3><p>Dockerfile 支持 <code>FROM</code>、 <code>RUN</code>、 <code>CMD</code>、 <code>LABEL</code>、 <code>EXPOSE</code>、 <code>ENV</code>、 <code>ADD</code>、 <code>COPY</code>、 <code>ENTRYPOINT</code>、 <code>VOLUME</code>、 <code>USER</code>、 <code>WORKDIR</code>、 <code>ARG</code>、 <code>ONBUILD</code>、 <code>SHELL</code> 等指令，这里只选择常用的几个进行讲解，可结合上面的示例进行理解。其它的请自行查阅官方文档。</p><h4 id=31-from>3.1 FROM</h4><p><code>FROM</code> 指令用于指定要操作的基础镜像，因为在我们构建我们自己的镜像的时候需要一个基础镜像。 语法：</p><pre tabindex=0><code>FROM &lt;image&gt; [AS &lt;name&gt;]
+FROM &lt;image&gt;[:&lt;tag&gt;] [AS &lt;name&gt;]
+</code></pre><p>其中 <code>[AS &lt;name>]</code> 为指定一个名称，在一个 Dockerfile 中多次使用 <code>FROM</code> 时如有需要，可用 <code>COPY --from=&lt;name|index></code> 语法进行复制。</p><h4 id=32-run>3.2 RUN</h4><p><code>RUN</code> 指令用于执行命令，并且是在新的一层上执行，并把执行后的结果提交，也就是生成新的一层。基于这个问题，我们在使用 <code>RUN</code> 指令时应该尽可能的把要执行的命令一次写完，以减少最后生成的镜像的层数。 语法：</p><pre tabindex=0><code>RUN &lt;command&gt;
+RUN [&#34;executable&#34;, &#34;param1&#34;, &#34;param2&#34;]
+</code></pre><h4 id=33-cmd>3.3 CMD</h4><p><code>CMD</code> 指令用于给容器启动时指定一个用于执行的命令，例如上例中的 nginx 启动命令。 语法：</p><pre tabindex=0><code>CMD [&#34;executable&#34;,&#34;param1&#34;,&#34;param2&#34;]
+CMD [&#34;param1&#34;,&#34;param2&#34;] ### 用于给 ENTRYPOINT 指令提供默认参数
+CMD command param1 param2
+</code></pre><h4 id=34-label>3.4 LABEL</h4><p><code>LABEL</code> 指令用于为镜像指定标签，可用 <code>docker inspect</code> 命令查看。可用来代替被舍弃的 <code>MAINTAINER</code> 命令。 语法：</p><pre tabindex=0><code>LABEL &lt;key&gt;=&lt;value&gt; &lt;key&gt;=&lt;value&gt; &lt;key&gt;=&lt;value&gt; ...
+</code></pre><h4 id=35-expose>3.5 EXPOSE</h4><p><code>EXPOSE</code> 指令用于告诉 Docker 容器监听的特殊端口，但是此时端口还没有暴露给 host ，只有当在运行一个容器显式用参数 <code>-p</code> 或者 <code>-P</code> 的时候才会暴露端口。 语法：</p><pre tabindex=0><code>EXPOSE &lt;port&gt; [&lt;port&gt;/&lt;protocol&gt;...]
+</code></pre><h4 id=36-env>3.6 ENV</h4><p><code>ENV</code> 指令用于设定环境变量。 语法：</p><pre tabindex=0><code>ENV &lt;key&gt; &lt;value&gt;
+ENV &lt;key&gt;=&lt;value&gt; ...
+</code></pre><h4 id=37-add>3.7 ADD</h4><p><code>ADD</code> 指令用于复制新文件，目录，远程文件到容器中。其中 <code>&lt;src></code> 可以为文件，目录，URL，若为可解压文件，在复制后会解压。 语法：</p><pre tabindex=0><code>ADD &lt;src&gt;... &lt;dest&gt;
+ADD [&#34;&lt;src&gt;&#34;,... &#34;&lt;dest&gt;&#34;]
+</code></pre><h4 id=38-copy>3.8 COPY</h4><p><code>COPY</code> 指令与 <code>ADD</code> 指令非常相似，但 <code>COPY</code> 比较直观且简单，它只支持本地的文件以及目录的复制，不像 <code>ADD</code> 指令可以远程获取文件并解压。 语法：</p><pre tabindex=0><code>COPY &lt;src&gt;... &lt;dest&gt;
+COPY [&#34;&lt;src&gt;&#34;,... &#34;&lt;dest&gt;&#34;]
+</code></pre><h4 id=39-entrypoint>3.9 ENTRYPOINT</h4><p><code>ENTRYPOINT</code> 指令也跟 <code>CMD</code> 指令相似，用于指定容器启动时执行的命令。当使用 <code>ENTRYPOINT</code> 指令时，可用 <code>CMD</code> 命令配合，这样在启动容器时，可以对 <code>CMD</code> 指令写入的参数进行覆盖。 语法：</p><pre tabindex=0><code>ENTRYPOINT [&#34;executable&#34;, &#34;param1&#34;, &#34;param2&#34;]
+</code></pre><p>例子：</p><pre tabindex=0><code>ENTRYPOINT [&#34;top&#34;,&#34;-b&#34;]
+CMD [&#34;-c&#34;]
+</code></pre><p>上面的 <code>-c</code> 参数可以在启动时覆盖 <code>docker run -it --rm --name test top -H</code>。 如果要覆盖 <code>ENTRYPOINT</code> 指令则用 <code>--entrypoint</code> 参数启动容器。</p><h4 id=310-volume>3.10 VOLUME</h4><p><code>VOLUME</code> 指令用于为容器创建一个挂载点，这个挂载点可以用来挂载 <code>本地文件/文件夹</code> 也可以用来挂载 <code>数据卷</code>。其中若在启动一个新容器时没有指定挂载目录，则会自动创建一个数据卷，当容器被销毁时，数据卷如果没有被其它容器引用则会被删除。 语法：</p><pre tabindex=0><code>VOLUME [&#34;/data1&#34;,&#34;/data2&#34;]
+</code></pre><h4 id=311-user>3.11 USER</h4><p><code>USER</code> 指令用于设置执行 <code>RUN</code>, <code>CMD</code>, <code>ENTRYPOINT</code> 等指令的用户以及用户组。默认为 <code>root</code> 用户。 语法：</p><pre tabindex=0><code>USER &lt;user&gt;[:&lt;group&gt;]
+</code></pre><h4 id=312-workdir>3.12 WORKDIR</h4><p><code>WORKDIR</code> 指令用于设置 <code>RUN</code>, <code>CMD</code>, <code>ENTRYPOINT</code>, <code>COPY</code>, <code>ADD</code> 等指令的工作目录。 语法：</p><pre tabindex=0><code>WORKDIR /path/to/workdir
+</code></pre><h3 id=4-总结>4 总结</h3><hr><p>本文从一个具体的例子出发，讲述了如何利用 Dockerfile 构建镜像，然后解释了 Dockerfile 文件中的指令的语法，有关更多内容可访问官方文档。</p><h3 id=5-参考资料>5 参考资料</h3><hr><ul><li><a href=https://docs.docker.com/engine/reference/builder/>Dockerfile reference</a></li></ul></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%B9%E5%99%A8/ rel=tag>容器</a></li><li class=tags__item><a class="tags__link btn" href=/tags/docker/ rel=tag>Docker</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

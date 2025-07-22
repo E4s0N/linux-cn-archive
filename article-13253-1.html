@@ -1,0 +1,81 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用一个开源工具实现多线程 Python 程序的可视化 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用一个开源工具实现多线程 Python 程序的可视化"><meta property="og:description" content="VizTracer 可以跟踪并发的 Python 程序，以帮助记录、调试和剖析。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13253-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-03-30T23:04:00+00:00"><meta property="article:modified_time" content="2021-03-30T23:04:00+00:00"><meta itemprop=name content="用一个开源工具实现多线程 Python 程序的可视化"><meta itemprop=description content="VizTracer 可以跟踪并发的 Python 程序，以帮助记录、调试和剖析。"><meta itemprop=datePublished content="2021-03-30T23:04:00+00:00"><meta itemprop=dateModified content="2021-03-30T23:04:00+00:00"><meta itemprop=wordCount content="321"><meta itemprop=keywords content="Python,可视化,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用一个开源工具实现多线程 Python 程序的可视化</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-03-30T23:04:00Z>March 30, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>VizTracer 可以跟踪并发的 Python 程序，以帮助记录、调试和剖析。</p></blockquote><p><img src=/data/attachment/album/202103/30/230404xi9pox38ookk8xe2.jpg alt title="Colorful sound wave graph"></p><p>并发是现代编程中必不可少的一部分，因为我们有多个核心，有许多需要协作的任务。然而，当并发程序不按顺序运行时，就很难理解它们。对于工程师来说，在这些程序中发现 bug 和性能问题不像在单线程、单任务程序中那么容易。</p><p>在 Python 中，你有多种并发的选择。最常见的可能是用 <code>threading</code> 模块的多线程，用<code>subprocess</code> 和 <code>multiprocessing</code> 模块的多进程，以及最近用 <code>asyncio</code> 模块提供的 <code>async</code> 语法。在 <a href=https://readthedocs.org/projects/viztracer/>VizTracer</a> 之前，缺乏分析使用了这些技术程序的工具。</p><p>VizTracer 是一个追踪和可视化 Python 程序的工具，对日志、调试和剖析很有帮助。尽管它对单线程、单任务程序很好用，但它在并发程序中的实用性是它的独特之处。</p><h3 id=尝试一个简单的任务>尝试一个简单的任务</h3><p>从一个简单的练习任务开始：计算出一个数组中的整数是否是质数并返回一个布尔数组。下面是一个简单的解决方案：</p><pre tabindex=0><code>def is_prime(n):
+    for i in range(2, n):
+        if n % i == 0:
+            return False
+    return True
+
+def get_prime_arr(arr):
+    return [is_prime(elem) for elem in arr]
+</code></pre><p>试着用 VizTracer 以单线程方式正常运行它：</p><pre tabindex=0><code>if __name__ == &#34;__main__&#34;:
+    num_arr = [random.randint(100, 10000) for _ in range(6000)]
+    get_prime_arr(num_arr)
+</code></pre><pre tabindex=0><code>viztracer my_program.py
+</code></pre><p><img src=/data/attachment/album/202103/30/230415lj0240f06fg55gzn.png alt="Running code in a single thread" title="Running code in a single thread"></p><p>调用堆栈报告显示，耗时约 140ms，大部分时间花在 <code>get_prime_arr</code> 上。</p><p><img src=/data/attachment/album/202103/30/230415zrncqnret3c3n4cn.png alt="call-stack report" title="call-stack report"></p><p>这只是在数组中的元素上一遍又一遍地执行 <code>is_prime</code> 函数。</p><p>这是你所期望的，而且它并不有趣（如果你了解 VizTracer 的话）。</p><h3 id=试试多线程程序>试试多线程程序</h3><p>试着用多线程程序来做：</p><pre tabindex=0><code>if __name__ == &#34;__main__&#34;:
+    num_arr = [random.randint(100, 10000) for i in range(2000)]
+    thread1 = Thread(target=get_prime_arr, args=(num_arr,))
+    thread2 = Thread(target=get_prime_arr, args=(num_arr,))
+    thread3 = Thread(target=get_prime_arr, args=(num_arr,))
+
+    thread1.start()
+    thread2.start()
+    thread3.start()
+
+    thread1.join()
+    thread2.join()
+    thread3.join()
+</code></pre><p>为了配合单线程程序的工作负载，这就为三个线程使用了一个 2000 元素的数组，模拟了三个线程共享任务的情况。</p><p><img src=/data/attachment/album/202103/30/230416z8c51yczar1vz404.png alt="Multi-thread program" title="Multi-thread program"></p><p>如果你熟悉 Python 的全局解释器锁（GIL），就会想到，它不会再快了。由于开销太大，花了 140ms 多一点的时间。不过，你可以观察到多线程的并发性：</p><p><img src=/data/attachment/album/202103/30/230416b34bz4432lijolic.png alt="Concurrency of multiple threads" title="Concurrency of multiple threads"></p><p>当一个线程在工作（执行多个 <code>is_prime</code> 函数）时，另一个线程被冻结了（一个 <code>is_prime</code> 函数）；后来，它们进行了切换。这是由于 GIL 的原因，这也是 Python 没有真正的多线程的原因。它可以实现并发，但不能实现并行。</p><h3 id=用多进程试试>用多进程试试</h3><p>要想实现并行，办法就是 <code>multiprocessing</code> 库。下面是另一个使用 <code>multiprocessing</code> 的版本：</p><pre tabindex=0><code>if __name__ == &#34;__main__&#34;:
+    num_arr = [random.randint(100, 10000) for _ in range(2000)]
+   
+    p1 = Process(target=get_prime_arr, args=(num_arr,))
+    p2 = Process(target=get_prime_arr, args=(num_arr,))
+    p3 = Process(target=get_prime_arr, args=(num_arr,))
+
+    p1.start()
+    p2.start()
+    p3.start()
+
+    p1.join()
+    p2.join()
+    p3.join()
+</code></pre><p>要使用 VizTracer 运行它，你需要一个额外的参数：</p><pre tabindex=0><code>viztracer --log_multiprocess my_program.py
+</code></pre><p><img src=/data/attachment/album/202103/30/230416lxge66sj92swi4xh.png alt="Running with extra argument" title="Running with extra argument"></p><p>整个程序在 50ms 多一点的时间内完成，实际任务在 50ms 之前完成。程序的速度大概提高了三倍。</p><p>为了和多线程版本进行比较，这里是多进程版本：</p><p><img src=/data/attachment/album/202103/30/230417u0qcft0wdzll0txv.png alt="Multi-process version" title="Multi-process version"></p><p>在没有 GIL 的情况下，多个进程可以实现并行，也就是多个 <code>is_prime</code> 函数可以并行执行。</p><p>不过，Python 的多线程也不是一无是处。例如，对于计算密集型和 I/O 密集型程序，你可以用睡眠来伪造一个 I/O 绑定的任务：</p><pre tabindex=0><code>def io_task():
+    time.sleep(0.01)
+</code></pre><p>在单线程、单任务程序中试试：</p><pre tabindex=0><code>if __name__ == &#34;__main__&#34;:
+    for _ in range(3):
+        io_task()
+</code></pre><p><img src=/data/attachment/album/202103/30/230417srr3b4uilu3rxwdh.png alt="I/O-bound single-thread, single-task program" title="I/O-bound single-thread, single-task program"></p><p>整个程序用了 30ms 左右，没什么特别的。</p><p>现在使用多线程：</p><pre tabindex=0><code>if __name__ == &#34;__main__&#34;:
+    thread1 = Thread(target=io_task)
+    thread2 = Thread(target=io_task)
+    thread3 = Thread(target=io_task)
+
+    thread1.start()
+    thread2.start()
+    thread3.start()
+
+    thread1.join()
+    thread2.join()
+    thread3.join()
+</code></pre><p><img src=/data/attachment/album/202103/30/230417njm8fmm81btmrn1p.png alt="I/O-bound multi-thread program" title="I/O-bound multi-thread program"></p><p>程序耗时 10ms，很明显三个线程是并发工作的，这提高了整体性能。</p><h3 id=用-asyncio-试试>用 asyncio 试试</h3><p>Python 正在尝试引入另一个有趣的功能，叫做异步编程。你可以制作一个异步版的任务：</p><pre tabindex=0><code>import asyncio
+
+async def io_task():
+    await asyncio.sleep(0.01)
+
+async def main():
+    t1 = asyncio.create_task(io_task())
+    t2 = asyncio.create_task(io_task())
+    t3 = asyncio.create_task(io_task())
+
+    await t1
+    await t2
+    await t3
+
+if __name__ == &#34;__main__&#34;:
+    asyncio.run(main())
+</code></pre><p>由于 <code>asyncio</code> 从字面上看是一个带有任务的单线程调度器，你可以直接在它上使用 VizTracer：</p><p><img src=/data/attachment/album/202103/30/230417x7c9czc6cchw37c6.png alt="VizTracer with asyncio" title="VizTracer with asyncio"></p><p>依然花了 10ms，但显示的大部分函数都是底层结构，这可能不是用户感兴趣的。为了解决这个问题，可以使用 <code>--log_async</code> 来分离真正的任务：</p><pre tabindex=0><code>viztracer --log_async my_program.py
+</code></pre><p><img src=/data/attachment/album/202103/30/230418t09ppy9z0ugcy6go.png alt="Using &ndash;log_async to separate tasks" title="Using --log_async to separate tasks"></p><p>现在，用户任务更加清晰了。在大部分时间里，没有任务在运行（因为它唯一做的事情就是睡觉）。有趣的部分是这里：</p><p><img src=/data/attachment/album/202103/30/230418ittkkcr6dfzrqrkk.png alt="Graph of task creation and execution" title="Graph of task creation and execution"></p><p>这显示了任务的创建和执行时间。Task-1 是 <code>main()</code> 协程，创建了其他任务。Task-2、Task-3、Task-4 执行 <code>io_task</code> 和 <code>sleep</code> 然后等待唤醒。如图所示，因为是单线程程序，所以任务之间没有重叠，VizTracer 这样可视化是为了让它更容易理解。</p><p>为了让它更有趣，可以在任务中添加一个 <code>time.sleep</code> 的调用来阻止异步循环：</p><pre tabindex=0><code>async def io_task():
+    time.sleep(0.01)
+    await asyncio.sleep(0.01)
+</code></pre><p><img src=/data/attachment/album/202103/30/230418xbg4kzw9ccayayab.png alt="time.sleep call" title="time.sleep call"></p><p>程序耗时更长（40ms），任务填补了异步调度器中的空白。</p><p>这个功能对于诊断异步程序的行为和性能问题非常有帮助。</p><h3 id=看看-viztracer-发生了什么>看看 VizTracer 发生了什么？</h3><p>通过 VizTracer，你可以在时间轴上查看程序的进展情况，而不是从复杂的日志中想象。这有助于你更好地理解你的并发程序。</p><p>VizTracer 是开源的，在 Apache 2.0 许可证下发布，支持所有常见的操作系统（Linux、macOS 和 Windows）。你可以在 <a href=https://github.com/gaogaotiantian/viztracer>VizTracer 的 GitHub 仓库</a>中了解更多关于它的功能和访问它的源代码。</p><hr><p>via: <a href=https://opensource.com/article/21/3/python-viztracer>https://opensource.com/article/21/3/python-viztracer</a></p><p>作者：<a href=https://opensource.com/users/gaogaotiantian>Tian Gao</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/ rel=tag>可视化</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

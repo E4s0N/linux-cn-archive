@@ -1,0 +1,96 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Ubuntu 15.04 / CentOS 7 上安装广告服务器 Revive Adserver - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Ubuntu 15.04 / CentOS 7 上安装广告服务器 Revive Adserver"><meta property="og:description" content="Revive Adserver是一个自由开源的广告管理系统，能使出版商，广告平台和广告商在网页、应用、视频上投放并管理广告的系统。"><meta property="og:type" content="article"><meta property="og:url" content="/article-6999-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-02-11T20:59:17+00:00"><meta property="article:modified_time" content="2016-02-11T20:59:17+00:00"><meta itemprop=name content="在 Ubuntu 15.04 / CentOS 7 上安装广告服务器 Revive Adserver"><meta itemprop=description content="Revive Adserver是一个自由开源的广告管理系统，能使出版商，广告平台和广告商在网页、应用、视频上投放并管理广告的系统。"><meta itemprop=datePublished content="2016-02-11T20:59:17+00:00"><meta itemprop=dateModified content="2016-02-11T20:59:17+00:00"><meta itemprop=wordCount content="462"><meta itemprop=keywords content="广告,Revive,Adserver,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Ubuntu 15.04 / CentOS 7 上安装广告服务器 Revive Adserver</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-02-11T20:59:17Z>February 11, 2016</time></div></div></header><div class="content post__content clearfix"><p>Revive Adserver是一个自由开源的广告管理系统，能使出版商，广告平台和广告商在网页、应用、视频上投放并管理广告的系统。Revive Adserver以前叫做OpenX Source，遵循GNU通用公共授权协议。它集广告管理、网站定位、地理定位和一个用于数据收集的跟踪系统于一体。能使网站站长管理内部的、付费的以及第三方来源的广告，如谷歌的AdSense。本教程中，将会教会你在Ubuntu 15.04或CentOS 7安装并运行Revive Adserver。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201602/11/205919p645kkp4wm0hffwu.png alt></p><h3 id=1-安装lamp>1. 安装LAMP</h3><p>首先，Revive Adserver需要完整的LAMP环境才能运行，所以我们先安装LAMP。LAMP是Apache网页服务器，MySQL/MariaDB数据库和PHP模块的集合。要使Revive正常运行，需要安装PHP的众多模块，如apc, zlib, xml, pcre, mysql和mbstring。在不同的Linux发行版中，我们可以用下列命令进行LAMP的配置:</p><h4 id=在ubuntu-1504下>在Ubuntu 15.04下</h4><pre tabindex=0><code># apt-get install apache2 mariadb-server php5 php5-gd php5-mysql php5-curl php-apc zlibc zlib1g zlib1g-dev libpcre3 libpcre3-dev libapache2-mod-php5 zip
+</code></pre><h4 id=在centos-7下>在CentOS 7下</h4><pre tabindex=0><code># yum install httpd mariadb php php-gd php-mysql php-curl php-mbstring php-xml php-apc zlibc zlib1g zlib1g-dev libpcre3 libpcre3-dev zip
+</code></pre><h3 id=2-启动apache-web和mariadb服务>2. 启动Apache Web和MariaDB服务</h3><p>可以用下列命令启动刚刚安装好的Apache Web服务和MariaDB数据库服务。</p><h4 id=在ubuntu-1504下-1>在Ubuntu 15.04下</h4><p>Ubuntu15.04使用Systemd作为默认初始系统，所以用下列命令启动Apache和MariaDB进程：</p><pre tabindex=0><code># systemctl start apache2 mysql
+</code></pre><p>可以用下列命令使其开机自动运行：</p><pre tabindex=0><code># systemctl enable apache2 mysql
+
+Synchronizing state for apache2.service with sysvinit using update-rc.d...
+Executing /usr/sbin/update-rc.d apache2 defaults
+Executing /usr/sbin/update-rc.d apache2 enable
+Synchronizing state for mysql.service with sysvinit using update-rc.d...
+Executing /usr/sbin/update-rc.d mysql defaults
+Executing /usr/sbin/update-rc.d mysql enable
+</code></pre><h4 id=在centos-7下-1>在CentOS 7下</h4><p>CentOS 7同样是以Systemd作为默认初始系统，可以用下列命令启动:</p><pre tabindex=0><code># systemctl start httpd mariadb
+
+ln -s &#39;/usr/lib/systemd/system/httpd.service&#39; &#39;/etc/systemd/system/multi-user.target.wants/httpd.service&#39;
+ln -s &#39;/usr/lib/systemd/system/mariadb.service&#39; &#39;/etc/systemd/system/multi-user.target.wants/mariadb.service&#39;
+</code></pre><h3 id=3-配置mariadb>3. 配置MariaDB</h3><h4 id=在centos-7ubuntu-1504下>在CentOS 7/Ubuntu 15.04下</h4><p>当我们第一次启动MariaDB时，MariaDB是没有分配密码的，所以要先设置一个root密码。之后再创建一个新的数据库用来储存Revive Adserver的数据。</p><p>使用以下命令配置MariaDB并设置其root密码：</p><pre tabindex=0><code># mysql_secure_installation
+</code></pre><p>这时会要我们输入root密码，但我们之前什么密码都没设置，所以按回车下一步。之后，要求设置root密码，这时我们输入Y，然后输入自己想要的密码。回车继续下一步。</p><pre tabindex=0><code> …
+so you should just press enter here.
+
+Enter current password for root (enter for none):
+OK, successfully used password, moving on…
+
+Setting the root password ensures that nobody can log into the MariaDB
+root user without the proper authorisation.
+
+Set root password? [Y/n] y
+New password:
+Re-enter new password:
+Password updated successfully!
+Reloading privilege tables..
+… Success!
+…
+installation should now be secure.
+Thanks for using MariaDB!
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201602/11/205923ivqgqhhtqwql6hq6.png alt="Configuring MariaDB"></p><h3 id=4-创建新的数据库>4. 创建新的数据库</h3><p>为MariaDB的root用户设置了密码之后，就可以创建用来储存Revive Adserver应用数据的数据库。首先通过以下命令登录MariaDB控制台：</p><pre tabindex=0><code># mysql -u root -p
+</code></pre><p>这时要求输入root用户的密码，我们只要输入上一步设置好的密码。然后进入MariaDB控制台创建新的数据库，数据库用户及其密码，并且授予其创建、删除、编辑和存储表与数据的全部权限。</p><pre tabindex=0><code>&gt; CREATE DATABASE revivedb;
+&gt; CREATE USER &#39;reviveuser&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;Pa$$worD123&#39;;
+&gt; GRANT ALL PRIVILEGES ON revivedb.* TO &#39;reviveuser&#39;@&#39;localhost&#39;;
+&gt; FLUSH PRIVILEGES;
+&gt; EXIT;
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201602/11/205925qr2awbzdxxpkbfta.png alt="Creating Mariadb Revive Database"></p><h3 id=5-下载revive-adserver>5. 下载Revive Adserver</h3><p>接下来下载Revive Adserver的最新版本Revive Adserver.3.2.2（写本文时）。可以使用wget命令从Revive Adserverde 官方网站下载压缩包，网址是：<a href=http://www.revive-adserver.com/download/>http://www.revive-adserver.com/download/</a> 。命令如下：</p><pre tabindex=0><code># cd /tmp/
+# wget http://download.revive-adserver.com/revive-adserver-3.2.2.zip
+
+--2015-11-09 17:03:48-- http://download.revive-adserver.com/revive-adserver-3.2.2.zip
+Resolving download.revive-adserver.com (download.revive-adserver.com)... 54.230.119.219, 54.239.132.177, 54.230.116.214, ...
+Connecting to download.revive-adserver.com (download.revive-adserver.com)|54.230.119.219|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 11663620 (11M) [application/zip]
+Saving to: &#39;revive-adserver-3.2.2.zip&#39;
+revive-adserver-3.2 100%[=====================&gt;] 11.12M 1.80MB/s in 13s
+2015-11-09 17:04:02 (906 KB/s) - &#39;revive-adserver-3.2.2.zip&#39; saved [11663620/11663620]
+</code></pre><p>解压到临时目录下：</p><pre tabindex=0><code># unzip revive-adserver-3.2.2.zip
+</code></pre><p>把解压后的整个文件夹移动到Apache Web服务器的默认根目录/var/www/html/下：</p><pre tabindex=0><code># mv revive-adserver-3.2.2 /var/www/html/reviveads
+</code></pre><h3 id=6-配置apache-web服务>6. 配置Apache Web服务</h3><p>现在配置Apache服务使Revive正常运行。通过创建配置文件reviveads.conf来创建一个新的虚拟主机。这个目录在不同的Linux发行版上有所不同。</p><h4 id=在ubuntu-1504下-2>在Ubuntu 15.04下</h4><pre tabindex=0><code># touch /etc/apache2/sites-available/reviveads.conf
+# ln -s /etc/apache2/sites-available/reviveads.conf /etc/apache2/sites-enabled/reviveads.conf
+# nano /etc/apache2/sites-available/reviveads.conf
+</code></pre><p>在这个文件中添加下列几行文本：</p><pre tabindex=0><code>&lt;VirtualHost *:80&gt;
+ServerAdmin info@reviveads.linoxide.com
+DocumentRoot /var/www/html/reviveads/
+ServerName reviveads.linoxide.com
+ServerAlias www.reviveads.linoxide.com
+&lt;Directory /var/www/html/reviveads/&gt;
+Options FollowSymLinks
+AllowOverride All
+&lt;/Directory&gt;
+ErrorLog /var/log/apache2/reviveads.linoxide.com-error_log
+CustomLog /var/log/apache2/reviveads.linoxide.com-access_log common
+&lt;/VirtualHost&gt;
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201602/11/205926mh7q03wa6a13w8zi.png alt="Configuring Apache2 Ubuntu"></p><p>保存并退出，重启Apache Web服务：</p><pre tabindex=0><code># systemctl restart apache2
+</code></pre><h4 id=在centos-7下-2>在CentOS 7下</h4><p>在CentOS下，我们直接在/etc/httpd/conf.d/ 目录下创建reviveads.conf :</p><pre tabindex=0><code># nano /etc/httpd/conf.d/reviveads.conf 
+</code></pre><p>在这个文件中添加下列几行文本：</p><pre tabindex=0><code>&lt;VirtualHost *:80&gt;
+ServerAdmin info@reviveads.linoxide.com
+DocumentRoot /var/www/html/reviveads/
+ServerName reviveads.linoxide.com
+ServerAlias www.reviveads.linoxide.com
+&lt;Directory /var/www/html/reviveads/&gt;
+Options FollowSymLinks
+AllowOverride All
+&lt;/Directory&gt;
+ErrorLog /var/log/httpd/reviveads.linoxide.com-error_log
+CustomLog /var/log/httpd/reviveads.linoxide.com-access_log common
+&lt;/VirtualHost&gt;
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201602/11/205926w04zw0a7sj0xa4sj.png alt="Configuring httpd Centos"></p><p>保存并退出，重启Apache Web服务：</p><pre tabindex=0><code># systemctl restart httpd
+</code></pre><h3 id=7-修复权限和所有权>7. 修复权限和所有权</h3><p>现在我们修改安装路径下文件的权限和所有权。把安装目录的所有权改成Apache进程所有，以便Apache Web服务有文件和目录的编辑、创建和删除的完全权限。</p><h4 id=在ubuntu-1504下-3>在Ubuntu 15.04下</h4><pre tabindex=0><code># chown www-data: -R /var/www/html/reviveads
+</code></pre><h4 id=在centos-7下-3>在CentOS 7下</h4><pre tabindex=0><code># chown apache: -R /var/www/html/reviveads  
+</code></pre><h3 id=8-设置防火墙>8. 设置防火墙</h3><p>现在要配置防火墙，打开80端口使Apache Web服务运行的Revive Adserver能够被网络上的其他机器所访问。</p><h4 id=在ubuntu-1504centos-7下>在Ubuntu 15.04/CentOS 7下</h4><p>Ubuntu15.04/CentOS 7都使用Systemd作为默认初始系统，使用firewalld作为其防火墙。要打开80端口（http服务端口），执行以下命令：</p><pre tabindex=0><code># firewall-cmd --permanent --add-service=http
+
+success
+
+# firewall-cmd --reload
+
+success 
+</code></pre><h3 id=9-网站的安装>9. 网站的安装</h3><p>顺利的话我们能够使用浏览器进行交互，并可以将浏览器指向正在运行的网络服务器。只要在浏览器输入http://ip-address/ 或者 <a href=http://domain.com>http://domain.com</a> 。这里我们要访问 <a href=http://reviveads.linoxide.com/>http://reviveads.linoxide.com/</a></p><p>打开后可以看到Revive Adserver的欢迎页面，上面还有作为它发行许可证的GNU通用公共许可证V2。点击 I agree 继续下一步安装。</p><p>在下一页中，我们要输入数据库信息以便把Revive Adserver和MariaDB数据库服务连接起来。要输入之前设置的数据库名称，用户名以及密码。在本教程中，我们分别输入数据库名称为revivedb，用户名为reviveuser，密码为Pa$$worD123,并且令主机名为localhost，点击continue继续。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201602/11/205927t5n1fd08itthtdtd.png alt="Configuring Revive Adserver"></p><p>输入要填的信息，如：管理员用户名，密码和邮箱。可以以这些信息登录Adserver的控制界面。然后跳到最后一页，可以看到Revive Adserver已经安装成功了。</p><p>接着，转到Adverstiser页面，添加新的广告管理。在控制界面添加新用户到adserver，为广告库户添加标题，网页，视频 广告。</p><h3 id=总结>总结</h3><p>本文中，我们学习了如何在Ubuntu 15.04和CentOS 7上安装并配置Revive Adserver。尽管Revive Adserver的原始代码是从OpenX那买的，但现在OpenX Enterprise和Revive Adserver已经完全分开了。可以从<a href=http://www.adserverplugins.com/%09>http://www.adserverplugins.com/</a> 获得更多插件来扩展新特性。讲真，这个软件确实让网页，应用，视频上的广告管理变得容易了许多。</p><hr><p>via: <a href=http://linoxide.com/linux-how-to/install-revive-adserver-ubuntu-15-04-centos-7/>http://linoxide.com/linux-how-to/install-revive-adserver-ubuntu-15-04-centos-7/</a></p><p>作者：<a href=http://linoxide.com/author/arunp/>Arun Pyasi</a> 译者：<a href=https://github.com/chisper>chisper</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%B9%BF%E5%91%8A/ rel=tag>广告</a></li><li class=tags__item><a class="tags__link btn" href=/tags/revive/ rel=tag>Revive</a></li><li class=tags__item><a class="tags__link btn" href=/tags/adserver/ rel=tag>Adserver</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

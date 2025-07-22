@@ -1,0 +1,48 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>怎样在 Ubuntu 下安装 Moodle（魔灯） - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="怎样在 Ubuntu 下安装 Moodle（魔灯）"><meta property="og:description" content="Moodle （模块化面向对象动态学习环境的缩写）是一种自由而开源的学习管理系统，为教师、学生和管理员提供个性化的学习环境。Moodle 由 Moodle 项目创建，由 Moodle 总部统一领导和协调。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9211-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-01-07T09:45:00+00:00"><meta property="article:modified_time" content="2018-01-07T09:45:00+00:00"><meta itemprop=name content="怎样在 Ubuntu 下安装 Moodle（魔灯）"><meta itemprop=description content="Moodle （模块化面向对象动态学习环境的缩写）是一种自由而开源的学习管理系统，为教师、学生和管理员提供个性化的学习环境。Moodle 由 Moodle 项目创建，由 Moodle 总部统一领导和协调。"><meta itemprop=datePublished content="2018-01-07T09:45:00+00:00"><meta itemprop=dateModified content="2018-01-07T09:45:00+00:00"><meta itemprop=wordCount content="340"><meta itemprop=keywords content="Moodle,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>怎样在 Ubuntu 下安装 Moodle（魔灯）</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-01-07T09:45:00Z>January 07, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201801/08/143359cyunyyhxiykfz5q5.jpg alt></p><p>这是一篇关于如何在 Ubuntu 16.04 上安装 Moodle （“魔灯”）的逐步指南。Moodle （ 模块化面向对象动态学习环境 Modular-object-oriented dynamic learning environment 的缩写）是一种自由而开源的学习管理系统，为教师、学生和管理员提供个性化的学习环境。Moodle 由 Moodle 项目创建，由 <a href=https://moodle.com/hq>Moodle 总部</a>统一领导和协调。</p><p>Moodle 有很多非常实用的功能，比如：</p><ul><li>现代和易于使用的界面</li><li>个性化仪表盘</li><li>协作工具和活动</li><li>一体式日历</li><li>简单的文本编辑器</li><li>进度跟踪</li><li>公告</li><li>不胜枚举…</li></ul><p>在本教程中，我们将指导您在 Ubuntu 16.04 VPS 上利用 Apache web 服务器、MySQL 和 PHP 7 安装最新版本的 Moodle。（LCTT 译注：在 Ubuntu 的后继版本上的安装也类似。）</p><h3 id=1-通过-ssh-登录>1、 通过 SSH 登录</h3><p>首先，利用 root 用户通过 SSH 登录到 Ubuntu 16.04 VPS：</p><pre tabindex=0><code>ssh root@IP_Address -p Port_number
+</code></pre><h3 id=2-更新操作系统软件包>2、 更新操作系统软件包</h3><p>运行以下命令更新系统软件包并安装一些依赖软件：</p><pre tabindex=0><code>apt-get update &amp;&amp; apt-get upgrade
+apt-get install git-core graphviz aspell
+</code></pre><h3 id=3-安装-apache-web-服务器>3、 安装 Apache Web 服务器</h3><p>利用下面命令，从 Ubuntu 软件仓库安装 Apache Web 服务器：</p><pre tabindex=0><code>apt-get install apache2
+</code></pre><h3 id=4-启动-apache-web-服务器>4、 启动 Apache Web 服务器</h3><p>一旦安装完毕，启动 Apache 并使它能够在系统启动时自动启动，利用下面命令：</p><pre tabindex=0><code>systemctl enable apache2
+</code></pre><h3 id=5-安装-php-7>5、 安装 PHP 7</h3><p>接下来，我们将安装 PHP 7 和 Moodle 所需的一些额外的 PHP 模块，命令是：</p><pre tabindex=0><code>apt-get install php7.0 libapache2-mod-php7.0 php7.0-pspell php7.0-curl php7.0-gd php7.0-intl php7.0-mysql php7.0-xml php7.0-xmlrpc php7.0-ldap php7.0-zip
+</code></pre><h3 id=6-安装和配置-mysql-数据库服务器>6、 安装和配置 MySQL 数据库服务器</h3><p>Moodle 将大部分数据存储在数据库中，所以我们将利用以下命令安装 MySQL 数据库服务器：</p><pre tabindex=0><code>apt-get install mysql-client mysql-server
+</code></pre><p>安装完成后，运行 <code>mysql_secure_installation</code> 脚本配置 MySQL 的 <code>root</code> 密码以确保 MySQL 安全。</p><p>以 <code>root</code> 用户登录到 MySQL 服务器，并为 Moodle 创建一个数据库以及能访问它的用户，以下是具体操作指令：</p><pre tabindex=0><code>mysql -u root -p
+mysql&gt; CREATE DATABASE moodle;
+mysql&gt; GRANT ALL PRIVILEGES ON moodle.* TO &#39;moodleuser&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;PASSWORD&#39;;
+mysql&gt; FLUSH PRIVILEGES;
+mysql&gt; \q
+</code></pre><p>一定要记得将上述 <code>PASSWORD</code> 替换成一个安全性强的密码。</p><h3 id=7-从-github-仓库获取-moodle>7、 从 GitHub 仓库获取 Moodle</h3><p>接下来，切换当前工作目录，并从 GitHub 官方仓库中复制 Moodle：</p><pre tabindex=0><code>cd /var/www/html/
+git clone https://github.com/moodle/moodle.git
+</code></pre><p>切换到 <code>moodle</code> 目录，检查所有可用的分支：</p><pre tabindex=0><code>cd moodle/
+git branch -a
+</code></pre><p>选择最新稳定版本（当前是 <code>MOODLE_34_STABLE</code> ），运行以下命令告诉 git 哪个分支可以跟踪或使用：</p><pre tabindex=0><code>git branch --track MOODLE_34_STABLE origin/MOODLE_34_STABLE
+</code></pre><p>并切换至这个特定版本：</p><pre tabindex=0><code>git checkout MOODLE_34_STABLE
+
+Switched to branch &#39;MOODLE_34_STABLE&#39;
+Your branch is up-to-date with &#39;origin/MOODLE_34_STABLE&#39;.
+</code></pre><p>为存储 Moodle 数据创建目录：</p><pre tabindex=0><code>mkdir /var/moodledata
+</code></pre><p>正确设置其所有权和访问权限：</p><pre tabindex=0><code>chown -R www-data:www-data /var/www/html/moodle
+chown www-data:www-data /var/moodledata
+</code></pre><h3 id=8-配置-apache-web-服务器>8、 配置 Apache Web 服务器</h3><p>使用以下内容为您的域名创建 Apache 虚拟主机：</p><pre tabindex=0><code>nano /etc/apache2/sites-available/yourdomain.com.conf
+
+    ServerAdmin admin@yourdomain.com
+    DocumentRoot /var/www/html/moodle
+    ServerName yourdomain.com
+    ServerAlias www.yourdomain.com
+
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+
+    ErrorLog /var/log/httpd/yourdomain.com-error_log
+    CustomLog /var/log/httpd/yourdomain.com-access_log common
+</code></pre><p>保存文件并启用虚拟主机：</p><pre tabindex=0><code>a2ensite yourdomain.com
+
+Enabling site yourdomain.com.
+To activate the new configuration, you need to run:
+ service apache2 reload
+</code></pre><p>最后，重启 Apache Web 服务器，以使配置生效：</p><pre tabindex=0><code>service apache2 reload
+</code></pre><h3 id=9-接下来按照提示完成安装>9、 接下来按照提示完成安装</h3><p>现在，点击 “<a href=http://yourdomain.com%E2%80%9D%EF%BC%88LCTT>http://yourdomain.com”（LCTT</a> 译注：在浏览器的地址栏里输入以上域名以访问 Apache WEB 服务器），按照提示完成 Moodle 的安装。有关如何配置和使用 Moodle 的更多信息，您可以查看其<a href=https://docs.moodle.org/34/en/Main_page>官方文档</a>。</p><p>如果您使用我们的<a href=https://www.rosehosting.com/moodle-hosting.html>优化的 Moodle 托管主机服务</a>，您不必在 Ubuntu 16.04 上安装 Moodle，在这种情况下，您只需要求我们的专业 Linux 系统管理员在 Ubuntu 16.04 上安装和配置最新版本的 Moodle。他们将提供 24×7 及时响应的服务。（LCTT 译注：这是原文作者——一个主机托管商的广告~）</p><p><strong>PS.</strong> 如果你喜欢这篇关于如何在 Ubuntu 16.04 上安装 Moodle 的帖子，请在社交网络上与你的朋友分享，或者留下你的回复。谢谢。</p><hr><p>via: <a href=https://www.rosehosting.com/blog/how-to-install-moodle-on-ubuntu-16-04/>https://www.rosehosting.com/blog/how-to-install-moodle-on-ubuntu-16-04/</a></p><p>作者：<a href=https://www.rosehosting.com>RoseHosting</a> 译者：<a href=https://github.com/stevenzdg988>stevenzdg988</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/moodle/ rel=tag>Moodle</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

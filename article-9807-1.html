@@ -1,0 +1,75 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>3 个 Python 命令行工具 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="3 个 Python 命令行工具"><meta property="og:description" content="用 Click、Docopt 和 Fire 库写你自己的命令行应用。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9807-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-07-04T22:13:05+00:00"><meta property="article:modified_time" content="2018-07-04T22:13:05+00:00"><meta itemprop=name content="3 个 Python 命令行工具"><meta itemprop=description content="用 Click、Docopt 和 Fire 库写你自己的命令行应用。"><meta itemprop=datePublished content="2018-07-04T22:13:05+00:00"><meta itemprop=dateModified content="2018-07-04T22:13:05+00:00"><meta itemprop=wordCount content="298"><meta itemprop=keywords content="Python,命令行,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>3 个 Python 命令行工具</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-07-04T22:13:05Z>July 04, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>用 Click、Docopt 和 Fire 库写你自己的命令行应用。</p></blockquote><p><img src=/data/attachment/album/201807/04/221255bso5csppf0437x8r.jpg alt></p><p>有时对于某项工作来说一个命令行工具就足以胜任。命令行工具是一种从你的 shell 或者终端之类的地方交互或运行的程序。<a href=https://git-scm.com/>Git</a> 和 <a href=https://curl.haxx.se/>Curl</a> 就是两个你也许已经很熟悉的命令行工具。</p><p>当你有一小段代码需要在一行中执行多次或者经常性地被执行，命令行工具就会很有用。Django 开发者执行 <code>./manage.py runserver</code> 命令来启动他们的网络服务器；Docker 开发者执行 <code>docker-compose up</code> 来启动他们的容器。你想要写一个命令行工具的原因可能和你一开始想写代码的原因有很大不同。</p><p>对于这个月的 Python 专栏，我们有 3 个库想介绍给希望为自己编写命令行工具的 Python 使用者。</p><h3 id=click>Click</h3><p><a href=http://click.pocoo.org/5/>Click</a> 是我们最爱的用来开发命令行工具的 Python 包。其：</p><ul><li>有一个富含例子的出色文档</li><li>包含说明如何将命令行工具打包成一个更加易于执行的 Python 应用程序</li><li>自动生成实用的帮助文本</li><li>使你能够叠加使用可选和必要参数，甚至是 <a href=http://click.pocoo.org/5/commands/>多个命令</a></li><li>有一个 Django 版本（ <a href=https://github.com/GaretJax/django-click><code>django-click</code></a> ）用来编写管理命令</li></ul><p>Click 使用 <code>@click.command()</code> 去声明一个函数作为命令，同时可以指定必要和可选参数。</p><pre tabindex=0><code># hello.py
+import click 
+
+@click.command()
+@click.option(&#39;--name&#39;, default=&#39;&#39;, help=&#39;Your name&#39;)
+def say_hello(name):
+    click.echo(&#34;Hello {}!&#34;.format(name))
+
+if __name__ == &#39;__main__&#39;:
+    say_hello()
+</code></pre><p><code>@click.option()</code> 修饰器声明了一个 <a href=http://click.pocoo.org/5/options/>可选参数</a> ，而 <code>@click.argument()</code> 修饰器声明了一个 <a href=http://click.pocoo.org/5/arguments/>必要参数</a>。你可以通过叠加修饰器来组合可选和必要参数。<code>echo()</code> 方法将结果打印到控制台。</p><pre tabindex=0><code>$ python hello.py --name=&#39;Lacey&#39;
+Hello Lacey!
+</code></pre><h3 id=docopt>Docopt</h3><p><a href=http://docopt.org/>Docopt</a> 是一个命令行工具的解析器，类似于命令行工具的 Markdown。如果你喜欢流畅地编写应用文档，在本文推荐的库中 Docopt 有着最好的格式化帮助文本。它不是我们最爱的命令行工具开发包的原因是它的文档犹如把人扔进深渊，使你开始使用时会有一些小困难。然而，它仍是一个轻量级的、广受欢迎的库，特别是当一个漂亮的说明文档对你来说很重要的时候。</p><p>Docopt 对于如何格式化文章开头的 docstring 是很特别的。在工具名称后面的 docsring 中，顶部元素必须是 <code>Usage:</code> 并且需要列出你希望命令被调用的方式（比如：自身调用，使用参数等等）。<code>Usage:</code> 需要包含 <code>help</code> 和 <code>version</code> 参数。</p><p>docstring 中的第二个元素是 <code>Options:</code>，对于在 <code>Usages:</code> 中提及的可选项和参数，它应当提供更多的信息。你的 docstring 的内容变成了你帮助文本的内容。</p><pre tabindex=0><code>&#34;&#34;&#34;HELLO CLI
+
+Usage:
+    hello.py
+    hello.py &lt;name&gt;
+    hello.py -h|--help
+    hello.py -v|--version
+
+Options:
+    &lt;name&gt;  Optional name argument.
+    -h --help  Show this screen.
+    -v --version  Show version.
+&#34;&#34;&#34;
+
+from docopt import docopt
+
+def say_hello(name):
+    return(&#34;Hello {}!&#34;.format(name))
+
+
+if __name__ == &#39;__main__&#39;:
+    arguments = docopt(__doc__, version=&#39;DEMO 1.0&#39;)
+    if arguments[&#39;&lt;name&gt;&#39;]:
+        print(say_hello(arguments[&#39;&lt;name&gt;&#39;]))
+    else:
+        print(arguments)
+</code></pre><p>在最基本的层面，Docopt 被设计用来返回你的参数键值对。如果我不指定上述的 <code>name</code> 调用上面的命令，我会得到一个字典的返回值：</p><pre tabindex=0><code>$ python hello.py
+{&#39;--help&#39;: False,
+ &#39;--version&#39;: False,
+ &#39;&lt;name&gt;&#39;: None}
+</code></pre><p>这里可看到我没有输入 <code>help</code> 和 <code>version</code> 标记并且 <code>name</code> 参数是 <code>None</code>。</p><p>但是如果我带着一个 <code>name</code> 参数调用，<code>say_hello</code> 函数就会执行了。</p><pre tabindex=0><code>$ python hello.py Jeff
+Hello Jeff!
+</code></pre><p>Docopt 允许同时指定必要和可选参数，且各自有着不同的语法约定。必要参数需要在 <code>ALLCAPS</code> 和 <code>&lt;carets></code> 中展示，而可选参数需要单双横杠显示，就像 <code>--like</code>。更多内容可以阅读 Docopt 有关 <a href=https://github.com/docopt/docopt#usage-pattern-format>patterns</a> 的文档。</p><h3 id=fire>Fire</h3><p><a href=https://github.com/google/python-fire>Fire</a> 是谷歌的一个命令行工具开发库。尤其令人喜欢的是当你的命令需要更多复杂参数或者处理 Python 对象时，它会聪明地尝试解析你的参数类型。</p><p>Fire 的 <a href=https://github.com/google/python-fire/blob/master/docs/guide.md>文档</a> 包括了海量的样例，但是我希望这些文档能被更好地组织。Fire 能够处理 <a href=https://github.com/google/python-fire/blob/master/docs/guide.md#exposing-multiple-commands>同一个文件中的多条命令</a>、使用 <a href=https://github.com/google/python-fire/blob/master/docs/guide.md#version-3-firefireobject>对象</a> 的方法作为命令和 <a href=https://github.com/google/python-fire/blob/master/docs/guide.md#grouping-commands>分组</a> 命令。</p><p>它的弱点在于输出到控制台的文档。命令行中的 docstring 不会出现在帮助文本中，并且帮助文本也不一定标识出参数。</p><pre tabindex=0><code>import fire
+
+
+def say_hello(name=&#39;&#39;):
+    return &#39;Hello {}!&#39;.format(name)
+
+
+if __name__ == &#39;__main__&#39;:
+    fire.Fire()
+</code></pre><p>参数是必要还是可选取决于你是否在函数或者方法定义中为其指定了一个默认值。要调用命令，你必须指定文件名和函数名，比较类似 Click 的语法：</p><pre tabindex=0><code>$ python hello.py say_hello Rikki
+Hello Rikki!
+</code></pre><p>你还可以像标记一样传参，比如 <code>--name=Rikki</code>。</p><h3 id=额外赠送打包>额外赠送：打包！</h3><p>Click 包含了使用 <code>setuptools</code> <a href=http://click.pocoo.org/5/setuptools/>打包</a> 命令行工具的使用说明（强烈推荐按照说明操作）。</p><p>要打包我们第一个例子中的命令行工具，将以下内容加到你的 <code>setup.py</code> 文件里：</p><pre tabindex=0><code>from setuptools import setup
+
+setup(
+    name=&#39;hello&#39;,
+    version=&#39;0.1&#39;,
+    py_modules=[&#39;hello&#39;],
+    install_requires=[
+        &#39;Click&#39;,
+    ],
+    entry_points=&#39;&#39;&#39;
+        [console_scripts]
+        hello=hello:say_hello
+    &#39;&#39;&#39;,
+)
+</code></pre><p>任何你看见 <code>hello</code> 的地方，使用你自己的模块名称替换掉，但是要记得忽略 <code>.py</code> 后缀名。将 <code>say_hello</code> 替换成你的函数名称。</p><p>然后，执行 <code>pip install --editable</code> 来使你的命令在命令行中可用。</p><p>现在你可以调用你的命令，就像这样：</p><pre tabindex=0><code>$ hello --name=&#39;Jeff&#39;
+Hello Jeff!
+</code></pre><p>通过打包你的命令，你可以省掉在控制台键入 <code>python hello.py --name='Jeff'</code> 这种额外的步骤以减少键盘敲击。这些指令也很可能可在我们提到的其他库中使用。</p><hr><p>via: <a href=https://opensource.com/article/18/5/3-python-command-line-tools>https://opensource.com/article/18/5/3-python-command-line-tools</a></p><p>作者：<a href=https://opensource.com/users/laceynwilliams>Jeff Triplett</a>，<a href=https://opensource.com/users/laceynwilliams>Lacey Williams Hensche</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/hoppipolla->hoppipolla-</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/ rel=tag>命令行</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

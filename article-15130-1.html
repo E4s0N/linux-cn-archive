@@ -1,0 +1,46 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>我在 Linux 中使用的 5 个 Git 配置 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="我在 Linux 中使用的 5 个 Git 配置"><meta property="og:description" content="这份简要指南能够帮助你快速开始使用 Git，以及配置一些选项。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15130-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-10-11T16:23:40+00:00"><meta property="article:modified_time" content="2022-10-11T16:23:40+00:00"><meta itemprop=name content="我在 Linux 中使用的 5 个 Git 配置"><meta itemprop=description content="这份简要指南能够帮助你快速开始使用 Git，以及配置一些选项。"><meta itemprop=datePublished content="2022-10-11T16:23:40+00:00"><meta itemprop=dateModified content="2022-10-11T16:23:40+00:00"><meta itemprop=wordCount content="299"><meta itemprop=keywords content="Git,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>我在 Linux 中使用的 5 个 Git 配置</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-10-11T16:23:40Z>October 11, 2022</time></div></div></header><div class="content post__content clearfix"><blockquote><p>这份简要指南能够帮助你快速开始使用 Git，以及配置一些选项。</p></blockquote><p><img src=/data/attachment/album/202210/11/162338c314ls57bg51hd45.jpg alt></p><p>在 Linux 中设置 Git 十分简单，但为了获得完美的配置，我做了以下五件事：</p><ol><li>创建全局配置</li><li>设置默认名称</li><li>设置默认邮箱地址</li><li>设置默认分支名称</li><li>设置默认编辑器</li></ol><p>我使用 Git 管理我的代码、命令行脚本以及文档版本。这意味着每次我开始一项新的任务，首先我需要创建一个文件目录并将其添加到 Git 库中：</p><pre tabindex=0><code>$ mkdir newproject
+$ cd newproject
+$ git init
+</code></pre><p>有一些我一直想要的常规设置。不多，但可以避免我每次都进行配置。我喜欢利用 Git 的 <em>全局</em> 配置功能。</p><p>Git 提供了进行手动配置的 <code>git config</code> 命令，但这有一些注意事项。例如，通常你会设置邮箱地址。你可以通过运行 <code>git config user.email 你的邮件地址</code> 命令进行设置。然而，这只会在你当前所在的 Git 目录下起作用。</p><pre tabindex=0><code>$ git config user.email alan@opensource.com
+fatal: not in a git directory
+</code></pre><p>此外，当这个命令在 Git 仓库中运行时，它只会配置特定的一个仓库。在新的仓库中，你不得不重复这个步骤。我可以通过全局配置来避免重复。选项 <code>--global</code> 会指示 Git 将邮箱地址写入全局配置 <code>~/.gitconfig</code> 文件中，甚至在必要时会创建它：</p><blockquote><p>请记住，波浪线（<code>~</code>）代表你的主文件夹。在我的电脑中它是 <code>/home/alan</code>。</p></blockquote><pre tabindex=0><code>$ git config --global user.email alan@opensource.com
+$ cat ~/.gitconfig
+[user]
+        email = alan@opensource.com
+</code></pre><p>这里的缺点是，如果你有大量偏好设置，需要输入很多命令，这将花费大量时间并且很容易出错。Git 提供了更加快捷有效的方式，可以直接编辑你的全局配置文件——这是我列表中的第一项！</p><h3 id=1创建全局配置>1、创建全局配置</h3><p>如果你刚开始使用 Git，或许你还没有该文件。不用担心，让我们直接开始。只需要用 <code>--edit</code> 选项：</p><pre tabindex=0><code>$ git config --global --edit
+</code></pre><p>如果没有该文件，Git 将会创建一个包含以下内容的新文件，并使用你终端的默认编辑器打开它：</p><pre tabindex=0><code># This is Git&#39;s per-user configuration file.
+[user]
+# Please adapt and uncomment the following lines:
+#       name = Alan
+#       email = alan@hopper
+~
+~
+~
+&#34;~/.gitconfig&#34; 5L, 155B                                     1,1           All
+</code></pre><p>现在我们已经打开了编辑器，并且 Git 已经在后台创建了全局配置文件，我们可以继续接下来的设置。</p><h3 id=2设置默认名称>2、设置默认名称</h3><p>名字是该文件中的首要条目，让我们先从它开始。用命令行设置我的名称是 <code>git config --global user.name "Alan Formy-Duval"</code>。不用在命令行中运行该命令，只需要在配置文件中编辑 <code>name</code> 条目就行：</p><pre tabindex=0><code>name = Alan Formy-Duval
+</code></pre><h3 id=3设置默认邮箱地址>3、设置默认邮箱地址</h3><p>邮箱地址是第二个条目，让我们添加它。默认情况下，Git 使用你的系统提供的名称和邮箱地址。如果不正确或者你想要更改，你可以在配置文件中具体说明。事实上，如果你没有配置这些，Git 在你第一次提交时会友好的提示你：</p><pre tabindex=0><code>Committer: Alan &lt;alan@hopper&gt;
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate....
+</code></pre><p>在命令行中运行 <code>git config --global user.email "alan@opensource.com"</code> 会设置好我的邮箱。同样，我们在配置文件中编辑 <code>email</code> 条目，提供你的邮箱地址：</p><pre tabindex=0><code>email = alan@opensource.com
+</code></pre><p>我喜欢设置的最后两个设置是默认分支名称和默认编辑器。当你仍在编辑器中时，需要添加这些指令。</p><h3 id=4设置默认分支名称>4、设置默认分支名称</h3><p>目前有一种趋势，即不再使用 <code>master</code> 作为默认分支名称。事实上，在新存储库初始化时，Git 将通过友好的消息提示更改默认分支名称：</p><pre tabindex=0><code>$ git init
+hint: Using &#39;master&#39; as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint:
+hint:   git config --global init.defaultBranch &lt;name&gt;
+</code></pre><p>这个名为 <code>defaultBranch</code> 的指令需要位于一个名为 <code>init</code> 的新部分中。现在普遍接受的是，许多程序员使用 <code>main</code> 这个词作为他们的默认分支。这是我喜欢使用的。将此部分后跟指令添加到配置中：</p><pre tabindex=0><code>[init]
+            defaultBranch = main
+</code></pre><h3 id=5设置默认编辑器>5、设置默认编辑器</h3><p>第五个设置是设置默认的编辑器。这是指 Git 将使用的编辑器，用于在你每次将更改提交到存储库时输入你的提交消息。不论是 <a href=https://opensource.com/article/20/12/gnu-nano>nano</a>、<a href=https://opensource.com/resources/what-emacs>emacs</a>、<a href=https://opensource.com/article/19/3/getting-started-vim>vi</a> 还是其他编辑器，每个人都有他喜欢的。我喜欢用 vi。添加 <code>core</code> 部分，并设置 <code>editor</code> 指令为你喜欢的编辑器。</p><pre tabindex=0><code>[core]
+            editor = vi
+</code></pre><p>这是最后一项。退出编辑器。Git 在主目录下保存全局配置文件。如果你再次运行编辑命令，将会看到所有内容。注意配置文件是明文存储的文本文件，因此它可以很容易使用文本工具查看，如 <a href=https://opensource.com/article/19/2/getting-started-cat-command>cat</a> 命令。这是我的配置文件内容：</p><pre tabindex=0><code>$ cat ~/.gitconfig
+[user]
+        email = alan@opensource.com
+        name = Alan Formy-Duval
+[core]
+        editor = vi
+[init]
+        defaultBranch = main
+</code></pre><p>这是一个简单的指南，可以让你快速开始使用 Git 和它的一些配置选项。</p><hr><p>via: <a href=https://opensource.com/article/22/9/git-configuration-linux>https://opensource.com/article/22/9/git-configuration-linux</a></p><p>作者：<a href=https://opensource.com/users/alanfdoss>Alan Formy-Duval</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/Donkey-Hao>Donkey-Hao</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/git/ rel=tag>Git</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

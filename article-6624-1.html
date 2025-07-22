@@ -1,0 +1,84 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 CentOS 7.0 上配置 Ceph 存储 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 CentOS 7.0 上配置 Ceph 存储"><meta property="og:description" content="Ceph 是一个将数据存储在单一分布式计算机集群上的开源软件平台。当你计划构建一个云时，你首先需要决定如何实现你的存储。开源的 Ceph 是红帽原生技术之一，它基于称为 RADOS 的对象存储系统，用一组网关 API 表示块、文件、和对象模式中的数据。由于它自身开源的特性，这种便携存储平台能在公有云和私有云上安装和使用。Ceph 集群的拓扑结构是按照备份和信息分布设计的，这种内在设计能提供数据完整性。它的设计目标就是容错、通过正确配置能运行于商业硬件和一些更高级的系统。 Ceph 能在任何 Linux 发行版上安装，但为了能正确运行，"><meta property="og:type" content="article"><meta property="og:url" content="/article-6624-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-11-22T17:22:36+00:00"><meta property="article:modified_time" content="2015-11-22T17:22:36+00:00"><meta itemprop=name content="如何在 CentOS 7.0 上配置 Ceph 存储"><meta itemprop=description content="Ceph 是一个将数据存储在单一分布式计算机集群上的开源软件平台。当你计划构建一个云时，你首先需要决定如何实现你的存储。开源的 Ceph 是红帽原生技术之一，它基于称为 RADOS 的对象存储系统，用一组网关 API 表示块、文件、和对象模式中的数据。由于它自身开源的特性，这种便携存储平台能在公有云和私有云上安装和使用。Ceph 集群的拓扑结构是按照备份和信息分布设计的，这种内在设计能提供数据完整性。它的设计目标就是容错、通过正确配置能运行于商业硬件和一些更高级的系统。 Ceph 能在任何 Linux 发行版上安装，但为了能正确运行，"><meta itemprop=datePublished content="2015-11-22T17:22:36+00:00"><meta itemprop=dateModified content="2015-11-22T17:22:36+00:00"><meta itemprop=wordCount content="516"><meta itemprop=keywords content="Ceph,云存储,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 CentOS 7.0 上配置 Ceph 存储</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-11-22T17:22:36Z>November 22, 2015</time></div></div></header><div class="content post__content clearfix"><p>Ceph 是一个将数据存储在单一分布式计算机集群上的开源软件平台。当你计划构建一个云时，你首先需要决定如何实现你的存储。开源的 Ceph 是红帽原生技术之一，它基于称为 RADOS 的对象存储系统，用一组网关 API 表示块、文件、和对象模式中的数据。由于它自身开源的特性，这种便携存储平台能在公有云和私有云上安装和使用。Ceph 集群的拓扑结构是按照备份和信息分布设计的，这种内在设计能提供数据完整性。它的设计目标就是容错、通过正确配置能运行于商业硬件和一些更高级的系统。</p><p>Ceph 能在任何 Linux 发行版上安装，但为了能正确运行，它需要最近的内核以及其它最新的库。在这篇指南中，我们会使用最小化安装的 CentOS-7.0。</p><p><img src=/data/attachment/album/201511/22/171650gqt6y2brqq8q4ty7.png alt></p><h3 id=系统资源>系统资源</h3><pre tabindex=0><code>**CEPH-STORAGE**
+OS: CentOS Linux 7 (Core)
+RAM:1 GB
+CPU:1 CPU
+DISK: 20
+Network: 45.79.136.163
+FQDN: ceph-storage.linoxide.com
+
+**CEPH-NODE**
+OS: CentOS Linux 7 (Core)
+RAM:1 GB
+CPU:1 CPU
+DISK: 20
+Network: 45.79.171.138
+FQDN: ceph-node.linoxide.com
+</code></pre><h3 id=安装前的配置>安装前的配置</h3><p>在安装 Ceph 存储之前，我们要在每个节点上完成一些步骤。第一件事情就是确保每个节点的网络已经配置好并且能相互访问。</p><p><strong>配置 Hosts</strong></p><p>要在每个节点上配置 hosts 条目，要像下面这样打开默认的 hosts 配置文件（LCTT 译注：或者做相应的 DNS 解析）。</p><pre tabindex=0><code># vi /etc/hosts
+</code></pre><hr><pre tabindex=0><code>45.79.136.163 ceph-storage ceph-storage.linoxide.com
+45.79.171.138 ceph-node ceph-node.linoxide.com
+</code></pre><p><strong>安装 VMware 工具</strong></p><p>工作环境是 VMWare 虚拟环境时，推荐你安装它的 open VM 工具。你可以使用下面的命令安装。</p><pre tabindex=0><code># yum install -y open-vm-tools
+</code></pre><p><strong>配置防火墙</strong></p><p>如果你正在使用启用了防火墙的限制性环境，确保在你的 Ceph 存储管理节点和客户端节点中开放了以下的端口。</p><blockquote><p>你必须在你的 Admin Calamari 节点开放 80、2003、以及4505-4506 端口，并且允许通过 80 号端口访问到 Ceph 或 Calamari 管理节点，以便你网络中的客户端能访问 Calamari web 用户界面。</p></blockquote><p>你可以使用下面的命令在 CentOS 7 中启动并启用防火墙。</p><pre tabindex=0><code># systemctl start firewalld
+# systemctl enable firewalld
+</code></pre><p>运行以下命令使 Admin Calamari 节点开放上面提到的端口。</p><pre tabindex=0><code># firewall-cmd --zone=public --add-port=80/tcp --permanent
+# firewall-cmd --zone=public --add-port=2003/tcp --permanent
+# firewall-cmd --zone=public --add-port=4505-4506/tcp --permanent
+# firewall-cmd --reload
+</code></pre><p>在 Ceph Monitor 节点，你要在防火墙中允许通过以下端口。</p><pre tabindex=0><code># firewall-cmd --zone=public --add-port=6789/tcp --permanent
+</code></pre><p>然后允许以下默认端口列表，以便能和客户端以及监控节点交互，并发送数据到其它 OSD。</p><pre tabindex=0><code># firewall-cmd --zone=public --add-port=6800-7300/tcp --permanent
+</code></pre><p>如果你工作在非生产环境，建议你停用防火墙以及 SELinux 设置，在我们的测试环境中我们会停用防火墙以及 SELinux。</p><pre tabindex=0><code># systemctl stop firewalld
+# systemctl disable firewalld
+</code></pre><p><strong>系统升级</strong></p><p>现在升级你的系统并重启使所需更改生效。</p><pre tabindex=0><code># yum update
+# shutdown -r 0
+</code></pre><h3 id=设置-ceph-用户>设置 Ceph 用户</h3><p>现在我们会新建一个单独的 sudo 用户用于在每个节点安装 ceph-deploy工具，并允许该用户无密码访问每个节点，因为它需要在 Ceph 节点上安装软件和配置文件而不会有输入密码提示。</p><p>运行下面的命令在 ceph-storage 主机上新建有独立 home 目录的新用户。</p><pre tabindex=0><code>[root@ceph-storage ~]# useradd -d /home/ceph -m ceph
+[root@ceph-storage ~]# passwd ceph
+</code></pre><p>节点中新建的每个用户都要有 sudo 权限，你可以使用下面展示的命令赋予 sudo 权限。</p><pre tabindex=0><code>[root@ceph-storage ~]# echo &#34;ceph ALL = (root) NOPASSWD:ALL&#34; | sudo tee /etc/sudoers.d/ceph
+ceph ALL = (root) NOPASSWD:ALL
+
+[root@ceph-storage ~]# sudo chmod 0440 /etc/sudoers.d/ceph
+</code></pre><h3 id=设置-ssh-密钥>设置 SSH 密钥</h3><p>现在我们会在 Ceph 管理节点生成 ssh 密钥并把密钥复制到每个 Ceph 集群节点。</p><p>在 ceph-node 运行下面的命令复制它的 ssh 密钥到 ceph-storage。</p><pre tabindex=0><code>[root@ceph-node ~]# ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):
+Created directory &#39;/root/.ssh&#39;.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+5b:*:*:*:*:*:*:*:*:*:c9 root@ceph-node
+The key&#39;s randomart image is:
++--[ RSA 2048]----+
+</code></pre><hr><pre tabindex=0><code>[root@ceph-node ~]# ssh-copy-id ceph@ceph-storage
+</code></pre><p><img src=/data/attachment/album/201511/22/172239jldoo6qay763zoo6.png alt="SSH key"></p><h3 id=配置-pid-数目>配置 PID 数目</h3><p>要配置 PID 数目的值，我们会使用下面的命令检查默认的内核值。默认情况下，是一个小的最大线程数 32768。</p><p>如下图所示通过编辑系统配置文件配置该值为一个更大的数。</p><p><img src=/data/attachment/album/201511/22/172240uda7i37i8ggypv7p.png alt="更改 PID 值"></p><h3 id=配置管理节点服务器>配置管理节点服务器</h3><p>配置并验证了所有网络后，我们现在使用 ceph 用户安装 ceph-deploy。通过打开文件检查 hosts 条目（LCTT 译注：你也可以用 DNS 解析来完成）。</p><pre tabindex=0><code># vim /etc/hosts
+ceph-storage 45.79.136.163
+ceph-node 45.79.171.138
+</code></pre><p>运行下面的命令添加它的库。</p><pre tabindex=0><code># rpm -Uhv http://ceph.com/rpm-giant/el7/noarch/ceph-release-1-0.el7.noarch.rpm
+</code></pre><p><img src=/data/attachment/album/201511/22/172240c16xjn6bnqhyyq78.png alt="添加 Ceph 仓仓库"></p><p>或者创建一个新文件并更新 Ceph 库参数，别忘了替换你当前的 Release 和版本号。</p><pre tabindex=0><code>[root@ceph-storage ~]# vi /etc/yum.repos.d/ceph.repo
+</code></pre><hr><pre tabindex=0><code>[ceph-noarch]
+name=Ceph noarch packages
+baseurl=http://ceph.com/rpm-{ceph-release}/{distro}/noarch
+enabled=1
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+</code></pre><p>之后更新你的系统并安装 ceph-deploy 软件包。</p><h3 id=安装-ceph-deploy-软件包>安装 ceph-deploy 软件包</h3><p>我们运行下面的命令以及 ceph-deploy 安装命令来更新系统以及最新的 ceph 库和其它软件包。</p><pre tabindex=0><code>#yum update -y &amp;&amp; yum install ceph-deploy -y
+</code></pre><h3 id=配置集群>配置集群</h3><p>使用下面的命令在 ceph 管理节点上新建一个目录并进入新目录，用于收集所有输出文件和日志。</p><pre tabindex=0><code># mkdir ~/ceph-cluster
+# cd ~/ceph-cluster
+</code></pre><hr><pre tabindex=0><code># ceph-deploy new storage
+</code></pre><p><img src=/data/attachment/album/201511/22/172241tchhr2fqtnjl5cnl.png alt="设置 ceph 集群"></p><p>如果成功执行了上面的命令，你会看到它新建了配置文件。</p><p>现在配置 Ceph 默认的配置文件，用任意编辑器打开它并在会影响你公共网络的 global 参数下面添加以下两行。</p><pre tabindex=0><code># vim ceph.conf
+osd pool default size = 1
+public network = 45.79.0.0/16
+</code></pre><h3 id=安装-ceph>安装 Ceph</h3><p>现在我们准备在和 Ceph 集群关联的每个节点上安装 Ceph。我们使用下面的命令在 ceph-storage 和 ceph-node 上安装 Ceph。</p><pre tabindex=0><code># ceph-deploy install ceph-node ceph-storage
+</code></pre><p><img src=/data/attachment/album/201511/22/172241jjgjbjbgbzbvvh5n.png alt="安装 ceph"></p><p>处理所有所需仓库和安装所需软件包会需要一些时间。</p><p>当两个节点上的 ceph 安装过程都完成后，我们下一步会通过在相同节点上运行以下命令创建监视器并收集密钥。</p><pre tabindex=0><code># ceph-deploy mon create-initial
+</code></pre><p><img src=/data/attachment/album/201511/22/172242hybyb9duf07afzc9.png alt="Ceph 初始化监视器"></p><h3 id=设置-osd-和-osd-守护进程>设置 OSD 和 OSD 守护进程</h3><p>现在我们会设置磁盘存储，首先运行下面的命令列出你所有可用的磁盘。</p><pre tabindex=0><code># ceph-deploy disk list ceph-storage
+</code></pre><p>结果中会列出你存储节点中使用的磁盘，你会用它们来创建 OSD。让我们运行以下命令，请使用你的磁盘名称。</p><pre tabindex=0><code># ceph-deploy disk zap storage:sda
+# ceph-deploy disk zap storage:sdb
+</code></pre><p>为了最后完成 OSD 配置，运行下面的命令配置日志磁盘以及数据磁盘。</p><pre tabindex=0><code># ceph-deploy osd prepare storage:sdb:/dev/sda
+# ceph-deploy osd activate storage:/dev/sdb1:/dev/sda1
+</code></pre><p>你需要在所有节点上运行相同的命令，它会清除你磁盘上的所有东西。之后为了集群能运转起来，我们需要使用以下命令从 ceph 管理节点复制不同的密钥和配置文件到所有相关节点。</p><pre tabindex=0><code># ceph-deploy admin ceph-node ceph-storage
+</code></pre><h3 id=测试-ceph>测试 Ceph</h3><p>我们快完成了 Ceph 集群设置，让我们在 ceph 管理节点上运行下面的命令检查正在运行的 ceph 状态。</p><pre tabindex=0><code># ceph status
+# ceph health
+HEALTH_OK
+</code></pre><p>如果你在 ceph status 中没有看到任何错误信息，就意味着你成功地在 CentOS 7 上安装了 ceph 存储集群。</p><h3 id=总结>总结</h3><p>在这篇详细的文章中我们学习了如何使用两台安装了 CentOS 7 的虚拟机设置 Ceph 存储集群，这能用于备份或者作为用于其它虚拟机的本地存储。我们希望这篇文章能对你有所帮助。当你试着安装的时候记得分享你的经验。</p><hr><p>via: <a href=http://linoxide.com/storage/setup-red-hat-ceph-storage-centos-7-0/>http://linoxide.com/storage/setup-red-hat-ceph-storage-centos-7-0/</a></p><p>作者：<a href=http://linoxide.com/author/kashifs/>Kashif Siddique</a> 译者：<a href=http://mutouxiaogui.cn/blog/>ictlyh</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ceph/ rel=tag>Ceph</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E4%BA%91%E5%AD%98%E5%82%A8/ rel=tag>云存储</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

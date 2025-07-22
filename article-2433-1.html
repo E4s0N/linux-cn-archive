@@ -1,0 +1,78 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在openSUSE 13.1中配置FTP服务器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在openSUSE 13.1中配置FTP服务器"><meta property="og:description" content="vsftpd （ 非常安全的文件传输协议守护进程） 是Unix/Linux系统中的一个安全快速的FTP服务器。 在这篇指导教程中，让我们看看在openSUSE 13.1中怎样使用vsftpd来配置一个基本的FTP服务器。
+安装 vsftpd
+作为root用  &mldr;
+"><meta property="og:type" content="article"><meta property="og:url" content="/article-2433-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-01-02T20:45:00+00:00"><meta property="article:modified_time" content="2014-01-02T20:45:00+00:00"><meta itemprop=name content="在openSUSE 13.1中配置FTP服务器"><meta itemprop=description content="vsftpd （ 非常安全的文件传输协议守护进程） 是Unix/Linux系统中的一个安全快速的FTP服务器。 在这篇指导教程中，让我们看看在openSUSE 13.1中怎样使用vsftpd来配置一个基本的FTP服务器。
+安装 vsftpd
+作为root用  &mldr;
+"><meta itemprop=datePublished content="2014-01-02T20:45:00+00:00"><meta itemprop=dateModified content="2014-01-02T20:45:00+00:00"><meta itemprop=wordCount content="317"><meta itemprop=keywords content="openSUSE,FTP,vsftpd,Unix,Linux,安装,配置,教程,技巧,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在openSUSE 13.1中配置FTP服务器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-01-02T20:45:00Z>January 02, 2014</time></div></div></header><div class="content post__content clearfix"><p><strong>vsftpd</strong> （ <strong>非常安全的文件传输协议守护进程</strong>） 是Unix/Linux系统中的一个安全快速的FTP服务器。 在这篇指导教程中，让我们看看在openSUSE 13.1中怎样使用vsftpd来配置一个基本的FTP服务器。</p><p><img src=/data/attachment/album/201401/02/203124ldtkguzd2gog9r9u.jpg alt></p><h3 id=安装-vsftpd>安装 vsftpd</h3><p>作为root用户登录然后输入以下命令。</p><pre tabindex=0><code># zypper in vsftpd
+</code></pre><p>启动 vsftpd 服务然后通过设置使它在每次系统重启时自动启动。</p><pre tabindex=0><code># systemctl enable vsftpd.service
+# systemctl start vsftpd.service
+</code></pre><h3 id=配置-vsftpd>配置 vsftpd</h3><p>为ftp用户新建一个文件夹。</p><pre tabindex=0><code># mkdir /srv/ftp
+</code></pre><p>创建一个名为 <strong>ftp-users</strong> 的组。</p><pre tabindex=0><code># groupadd ftp-users
+</code></pre><p>让我们来创建一个叫unixmen的示例用户 并设置其主目录为 <strong>/srv/ftp</strong> 组为 <strong>ftp-users</strong> 。</p><pre tabindex=0><code># useradd -g ftp-users -d /srv/ftp/ unixmen
+</code></pre><p>为新用户设置密码。</p><pre tabindex=0><code># passwd unixmen
+</code></pre><p>使ftp主目录 <strong>/srv/ftp/</strong> 可以被ftp用户所访问。</p><pre tabindex=0><code># chmod 750 /srv/ftp/
+# chown unixmen:ftp-users /srv/ftp/
+</code></pre><p>编辑 vsftpd.conf 文件</p><pre tabindex=0><code># nano /etc/vsftpd.conf
+</code></pre><p>设置如下的更改。</p><pre tabindex=0><code>[...]
+#Uncomment and  Set YES to enable write.
+write_enable=YES
+[...]
+# Uncomment and Set banner name for your website
+ftpd_banner=Welcome to Unixmen FTP service.
+[...]
+# Uncomment
+ls_recurse_enable=YES
+[...]
+# Uncomment and set YES to allow local users to log in.
+local_enable=YES
+[...]
+# To disable anonymous access, set NO.
+anonymous_enable=NO
+[...]
+# Uncomment to enable ascii download and upload.
+ascii_upload_enable=YES
+ascii_download_enable=YES
+[...]
+## Add at the end of this  file ##
+use_localtime=YES
+</code></pre><p>保存并退出文件。</p><h3 id=测试本地ftp服务器>测试本地FTP服务器</h3><p>首先 让我们按如下步骤尝试登录FTP服务器</p><pre tabindex=0><code># ftp localhost
+Trying ::1:21 ...
+Connected to localhost.
+220 (vsFTPd 3.0.2)
+Name (localhost:root): unixmen
+331 Please specify the password.
+Password: 
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp&gt;
+</code></pre><p>正如你在上面所输出的那样, 我们能够用unixmen用户登录到ftp服务器。</p><h3 id=测试远程ftp服务器>测试远程FTP服务器</h3><p>默认 openSUSE 内置的防火墙不允许远程系统登录FTP。所以让我们允许vsftpd服务通过suse的防火墙。然后我们需要打开： <strong>Yast -> 安全性与用户 -> 防火墙</strong>.</p><p><img src=/data/attachment/album/201401/02/203137xxy1yr1nnz4b219u.jpg alt></p><p>在防火墙界面，进入 <strong>允许服务</strong>. 在区域选择下拉框中，选择 <strong>外部区域</strong> 在服务允许下拉框中，选择 <strong>vsftpd 服务器</strong> 然后点击添加。</p><p><img src=/data/attachment/album/201401/02/203139zsah1zwss8aghbb3.jpg alt></p><p>单击下一步并关闭Yast控制中心</p><p>现在尝试从远程系统连接FTP。</p><p>我试着从我的ubuntu桌面系统登录FTP服务器。</p><pre tabindex=0><code>sk@sk:~$ ftp 192.168.1.53
+Connected to 192.168.1.53.
+220 (vsFTPd 3.0.2)
+Name (192.168.1.53:sk): unixmen
+331 Please specify the password.
+Password:
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp&gt;
+</code></pre><p>正如你在上面输出中所看到的，我能够连接到ftp服务器。如果不允许vsftpd服务通过防火墙，你将会得到一个连接超时的报错。</p><h3 id=从浏览器连接>从浏览器连接</h3><p>打开你的浏览器并导航到<strong>ftp://ip-address/</strong>。输入ftp用户名和密码。</p><p><img src=/data/attachment/album/201401/02/203141oyhh1jfz81eqet18.jpg alt></p><h3 id=使用filezilla连接到ftp服务器>使用FileZilla连接到FTP服务器</h3><p>对于新手来说，在命令行模式下工作可能会很烦恼。所以让我们来安装一个叫<a href=https://filezilla-project.org/><strong>Filezilla</strong></a>的图形化的FTP客户端。它可以让我们登陆FTP变得更加简单:</p><p>几乎所有的发行版在它们的官方软件仓库中都有filezilla客户端。 为了在基于Linux的系统上安装filezilla 需要键入以下的命令:</p><p>在基于Ubuntu的系统中:</p><pre tabindex=0><code>$ sudo apt-get install filezilla
+</code></pre><p>在Fedora/Redhat系统中:</p><pre tabindex=0><code>$ sudo yum install filezilla
+</code></pre><p>在openSUSE中:</p><pre tabindex=0><code># zypper in filezilla
+</code></pre><p>安装完fielzilla后打开它。输入ftp服务器的IP地址、用户名和密码，然后点击快速连接。</p><p><img src=/data/attachment/album/201401/02/203143o5k4o4p5o5zcgz1r.jpg alt></p><p>为了增加安全性，你可以通过将用户添加到 <strong>/etc/vsftpd.chroot_list</strong>文件中来限制特定用户对FTP服务器的访问。</p><p>编辑 vsftpd.conf 文件,</p><pre tabindex=0><code>nano /etc/vsftpd.conf
+</code></pre><p>设置如下的更改.</p><pre tabindex=0><code>[...]
+# Uncomment and set YES
+chroot_local_user=YES
+chroot_list_enable=YES
+chroot_list_file=/etc/vsftpd.chroot_list
+[...]
+</code></pre><p>创建 <strong>文件 /etc/vsftpd.chroot_list</strong>,</p><pre tabindex=0><code>nano /etc/vsftpd.chroot_list
+</code></pre><p>添加你希望能够访问FTP服务器的用户。我添加了用户<strong>unixmen</strong>。</p><pre tabindex=0><code>unixmen
+</code></pre><p>重启ftp服务.</p><pre tabindex=0><code># systemctl restart vsftpd.service
+</code></pre><p>现在你能够使用chroot_list文件中列出的用户来连接到FTP服务器。</p><p>如果chroot_list以外的用户想访问FTP服务器，他们将得到如下错误提示。</p><pre tabindex=0><code>500 OOPS: could not read chroot() list file:/etc/vsftpd.chroot_list
+ftp: Login failed
+</code></pre><p>就是现在这样，你的FTP服务器已经可以使用了，好好享受吧!</p><hr><p>via: <a href=http://www.unixmen.com/setup-ftp-server-opensuse-13-1/>http://www.unixmen.com/setup-ftp-server-opensuse-13-1/</a></p><p>译者：<a href=https://github.com/zsJacky>zsJacky</a> 校对：<a href=https://github.com/carolinewuyan>Caroline</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/opensuse/ rel=tag>openSUSE</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ftp/ rel=tag>FTP</a></li><li class=tags__item><a class="tags__link btn" href=/tags/vsftpd/ rel=tag>vsftpd</a></li><li class=tags__item><a class="tags__link btn" href=/tags/unix/ rel=tag>Unix</a></li><li class=tags__item><a class="tags__link btn" href=/tags/linux/ rel=tag>Linux</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%89%E8%A3%85/ rel=tag>安装</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E9%85%8D%E7%BD%AE/ rel=tag>配置</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%99%E7%A8%8B/ rel=tag>教程</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8A%80%E5%B7%A7/ rel=tag>技巧</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

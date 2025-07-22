@@ -1,0 +1,158 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 RHEL8 /CentOS8 上建立多节点 Elastic stack 集群 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 RHEL8 /CentOS8 上建立多节点 Elastic stack 集群"><meta property="og:description" content="Elastic stack 俗称 ELK stack，是一组包括 Elasticsearch、Logstash 和 Kibana 在内的开源产品。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11394-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-09-26T21:24:00+00:00"><meta property="article:modified_time" content="2019-09-26T21:24:00+00:00"><meta itemprop=name content="如何在 RHEL8 /CentOS8 上建立多节点 Elastic stack 集群"><meta itemprop=description content="Elastic stack 俗称 ELK stack，是一组包括 Elasticsearch、Logstash 和 Kibana 在内的开源产品。"><meta itemprop=datePublished content="2019-09-26T21:24:00+00:00"><meta itemprop=dateModified content="2019-09-26T21:24:00+00:00"><meta itemprop=wordCount content="870"><meta itemprop=keywords content="Elastic,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 RHEL8 /CentOS8 上建立多节点 Elastic stack 集群</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-09-26T21:24:00Z>September 26, 2019</time></div></div></header><div class="content post__content clearfix"><p>Elastic stack 俗称 ELK stack，是一组包括 Elasticsearch、Logstash 和 Kibana 在内的开源产品。Elastic Stack 由 Elastic 公司开发和维护。使用 Elastic stack，可以将系统日志发送到 Logstash，它是一个数据收集引擎，接受来自可能任何来源的日志或数据，并对日志进行归一化，然后将日志转发到 Elasticsearch，用于分析、索引、搜索和存储，最后使用 Kibana 表示为可视化数据，使用 Kibana，我们还可以基于用户的查询创建交互式图表。</p><p><img src=/data/attachment/album/201909/26/212420byaf0zyrv9z8ak8r.jpg alt></p><p>在本文中，我们将演示如何在 RHEL 8 / CentOS 8 服务器上设置多节点 elastic stack 集群。以下是我的 Elastic Stack 集群的详细信息:</p><p><strong>Elasticsearch：</strong></p><ul><li>三台服务器，最小化安装 RHEL 8 / CentOS 8</li><li>IP & 主机名 – 192.168.56.40（<code>elasticsearch1.linuxtechi.local</code>）、192.168.56.50 （<code>elasticsearch2.linuxtechi.local</code>）、192.168.56.60（elasticsearch3.linuxtechi.local`）</li></ul><p>Logstash：**</p><ul><li>两台服务器，最小化安装 RHEL 8 / CentOS 8</li><li>IP & 主机 – 192.168.56.20（<code>logstash1.linuxtechi.local</code>）、192.168.56.30（<code>logstash2.linuxtechi.local</code>）</li></ul><p><strong>Kibana：</strong></p><ul><li>一台服务器，最小化安装 RHEL 8 / CentOS 8</li><li>IP & 主机名 – 192.168.56.10（<code>kibana.linuxtechi.local</code>）</li></ul><p><strong>Filebeat：</strong></p><ul><li>一台服务器，最小化安装 CentOS 7</li><li>IP & 主机名 – 192.168.56.70（<code>web-server</code>）</li></ul><p>让我们从设置 Elasticsearch 集群开始，</p><h3 id=设置3个节点-elasticsearch-集群>设置3个节点 Elasticsearch 集群</h3><p>正如我已经说过的，设置 Elasticsearch 集群的节点，登录到每个节点，设置主机名并配置 yum/dnf 库。</p><p>使用命令 <code>hostnamectl</code> 设置各个节点上的主机名：</p><pre tabindex=0><code>[root@linuxtechi ~]# hostnamectl set-hostname &#34;elasticsearch1.linuxtechi. local&#34;
+[root@linuxtechi ~]# exec bash
+[root@linuxtechi ~]#
+[root@linuxtechi ~]# hostnamectl set-hostname &#34;elasticsearch2.linuxtechi. local&#34;
+[root@linuxtechi ~]# exec bash
+[root@linuxtechi ~]#
+[root@linuxtechi ~]# hostnamectl set-hostname &#34;elasticsearch3.linuxtechi. local&#34;
+[root@linuxtechi ~]# exec bash
+[root@linuxtechi ~]#
+</code></pre><p>对于 CentOS 8 系统，我们不需要配置任何操作系统包库，对于 RHEL 8 服务器，如果你有有效订阅，那么用红帽订阅以获得包存储库就可以了。如果你想为操作系统包配置本地 yum/dnf 存储库，请参考以下网址：</p><ul><li><a href=https://www.linuxtechi.com/setup-local-yum-dnf-repository-rhel-8/>如何使用 DVD 或 ISO 文件在 RHEL 8 服务器上设置本地 Yum / DNF 存储库</a></li></ul><p>在所有节点上配置 Elasticsearch 包存储库，在 <code>/etc/yum.repo.d/</code> 文件夹下创建一个包含以下内容的 <code>elastic.repo</code> 文件：</p><pre tabindex=0><code>~]# vi /etc/yum.repos.d/elastic.repo
+
+[elasticsearch-7.x]
+name=Elasticsearch repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+</code></pre><p>保存文件并退出。</p><p>在所有三个节点上使用 <code>rpm</code> 命令导入 Elastic 公共签名密钥。</p><pre tabindex=0><code>~]# rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+</code></pre><p>在所有三个节点的 <code>/etc/hosts</code> 文件中添加以下行:</p><pre tabindex=0><code>192.168.56.40             elasticsearch1.linuxtechi.local
+192.168.56.50             elasticsearch2.linuxtechi.local
+192.168.56.60             elasticsearch3.linuxtechi.local
+</code></pre><p>使用 <code>yum</code>/<code>dnf</code> 命令在所有三个节点上安装 Java：</p><pre tabindex=0><code>[root@linuxtechi ~]# dnf install java-openjdk -y
+[root@linuxtechi ~]# dnf install java-openjdk -y
+[root@linuxtechi ~]# dnf install java-openjdk -y
+</code></pre><p>使用 <code>yum</code>/<code>dnf</code> 命令在所有三个节点上安装 Elasticsearch：</p><pre tabindex=0><code>[root@linuxtechi ~]# dnf install elasticsearch -y
+[root@linuxtechi ~]# dnf install elasticsearch -y
+[root@linuxtechi ~]# dnf install elasticsearch -y
+</code></pre><p><strong>注意：</strong> 如果操作系统防火墙已启用并在每个 Elasticsearch 节点中运行，则使用 <code>firewall-cmd</code> 命令允许以下端口开放：</p><pre tabindex=0><code>~]# firewall-cmd --permanent --add-port=9300/tcp
+~]# firewall-cmd --permanent --add-port=9200/tcp
+~]# firewall-cmd --reload
+</code></pre><p>配置 Elasticsearch, 在所有节点上编辑文件 <code>/etc/elasticsearch/elasticsearch.yml</code> 并加入以下内容：</p><pre tabindex=0><code>~]# vim /etc/elasticsearch/elasticsearch.yml
+
+cluster.name: opn-cluster
+node.name: elasticsearch1.linuxtechi.local
+network.host: 192.168.56.40
+http.port: 9200
+discovery.seed_hosts: [&#34;elasticsearch1.linuxtechi.local&#34;, &#34;elasticsearch2.linuxtechi.local&#34;, &#34;elasticsearch3.linuxtechi.local&#34;]
+cluster.initial_master_nodes: [&#34;elasticsearch1.linuxtechi.local&#34;, &#34;elasticsearch2.linuxtechi.local&#34;, &#34;elasticsearch3.linuxtechi.local&#34;]
+</code></pre><p><strong>注意：</strong> 在每个节点上，在 <code>node.name</code> 中填写正确的主机名，在 <code>network.host</code> 中填写正确的 IP 地址，其他参数保持不变。</p><p>现在使用 <code>systemctl</code> 命令在所有三个节点上启动并启用 Elasticsearch 服务：</p><pre tabindex=0><code>~]# systemctl daemon-reload
+~]# systemctl enable elasticsearch.service
+~]# systemctl start elasticsearch.service
+</code></pre><p>使用下面 <code>ss</code> 命令验证 elasticsearch 节点是否开始监听 9200 端口：</p><pre tabindex=0><code>[root@linuxtechi ~]# ss -tunlp | grep 9200
+tcp   LISTEN  0       128       [::ffff:192.168.56.40]:9200              *:*     users:((&#34;java&#34;,pid=2734,fd=256))
+[root@linuxtechi ~]#
+</code></pre><p>使用以下 <code>curl</code> 命令验证 Elasticsearch 群集状态：</p><pre tabindex=0><code>[root@linuxtechi ~]# curl  http://elasticsearch1.linuxtechi.local:9200
+[root@linuxtechi ~]# curl -X GET  http://elasticsearch2.linuxtechi.local:9200/_cluster/health?pretty
+</code></pre><p>命令的输出如下所示：</p><p><img src=/data/attachment/album/201909/26/212753bchmv9icciva11wz.jpg alt=Elasticsearch-cluster-status-rhel8></p><p>以上输出表明我们已经成功创建了 3 节点的 Elasticsearch 集群，集群的状态也是绿色的。</p><p><strong>注意：</strong> 如果你想修改 JVM 堆大小，那么你可以编辑了文件 <code>/etc/elasticsearch/jvm.options</code>，并根据你的环境更改以下参数：</p><ul><li><code>-Xms1g</code></li><li><code>-Xmx1g</code></li></ul><p>现在让我们转到 Logstash 节点。</p><h3 id=安装和配置-logstash>安装和配置 Logstash</h3><p>在两个 Logstash 节点上执行以下步骤。</p><p>登录到两个节点使用 <code>hostnamectl</code> 命令设置主机名：</p><pre tabindex=0><code>[root@linuxtechi ~]# hostnamectl set-hostname &#34;logstash1.linuxtechi.local&#34;
+[root@linuxtechi ~]# exec bash
+[root@linuxtechi ~]#
+[root@linuxtechi ~]# hostnamectl set-hostname &#34;logstash2.linuxtechi.local&#34;
+[root@linuxtechi ~]# exec bash
+[root@linuxtechi ~]#
+</code></pre><p>在两个 logstash 节点的 <code>/etc/hosts</code> 文件中添加以下条目：</p><pre tabindex=0><code>~]# vi /etc/hosts
+192.168.56.40             elasticsearch1.linuxtechi.local
+192.168.56.50             elasticsearch2.linuxtechi.local
+192.168.56.60             elasticsearch3.linuxtechi.local
+</code></pre><p>保存文件并退出。</p><p>在两个节点上配置 Logstash 存储库，在文件夹 <code>/ete/yum.repo.d/</code> 下创建一个包含以下内容的文件 <code>logstash.repo</code>：</p><pre tabindex=0><code>~]# vi /etc/yum.repos.d/logstash.repo
+
+[elasticsearch-7.x]
+name=Elasticsearch repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+</code></pre><p>保存并退出文件，运行 <code>rpm</code> 命令导入签名密钥：</p><pre tabindex=0><code>~]# rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+</code></pre><p>使用 <code>yum</code>/<code>dnf</code> 命令在两个节点上安装 Java OpenJDK：</p><pre tabindex=0><code>~]# dnf install java-openjdk -y
+</code></pre><p>从两个节点运行 <code>yum</code>/<code>dnf</code> 命令来安装 logstash：</p><pre tabindex=0><code>[root@linuxtechi ~]# dnf install logstash -y
+[root@linuxtechi ~]# dnf install logstash -y
+</code></pre><p>现在配置 logstash，在两个 logstash 节点上执行以下步骤，创建一个 logstash 配置文件，首先我们在 <code>/etc/logstash/conf.d/</code> 下复制 logstash 示例文件：</p><pre tabindex=0><code># cd /etc/logstash/
+# cp logstash-sample.conf conf.d/logstash.conf
+</code></pre><p>编辑配置文件并更新以下内容：</p><pre tabindex=0><code># vi conf.d/logstash.conf
+
+input {
+  beats {
+    port =&gt; 5044
+  }
+}
+
+output {
+  elasticsearch {
+    hosts =&gt; [&#34;http://elasticsearch1.linuxtechi.local:9200&#34;, &#34;http://elasticsearch2.linuxtechi.local:9200&#34;, &#34;http://elasticsearch3.linuxtechi.local:9200&#34;]
+    index =&gt; &#34;%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}&#34;
+    #user =&gt; &#34;elastic&#34;
+    #password =&gt; &#34;changeme&#34;
+  }
+}
+</code></pre><p>在 <code>output</code> 部分之下，在 <code>hosts</code> 参数中指定所有三个 Elasticsearch 节点的 FQDN，其他参数保持不变。</p><p>使用 <code>firewall-cmd</code> 命令在操作系统防火墙中允许 logstash 端口 “5044”：</p><pre tabindex=0><code>~ # firewall-cmd --permanent --add-port=5044/tcp
+~ # firewall-cmd –reload
+</code></pre><p>现在，在每个节点上运行以下 <code>systemctl</code> 命令，启动并启用 Logstash 服务：</p><pre tabindex=0><code>~]# systemctl start logstash
+~]# systemctl eanble logstash
+</code></pre><p>使用 <code>ss</code> 命令验证 logstash 服务是否开始监听 5044 端口：</p><pre tabindex=0><code>[root@linuxtechi ~]# ss -tunlp | grep 5044
+tcp   LISTEN  0       128                         *:5044                *:*      users:((&#34;java&#34;,pid=2416,fd=96))
+[root@linuxtechi ~]#
+</code></pre><p>以上输出表明 logstash 已成功安装和配置。让我们转到 Kibana 安装。</p><h3 id=安装和配置-kibana>安装和配置 Kibana</h3><p>登录 Kibana 节点，使用 <code>hostnamectl</code> 命令设置主机名：</p><pre tabindex=0><code>[root@linuxtechi ~]# hostnamectl set-hostname &#34;kibana.linuxtechi.local&#34;
+[root@linuxtechi ~]# exec bash
+[root@linuxtechi ~]#
+</code></pre><p>编辑 <code>/etc/hosts</code> 文件并添加以下行：</p><pre tabindex=0><code>192.168.56.40             elasticsearch1.linuxtechi.local
+192.168.56.50             elasticsearch2.linuxtechi.local
+192.168.56.60             elasticsearch3.linuxtechi.local
+</code></pre><p>使用以下命令设置 Kibana 存储库：</p><pre tabindex=0><code>[root@linuxtechi ~]# vi /etc/yum.repos.d/kibana.repo
+[elasticsearch-7.x]
+name=Elasticsearch repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+
+[root@linuxtechi ~]# rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+</code></pre><p>执行 <code>yum</code>/<code>dnf</code> 命令安装 kibana：</p><pre tabindex=0><code>[root@linuxtechi ~]# yum install kibana -y
+</code></pre><p>通过编辑 <code>/etc/kibana/kibana.yml</code> 文件，配置 Kibana：</p><pre tabindex=0><code>[root@linuxtechi ~]# vim /etc/kibana/kibana.yml
+…………
+server.host: &#34;kibana.linuxtechi.local&#34;
+server.name: &#34;kibana.linuxtechi.local&#34;
+elasticsearch.hosts: [&#34;http://elasticsearch1.linuxtechi.local:9200&#34;, &#34;http://elasticsearch2.linuxtechi.local:9200&#34;, &#34;http://elasticsearch3.linuxtechi.local:9200&#34;]
+…………
+</code></pre><p>启用并启动 kibana 服务：</p><pre tabindex=0><code>[root@linuxtechi ~]# systemctl start kibana
+[root@linuxtechi ~]# systemctl enable kibana
+</code></pre><p>在系统防火墙上允许 Kibana 端口 “5601”：</p><pre tabindex=0><code>[root@linuxtechi ~]# firewall-cmd --permanent --add-port=5601/tcp
+success
+[root@linuxtechi ~]# firewall-cmd --reload
+success
+[root@linuxtechi ~]#
+</code></pre><p>使用以下 URL 访问 Kibana 界面：<a href=http://kibana.linuxtechi.local:5601>http://kibana.linuxtechi.local:5601</a></p><p><img src=/data/attachment/album/201909/26/212453uht51r0cd0wcupbh.jpg alt=Kibana-Dashboard-rhel8></p><p>从面板上，我们可以检查 Elastic Stack 集群的状态。</p><p><img src=/data/attachment/album/201909/26/212508s0f88fd788nwk868.jpg alt=Stack-Monitoring-Overview-RHEL8></p><p>这证明我们已经在 RHEL 8 /CentOS 8 上成功地安装并设置了多节点 Elastic Stack 集群。</p><p>现在让我们通过 <code>filebeat</code> 从其他 Linux 服务器发送一些日志到 logstash 节点中，在我的例子中，我有一个 CentOS 7服务器，我将通过 <code>filebeat</code> 将该服务器的所有重要日志推送到 logstash。</p><p>登录到 CentOS 7 服务器使用 yum/rpm 命令安装 filebeat 包：</p><pre tabindex=0><code>[root@linuxtechi ~]# rpm -ivh https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.3.1-x86_64.rpm
+Retrieving https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.3.1-x86_64.rpm
+Preparing...                          ################################# [100%]
+Updating / installing...
+   1:filebeat-7.3.1-1                 ################################# [100%]
+[root@linuxtechi ~]#
+</code></pre><p>编辑 <code>/etc/hosts</code> 文件并添加以下内容：</p><pre tabindex=0><code>192.168.56.20             logstash1.linuxtechi.local
+192.168.56.30             logstash2.linuxtechi.local
+</code></pre><p>现在配置 <code>filebeat</code>，以便它可以使用负载平衡技术向 logstash 节点发送日志，编辑文件 <code>/etc/filebeat/filebeat.yml</code>，并添加以下参数：</p><p>在 <code>filebeat.inputs:</code> 部分将 <code>enabled: false</code> 更改为 <code>enabled: true</code>，并在 <code>paths</code> 参数下指定我们可以发送到 logstash 的日志文件的位置；注释掉 <code>output.elasticsearch</code> 和 <code>host</code> 参数；删除 <code>output.logstash:</code> 和 <code>hosts:</code> 的注释，并在 <code>hosts</code> 参数添加两个 logstash 节点，以及设置 <code>loadbalance: true</code>。</p><pre tabindex=0><code>[root@linuxtechi ~]# vi /etc/filebeat/filebeat.yml
+
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/messages
+    - /var/log/dmesg
+    - /var/log/maillog
+    - /var/log/boot.log
+#output.elasticsearch:
+  #  hosts: [&#34;localhost:9200&#34;]
+
+output.logstash:
+    hosts: [&#34;logstash1.linuxtechi.local:5044&#34;, &#34;logstash2.linuxtechi.local:5044&#34;]
+    loadbalance: true
+</code></pre><p>使用下面的 2 个 <code>systemctl</code> 命令 启动并启用 <code>filebeat</code> 服务：</p><pre tabindex=0><code>[root@linuxtechi ~]# systemctl start filebeat
+[root@linuxtechi ~]# systemctl enable filebeat
+</code></pre><p>现在转到 Kibana 用户界面，验证新索引是否可见。</p><p>从左侧栏中选择管理选项，然后单击 Elasticsearch 下的索引管理：</p><p><img src=/data/attachment/album/201909/26/212514m1lziump2ly2zz81.jpg alt=Elasticsearch-index-management-Kibana></p><p>正如我们上面看到的，索引现在是可见的，让我们现在创建索引模型。</p><p>点击 Kibana 部分的 “Index Patterns”，它将提示我们创建一个新模型，点击 “Create Index Pattern” ，并将模式名称指定为 “filebeat”：</p><p><img src=/data/attachment/album/201909/26/212519soeqwn1emyomum2m.jpg alt=Define-Index-Pattern-Kibana-RHEL8></p><p>点击下一步。</p><p>选择 “Timestamp” 作为索引模型的时间过滤器，然后单击 “Create index pattern”：</p><p><img src=/data/attachment/album/201909/26/212526cvb1vr31lj3lojkn.jpg alt=Time-Filter-Index-Pattern-Kibana-RHEL8></p><p><img src=/data/attachment/album/201909/26/212532wlz4albbl2mgccap.jpg alt=filebeat-index-pattern-overview-Kibana></p><p>现在单击查看实时 filebeat 索引模型：</p><p><img src=/data/attachment/album/201909/26/212548zqw4482qv44q12v7.jpg alt=Discover-Kibana-REHL8></p><p>这表明 Filebeat 代理已配置成功，我们能够在 Kibana 仪表盘上看到实时日志。</p><p>以上就是本文的全部内容，对这些帮助你在 RHEL 8 / CentOS 8 系统上设置 Elastic Stack 集群的步骤，请不要犹豫分享你的反馈和意见。</p><hr><p>via: <a href=https://www.linuxtechi.com/setup-multinode-elastic-stack-cluster-rhel8-centos8/>https://www.linuxtechi.com/setup-multinode-elastic-stack-cluster-rhel8-centos8/</a></p><p>作者：<a href=https://www.linuxtechi.com/author/pradeep/>Pradeep Kumar</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/heguangzhi>heguangzhi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/elastic/ rel=tag>Elastic</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

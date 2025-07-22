@@ -1,0 +1,72 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Python 突变测试介绍 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Python 突变测试介绍"><meta property="og:description" content="通过突变测试来修复未知的 bug。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12871-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-11-29T23:01:53+00:00"><meta property="article:modified_time" content="2020-11-29T23:01:53+00:00"><meta itemprop=name content="Python 突变测试介绍"><meta itemprop=description content="通过突变测试来修复未知的 bug。"><meta itemprop=datePublished content="2020-11-29T23:01:53+00:00"><meta itemprop=dateModified content="2020-11-29T23:01:53+00:00"><meta itemprop=wordCount content="361"><meta itemprop=keywords content="测试,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Python 突变测试介绍</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-11-29T23:01:53Z>November 29, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>通过突变测试来修复未知的 bug。</p></blockquote><p><img src=/data/attachment/album/202011/29/230106ie9xc89dj3jx1yj9.jpg alt></p><p>你一定对所有内容都进行了测试，也许你甚至在项目仓库中有一个徽章，标明有 100% 的测试覆盖率，但是这些测试真的帮到你了吗？你怎么知道的？</p><p>开发人员很清楚单元测试的<em>成本</em>。测试必须要编写。有时它们无法按照预期工作：存在假告警或者抖动测试。在不更改任何代码的情况下有时成功，有时失败。通过单元测试发现的小问题很有价值，但是通常它们悄无声息的出现在开发人员的机器上，并且在提交到版本控制之前就已得到修复。但真正令人担忧的问题大多是看不见的。最糟糕的是，<em>丢失的告警</em>是完全不可见的：你看不到没能捕获的错误，直到出现在用户手上 —— 有时甚至连用户都看不到。</p><p>有一种测试可以使不可见的错误变为可见： 突变测试 mutation testing 。</p><p>变异测试通过算法修改源代码，并检查每次测试是否都有“变异体”存活。任何在单元测试中幸存下来的变异体都是问题：这意味着对代码的修改（可能会引入错误）没有被标准测试套件捕获。</p><p><a href=https://opensource.com/resources/python>Python</a> 中用于突变测试的一个框架是 <code>mutmut</code>。</p><p>假设你需要编写代码来计算钟表中时针和分针之间的角度，直到最接近的度数，代码可能会这样写：</p><pre tabindex=0><code>def hours_hand(hour, minutes):
+    base = (hour % 12 ) * (360 // 12)
+    correction = int((minutes / 60) * (360 // 12))
+    return base + correction
+
+def minutes_hand(hour, minutes):
+    return minutes * (360 // 60)
+
+def between(hour, minutes):
+    return abs(hours_hand(hour, minutes) - minutes_hand(hour, minutes))
+</code></pre><p>首先，写一个简单的单元测试：</p><pre tabindex=0><code>import angle
+
+def test_twelve():
+    assert angle.between(12, 00) == 0
+</code></pre><p>足够了吗？代码没有 <code>if</code> 语句，所以如果你查看覆盖率：</p><pre tabindex=0><code>$ coverage run `which pytest`
+============================= test session starts ==============================
+platform linux -- Python 3.8.3, pytest-5.4.3, py-1.8.2, pluggy-0.13.1
+rootdir: /home/moshez/src/mut-mut-test
+collected 1 item                                                              
+
+tests/test_angle.py .                                                    [100%]
+
+============================== 1 passed in 0.01s ===============================
+</code></pre><p>完美！测试通过，覆盖率为 100%，你真的是一个测试专家。但是，当你使用突变测试时，覆盖率会变成多少？</p><pre tabindex=0><code>$ mutmut run --paths-to-mutate angle.py
+&lt;snip&gt;
+Legend for output:
+? Killed mutants.   The goal is for everything to end up in this bucket.
+⏰ Timeout.          Test suite took 10 times as long as the baseline so were killed.
+? Suspicious.       Tests took a long time, but not long enough to be fatal.
+? Survived.         This means your tests needs to be expanded.
+? Skipped.          Skipped.
+&lt;snip&gt;
+⠋ 21/21  ? 5  ⏰ 0  ? 0  ? 16  ? 0
+</code></pre><p>天啊，在 21 个突变体中，有 16 个存活。只有 5 个通过了突变测试，但是，这意味着什么呢？</p><p>对于每个突变测试，<code>mutmut</code> 会修改部分源代码，以模拟潜在的错误，修改的一个例子是将 <code>></code> 比较更改为 <code>>=</code>，查看会发生什么。如果没有针对这个边界条件的单元测试，那么这个突变将会“存活”：这是一个没有任何测试用例能够检测到的潜在错误。</p><p>是时候编写更好的单元测试了。很容易检查使用 <code>results</code> 所做的更改：</p><pre tabindex=0><code>$ mutmut results
+&lt;snip&gt;
+Survived ? (16)
+
+---- angle.py (16) ----
+
+4-7, 9-14, 16-21
+$ mutmut apply 4
+$ git diff
+diff --git a/angle.py b/angle.py
+index b5dca41..3939353 100644
+--- a/angle.py
++++ b/angle.py
+@@ -1,6 +1,6 @@
+ def hours_hand(hour, minutes):
+     hour = hour % 12
+-    base = hour * (360 // 12)
++    base = hour / (360 // 12)
+     correction = int((minutes / 60) * (360 // 12))
+     return base + correction
+</code></pre><p>这是 <code>mutmut</code> 执行突变的一个典型例子，它会分析源代码并将运算符更改为不同的运算符：减法变加法。在本例中由乘法变为除法。一般来说，单元测试应该在操作符更换时捕获错误。否则，它们将无法有效地测试行为。按照这种逻辑，<code>mutmut</code> 会遍历源代码仔细检查你的测试。</p><p>你可以使用 <code>mutmut apply</code> 来应用失败的突变体。事实证明你几乎没有检查过 <code>hour</code> 参数是否被正确使用。修复它：</p><pre tabindex=0><code>$ git diff
+diff --git a/tests/test_angle.py b/tests/test_angle.py
+index f51d43a..1a2e4df 100644
+--- a/tests/test_angle.py
++++ b/tests/test_angle.py
+@@ -2,3 +2,6 @@ import angle
+ 
+ def test_twelve():
+     assert angle.between(12, 00) == 0
++
++def test_three():
++    assert angle.between(3, 00) == 90
+</code></pre><p>以前，你只测试了 12 点钟，现在增加一个 3 点钟的测试就足够了吗？</p><pre tabindex=0><code>$ mutmut run --paths-to-mutate angle.py
+&lt;snip&gt;
+⠋ 21/21  ? 7  ⏰ 0  ? 0  ? 14  ? 0
+</code></pre><p>这项新测试成功杀死了两个突变体，比以前更好，当然还有很长的路要走。我不会一一解决剩下的 14 个测试用例，因为我认为模式已经很明确了。（你能将它们降低到零吗？）</p><p>变异测试和覆盖率一样，是一种工具，它允许你查看测试套件的全面程度。使用它使得测试用例需要改进：那些幸存的突变体中的任何一个都是人类在篡改代码时可能犯的错误，以及潜伏在程序中的隐藏错误。继续测试，愉快地搜寻 bug 吧。</p><hr><p>via: <a href=https://opensource.com/article/20/7/mutmut-python>https://opensource.com/article/20/7/mutmut-python</a></p><p>作者：<a href=https://opensource.com/users/moshez>Moshe Zadka</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%B5%8B%E8%AF%95/ rel=tag>测试</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

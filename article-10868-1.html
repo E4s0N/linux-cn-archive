@@ -1,0 +1,70 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 Linux Shell 脚本来监控磁盘使用情况并发送邮件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 Linux Shell 脚本来监控磁盘使用情况并发送邮件"><meta property="og:description" content="在这篇指南中我们打算写一个 shell 脚本来监控系统的磁盘空间使用率。当系统到达给定的阀值，它将给对应的邮件地址发送一封邮件。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10868-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-05-18T00:21:30+00:00"><meta property="article:modified_time" content="2019-05-18T00:21:30+00:00"><meta itemprop=name content="用 Linux Shell 脚本来监控磁盘使用情况并发送邮件"><meta itemprop=description content="在这篇指南中我们打算写一个 shell 脚本来监控系统的磁盘空间使用率。当系统到达给定的阀值，它将给对应的邮件地址发送一封邮件。"><meta itemprop=datePublished content="2019-05-18T00:21:30+00:00"><meta itemprop=dateModified content="2019-05-18T00:21:30+00:00"><meta itemprop=wordCount content="511"><meta itemprop=keywords content="磁盘,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 Linux Shell 脚本来监控磁盘使用情况并发送邮件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-05-18T00:21:30Z>May 18, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201905/18/002118aaeaejeejrengyvg.jpg alt></p><p>市场上有很多用来监控 Linux 系统的监控工具，当系统到达阀值后它将发送一封邮件。它监控所有的东西例如 CPU 利用率、内存利用率、交换空间利用率、磁盘空间利用率等等。然而，它更适合小环境和大环境。</p><p>想一想如果你只有少量系统，那么什么是最好的方式来应对这种情况。</p><p>是的，我们想要写一个 <a href=https://www.2daygeek.com/category/shell-script/>shell 脚本</a> 来实现。</p><p>在这篇指南中我们打算写一个 shell 脚本来监控系统的磁盘空间使用率。当系统到达给定的阀值，它将给对应的邮件地址发送一封邮件。在这篇文章中我们总共添加了四个 shell 脚本，每个用于不同的目的。之后，我们会想出其他 shell 脚本来监控 CPU，内存和交换空间利用率。</p><p>在此之前，我想澄清一件事，根据我观察的磁盘空间使用率 shell 脚本使用情况。</p><p>大多数用户在多篇博客中评论说，当他们运行磁盘空间使用率脚本时他们获得了以下错误。</p><pre tabindex=0><code># sh /opt/script/disk-usage-alert-old.sh
+
+/dev/mapper/vg_2g-lv_root
+test-script.sh: line 7: [: /dev/mapper/vg_2g-lv_root: integer expression expected
+/ 9.8G
+</code></pre><p>是的，这是对的。甚至，当我第一次运行这个脚本的时候我遇到了相同的问题。之后，我发现了根本原因。</p><p>当你在基于 RHEL 5 & RHEL 6 的系统上运行包含用于磁盘空间警告的 <code>df -h</code> 或 <code>df -H</code> 的 shell 脚本中时，你会发现上述错误信息，因为输出格式不对，查看下列输出。</p><p>为了解决这个问题，我们需要用 <code>df -Ph</code> （POSIX 输出格式），但是默认的 <code>df -h</code> 在基于 RHEL 7 的系统上运行的很好。</p><pre tabindex=0><code># df -h
+
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/mapper/vg_2g-lv_root
+                       10G  6.7G  3.4G  67% /
+tmpfs                 7.8G     0  7.8G   0% /dev/shm
+/dev/sda1             976M   95M  830M  11% /boot
+/dev/mapper/vg_2g-lv_home
+                      5.0G  4.3G  784M  85% /home
+/dev/mapper/vg_2g-lv_tmp
+                      4.8G   14M  4.6G   1% /tmp
+</code></pre><h3 id=方法一linux-shell-脚本来监控磁盘空间使用率和发送邮件>方法一：Linux Shell 脚本来监控磁盘空间使用率和发送邮件</h3><p>你可以使用下列 shell 脚本在 Linux 系统中来监控磁盘空间使用率。</p><p>当系统到达给定的阀值限制时，它将发送一封邮件。在这个例子中，我们设置阀值为 60% 用于测试目的，你可以改变这个限制来符合你的需求。</p><p>如果超过一个文件系统到达给定的阀值，它将发送多封邮件，因为这个脚本使用了循环。</p><p>同样，替换你的邮件地址来获取这份警告。</p><pre tabindex=0><code># vi /opt/script/disk-usage-alert.sh
+
+#!/bin/sh
+df -Ph | grep -vE &#39;^Filesystem|tmpfs|cdrom&#39; | awk &#39;{ print $5,$1 }&#39; | while read output;
+do
+  echo $output
+  used=$(echo $output | awk &#39;{print $1}&#39; | sed s/%//g)
+  partition=$(echo $output | awk &#39;{print $2}&#39;)
+  if [ $used -ge 60 ]; then
+  echo &#34;The partition \&#34;$partition\&#34; on $(hostname) has used $used% at $(date)&#34; | mail -s &#34;Disk Space Alert: $used% Used On $(hostname)&#34; [email protected]
+  fi
+done
+</code></pre><p>输出：我获得了下列两封邮件警告。</p><pre tabindex=0><code>The partition &#34;/dev/mapper/vg_2g-lv_home&#34; on 2g.CentOS7 has used 85% at Mon Apr 29 06:16:14 IST 2019
+
+The partition &#34;/dev/mapper/vg_2g-lv_root&#34; on 2g.CentOS7 has used 67% at Mon Apr 29 06:16:14 IST 2019
+</code></pre><p>最终添加了一个 <a href=https://www.2daygeek.com/crontab-cronjob-to-schedule-jobs-in-linux/>cronjob</a> 来自动完成。它会每 10 分钟运行一次。</p><pre tabindex=0><code># crontab -e
+*/10 * * * * /bin/bash /opt/script/disk-usage-alert.sh
+</code></pre><h3 id=方法二linux-shell-脚本来监控磁盘空间使用率和发送邮件>方法二：Linux Shell 脚本来监控磁盘空间使用率和发送邮件</h3><p>作为代替，你可以使用下列的 shell 脚本。对比上面的脚本我们做了少量改变。</p><pre tabindex=0><code># vi /opt/script/disk-usage-alert-1.sh
+
+#!/bin/sh
+df -Ph | grep -vE &#39;^Filesystem|tmpfs|cdrom&#39; | awk &#39;{ print $5,$1 }&#39; | while read output;
+do
+  max=60%
+  echo $output
+  used=$(echo $output | awk &#39;{print $1}&#39;)
+  partition=$(echo $output | awk &#39;{print $2}&#39;)
+  if [ ${used%?} -ge ${max%?} ]; then
+  echo &#34;The partition \&#34;$partition\&#34; on $(hostname) has used $used at $(date)&#34; | mail -s &#34;Disk Space Alert: $used Used On $(hostname)&#34; [email protected]
+  fi
+done
+</code></pre><p>输出：我获得了下列两封邮件警告。</p><pre tabindex=0><code>The partition &#34;/dev/mapper/vg_2g-lv_home&#34; on 2g.CentOS7 has used 85% at Mon Apr 29 06:16:14 IST 2019
+
+The partition &#34;/dev/mapper/vg_2g-lv_root&#34; on 2g.CentOS7 has used 67% at Mon Apr 29 06:16:14 IST 2019
+</code></pre><p>最终添加了一个 <a href=https://www.2daygeek.com/crontab-cronjob-to-schedule-jobs-in-linux/>cronjob</a> 来自动完成。它会每 10 分钟运行一次。</p><pre tabindex=0><code># crontab -e
+*/10 * * * * /bin/bash /opt/script/disk-usage-alert-1.sh
+</code></pre><h3 id=方法三linux-shell-脚本来监控磁盘空间使用率和发送邮件>方法三：Linux Shell 脚本来监控磁盘空间使用率和发送邮件</h3><p>我更喜欢这种方法。因为，它工作起来很有魔力，你只会收到一封关于所有事的邮件。</p><p>这相当简单和直接。</p><pre tabindex=0><code>*/10 * * * * df -Ph | sed s/%//g | awk &#39;{ if($5 &gt; 60) print $0;}&#39; | mail -s &#34;Disk Space Alert On $(hostname)&#34; [email protected]
+</code></pre><p>输出： 我获得了一封关于所有警告的邮件。</p><pre tabindex=0><code>Filesystem                            Size  Used Avail Use Mounted on
+/dev/mapper/vg_2g-lv_root              10G  6.7G  3.4G  67 /
+/dev/mapper/vg_2g-lv_home             5.0G  4.3G  784M  85 /home
+</code></pre><h3 id=方法四linux-shell-脚本来监控某个分区的磁盘空间使用情况和发送邮件>方法四：Linux Shell 脚本来监控某个分区的磁盘空间使用情况和发送邮件</h3><pre tabindex=0><code># vi /opt/script/disk-usage-alert-2.sh
+
+#!/bin/bash
+used=$(df -Ph | grep &#39;/dev/mapper/vg_2g-lv_dbs&#39; | awk {&#39;print $5&#39;})
+max=80%
+if [ ${used%?} -ge ${max%?} ]; then
+echo &#34;The Mount Point &#34;/DB&#34; on $(hostname) has used $used at $(date)&#34; | mail -s &#34;Disk space alert on $(hostname): $used used&#34; [email protected]
+fi
+</code></pre><p>输出： 我得到了下面的邮件警告。</p><pre tabindex=0><code>The partition /dev/mapper/vg_2g-lv_dbs on 2g.CentOS6 has used 82% at Mon Apr 29 06:16:14 IST 2019
+</code></pre><p>最终添加了一个 <a href=https://www.2daygeek.com/crontab-cronjob-to-schedule-jobs-in-linux/>cronjob</a> 来自动完成这些工作。它将每 10 分钟运行一次。</p><pre tabindex=0><code># crontab -e
+*/10 * * * * /bin/bash /opt/script/disk-usage-alert-2.sh
+</code></pre><p>注意： 你将在 10 分钟后收到一封邮件警告，因为这个脚本被计划为每 10 分钟运行一次（但也不是精确的 10 分钟，取决于时间）。</p><p>例如这个例子。如果你的系统在 8:25 到达了限制，你将在 5 分钟后收到邮件警告。希望现在讲清楚了。</p><hr><p>via: <a href=https://www.2daygeek.com/linux-shell-script-to-monitor-disk-space-usage-and-send-email/>https://www.2daygeek.com/linux-shell-script-to-monitor-disk-space-usage-and-send-email/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/warmfrog>warmfrog</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%A3%81%E7%9B%98/ rel=tag>磁盘</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

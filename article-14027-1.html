@@ -1,0 +1,117 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>C++ 控制台格式化打印技巧 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="C++ 控制台格式化打印技巧"><meta property="og:description" content="下次当你为控制台输出的格式而苦恼时，请参考这篇文章及其速查表。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14027-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-11-28T10:05:00+00:00"><meta property="article:modified_time" content="2021-11-28T10:05:00+00:00"><meta itemprop=name content="C++ 控制台格式化打印技巧"><meta itemprop=description content="下次当你为控制台输出的格式而苦恼时，请参考这篇文章及其速查表。"><meta itemprop=datePublished content="2021-11-28T10:05:00+00:00"><meta itemprop=dateModified content="2021-11-28T10:05:00+00:00"><meta itemprop=wordCount content="781"><meta itemprop=keywords content="格式化,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>C++ 控制台格式化打印技巧</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-11-28T10:05:00Z>November 28, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>下次当你为控制台输出的格式而苦恼时，请参考这篇文章及其速查表。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202111/28/100548utbax4o4ttwcgyjz.jpg alt></p><p>我写文章主要是为了给自己写文档。我在编程时非常健忘，所以我经常会写下有用的代码片段、特殊的特性，以及我使用的编程语言中的常见错误。这篇文章完全切合我最初的想法，因为它涵盖了从 C++ 控制台格式化打印时的常见用例。</p><p>像往常一样，这篇文章带有大量的例子。除非另有说明，代码片段中显示的所有类型和类都是 <code>std</code> 命名空间的一部分。所以当你阅读这段代码时，你必须在类型和类的前面加上<code>using namespace std;</code>。当然，该示例代码也可以在 <a href=https://github.com/hANSIc99/cpp_output_formatting>GitHub</a> 上找到。</p><h3 id=面向对象的流>面向对象的流</h3><p>如果你曾经用过 C++ 编程，你肯定使用过 <a href=https://en.cppreference.com/w/cpp/io/cout>cout</a>。当你包含 <code>&lt;iostream></code> 时，<a href=https://en.cppreference.com/w/cpp/io/basic_ostream>ostream</a> 类型的 <code>cout</code> 对象就进入了作用域。这篇文章的重点是 <code>cout</code>，它可以让你打印到控制台，但这里描述的一般格式化对所有 <a href=https://en.cppreference.com/w/cpp/io/basic_ostream>ostream</a> 类型的流对象都有效。<code>ostream</code> 对象是 <code>basic_ostream</code> 的一个实例，其模板参数为 <code>char</code> 类型。头文件 <code>&lt;iosfwd></code> 是 <code>&lt;iostream></code> 的包含层次结构的一部分，包含了常见类型的前向声明。</p><p>类 <code>basic_ostream</code> 继承于 <code>basic_ios</code>，该类型又继承于 <code>ios_base</code>。在 <a href=https://en.cppreference.com/w/cpp/io>cppreference.com</a> 上你可以找到一个显示不同类之间关系的类图。</p><p><code>ios_base</code> 类是所有 I/O 流类的基类。<code>basic_ios</code> 类是一个模板类，它对常见的字符类型进行了 模板特化 specialization ，称为 <code>ios</code>。因此，当你在标准 I/O 的上下文中读到 <code>ios</code> 时，它是 <code>basic_ios</code> 的 <code>char</code> 类型的模板特化。</p><h3 id=格式化流>格式化流</h3><p>一般来说，基于 <code>ostream</code> 的流有三种格式化的方法。</p><ol><li>使用 <code>ios_base</code> 提供的格式标志。</li><li>在头文件 <code>&lt;iomanip></code> 和 <code>&lt;ios></code> 中定义的流修改函数。</li><li>通过调用 <code>&lt;&lt;</code> 操作符的 <a href=https://en.cppreference.com/w/cpp/io/basic_ostream/operator_ltlt>特定重载</a>。</li></ol><p>所有这些方法都有其优点和缺点，通常取决于使用哪种方法的情况。下面显示的例子混合使用所有这些方法。</p><h4 id=右对齐>右对齐</h4><p>默认情况下，<code>cout</code> 占用的空间与要打印的数据所需的空间一样大。为了使这种右对齐的输出生效，你必须定义一个行允许占用的最大宽度。我使用格式标志来达到这个目的。</p><p>右对齐输出的标志和宽度调整只适用于其后的行。</p><pre tabindex=0><code>cout.setf(ios::right, ios::adjustfield);
+cout.width(50);
+cout &lt;&lt; &#34;This text is right justified&#34; &lt;&lt; endl;
+cout &lt;&lt; &#34;This text is left justified again&#34; &lt;&lt; endl;
+</code></pre><p>在上面的代码中，我使用 <code>setf</code> 配置了右对齐的输出。我建议你将位掩码 <code>ios::adjustfield</code> 应用于 <code>setf</code>，这将使位掩码指定的所有标志在实际的 <code>ios::right</code> 标志被设置之前被重置，以防止发生组合碰撞。</p><h4 id=填充空白>填充空白</h4><p>当使用右对齐输出时，默认情况下，空的地方会用空白字符填充。你可以通过使用 <code>setfill</code> 指定填充字符来改变它：</p><pre tabindex=0><code>cout &lt;&lt; right &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(30) &lt;&lt; 500 &lt;&lt; &#34; pcs&#34; &lt;&lt; endl;
+cout &lt;&lt; right &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(30) &lt;&lt; 3000 &lt;&lt; &#34; pcs&#34; &lt;&lt; endl;
+cout &lt;&lt; right &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(30) &lt;&lt; 24500 &lt;&lt; &#34; pcs&#34; &lt;&lt; endl;
+</code></pre><p>代码输出如下：</p><pre tabindex=0><code>...........................500 pcs
+..........................3000 pcs
+.........................24500 pcs
+</code></pre><h4 id=组合>组合</h4><p>想象一下，你的 C++ 程序记录了你的储藏室库存。不时地，你想打印一份当前库存的清单。要做到这一点，你可以使用以下格式。</p><p>下面的代码是左对齐和右对齐输出的组合，使用点作为填充字符，可以得到一个漂亮的列表：</p><pre tabindex=0><code>cout &lt;&lt; left &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(20) &lt;&lt; &#34;Flour&#34; &lt;&lt; right &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(20) &lt;&lt; 0.7 &lt;&lt; &#34; kg&#34; &lt;&lt; endl;
+cout &lt;&lt; left &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(20) &lt;&lt; &#34;Honey&#34; &lt;&lt; right &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(20) &lt;&lt; 2 &lt;&lt; &#34; Glasses&#34; &lt;&lt; endl;
+cout &lt;&lt; left &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(20) &lt;&lt; &#34;Noodles&#34; &lt;&lt; right &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(20) &lt;&lt; 800 &lt;&lt; &#34; g&#34; &lt;&lt; endl;
+cout &lt;&lt; left &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(20) &lt;&lt; &#34;Beer&#34; &lt;&lt; right &lt;&lt; setfill(&#39;.&#39;) &lt;&lt; setw(20) &lt;&lt; 20 &lt;&lt; &#34; Bottles&#34; &lt;&lt; endl;
+</code></pre><p>输出：</p><pre tabindex=0><code>Flour...............................0.70 kg
+Honey..................................2 Glasses
+Noodles..............................800 g
+Beer..................................20 Bottles
+</code></pre><h3 id=打印数值>打印数值</h3><p>当然，基于流的输出也能让你输出各种变量类型。</p><h4 id=布尔型>布尔型</h4><p><code>boolalpha</code> 开关可以让你把布尔型的二进制解释转换为字符串：</p><pre tabindex=0><code>cout &lt;&lt; &#34;Boolean output without using boolalpha: &#34; &lt;&lt; true &lt;&lt; &#34; / &#34; &lt;&lt; false &lt;&lt; endl;
+cout &lt;&lt; &#34;Boolean output using boolalpha: &#34; &lt;&lt; boolalpha &lt;&lt; true &lt;&lt; &#34; / &#34; &lt;&lt; false &lt;&lt; endl;
+</code></pre><p>以上几行产生的输出结果如下：</p><pre tabindex=0><code>Boolean output without using boolalpha: 1 / 0
+Boolean output using boolalpha: true / false
+</code></pre><h4 id=地址>地址</h4><p>如果一个整数的值应该被看作是一个地址，那么只需要把它投到 <code>void*</code> 就可以了，以便调用正确的重载。下面是一个例子：</p><pre tabindex=0><code>unsigned long someAddress = 0x0000ABCD;
+cout &lt;&lt; &#34;Treat as unsigned long: &#34; &lt;&lt; someAddress &lt;&lt; endl;
+cout &lt;&lt; &#34;Treat as address: &#34; &lt;&lt; (void*)someAddress &lt;&lt; endl;
+</code></pre><p>该代码产生了以下输出：</p><pre tabindex=0><code>Treat as unsigned long: 43981
+Treat as address: 0000ABCD
+</code></pre><p>该代码打印出了具有正确长度的地址。一个 32 位的可执行文件产生了上述输出。</p><h4 id=整数>整数</h4><p>打印整数是很简单的。为了演示，我使用 <code>setf</code> 和 <code>setiosflags</code> 来指定数字的基数。应用流修改器 <code>hex</code>/<code>oct</code> 也有同样的效果。</p><pre tabindex=0><code>int myInt = 123;
+
+cout &lt;&lt; &#34;Decimal: &#34; &lt;&lt; myInt &lt;&lt; endl;
+
+cout.setf(ios::hex, ios::basefield);
+cout &lt;&lt; &#34;Hexadecimal: &#34; &lt;&lt; myInt &lt;&lt; endl;
+
+cout &lt;&lt; &#34;Octal: &#34; &lt;&lt; resetiosflags(ios::basefield) &lt;&lt;  setiosflags(ios::oct) &lt;&lt; myInt &lt;&lt; endl;
+</code></pre><p><strong>注意：</strong> 默认情况下，没有指示所使用的基数，但你可以使用 <code>showbase</code> 添加一个。</p><pre tabindex=0><code>Decimal: 123
+Hexadecimal: 7b
+Octal: 173
+</code></pre><h4 id=用零填充>用零填充</h4><pre tabindex=0><code>0000003
+0000035
+0000357
+0003579
+</code></pre><p>你可以通过指定宽度和填充字符得到类似上述的输出：</p><pre tabindex=0><code>cout &lt;&lt; setfill(&#39;0&#39;) &lt;&lt; setw(7) &lt;&lt; 3 &lt;&lt; endl;
+cout &lt;&lt; setfill(&#39;0&#39;) &lt;&lt; setw(7) &lt;&lt; 35 &lt;&lt; endl;
+cout &lt;&lt; setfill(&#39;0&#39;) &lt;&lt; setw(7) &lt;&lt; 357 &lt;&lt; endl;
+cout &lt;&lt; setfill(&#39;0&#39;) &lt;&lt; setw(7) &lt;&lt; 3579 &lt;&lt; endl;
+</code></pre><h4 id=浮点值>浮点值</h4><p>如果我想打印浮点数值，我可以选择“固定”和“科学”格式。此外，我还可以指定精度：</p><pre tabindex=0><code>double myFloat = 1234.123456789012345;
+int defaultPrecision = cout.precision(); // == 2
+
+cout &lt;&lt; &#34;Default precision: &#34; &lt;&lt; myFloat &lt;&lt; endl;
+cout.precision(4);
+cout &lt;&lt; &#34;Modified precision: &#34; &lt;&lt; myFloat &lt;&lt; endl;
+cout.setf(ios::scientific, ios::floatfield);
+cout &lt;&lt; &#34;Modified precision &amp; scientific format: &#34; &lt;&lt; myFloat &lt;&lt; endl;
+/* back to default */
+cout.precision(defaultPrecision);
+cout.setf(ios::fixed, ios::floatfield);
+cout &lt;&lt; &#34;Default precision &amp; fixed format:  &#34; &lt;&lt; myFloat &lt;&lt; endl;
+</code></pre><p>上面的代码产生以下输出：</p><pre tabindex=0><code>Default precision: 1234.12
+Modified precision: 1234.1235
+Modified precision &amp; scientific format: 1.2341e+03
+Default precision &amp; fixed format:  1234.12
+</code></pre><h4 id=时间和金钱>时间和金钱</h4><p>通过 <code>put_money</code>，你可以用正确的、与当地有关的格式来打印货币单位。这需要你的控制台能够输出 UTF-8 字符集。请注意，变量 <code>specialOffering</code> 以美分为单位存储货币价值。</p><pre tabindex=0><code>long double specialOffering = 9995;
+
+cout.imbue(locale(&#34;en_US.UTF-8&#34;));
+cout &lt;&lt; showbase &lt;&lt; put_money(specialOffering) &lt;&lt; endl;
+cout.imbue(locale(&#34;de_DE.UTF-8&#34;));
+cout &lt;&lt; showbase &lt;&lt; put_money(specialOffering) &lt;&lt; endl;
+cout.imbue(locale(&#34;ru_RU.UTF-8&#34;));
+cout  &lt;&lt; showbase &lt;&lt; put_money(specialOffering) &lt;&lt; endl;
+</code></pre><p><code>ios</code> 的 <code>imbue</code> 方法让你指定一个地区。通过命令 <code>locale -a</code>，你可以得到你系统中所有可用的地区标识符的列表。</p><pre tabindex=0><code>$99.95
+99,950€
+99,950₽
+</code></pre><p>（不知道出于什么原因，在我的系统上，它打印的欧元和卢布有三个小数位，对我来说看起来很奇怪，但这也许是官方的格式。）</p><p>同样的原则也适用于时间输出。函数 <code>put_time</code> 可以让你以相应的地区格式打印时间。此外，你可以指定时间对象的哪些部分被打印出来。</p><pre tabindex=0><code>time_t now = time(nullptr);
+tm localtm = *localtime(&amp;now);
+
+
+cout.imbue(locale(&#34;en_US.UTF-8&#34;));
+cout &lt;&lt; &#34;en_US : &#34; &lt;&lt; put_time(&amp;localtm, &#34;%c&#34;) &lt;&lt; endl;
+cout.imbue(locale(&#34;de_DE.UTF-8&#34;));
+cout &lt;&lt; &#34;de_DE : &#34; &lt;&lt; put_time(&amp;localtm, &#34;%c&#34;) &lt;&lt; endl;
+cout.imbue(locale(&#34;ru_RU.UTF-8&#34;));
+cout &lt;&lt; &#34;ru_RU : &#34; &lt;&lt; put_time(&amp;localtm, &#34;%c&#34;) &lt;&lt; endl;
+</code></pre><p>格式指定符 <code>%c</code> 会打印一个标准的日期和时间字符串：</p><pre tabindex=0><code>en_US : Tue 02 Nov 2021 07:36:36 AM CET
+de_DE : Di 02 Nov 2021 07:36:36 CET
+ru_RU : Вт 02 ноя 2021 07:36:36
+</code></pre><h3 id=创建自定义的流修改器>创建自定义的流修改器</h3><p>你也可以创建你自己的流。下面的代码在应用于 <code>ostream</code> 对象时插入了一个预定义的字符串：</p><pre tabindex=0><code>ostream&amp; myManipulator(ostream&amp; os) {
+    string myStr = &#34;&gt;&gt;&gt;Here I am&lt;&lt;&lt;&#34;;
+    os &lt;&lt; myStr;
+    return os;
+}
+</code></pre><p><strong>另一个例子：</strong> 如果你有重要的事情要说，就像互联网上的大多数人一样，你可以使用下面的代码在你的信息后面根据重要程度插入感叹号。重要程度被作为一个参数传递：</p><pre tabindex=0><code>struct T_Importance {
+     int levelOfSignificance;
+};
+
+T_Importance importance(int lvl){
+    T_Importance x = {.levelOfSignificance = lvl };
+    return x;
+}
+
+ostream&amp; operator&lt;&lt;(ostream&amp; __os, T_Importance t){
+
+    for(int i = 0; i &lt; t.levelOfSignificance; ++i){
+        __os.put(&#39;!&#39;);
+    }
+    return __os;
+}
+</code></pre><p>这两个修饰符现在都可以简单地传递给 <code>cout</code>：</p><pre tabindex=0><code>cout &lt;&lt; &#34;My custom manipulator: &#34; &lt;&lt; myManipulator &lt;&lt; endl;
+
+cout &lt;&lt; &#34;I have something important to say&#34; &lt;&lt; importance(5) &lt;&lt; endl;
+</code></pre><p>产生以下输出：</p><pre tabindex=0><code>My custom manipulator: &gt;&gt;&gt;Here I am&lt;&lt;&lt;
+
+I have something important to say!!!!!
+</code></pre><h3 id=结语>结语</h3><p>下次你再纠结于控制台输出格式时，我希望你记得这篇文章及其 <a href=https://opensource.com/downloads/cout-cheat-sheet>速查表</a>。</p><p>在 C++ 应用程序中，<code>cout</code> 是 <a href=https://opensource.com/article/20/8/printf>printf</a> 的新邻居。虽然使用 <code>printf</code> 仍然有效，但我可能总是喜欢使用 <code>cout</code>。特别是与定义在 <code>&lt;ios></code> 中的修改函数相结合，会产生漂亮的、可读的代码。</p><hr><p>via: <a href=https://opensource.com/article/21/11/c-stdcout-cheat-sheet>https://opensource.com/article/21/11/c-stdcout-cheat-sheet</a></p><p>作者：<a href=https://opensource.com/users/hansic99>Stephan Avenwedde</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96/ rel=tag>格式化</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

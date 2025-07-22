@@ -1,0 +1,44 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何关闭一个不活动的或者空闲的 SSH 会话 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何关闭一个不活动的或者空闲的 SSH 会话"><meta property="og:description" content="让我们来假设一下，当你通过 ssh 在服务器上工作时，由于网络、电源或者是本地 PC 重启等原因会导致你的会话连接断开。
+你可能会再次登录服务器继续工作也可能不会，但是你始终会留下之前没有关闭的 ssh 会话。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8671-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-07-06T09:13:00+00:00"><meta property="article:modified_time" content="2017-07-06T09:13:00+00:00"><meta itemprop=name content="如何关闭一个不活动的或者空闲的 SSH 会话"><meta itemprop=description content="让我们来假设一下，当你通过 ssh 在服务器上工作时，由于网络、电源或者是本地 PC 重启等原因会导致你的会话连接断开。
+你可能会再次登录服务器继续工作也可能不会，但是你始终会留下之前没有关闭的 ssh 会话。"><meta itemprop=datePublished content="2017-07-06T09:13:00+00:00"><meta itemprop=dateModified content="2017-07-06T09:13:00+00:00"><meta itemprop=wordCount content="233"><meta itemprop=keywords content="SSH,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何关闭一个不活动的或者空闲的 SSH 会话</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-07-06T09:13:00Z>July 06, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201707/06/091311wzpp1pp5d1tuuuku.jpg alt></p><p>让我们来假设一下，当你通过 ssh 在服务器上工作时，由于网络、电源或者是本地 PC 重启等原因会导致你的会话连接断开。</p><p>你可能会再次登录服务器继续工作也可能不会，但是你始终会留下之前没有关闭的 ssh 会话。</p><p>如何关闭一个不活动的 ssh 会话？首先使用 <code>w</code> 命令来识别出不活动或者是空闲的 ssh 会话，接着使用 <code>pstree</code> 命令来获取空闲会话的 PID，最后就是使用 <code>kill</code> 命令来关闭会话了。</p><ul><li>建议阅读：<a href=/article-6262-1.html>Mosh（Mobile Shell）- 最好的SSH 远程连接替代选项</a></li></ul><h3 id=如何识别不活动的或者是空闲的-ssh-会话>如何识别不活动的或者是空闲的 SSH 会话</h3><p>登录系统通过 <code>w</code> 命令来查看当前有多少用户登录着。如果你识别出了自己的会话连接就可以记下其它不活动或者是空闲的 ssh 会话去关闭。</p><p>在我当前的例子中，能看见两个用户登录着，其中一个是我当前在执行 <code>w</code> 命令的 ssh 会话另一个就是之前的空闲会话了。</p><pre tabindex=0><code># w
+ 10:36:39 up 26 days, 20:29,  2 users,  load average: 0.00, 0.02, 0.00
+USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT
+root     pts/0    219.91.219.14    10:34   28.00s  0.00s  0.00s -bash
+root     pts/2    219.91.219.14    10:36    0.00s  0.00s  0.00s w
+</code></pre><h3 id=如何获取-ssh-会话的-pid>如何获取 SSH 会话的 PID</h3><p>为了关闭空闲的 ssh 会话，我们需要空闲会话进程的父进程的 PID。我们可以执行 <code>pstree</code> 命令来查看包括了所有进程的树状图，以便获取父进程的 pid。</p><p>你会获得与下方示例中相似的输出。<code>pstree</code> 命令的输出会比这个多得多，为了更好的理解我删去了许多不相关的内容。</p><pre tabindex=0><code># pstree -p
+init(1)-+-abrtd(2131)
+        |-acpid(1958)
+        |-httpd(32413)-+-httpd(32442)
+        |
+    |-mingetty(2198)
+        |-mysqld_safe(24298)---mysqld(24376)-+-{mysqld}(24378)
+        |
+        |-php(32456)-+-php(32457)
+        |
+        |-sshd(2023)-+-sshd(10132)---bash(10136)
+        |            `-sshd(10199)---bash(10208)---pstree(10226)
+        |-udevd(774)-+-udevd(2191)
+                     `-udevd(27282)
+</code></pre><p>从上方的输出中，你可以看到 <code>sshd</code> 进程与分支的树形图。<code>sshd</code> 的主进程是 <code>sshd（2023）</code>，另两个分支分别为 <code>sshd（10132）</code> 和 <code>sshd（10199）</code>。</p><p>跟我在文章开始讲的相同，其中一个是我新的会话连接 <code>sshd（10199）</code> 它展示了我正在执行的 <code>pstree</code> 命令，因此空闲会话是另一个进程为 <code>sshd（10132）</code>。</p><ul><li>建议阅读：<a href=http://www.2daygeek.com/shellinabox-web-based-ssh-terminal-to-access-remote-linux-servers/>如何通过标准的网页浏览器来接入 Secure Shell (SSH) 服务器</a></li><li>建议阅读：<a href=http://www.2daygeek.com/pssh-parallel-ssh-run-execute-commands-on-multiple-linux-servers/>PSSH - 在多台 Linux 服务器上并行的执行命令</a></li></ul><h3 id=如何关闭空闲-ssh-会话>如何关闭空闲 SSH 会话</h3><p>我们已经获得了有关空闲会话的所有信息。那么，就让我们来使用 <code>kill</code> 命令来关闭空闲会话。请确认你将下方的 PID 替换成了你服务器上的空闲会话 PID。</p><pre tabindex=0><code># kill -9 10132
+</code></pre><p>（LCTT 译注：这里介绍另一个工具 <code>pkill</code>，使用 <code>pkill -t pts/0 -kill</code> 就可以关闭会话, debian 8 下可用，有些版本似乎需要更改 <code>-kill</code> 的位置）</p><h3 id=再次查看空闲会话是否已经被关闭>再次查看空闲会话是否已经被关闭</h3><p>再次使用 <code>w</code> 命令来查看空闲会话是否已经被关闭。没错，只有那个我自己的当前会话还在，因此那个空闲会话已经被关闭了。</p><pre tabindex=0><code># w
+ 10:40:18 up 26 days, 20:33,  1 user,  load average: 0.11, 0.04, 0.01
+USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT
+root     pts/2    219.91.219.14    10:36    0.00s  0.00s  0.00s w
+</code></pre><ul><li>建议阅读：<a href=/article-8199-1.html>rtop - 一个好用的通过 SSH 来监控远程服务器的工具</a></li><li>建议阅读：<a href=http://www.2daygeek.com/dsh-run-execute-shell-commands-on-multiple-linux-servers-at-once/>DSH - 同时在多台 Linux 服务器上执行命令</a></li></ul><h3 id=再次使用-pstree-命令检查>再次使用 pstree 命令检查</h3><p>再次使用 <code>pstree</code> 命令确认。是的，只有那个我自己的 ssh 会话还在。</p><pre tabindex=0><code># pstree -p
+init(1)-+-abrtd(2131)
+        |-acpid(1958)
+        |
+        |-httpd(32413)-+-httpd(32442)
+        |
+        |-mingetty(2198)
+        |-mysqld_safe(24298)---mysqld(24376)-+-{mysqld}(24378)
+        |
+        |-php(32456)-+-php(32457)
+        |
+        |-sshd(2023)---sshd(10199)---bash(10208)---pstree(10431)
+        |-udevd(774)-+-udevd(2191)
+                     `-udevd(27282)
+</code></pre><hr><p>via: <a href=http://www.2daygeek.com/kill-inactive-idle-ssh-sessions/>http://www.2daygeek.com/kill-inactive-idle-ssh-sessions/</a></p><p>作者：<a href=http://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 译者：<a href=https://github.com/wcnnbdk1>wcnnbdk1</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ssh/ rel=tag>SSH</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

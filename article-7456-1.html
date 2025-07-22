@@ -1,0 +1,68 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 下使用 scp 命令 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 下使用 scp 命令"><meta property="og:description" content="scp 的使用方式类似于 cp 命令，cp 命令将一个文件或文件夹从本地操作系统的一个位置（源）拷贝到目标位置（目的），而 scp 用来将文件或文件夹从网络上的一个主机拷贝到另一个主机当中去。"><meta property="og:type" content="article"><meta property="og:url" content="/article-7456-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-06-13T09:23:20+00:00"><meta property="article:modified_time" content="2016-06-13T09:23:20+00:00"><meta itemprop=name content="在 Linux 下使用 scp 命令"><meta itemprop=description content="scp 的使用方式类似于 cp 命令，cp 命令将一个文件或文件夹从本地操作系统的一个位置（源）拷贝到目标位置（目的），而 scp 用来将文件或文件夹从网络上的一个主机拷贝到另一个主机当中去。"><meta itemprop=datePublished content="2016-06-13T09:23:20+00:00"><meta itemprop=dateModified content="2016-06-13T09:23:20+00:00"><meta itemprop=wordCount content="412"><meta itemprop=keywords content="scp,cp,ssh,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 下使用 scp 命令</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-06-13T09:23:20Z>June 13, 2016</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201606/13/092323dlqzldtadybppndt.jpg alt></p><p>scp 是 安全拷贝协议 （ Secure Copy Protocol ） 的缩写，和众多 Linux/Unix 使用者所熟知的拷贝（cp）命令一样。scp 的使用方式类似于 cp 命令，cp 命令将一个文件或文件夹从本地操作系统的一个位置（源）拷贝到目标位置（目的），而 scp 用来将文件或文件夹从网络上的一个主机拷贝到另一个主机当中去。</p><p>scp 命令的使用方法如下所示，在这个例子中，我将一个叫 “importantfile” 的文件从本机（10.10.16.147）拷贝到远程主机（10.0.0.6）中。在这个命令里，你也可以使用主机名字来替代IP地址。</p><pre tabindex=0><code>[root@localhost ~]# scp importantfile admin@10.0.0.6:/home/admin/
+The authenticity of host &#39;10.0.0.6 (10.0.0.6)&#39; can&#39;t be established.
+RSA key fingerprint is SHA256:LqBzkeGa6K9BfWWKgcKlQoE0u+gjorX0lPLx5YftX1Y.
+RSA key fingerprint is MD5:ed:44:42:59:3e:dd:4c:12:43:4a:89:b1:5d:bd:9e:20.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added &#39;10.0.0.6&#39; (RSA) to the list of known hosts.
+admin@10.0.0.6&#39;s password:
+importantfile                                 100%    0     0.0KB/s   00:00
+[root@localhost ~]#
+</code></pre><p>类似的，如果你想从一个远程主机中取得文件，你可以利用如下的 scp 命令。</p><pre tabindex=0><code>[root@localhost ~]# scp root@10.10.16.137:/root/importantfile /home/admin/
+The authenticity of host &#39;10.10.16.137 (10.10.16.137)&#39; can&#39;t be established.
+RSA key fingerprint is b0:b0:a3:c3:2e:94:13:0c:29:2e:ba:0b:d3:d6:12:8f.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added &#39;10.10.16.137&#39; (RSA) to the list of known hosts.
+root@10.10.16.137&#39;s password:
+importantfile 100% 0 0.0KB/s 00:00
+[root@localhost ~]#
+</code></pre><p>你也可以像 cp 命令一样，在 scp 命令中使用不同的选项，scp 的 man 帮助详细地阐述了不同选项的用法和用处。</p><p><strong>示例输出</strong></p><p><img src=https://img.linux.net.cn/data/attachment/album/201606/13/092323sknls0lkaxjrl6ux.jpg alt></p><p>scp 可选参数如下所示:</p><pre tabindex=0><code> -B      采取批量模式（避免询问密码或口令）
+ -C      启用压缩。通过指明 -C 参数来开启压缩模式。
+ -c 加密方式
+         选择在传输过程中用来加密的加密方式 这个选项会被直接传递到 ssh(1)。
+ -F ssh 配置
+         给 ssh 指定一个用来替代默认配置的配置文件。这个选项会被直接传递到 ssh(1)。
+ -l 限速
+         限制命令使用的带宽，默认单位是 Kbit/s。
+ -P 端口
+         指定需要的连接的远程主机的端口。  
+         注意，这个选项使用的是一个大写的“P”，因为小写的“-p”已经用来保留目标文件的时间和模式相关信息。（LCTT 译注：ssh 命令中使用小写的“-p”来指定目标端口。）
+ -p      保留文件原来的修改时间，访问时间以及权限模式。
+ -q      静默模式：不显示来自 ssh(1) 命令的进度信息，警告和诊断信息。
+ -r      递归拷贝整个目录。
+         注意，scp 命令在树形遍历的时候同样会跟随符号连接，复制所连接的文件。
+ -v      详细模式。scp 和 ssh(1) 将会打印出处理过程中的调试信息。这可以帮助你调试连接、认证和配置方面的问题。
+</code></pre><p><strong>详细模式</strong></p><p>利用 scp 命令的 -v 选项，你可以得到认证、调试等的相关细节信息。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201606/13/092324qznxlxgclpcfpn74.jpg alt></p><p>当我们使用 -v 选项的时候，一个简单的输出如下所示：</p><pre tabindex=0><code>[root@localhost ~]# scp -v abc.txt admin@10.0.0.6:/home/admin
+Executing: program /usr/bin/ssh host 10.0.0.6, user admin, 
+command scp -v -t/home/admin
+OpenSSH_7.1p1, OpenSSL 1.0.2d-fips 9 Jul 2015
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: /etc/ssh/ssh_config line 56: Applying options for *
+debug1: Connecting to 10.0.0.6 [10.0.0.6] port 22.
+debug1: Connection established.
+debug1: Server host key: ssh-rsa SHA256:LqBzkeGa6K9BfWWKgcKlQoE0u+gjorX0lPLx5YftX1Y
+debug1: Next authentication method: publickey
+debug1: Trying private key: /root/.ssh/id_rsa
+debug1: Trying private key: /root/.ssh/id_dsa
+debug1: Trying private key: /root/.ssh/id_ecdsa
+debug1: Trying private key: /root/.ssh/id_ed25519
+debug1: Next authentication method: password
+admin@10.0.0.6&#39;s password:
+debug1: Authentication succeeded (password).
+Authenticated to 10.0.0.6 ([10.0.0.6]:22).
+debug1: channel 0: new [client-session]
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: Sending environment.
+debug1: Sending command: scp -v -t /home/admin
+Sending file modes: C0644 174 abc.txt
+Sink: C0644 174 abc.txt
+abc.txt                                                                                                                               100%  174     0.2KB/s   00:00
+Transferred: sent 3024, received 2584 bytes, in 0.3 seconds
+Bytes per second: sent 9863.3, received 8428.1
+debug1: Exit status 0
+[root@localhost ~]#
+</code></pre><p>当我们需要拷贝一个目录或者文件夹的时候，我们可以使用 -r 选项，它会递归拷贝整个目录。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201606/13/092325wpclwopqcxtia5ug.jpg alt></p><p><strong>静默模式</strong></p><p>如果你想要关闭进度信息以及警告和诊断信息，你可以通过使用scp命令中的-q选项.</p><p><img src=https://img.linux.net.cn/data/attachment/album/201606/13/092331cjsts7txmrtzrhrr.jpg alt></p><p>上一次我们仅仅使用 -r 参数，它显示了逐个文件的信息，但这一次当我们使用了 -q 参数，它就不显示进度信息。</p><p>利用 scp 的 -p 选项来保留目标文件的更新时间，访问时间和权限模式。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201606/13/092332b555xa5wd5kpp5zy.jpg alt></p><p><strong>通过 -P 选项来指定远程主机的连接端口</strong></p><p>scp 使用 ssh 命令来在两个主机之间传输文件，因为 ssh 默认使用的是22端口号，所以 scp 也使用相同的22端口号。</p><p>如果我们希望改变这个端口号，我们可以使用 -P（大写的 P，因为小写的 p 用来保持文件的访问时间等）选项来指定所需的端口号。</p><p>举个例子，如果我们想要使用2222端口号，我们可以使用如下的命令</p><pre tabindex=0><code>[root@localhost ~]# scp -P 2222 abcd1 root@10.10.16.137:/root/
+</code></pre><p><strong>限制命令使用的带宽，指定的单位是 Kbit/s</strong></p><p>如下所示，我们可以使用 -l 参数来指定 scp 命令所使用的带宽，在此我们将速度限制为512kbit/s。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201606/13/092333ru55gixi5dux51o5.jpg alt></p><p><strong>开启压缩</strong></p><p>如下所示，我们可以通过开启 scp 命令的压缩模式来节省传输过程中的带宽和时间。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201606/13/092337zk2skizc14wqonnn.jpg alt></p><p><strong>选择加密数据的加密方式</strong></p><p>scp 默认使用 AES-128 的加密方式，如果我们想要改变这个加密方式，可以通过 -c(小写的 c) 参数来指定其他的加密方式。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201606/13/092337q0wuszynb2spv20a.jpg alt></p><p>现在你可以利用 scp（Secure copy）命令在你所属网络中的两个节点之间安全地拷贝文件了。</p><hr><p>via: <a href=https://www.unixmen.com/scp-command-linuxunix/>https://www.unixmen.com/scp-command-linuxunix/</a></p><p>作者：<a href=https://www.unixmen.com/author/naga/>Naga Ramesh</a> 译者：<a href=https://github.com/lujianbo>lujianbo</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/scp/ rel=tag>scp</a></li><li class=tags__item><a class="tags__link btn" href=/tags/cp/ rel=tag>cp</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ssh/ rel=tag>ssh</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

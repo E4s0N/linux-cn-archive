@@ -1,0 +1,140 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Linux 中查看进程占用的端口号 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Linux 中查看进程占用的端口号"><meta property="og:description" content="对于 Linux 系统管理员来说，清楚某个服务是否正确地绑定或监听某个端口，是至关重要的。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10073-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-10-02T12:38:13+00:00"><meta property="article:modified_time" content="2018-10-02T12:38:13+00:00"><meta itemprop=name content="如何在 Linux 中查看进程占用的端口号"><meta itemprop=description content="对于 Linux 系统管理员来说，清楚某个服务是否正确地绑定或监听某个端口，是至关重要的。"><meta itemprop=datePublished content="2018-10-02T12:38:13+00:00"><meta itemprop=dateModified content="2018-10-02T12:38:13+00:00"><meta itemprop=wordCount content="1044"><meta itemprop=keywords content="端口,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Linux 中查看进程占用的端口号</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-10-02T12:38:13Z>October 02, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201810/02/123805zpppw4h5z9bwd5ab.jpg alt></p><p>对于 Linux 系统管理员来说，清楚某个服务是否正确地绑定或监听某个端口，是至关重要的。如果你需要处理端口相关的问题，这篇文章可能会对你有用。</p><p>端口是 Linux 系统上特定进程之间逻辑连接的标识，包括物理端口和软件端口。由于 Linux 操作系统是一个软件，因此本文只讨论软件端口。软件端口始终与主机的 IP 地址和相关的通信协议相关联，因此端口常用于区分应用程序。大部分涉及到网络的服务都必须打开一个套接字来监听传入的网络请求，而每个服务都使用一个独立的套接字。</p><p><strong>推荐阅读：</strong></p><ul><li><a href=https://www.2daygeek.com/how-to-check-find-the-process-id-pid-ppid-of-a-running-program-in-linux/>在 Linux 上查看进程 ID 的 4 种方法</a></li><li><a href=https://www.2daygeek.com/kill-terminate-a-process-in-linux-using-kill-pkill-killall-command/>在 Linux 上终止进程的 3 种方法</a></li></ul><p>套接字是和 IP 地址、软件端口和协议结合起来使用的，而端口号对传输控制协议（TCP）和用户数据报协议（UDP）协议都适用，TCP 和 UDP 都可以使用 0 到 65535 之间的端口号进行通信。</p><p>以下是端口分配类别：</p><ul><li>0 - 1023： 常用端口和系统端口</li><li>1024 - 49151： 软件的注册端口</li><li>49152 - 65535： 动态端口或私有端口</li></ul><p>在 Linux 上的 <code>/etc/services</code> 文件可以查看到更多关于保留端口的信息。</p><pre tabindex=0><code># less /etc/services
+# /etc/services:
+# $Id: services,v 1.55 2013/04/14 ovasik Exp $
+#
+# Network services, Internet style
+# IANA services version: last updated 2013-04-10
+#
+# Note that it is presently the policy of IANA to assign a single well-known
+# port number for both TCP and UDP; hence, most entries here have two entries
+# even if the protocol doesn&#39;t support UDP operations.
+# Updated from RFC 1700, ``Assigned Numbers&#39;&#39; (October 1994). Not all ports
+# are included, only the more common ones.
+#
+# The latest IANA port assignments can be gotten from
+# http://www.iana.org/assignments/port-numbers
+# The Well Known Ports are those from 0 through 1023.
+# The Registered Ports are those from 1024 through 49151
+# The Dynamic and/or Private Ports are those from 49152 through 65535
+#
+# Each line describes one service, and is of the form:
+#
+# service-name port/protocol [aliases ...] [# comment]
+
+tcpmux 1/tcp # TCP port service multiplexer
+tcpmux 1/udp # TCP port service multiplexer
+rje 5/tcp # Remote Job Entry
+rje 5/udp # Remote Job Entry
+echo 7/tcp
+echo 7/udp
+discard 9/tcp sink null
+discard 9/udp sink null
+systat 11/tcp users
+systat 11/udp users
+daytime 13/tcp
+daytime 13/udp
+qotd 17/tcp quote
+qotd 17/udp quote
+msp 18/tcp # message send protocol (historic)
+msp 18/udp # message send protocol (historic)
+chargen 19/tcp ttytst source
+chargen 19/udp ttytst source
+ftp-data 20/tcp
+ftp-data 20/udp
+# 21 is registered to ftp, but also used by fsp
+ftp 21/tcp
+ftp 21/udp fsp fspd
+ssh 22/tcp # The Secure Shell (SSH) Protocol
+ssh 22/udp # The Secure Shell (SSH) Protocol
+telnet 23/tcp
+telnet 23/udp
+# 24 - private mail system
+lmtp 24/tcp # LMTP Mail Delivery
+lmtp 24/udp # LMTP Mail Delivery
+</code></pre><p>可以使用以下六种方法查看端口信息。</p><ul><li><code>ss</code>：可以用于转储套接字统计信息。</li><li><code>netstat</code>：可以显示打开的套接字列表。</li><li><code>lsof</code>：可以列出打开的文件。</li><li><code>fuser</code>：可以列出那些打开了文件的进程的进程 ID。</li><li><code>nmap</code>：是网络检测工具和端口扫描程序。</li><li><code>systemctl</code>：是 systemd 系统的控制管理器和服务管理器。</li></ul><p>以下我们将找出 <code>sshd</code> 守护进程所使用的端口号。</p><h3 id=方法-1使用-ss-命令>方法 1：使用 ss 命令</h3><p><code>ss</code> 一般用于转储套接字统计信息。它能够输出类似于 <code>netstat</code> 输出的信息，但它可以比其它工具显示更多的 TCP 信息和状态信息。</p><p>它还可以显示所有类型的套接字统计信息，包括 PACKET、TCP、UDP、DCCP、RAW、Unix 域等。</p><pre tabindex=0><code># ss -tnlp | grep ssh
+LISTEN 0 128 *:22 *:* users:((&#34;sshd&#34;,pid=997,fd=3))
+LISTEN 0 128 :::22 :::* users:((&#34;sshd&#34;,pid=997,fd=4))
+</code></pre><p>也可以使用端口号来检查。</p><pre tabindex=0><code># ss -tnlp | grep &#34;:22&#34;
+LISTEN 0 128 *:22 *:* users:((&#34;sshd&#34;,pid=997,fd=3))
+LISTEN 0 128 :::22 :::* users:((&#34;sshd&#34;,pid=997,fd=4))
+</code></pre><h3 id=方法-2使用-netstat-命令>方法 2：使用 netstat 命令</h3><p><code>netstat</code> 能够显示网络连接、路由表、接口统计信息、伪装连接以及多播成员。</p><p>默认情况下，<code>netstat</code> 会列出打开的套接字。如果不指定任何地址族，则会显示所有已配置地址族的活动套接字。但 <code>netstat</code> 已经过时了，一般会使用 <code>ss</code> 来替代。</p><pre tabindex=0><code># netstat -tnlp | grep ssh
+tcp 0 0 0.0.0.0:22 0.0.0.0:* LISTEN 997/sshd
+tcp6 0 0 :::22 :::* LISTEN 997/sshd
+</code></pre><p>也可以使用端口号来检查。</p><pre tabindex=0><code># netstat -tnlp | grep &#34;:22&#34;
+tcp 0 0 0.0.0.0:22 0.0.0.0:* LISTEN 1208/sshd
+tcp6 0 0 :::22 :::* LISTEN 1208/sshd
+</code></pre><h3 id=方法-3使用-lsof-命令>方法 3：使用 lsof 命令</h3><p><code>lsof</code> 能够列出打开的文件，并列出系统上被进程打开的文件的相关信息。</p><pre tabindex=0><code># lsof -i -P | grep ssh
+COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME
+sshd 11584 root 3u IPv4 27625 0t0 TCP *:22 (LISTEN)
+sshd 11584 root 4u IPv6 27627 0t0 TCP *:22 (LISTEN)
+sshd 11592 root 3u IPv4 27744 0t0 TCP vps.2daygeek.com:ssh-&gt;103.5.134.167:49902 (ESTABLISHED)
+</code></pre><p>也可以使用端口号来检查。</p><pre tabindex=0><code># lsof -i tcp:22
+COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME
+sshd 1208 root 3u IPv4 20919 0t0 TCP *:ssh (LISTEN)
+sshd 1208 root 4u IPv6 20921 0t0 TCP *:ssh (LISTEN)
+sshd 11592 root 3u IPv4 27744 0t0 TCP vps.2daygeek.com:ssh-&gt;103.5.134.167:49902 (ESTABLISHED)
+</code></pre><h3 id=方法-4使用-fuser-命令>方法 4：使用 fuser 命令</h3><p><code>fuser</code> 工具会将本地系统上打开了文件的进程的进程 ID 显示在标准输出中。</p><pre tabindex=0><code># fuser -v 22/tcp
+ USER PID ACCESS COMMAND
+22/tcp: root 1208 F.... sshd
+ root 12388 F.... sshd
+ root 49339 F.... sshd
+</code></pre><h3 id=方法-5使用-nmap-命令>方法 5：使用 nmap 命令</h3><p><code>nmap</code>（“Network Mapper”）是一款用于网络检测和安全审计的开源工具。它最初用于对大型网络进行快速扫描，但它对于单个主机的扫描也有很好的表现。</p><p><code>nmap</code> 使用原始 IP 数据包来确定网络上可用的主机，这些主机的服务（包括应用程序名称和版本）、主机运行的操作系统（包括操作系统版本等信息）、正在使用的数据包过滤器或防火墙的类型，以及很多其它信息。</p><pre tabindex=0><code># nmap -sV -p 22 localhost
+
+Starting Nmap 6.40 ( http://nmap.org ) at 2018-09-23 12:36 IST
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000089s latency).
+Other addresses for localhost (not scanned): 127.0.0.1
+PORT STATE SERVICE VERSION
+22/tcp open ssh OpenSSH 7.4 (protocol 2.0)
+
+Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 0.44 seconds
+</code></pre><h3 id=方法-6使用-systemctl-命令>方法 6：使用 systemctl 命令</h3><p><code>systemctl</code> 是 systemd 系统的控制管理器和服务管理器。它取代了旧的 SysV 初始化系统管理，目前大多数现代 Linux 操作系统都采用了 systemd。</p><p><strong>推荐阅读：</strong></p><ul><li><a href=https://www.2daygeek.com/chkservice-a-tool-for-managing-systemd-units-from-linux-terminal/>chkservice – Linux 终端上的 systemd 单元管理工具</a></li><li><a href=https://www.2daygeek.com/how-to-check-all-running-services-in-linux/>如何查看 Linux 系统上正在运行的服务</a></li></ul><pre tabindex=0><code># systemctl status sshd
+● sshd.service - OpenSSH server daemon
+ Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)
+ Active: active (running) since Sun 2018-09-23 02:08:56 EDT; 6h 11min ago
+ Docs: man:sshd(8)
+ man:sshd_config(5)
+ Main PID: 11584 (sshd)
+ CGroup: /system.slice/sshd.service
+ └─11584 /usr/sbin/sshd -D
+
+Sep 23 02:08:56 vps.2daygeek.com systemd[1]: Starting OpenSSH server daemon...
+Sep 23 02:08:56 vps.2daygeek.com sshd[11584]: Server listening on 0.0.0.0 port 22.
+Sep 23 02:08:56 vps.2daygeek.com sshd[11584]: Server listening on :: port 22.
+Sep 23 02:08:56 vps.2daygeek.com systemd[1]: Started OpenSSH server daemon.
+Sep 23 02:09:15 vps.2daygeek.com sshd[11589]: Connection closed by 103.5.134.167 port 49899 [preauth]
+Sep 23 02:09:41 vps.2daygeek.com sshd[11592]: Accepted password for root from 103.5.134.167 port 49902 ssh2
+</code></pre><p>以上输出的内容显示了最近一次启动 <code>sshd</code> 服务时 <code>ssh</code> 服务的监听端口。但它不会将最新日志更新到输出中。</p><pre tabindex=0><code># systemctl status sshd
+● sshd.service - OpenSSH server daemon
+ Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)
+ Active: active (running) since Thu 2018-09-06 07:40:59 IST; 2 weeks 3 days ago
+ Docs: man:sshd(8)
+ man:sshd_config(5)
+ Main PID: 1208 (sshd)
+ CGroup: /system.slice/sshd.service
+ ├─ 1208 /usr/sbin/sshd -D
+ ├─23951 sshd: [accepted]
+ └─23952 sshd: [net]
+
+Sep 23 12:50:36 vps.2daygeek.com sshd[23909]: Invalid user pi from 95.210.113.142 port 51666
+Sep 23 12:50:36 vps.2daygeek.com sshd[23909]: input_userauth_request: invalid user pi [preauth]
+Sep 23 12:50:37 vps.2daygeek.com sshd[23911]: pam_unix(sshd:auth): check pass; user unknown
+Sep 23 12:50:37 vps.2daygeek.com sshd[23911]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=95.210.113.142
+Sep 23 12:50:37 vps.2daygeek.com sshd[23909]: pam_unix(sshd:auth): check pass; user unknown
+Sep 23 12:50:37 vps.2daygeek.com sshd[23909]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=95.210.113.142
+Sep 23 12:50:39 vps.2daygeek.com sshd[23911]: Failed password for invalid user pi from 95.210.113.142 port 51670 ssh2
+Sep 23 12:50:39 vps.2daygeek.com sshd[23909]: Failed password for invalid user pi from 95.210.113.142 port 51666 ssh2
+Sep 23 12:50:40 vps.2daygeek.com sshd[23911]: Connection closed by 95.210.113.142 port 51670 [preauth]
+Sep 23 12:50:40 vps.2daygeek.com sshd[23909]: Connection closed by 95.210.113.142 port 51666 [preauth]
+</code></pre><p>大部分情况下，以上的输出不会显示进程的实际端口号。这时更建议使用以下这个 <code>journalctl</code> 命令检查日志文件中的详细信息。</p><pre tabindex=0><code># journalctl | grep -i &#34;openssh\|sshd&#34;
+Sep 23 02:08:56 vps138235.vps.ovh.ca sshd[997]: Received signal 15; terminating.
+Sep 23 02:08:56 vps138235.vps.ovh.ca systemd[1]: Stopping OpenSSH server daemon...
+Sep 23 02:08:56 vps138235.vps.ovh.ca systemd[1]: Starting OpenSSH server daemon...
+Sep 23 02:08:56 vps138235.vps.ovh.ca sshd[11584]: Server listening on 0.0.0.0 port 22.
+Sep 23 02:08:56 vps138235.vps.ovh.ca sshd[11584]: Server listening on :: port 22.
+Sep 23 02:08:56 vps138235.vps.ovh.ca systemd[1]: Started OpenSSH server daemon.
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/how-to-find-out-which-port-number-a-process-is-using-in-linux/>https://www.2daygeek.com/how-to-find-out-which-port-number-a-process-is-using-in-linux/</a></p><p>作者：<a href=https://www.2daygeek.com/author/prakash/>Prakash Subramanian</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/HankChow>HankChow</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%AB%AF%E5%8F%A3/ rel=tag>端口</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

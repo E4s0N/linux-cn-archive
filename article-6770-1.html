@@ -1,0 +1,80 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Ubuntu 上安装世界上最先进的开源数据库 PostgreSQL 9.4 和 phpPgAdmin - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Ubuntu 上安装世界上最先进的开源数据库 PostgreSQL 9.4 和 phpPgAdmin"><meta property="og:description" content="简介 PostgreSQL 是一款强大的，开源的，对象关系型数据库系统。它支持所有的主流操作系统，包括 Linux、Unix（AIX、BSD、HP-UX，SGI IRIX、Mac OS、Solaris、Tru64） 以及 Windows 操作系统。 下面是 Ubuntu 发起者 Mark Shuttleworth 对 PostgreSQL 的一段评价。  PostgreSQL 是一款极赞的数据库系统。刚开始我们在 Launchpad 上使用它的时候，并不确定它能否胜任工作。但我是错了。它很强壮、快速，在各个方面都很专业。  Mark Shuttleworth.  在这篇简短的指南中，让我们来看看如何在 Ubuntu 15.10 服务器中安装 PostgreSQL 9.4。 安"><meta property="og:type" content="article"><meta property="og:url" content="/article-6770-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-12-21T11:54:00+00:00"><meta property="article:modified_time" content="2015-12-21T11:54:00+00:00"><meta itemprop=name content="在 Ubuntu 上安装世界上最先进的开源数据库 PostgreSQL 9.4 和 phpPgAdmin"><meta itemprop=description content="简介 PostgreSQL 是一款强大的，开源的，对象关系型数据库系统。它支持所有的主流操作系统，包括 Linux、Unix（AIX、BSD、HP-UX，SGI IRIX、Mac OS、Solaris、Tru64） 以及 Windows 操作系统。 下面是 Ubuntu 发起者 Mark Shuttleworth 对 PostgreSQL 的一段评价。  PostgreSQL 是一款极赞的数据库系统。刚开始我们在 Launchpad 上使用它的时候，并不确定它能否胜任工作。但我是错了。它很强壮、快速，在各个方面都很专业。  Mark Shuttleworth.  在这篇简短的指南中，让我们来看看如何在 Ubuntu 15.10 服务器中安装 PostgreSQL 9.4。 安"><meta itemprop=datePublished content="2015-12-21T11:54:00+00:00"><meta itemprop=dateModified content="2015-12-21T11:54:00+00:00"><meta itemprop=wordCount content="526"><meta itemprop=keywords content="数据库,PostgreSQL,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Ubuntu 上安装世界上最先进的开源数据库 PostgreSQL 9.4 和 phpPgAdmin</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-12-21T11:54:00Z>December 21, 2015</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201512/21/115439lfjotemjk8fiqoq8.png alt></p><h3 id=简介>简介</h3><p><a href=http://www.postgresql.org/>PostgreSQL</a> 是一款强大的，开源的，对象关系型数据库系统。它支持所有的主流操作系统，包括 Linux、Unix（AIX、BSD、HP-UX，SGI IRIX、Mac OS、Solaris、Tru64） 以及 Windows 操作系统。</p><p>下面是 <strong>Ubuntu</strong> 发起者 <strong>Mark Shuttleworth</strong> 对 PostgreSQL 的一段评价。</p><blockquote><p>PostgreSQL 是一款极赞的数据库系统。刚开始我们在 Launchpad 上使用它的时候，并不确定它能否胜任工作。但我是错了。它很强壮、快速，在各个方面都很专业。</p><p>— Mark Shuttleworth.</p></blockquote><p>在这篇简短的指南中，让我们来看看如何在 Ubuntu 15.10 服务器中安装 PostgreSQL 9.4。</p><h3 id=安装-postgresql>安装 PostgreSQL</h3><p>默认仓库中就有可用的 PostgreSQL。在终端中输入下面的命令安装它。</p><pre tabindex=0><code>sudo apt-get install postgresql postgresql-contrib
+</code></pre><p>如果你需要其它的版本，按照下面那样先添加 PostgreSQL 仓库然后再安装。</p><p><strong>PostgreSQL apt 仓库</strong> 支持 amd64 和 i386 架构的 Ubuntu 长期支持版（10.04、12.04 和 14.04），以及非长期支持版（14.10）。对于其它非长期支持版，该软件包虽然没有完全支持，但使用和 LTS 版本近似的也能正常工作。</p><h4 id=ubuntu-1410-系统>Ubuntu 14.10 系统：</h4><p>新建文件**/etc/apt/sources.list.d/pgdg.list**；</p><pre tabindex=0><code>sudo vi /etc/apt/sources.list.d/pgdg.list
+</code></pre><p>用下面一行添加仓库：</p><pre tabindex=0><code>deb http://apt.postgresql.org/pub/repos/apt/ utopic-pgdg main
+</code></pre><p><strong>注意</strong>： 上面的库只能用于 Ubuntu 14.10。还没有升级到 Ubuntu 15.04 和 15.10。</p><p>对于 <strong>Ubuntu 14.04</strong>，添加下面一行：</p><pre tabindex=0><code>deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main
+</code></pre><p>对于 <strong>Ubuntu 12.04</strong>，添加下面一行：</p><pre tabindex=0><code>deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main
+</code></pre><p>导入库签名密钥：</p><pre tabindex=0><code>wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+</code></pre><p>更新软件包列表：</p><pre tabindex=0><code>sudo apt-get update
+</code></pre><p>然后安装需要的版本。</p><pre tabindex=0><code>sudo apt-get install postgresql-9.4
+</code></pre><h3 id=访问-postgresql-命令窗口>访问 PostgreSQL 命令窗口</h3><p>默认的数据库名称和数据库用户名称都是 “<strong>postgres</strong>”。切换到 postgres 用户进行 postgresql 相关的操作：</p><pre tabindex=0><code>sudo -u postgres psql postgres
+</code></pre><h4 id=示例输出>示例输出：</h4><pre tabindex=0><code>psql (9.4.5)
+Type &#34;help&#34; for help.
+postgres=#
+</code></pre><p>要退出 postgresql 窗口，在 <strong>psql</strong> 窗口输入 <strong>\q</strong> 退出到终端。</p><h3 id=设置-postgres-用户密码>设置 “postgres” 用户密码</h3><p>登录到 postgresql 窗口，</p><pre tabindex=0><code>sudo -u postgres psql postgres
+</code></pre><p>用下面的命令为用户 postgres 设置密码：</p><pre tabindex=0><code>postgres=# \password postgres 
+Enter new password: 
+Enter it again: 
+postgres=# \q
+</code></pre><p>要安装 PostgreSQL Adminpack 扩展，在 postgresql 窗口输入下面的命令：</p><pre tabindex=0><code>sudo -u postgres psql postgres
+</code></pre><hr><pre tabindex=0><code>postgres=# CREATE EXTENSION adminpack;
+CREATE EXTENSION
+</code></pre><p>在 <strong>psql</strong> 窗口输入 <strong>\q</strong> 从 postgresql 窗口退回到终端。</p><h3 id=创建新用户和数据库>创建新用户和数据库</h3><p>例如，让我们创建一个新的用户，名为 “<strong>senthil</strong>”，密码是 “<strong>ubuntu</strong>”，以及名为 “<strong>mydb</strong>” 的数据库。</p><pre tabindex=0><code>sudo -u postgres createuser -D -A -P senthil
+</code></pre><hr><pre tabindex=0><code>sudo -u postgres createdb -O senthil mydb
+</code></pre><h3 id=删除用户和数据库>删除用户和数据库</h3><p>要删除数据库，首先切换到 postgres 用户：</p><pre tabindex=0><code>sudo -u postgres psql postgres
+</code></pre><p>输入命令：</p><pre tabindex=0><code>$ drop database &lt;database-name&gt;
+</code></pre><p>要删除一个用户，输入下面的命令：</p><pre tabindex=0><code>$ drop user &lt;user-name&gt;
+</code></pre><h3 id=配置-postgresql-md5-验证>配置 PostgreSQL-MD5 验证</h3><p><strong>MD5 验证</strong> 要求用户提供一个 MD5 加密的密码用于认证。首先编辑 <strong>/etc/postgresql/9.4/main/pg_hba.conf</strong> 文件：</p><pre tabindex=0><code>sudo vi /etc/postgresql/9.4/main/pg_hba.conf
+</code></pre><p>按照下面所示添加或修改行</p><pre tabindex=0><code>[...]
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+# &#34;local&#34; is for Unix domain socket connections only
+local   all             all                                     md5
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            md5
+host    all             all             192.168.1.0/24          md5
+# IPv6 local connections:
+host    all             all             ::1/128                 md5
+[...]
+</code></pre><p>其中， 192.168.1.0/24 是我的本地网络 IP 地址。用你自己的地址替换。</p><p>重启 postgresql 服务以使更改生效：</p><pre tabindex=0><code>sudo systemctl restart postgresql
+</code></pre><p>或者，</p><pre tabindex=0><code>sudo service postgresql restart
+</code></pre><h3 id=配置-postgresql-tcpip-配置>配置 PostgreSQL TCP/IP 配置</h3><p>默认情况下，没有启用 TCP/IP 连接，因此其它计算机的用户不能访问 postgresql。为了允许其它计算机的用户访问，编辑文件 <strong>/etc/postgresql/9.4/main/postgresql.conf:</strong></p><pre tabindex=0><code>sudo vi /etc/postgresql/9.4/main/postgresql.conf
+</code></pre><p>找到下面一行：</p><pre tabindex=0><code>[...]
+#listen_addresses = &#39;localhost&#39;
+[...]
+#port = 5432
+[...]
+</code></pre><p>取消该行的注释，然后设置你 postgresql 服务器的 IP 地址，或者设置为 ‘*’ 监听所有用户。你应该谨慎设置所有远程用户都可以访问 PostgreSQL。</p><pre tabindex=0><code>[...]
+listen_addresses = &#39;*&#39;
+[...]
+port = 5432
+[...]
+</code></pre><p>重启 postgresql 服务保存更改：</p><pre tabindex=0><code>sudo systemctl restart postgresql
+</code></pre><p>或者，</p><pre tabindex=0><code>sudo service postgresql restart
+</code></pre><h3 id=用-phppgadmin-管理-postgresql>用 phpPgAdmin 管理 PostgreSQL</h3><p><a href=http://phppgadmin.sourceforge.net/doku.php><strong>phpPgAdmin</strong></a> 是基于 web 用 PHP 写的 PostgreSQL 管理工具。</p><p>默认仓库中有可用的 phpPgAdmin。用下面的命令安装 phpPgAdmin：</p><pre tabindex=0><code>sudo apt-get install phppgadmin
+</code></pre><p>默认情况下，你可以在本地系统的 web 浏览器用 <strong>http://localhost/phppgadmin</strong> 访问 phppgadmin。</p><p>要访问远程系统，在 Ubuntu 15.10 上做如下操作：</p><p>编辑文件 <strong>/etc/apache2/conf-available/phppgadmin.conf</strong>,</p><pre tabindex=0><code>sudo vi /etc/apache2/conf-available/phppgadmin.conf
+</code></pre><p>找到 <strong>Require local</strong> 的一行在这行前面添加 <strong>#</strong> 注释掉它。</p><pre tabindex=0><code>#Require local
+</code></pre><p>添加下面的一行：</p><pre tabindex=0><code>allow from all
+</code></pre><p>保存并退出文件。</p><p>然后重启 apache 服务。</p><pre tabindex=0><code>sudo systemctl restart apache2
+</code></pre><p>对于 Ubuntu 14.10 及之前版本：</p><p>编辑 <strong>/etc/apache2/conf.d/phppgadmin</strong>:</p><pre tabindex=0><code>sudo nano /etc/apache2/conf.d/phppgadmin
+</code></pre><p>注释掉下面一行：</p><pre tabindex=0><code>[...]
+#allow from 127.0.0.0/255.0.0.0 ::1/128
+</code></pre><p>取消下面一行的注释使所有系统都可以访问 phppgadmin。</p><pre tabindex=0><code>allow from all
+</code></pre><p>编辑 <strong>/etc/apache2/apache2.conf</strong>:</p><pre tabindex=0><code>sudo vi /etc/apache2/apache2.conf
+</code></pre><p>添加下面一行：</p><pre tabindex=0><code>Include /etc/apache2/conf.d/phppgadmin
+</code></pre><p>然后重启 apache 服务。</p><pre tabindex=0><code>sudo service apache2 restart
+</code></pre><h3 id=配置-phppgadmin>配置 phpPgAdmin</h3><p>编辑文件 <strong>/etc/phppgadmin/config.inc.php</strong>， 做以下更改。下面大部分选项都带有解释。认真阅读以便了解为什么要更改这些值。</p><pre tabindex=0><code>sudo nano /etc/phppgadmin/config.inc.php
+</code></pre><p>找到下面一行：</p><pre tabindex=0><code>$conf[&#39;servers&#39;][0][&#39;host&#39;] = &#39;&#39;;
+</code></pre><p>按照下面这样更改：</p><pre tabindex=0><code>$conf[&#39;servers&#39;][0][&#39;host&#39;] = &#39;localhost&#39;;
+</code></pre><p>找到这一行：</p><pre tabindex=0><code>$conf[&#39;extra_login_security&#39;] = true;
+</code></pre><p>更改值为 <strong>false</strong>。</p><pre tabindex=0><code>$conf[&#39;extra_login_security&#39;] = false;
+</code></pre><p>找到这一行：</p><pre tabindex=0><code>$conf[&#39;owned_only&#39;] = false;
+</code></pre><p>更改值为 <strong>true</strong>。</p><pre tabindex=0><code>$conf[&#39;owned_only&#39;] = true;
+</code></pre><p>保存并关闭文件。重启 postgresql 服务和 Apache 服务。</p><pre tabindex=0><code>sudo systemctl restart postgresql
+
+sudo systemctl restart apache2
+</code></pre><p>或者，</p><pre tabindex=0><code>sudo service postgresql restart
+
+sudo service apache2 restart
+</code></pre><p>现在打开你的浏览器并导航到 <strong>http://ip-address/phppgadmin</strong>。你会看到以下截图。</p><p><img src=/data/attachment/album/201512/21/115440utwfg1u1kak1d717.jpg alt="phpPgAdmin "></p><p>用你之前创建的用户登录。我之前已经创建了一个名为 “<strong>senthil</strong>” 的用户，密码是 “<strong>ubuntu</strong>”，因此我以 “senthil” 用户登录。</p><p><img src=/data/attachment/album/201512/21/115440m44s566v6qit6w5w.jpg alt="phpPgAdmin  "></p><p>然后你就可以访问 phppgadmin 面板了。</p><p><img src=/data/attachment/album/201512/21/115441km9dd21oromlpcqm.jpg alt="phpPgAdmin "></p><p>用 postgres 用户登录：</p><p><img src=/data/attachment/album/201512/21/115441x9ccp2leh0hlxndx.jpg alt="phpPgAdmin "></p><p>就是这样。现在你可以用 phppgadmin 可视化创建、删除或者更改数据库了。</p><p>加油！</p><hr><p>via: <a href=http://www.unixmen.com/install-postgresql-9-4-and-phppgadmin-on-ubuntu-15-10/>http://www.unixmen.com/install-postgresql-9-4-and-phppgadmin-on-ubuntu-15-10/</a></p><p>作者：<a href=http://www.twitter.com/ostechnix>SK</a> 译者：<a href=http://mutouxiaogui.cn/blog/>ictlyh</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ rel=tag>数据库</a></li><li class=tags__item><a class="tags__link btn" href=/tags/postgresql/ rel=tag>PostgreSQL</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

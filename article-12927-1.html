@@ -1,0 +1,53 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 CentOS/RHEL 系统中使用带 VLAN 标记的以太网卡 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 CentOS/RHEL 系统中使用带 VLAN 标记的以太网卡"><meta property="og:description" content="在某些场景中，我们希望在 Linux 服务器（CentOS/RHEL）的同一块以太网卡（NIC）上分配来自不同 VLAN 的多个 IP。这个可以通过使用 VLAN 标记接口来实现。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12927-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-12-17T12:39:00+00:00"><meta property="article:modified_time" content="2020-12-17T12:39:00+00:00"><meta itemprop=name content="如何在 CentOS/RHEL 系统中使用带 VLAN 标记的以太网卡"><meta itemprop=description content="在某些场景中，我们希望在 Linux 服务器（CentOS/RHEL）的同一块以太网卡（NIC）上分配来自不同 VLAN 的多个 IP。这个可以通过使用 VLAN 标记接口来实现。"><meta itemprop=datePublished content="2020-12-17T12:39:00+00:00"><meta itemprop=dateModified content="2020-12-17T12:39:00+00:00"><meta itemprop=wordCount content="351"><meta itemprop=keywords content="VLAN,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 CentOS/RHEL 系统中使用带 VLAN 标记的以太网卡</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-12-17T12:39:00Z>December 17, 2020</time></div></div></header><div class="content post__content clearfix"><p>在某些场景中，我们希望在 Linux 服务器（CentOS/RHEL）的同一块以太网卡（NIC）上分配来自不同 VLAN 的多个 IP。这个可以通过使用 VLAN 标记接口来实现。但是要做到这一点，我们必须确保交换机的端口上连接了多个 VLAN，也就是说我们可以在交换机上添加多个 VLAN 来配置 聚合端口 Trunk port （LCTT 译注：一般有 聚合端口 Trunk port 、 接入端口 Access port 、 混合端口 Hybird port 三种）。</p><p><img src=/data/attachment/album/202012/17/123821uvv3oyonqnhn2bqq.jpg alt></p><p>假设我们有一个 Linux 服务器，我们在这里有两张以太网卡（<code>enp0s3</code> 和 <code>enp0s8</code>），第一张网卡（<code>enp0s3</code>）会用于数据传输，而第二张网卡（<code>enp0s8</code>） 会用于控制/流量管理。我会使用多个 VLAN 用于数据传输（或在数据流量网卡上从不同的 VLAN 中分配多个 IP）。</p><p>我假设连接到我服务器的数据网卡的端口，是通过映射多个 VLAN 来配置为聚合端口。</p><p>下面是映射到数据传输网卡（NIC）的 VLAN：</p><ul><li>VLAN ID (200), VLAN N/W = 172.168.10.0/24</li><li>VLAN ID (300), VLAN N/W = 172.168.20.0/24</li></ul><p>要在 CentOS 7 / RHEL 7 / CentOS 8 / RHEL 8 系统中使用 VLAN 标记接口，必须加载<a href=https://www.linuxtechi.com/how-to-manage-kernel-modules-in-linux/>内核模块</a> <code>8021q</code> 。</p><p>加载内核模块 <code>8021q</code> 可以使用下面的命令：</p><pre tabindex=0><code>[root@linuxtechi ~]# lsmod | grep -i 8021q
+[root@linuxtechi ~]# modprobe --first-time 8021q
+[root@linuxtechi ~]# lsmod | grep -i 8021q
+8021q                  29022  0
+garp                   14384  1 8021q
+mrp                    18542  1 8021q
+[root@linuxtechi ~]#
+</code></pre><p>可以使用 <code>modinfo</code> 命令显示内核模块 <code>8021q</code> 的详细信息：</p><pre tabindex=0><code>[root@linuxtechi ~]# modinfo 8021q
+filename:       /lib/modules/3.10.0-327.el7.x86_64/kernel/net/8021q/8021q.ko
+version:        1.8
+license:        GPL
+alias:          rtnl-link-vlan
+rhelversion:    7.2
+srcversion:     2E63BD725D9DC11C7DA6190
+depends:        mrp,garp
+intree:         Y
+vermagic:       3.10.0-327.el7.x86_64 SMP mod_unload modversions
+signer:         CentOS Linux kernel signing key
+sig_key:        79:AD:88:6A:11:3C:A0:22:35:26:33:6C:0F:82:5B:8A:94:29:6A:B3
+sig_hashalgo:   sha256
+[root@linuxtechi ~]#
+</code></pre><p>现在使用 <a href=https://www.linuxtechi.com/ip-command-examples-for-linux-users/>ip 命令</a>给 <code>enp0s3</code> 网卡标记（或映射）上 <code>200</code> 和 <code>300</code> 的 VLAN 。</p><p>（LCTT 译注：这是先给 <code>enp0s3</code> 网卡映射上 <code>200</code> 的 VLAN 标签。）</p><pre tabindex=0><code>[root@linuxtechi ~]# ip link add link enp0s3 name enp0s3.200 type vlan id 200
+</code></pre><p>使用下面的 <code>ip</code> 命令打开接口：</p><pre tabindex=0><code>[root@linuxtechi ~]# ip link set dev enp0s3.200 up
+</code></pre><p>同理给 <code>enp0s3</code> 网卡映射上 <code>300</code> 的 VLAN 标签：</p><pre tabindex=0><code>[root@linuxtechi ~]# ip link add link enp0s3 name enp0s3.300 type vlan id 300
+[root@linuxtechi ~]# ip link set dev enp0s3.300 up
+</code></pre><p>现在使用 <code>ip</code> 命令查看标记后的接口状态：</p><p><img src=/data/attachment/album/202012/17/123939tumm5uvmdapv94mu.jpg alt=tagged-interface-ip-command></p><p>现在我们可以使用下面的 <code>ip</code> 命令从它们各自的 VLAN 为已经标记的接口分配 IP 地址：</p><pre tabindex=0><code>[root@linuxtechi ~]# ip addr add 172.168.10.51/24 dev enp0s3.200
+[root@linuxtechi ~]# ip addr add 172.168.20.51/24 dev enp0s3.300
+</code></pre><p>使用下面的 <code>ip</code> 命令查看是否为已标记的接口分配到 IP：</p><p><img src=/data/attachment/album/202012/17/123941gxfexy9wmyen7ye7.jpg alt=ip-address-tagged-nic></p><p>重启之后，上面所有通过 <code>ip</code> 命令的更改都不会保持（LCTT 译注：修改后可保存至配置文件或数据库中，如果未进行保存处理，则只有当前环境生效，重启后配置失效）。系统重启和网络服务重启（LCTT 译注：<code>service network restart</code>，或 <code>down</code> 和 <code>up</code> 命令）之后这些标记接口将不可用。</p><p>因此，要使标记的接口在重启后保持不变，需要使用接口的 <code>ifcfg</code> 文件。</p><p>编辑接口（<code>enp0s3</code>）文件 <code>/etc/sysconfig/network-scripts/ifcfg-enp0s3</code>，并且增加下面的内容：</p><p><strong>作者提醒</strong>：替换为你环境中的接口名称。</p><pre tabindex=0><code>[root@linuxtechi ~]# vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
+TYPE=Ethernet
+DEVICE=enp0s3
+BOOTPROTO=none
+ONBOOT=yes
+</code></pre><p>保存和退出文件。</p><p>为 id 是 <code>200</code> 的 VLAN 创建接口文件 <code>/etc/sysconfig/network-scripts/ifcfg-enp0s3.200</code>，且增加下面的内容：</p><pre tabindex=0><code>[root@linuxtechi ~]# vi /etc/sysconfig/network-scripts/ifcfg-enp0s3.200
+DEVICE=enp0s3.200
+BOOTPROTO=none
+ONBOOT=yes
+IPADDR=172.168.10.51
+PREFIX=24
+NETWORK=172.168.10.0
+VLAN=yes
+</code></pre><p>保存并退出此文件。</p><p>同理为 id 是 <code>300</code> 的 VLAN 创建接口文件 <code>/etc/sysconfig/network-scripts/ifcfg-enp0s3.300</code>，且增加下面的内容：</p><pre tabindex=0><code>[root@linuxtechi ~]# vi /etc/sysconfig/network-scripts/ifcfg-enp0s3.300
+DEVICE=enp0s3.300
+BOOTPROTO=none
+ONBOOT=yes
+IPADDR=172.168.20.51
+PREFIX=24
+NETWORK=172.168.20.0
+VLAN=yes
+</code></pre><p>保存并退出文件，这时候使用下面的命令重启网络服务，</p><pre tabindex=0><code>[root@linuxtechi ~]# systemctl restart network
+</code></pre><p>现在使用下面的 <code>ip</code> 命令检验标记的接口是否已配置和启动，并且正在运行中：</p><p><img src=/data/attachment/album/202012/17/123942e5h9p94ieldimeil.jpg alt=tagged-interface-status-ip-command-linux-server></p><p>以上就是本文的全部内容，我希望你已经学会了在 CentOS 7 / 8 和 RHEL 7 / 8 服务器上如何去配置和启用 VLAN 标签接口的方法。请分享你的反馈和意见。</p><hr><p>via: <a href=https://www.linuxtechi.com/vlan-tagged-nic-ethernet-card-centos-rhel-servers/>https://www.linuxtechi.com/vlan-tagged-nic-ethernet-card-centos-rhel-servers/</a></p><p>作者：<a href=https://www.linuxtechi.com/author/pradeep/>Pradeep Kumar</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/quinbyjoe>quinbyjoe</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/vlan/ rel=tag>VLAN</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

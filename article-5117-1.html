@@ -1,0 +1,48 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>4 个 lvcreate 常用命令举例 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="4 个 lvcreate 常用命令举例"><meta property="og:description" content="4 个 lvcreate 常用命令举例 逻辑卷管理（LVM）是广泛使用的技术，并拥有极其灵活磁盘管理方案。主要包含3个基础命令：  创建物理卷使用pvcreate 创建卷组并给卷组增加分区vgcreate 创建新的逻辑卷使用lvcreate   下列例子主要讲述在已经存在的卷组上使用lvcreate创建逻辑卷。lvcreate命令可以在卷组的可用物理扩展池中分配逻辑扩展。通常，逻辑卷可以随意使用底层逻辑卷上的任意空间。修改逻辑卷将释放或重新分配物理卷的空间。这些例子已经在CentOS 5, CentOS 6, CentOS 7, RHEL 5, RHEl 6 和 RHEL 7 版本中测试通过。 4个lvcreate命令"><meta property="og:type" content="article"><meta property="og:url" content="/article-5117-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-03-25T15:09:00+00:00"><meta property="article:modified_time" content="2015-03-25T15:09:00+00:00"><meta itemprop=name content="4 个 lvcreate 常用命令举例"><meta itemprop=description content="4 个 lvcreate 常用命令举例 逻辑卷管理（LVM）是广泛使用的技术，并拥有极其灵活磁盘管理方案。主要包含3个基础命令：  创建物理卷使用pvcreate 创建卷组并给卷组增加分区vgcreate 创建新的逻辑卷使用lvcreate   下列例子主要讲述在已经存在的卷组上使用lvcreate创建逻辑卷。lvcreate命令可以在卷组的可用物理扩展池中分配逻辑扩展。通常，逻辑卷可以随意使用底层逻辑卷上的任意空间。修改逻辑卷将释放或重新分配物理卷的空间。这些例子已经在CentOS 5, CentOS 6, CentOS 7, RHEL 5, RHEl 6 和 RHEL 7 版本中测试通过。 4个lvcreate命令"><meta itemprop=datePublished content="2015-03-25T15:09:00+00:00"><meta itemprop=dateModified content="2015-03-25T15:09:00+00:00"><meta itemprop=wordCount content="153"><meta itemprop=keywords content="LVM,lvcreate,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>4 个 lvcreate 常用命令举例</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-03-25T15:09:00Z>March 25, 2015</time></div></div></header><div class="content post__content clearfix"><h1 id=4-个-lvcreate-常用命令举例>4 个 lvcreate 常用命令举例</h1><p>逻辑卷管理（LVM）是广泛使用的技术，并拥有极其灵活磁盘管理方案。主要包含3个基础命令：</p><ol><li>创建物理卷使用<strong>pvcreate</strong></li><li>创建卷组并给卷组增加分区<strong>vgcreate</strong></li><li>创建新的逻辑卷使用<strong>lvcreate</strong></li></ol><p><img src=/data/attachment/album/201503/24/151342nssnn5bshbefh5ao.jpg alt></p><p>下列例子主要讲述在已经存在的卷组上使用<strong>lvcreate</strong>创建逻辑卷。<strong>lvcreate</strong>命令可以在卷组的可用物理扩展池中分配逻辑扩展。通常，逻辑卷可以随意使用底层逻辑卷上的任意空间。修改逻辑卷将释放或重新分配物理卷的空间。这些例子已经在CentOS 5, CentOS 6, CentOS 7, RHEL 5, RHEl 6 和 RHEL 7 版本中测试通过。</p><h3 id=4个lvcreate命令例子>4个lvcreate命令例子</h3><ol><li>在名为vg_newlvm的卷组中创建15G大小的逻辑卷：</li></ol><pre tabindex=0><code>[root@centos7 ~]# lvcreate -L 15G vg_newlvm
+</code></pre><ol start=2><li>在名为vg<em>newlvm的卷组中创建大小为2500MB的逻辑卷，并命名为centos7</em>newvol，这样就创建了块设备/dev/vg<em>newlvm/centos7</em>newvol：</li></ol><pre tabindex=0><code>[root@centos7 ~]# lvcreate -L 2500 -n centos7_newvol vg_newlvm
+</code></pre><ol start=3><li>可以使用<strong>lvcreate</strong>命令的参数-l来指定逻辑卷扩展的大小。也可以使用这个参数以卷组的大小百分比来扩展逻辑卷。这下列的命令创建了centos7<em>newvol卷组的50%大小的逻辑卷vg</em>newlvm:</li></ol><pre tabindex=0><code>[root@centos7 ~]# lvcreate -l 50%VG -n centos7_newvol vg_newlvm
+</code></pre><ol start=4><li>使用卷组剩下的所有空间创建逻辑卷</li></ol><pre tabindex=0><code>[root@centos7 ~]# lvcreate --name centos7newvol -l 100%FREE vgnewlvm
+</code></pre><p>更多帮助，使用<strong>lvcreate</strong>命令&ndash;help选项来查看：</p><pre tabindex=0><code>[root@centos7 ~]# lvcreate --help
+</code></pre><hr><pre tabindex=0><code>  lvcreate: Create a logical volume（创建逻辑卷）
+
+lvcreate
+        [-A|--autobackup {y|n}]（自动备份）
+        [-a|--activate [a|e|l]{y|n}]
+        [--addtag Tag]（增加标签）
+        [--alloc AllocationPolicy]（分配策略）
+        [--cachemode CacheMode]（Cache模式）
+        [-C|--contiguous {y|n}]
+        [-d|--debug]
+        [-h|-?|--help]
+        [--ignoremonitoring]（忽略监控）
+        [--monitor {y|n}]（监控）
+        [-i|--stripes Stripes [-I|--stripesize StripeSize]]
+        [-k|--setactivationskip {y|n}]
+        [-K|--ignoreactivationskip]
+        {-l|--extents LogicalExtentsNumber[%{VG|PVS|FREE}] |（逻辑扩展数）
+         -L|--size LogicalVolumeSize[bBsSkKmMgGtTpPeE]}（逻辑卷大小）
+        [-M|--persistent {y|n}] [--major major] [--minor minor]
+        [-m|--mirrors Mirrors [--nosync] [{--mirrorlog {disk|core|mirrored}|--corelog}]]（镜像）
+        [-n|--name LogicalVolumeName]（逻辑卷名字）
+        [--noudevsync]
+        [-p|--permission {r|rw}]
+        [--[raid]minrecoveryrate Rate]
+        [--[raid]maxrecoveryrate Rate]
+        [-r|--readahead ReadAheadSectors|auto|none]（读取头扇区）
+        [-R|--regionsize MirrorLogRegionSize]（镜像逻辑区域尺寸）
+        [-T|--thin  [-c|--chunksize  ChunkSize]（块大小）
+          [--discards {ignore|nopassdown|passdown}]
+          [--poolmetadatasize MetadataSize[bBsSkKmMgG]]]
+          [--poolmetadataspare {y|n}]
+        [--thinpool ThinPoolLogicalVolume{Name|Path}] （精简池逻辑卷）
+        [-t|--test]
+        [--type VolumeType]（卷类型）
+        [-v|--verbose]
+        [-W|--wipesignatures {y|n}]
+        [-Z|--zero {y|n}]
+        [--version]
+        VolumeGroupName [PhysicalVolumePath...]
+</code></pre><hr><p>via: <a href=http://www.ehowstuff.com/4-lvcreate-command-examples-on-linux/>http://www.ehowstuff.com/4-lvcreate-command-examples-on-linux/</a></p><p>作者：<a href=http://www.ehowstuff.com/author/mhstar/>skytech</a> 译者：<a href=https://github.com/Vic020>Vic020</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/lvm/ rel=tag>LVM</a></li><li class=tags__item><a class="tags__link btn" href=/tags/lvcreate/ rel=tag>lvcreate</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

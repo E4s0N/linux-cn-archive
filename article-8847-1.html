@@ -1,0 +1,54 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Minikube：使用 Kubernetes 进行本地开发 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Minikube：使用 Kubernetes 进行本地开发"><meta property="og:description" content="这篇博客文章介绍了 Kubernetes 在开发模式中的用法，它的灵感来自于一个视频教程，你可以在“无痛 Docker 教程”中找到它。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8847-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-09-07T11:46:32+00:00"><meta property="article:modified_time" content="2017-09-07T11:46:32+00:00"><meta itemprop=name content="Minikube：使用 Kubernetes 进行本地开发"><meta itemprop=description content="这篇博客文章介绍了 Kubernetes 在开发模式中的用法，它的灵感来自于一个视频教程，你可以在“无痛 Docker 教程”中找到它。"><meta itemprop=datePublished content="2017-09-07T11:46:32+00:00"><meta itemprop=dateModified content="2017-09-07T11:46:32+00:00"><meta itemprop=wordCount content="343"><meta itemprop=keywords content="Docker,Kubernetes,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Minikube：使用 Kubernetes 进行本地开发</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-09-07T11:46:32Z>September 07, 2017</time></div></div></header><div class="content post__content clearfix"><p>如果你的运维团队在使用 Docker 和 Kubernetes，那么建议开发上采用相同或相似的技术。这将减少不兼容性和可移植性问题的数量，并使每个人都会认识到应用程序容器是开发和运维团队的共同责任。</p><p><img src=/data/attachment/album/201709/07/114634gfl4anlnlnnqh6wx.jpg alt></p><p>这篇博客文章介绍了 Kubernetes 在开发模式中的用法，它的灵感来自于一个视频教程，你可以在“<a href=http://painlessdocker.com/>无痛 Docker 教程</a>”中找到它。</p><p><img src=/data/attachment/album/201709/07/114634vqju644r19iv94j4.jpg alt></p><p>Minikube 是一个允许开发人员在本地使用和运行 Kubernetes 集群的工具，从而使开发人员的生活变得轻松。</p><p>在这篇博客中，对于我测试的例子，我使用的是 Linux Mint 18，但其它 Linux 发行版在安装部分没有区别。</p><pre tabindex=0><code>cat /etc/lsb-release 
+</code></pre><pre tabindex=0><code>DISTRIB_ID=LinuxMint
+DISTRIB_RELEASE=18.1
+DISTRIB_CODENAME=serena
+DISTRIB_DESCRIPTION=”Linux Mint 18.1 Serena”
+</code></pre><p><img src=/data/attachment/album/201709/07/114635xsd4mmt2md5zp8g9.png alt></p><h3 id=先决条件>先决条件</h3><p>为了与 Minkube 一起工作，我们应该安装 Kubectl 和 Minikube 和一些虚拟化驱动程序。</p><ul><li>对于 OS X，安装 <a href=https://git.k8s.io/minikube/docs/drivers.md#xhyve-driver>xhyve 驱动</a>、<a href=https://www.virtualbox.org/wiki/Downloads>VirtualBox</a> 或者 <a href=https://www.vmware.com/products/fusion>VMware Fusion</a>，然后再安装 Kubectl 和 Minkube。</li></ul><pre tabindex=0><code>curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/darwin/amd64/kubectl
+
+chmod +x ./kubectl
+
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.21.0/minikube-darwin-amd64 &amp;&amp; chmod +x minikube &amp;&amp; sudo mv minikube /usr/local/bin/
+</code></pre><ul><li>对于 Windows，安装 <a href=https://www.virtualbox.org/wiki/Downloads>VirtualBox</a> 或者 <a href=https://msdn.microsoft.com/en-us/virtualization/hyperv_on_windows/quick_start/walkthrough_install>Hyper-V</a>，然后再安装 Kubectl 和 Minkube。</li></ul><pre tabindex=0><code>curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.0/bin/windows/amd64/kubectl.exe
+</code></pre><p>将二进制文件添加到你的 PATH 中（这篇<a href=https://www.windows-commandline.com/set-path-command-line/>文章</a>解释了如何修改 PATH）</p><p>下载 <code>minikube-windows-amd64.exe</code>，将其重命名为 <code>minikube.exe</code>，并将其添加到你的 PATH 中。<a href=https://github.com/kubernetes/minikube/releases>在这</a>可以找到最新版本。</p><ul><li>对于 Linux，安装 <a href=https://www.virtualbox.org/wiki/Downloads>VirtualBox</a> 或者 <a href=http://www.linux-kvm.org/>KVM</a>，然后再安装 Kubectl 和 Minkube。</li></ul><pre tabindex=0><code>curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+
+chmod +x ./kubectl
+
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.21.0/minikube-linux-amd64 &amp;&amp; chmod +x minikube &amp;&amp; sudo mv minikube /usr/local/bin/
+</code></pre><h3 id=使用-minikube>使用 Minikube</h3><p>我们先从这个 Dockerfile 创建一个镜像：</p><pre tabindex=0><code>FROM busybox
+ADD index.html /www/index.html
+EXPOSE 8000
+CMD httpd -p 8000 -h /www; tail -f /dev/null
+</code></pre><p>添加你希望在 index.html 中看到的内容。</p><p>构建镜像：</p><pre tabindex=0><code>docker build -t eon01/hello-world-web-server .
+</code></pre><p>我们来运行容器来测试它：</p><pre tabindex=0><code>docker run -d --name webserver -p 8000:8000 eon01/hello-world-web-server
+</code></pre><p>这是 <code>docker ps</code> 的输出：</p><pre tabindex=0><code>docker ps
+
+CONTAINER ID        IMAGE                          COMMAND                  CREATED             STATUS              PORTS                    NAMES
+2ad8d688d812        eon01/hello-world-web-server   &#34;/bin/sh -c &#39;httpd...&#34;   3 seconds ago       Up 2 seconds        0.0.0.0:8000-&gt;8000/tcp   webserver
+</code></pre><p>让我们提交镜像并将其上传到公共 Docker Hub 中。你也可以使用自己的私有仓库：</p><pre tabindex=0><code>docker commit webserver
+docker push eon01/hello-world-web-server
+</code></pre><p>删除容器，因为我们将与 Minikube 一起使用它。</p><pre tabindex=0><code>docker rm -f webserver
+</code></pre><p>启动 Minikube：</p><pre tabindex=0><code>minkube start
+</code></pre><p>检查状态：</p><pre tabindex=0><code>minikube status
+</code></pre><p>我们运行一个单一节点：</p><pre tabindex=0><code>kubectl get node
+</code></pre><p>运行 webserver：</p><pre tabindex=0><code>kubectl run webserver --image=eon01/hello-world-web-server --port=8000
+</code></pre><p>webserver 应该会暴露它的端口：</p><pre tabindex=0><code>kubectl expose deployment webserver --type=NodePort
+</code></pre><p>为了得到服务 url 输入：</p><pre tabindex=0><code>minikube service webserver --url
+</code></pre><p>使用下面的命令得到 Web 页面的内容：</p><pre tabindex=0><code>curl $(minikube service webserver --url)
+</code></pre><p>显示运行中集群的摘要：</p><pre tabindex=0><code>kubectl cluster-info
+</code></pre><p>更多细节：</p><pre tabindex=0><code>kubectl cluster-info dump
+</code></pre><p>我们还可以使用以下方式列出 pod：</p><pre tabindex=0><code>kubectl get pods
+</code></pre><p>使用下面的方式访问面板：</p><pre tabindex=0><code>minikube dashboard
+</code></pre><p>如果你想访问 Web 程序的前端，输入：</p><pre tabindex=0><code>kubectl proxy
+</code></pre><p>如果我们要在容器内部执行一个命令，请使用以下命令获取 pod id：</p><pre tabindex=0><code>kubetctl get pods
+</code></pre><p>然后像这样使用：</p><pre tabindex=0><code>kubectl exec webserver-2022867364-0v1p9 -it -- /bin/sh
+</code></pre><p>最后完成了，请删除所有部署：</p><pre tabindex=0><code>kubectl delete deployments --all
+</code></pre><p>删除所有 pod：</p><pre tabindex=0><code>kubectl delete pods --all
+</code></pre><p>并且停止 Minikube。</p><pre tabindex=0><code>minikube stop
+</code></pre><p>我希望你享受这个介绍。</p><h3 id=更加深入>更加深入</h3><p>如果你对本文感到共鸣，您可以在<a href=http://painlessdocker.com/>无痛 Docker 教程</a>中找到更多有趣的内容。</p><p>我们 <a href=http://eralabs.io/>Eralabs</a> 将很乐意为你的 Docker 和云计算项目提供帮助，<a href=http://eralabs.io/>联系我们</a>，我们将很乐意听到你的项目。</p><p>请订阅 <a href=http://devopslinks.com/>DevOpsLinks</a>：成千上万的 IT 专家和 DevOps 爱好者在线社区。</p><p>你可能也有兴趣加入我们的新闻订阅 <a href=http://shipped.devopslinks.com/>Shipped</a>，一个专注于容器，编排和无服务技术的新闻订阅。</p><p>你可以在 <a href=https://twitter.com/eon01>Twitter</a>、<a href=https://clarity.fm/aymenelamri/>Clarity</a> 或我的<a href=http://aymenelamri.com/>网站</a>上找到我，你也可以看看我的书：<a href=http://saltstackfordevops.com/>SaltStack For DevOps</a>。</p><p>不要忘记加入我的最后一个项目 <a href=http://jobsfordevops.com/>DevOps 的职位</a>！</p><p>如果你喜欢本文，请推荐它，并与你的关注者分享。</p><hr><p>作者简介：</p><p>Aymen El Amri - 云和软件架构师、企业家、作者、www.eralabs.io 的 CEO、www.devopslinks.com 的创始人，个人页面：www.aymenelamri.com</p><hr><p>via: <a href=https://medium.com/devopslinks/using-kubernetes-minikube-for-local-development-c37c6e56e3db>https://medium.com/devopslinks/using-kubernetes-minikube-for-local-development-c37c6e56e3db</a></p><p>作者：<a href=https://medium.com/@eon01>Aymen El Amri</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/docker/ rel=tag>Docker</a></li><li class=tags__item><a class="tags__link btn" href=/tags/kubernetes/ rel=tag>Kubernetes</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,70 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux 包管理器比较：dnf 和 apt - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux 包管理器比较：dnf 和 apt"><meta property="og:description" content="包管理器提供大致相同的功能：安装、管理和移除应用，但是它们还是有一些不一样的地方。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13620-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-07-27T08:30:10+00:00"><meta property="article:modified_time" content="2021-07-27T08:30:10+00:00"><meta itemprop=name content="Linux 包管理器比较：dnf 和 apt"><meta itemprop=description content="包管理器提供大致相同的功能：安装、管理和移除应用，但是它们还是有一些不一样的地方。"><meta itemprop=datePublished content="2021-07-27T08:30:10+00:00"><meta itemprop=dateModified content="2021-07-27T08:30:10+00:00"><meta itemprop=wordCount content="409"><meta itemprop=keywords content="包管理器,apt,dnf,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux 包管理器比较：dnf 和 apt</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-07-27T08:30:10Z>July 27, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>包管理器提供大致相同的功能：安装、管理和移除应用，但是它们还是有一些不一样的地方。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202107/27/083002sd5zzxu37yhiz6yc.jpg alt title="Gift box opens with colors coming out"></p><p><a href=https://opensource.com/article/18/1/how-install-apps-linux>在 Linux 系统上获取一个应用</a> 有多种方式。例如，有新的 Flatpak 和容器方式，也有 DEB 和 RPM 这样一直以来经过考验的方式。</p><p>并没有一种通用的可以用于所有的操作系统的应用安装程序。如今，因为有无数的开发者发布软件，这导致了大部分的操作系统使用了应用商店（包括第一方和第三方）、拖放式安装，还有安装向导。不同的开发者对于他们发布的代码有不同的需求，这直接导致了他们所选择的安装方式的不同。</p><p>Linux 开创了一种通过命令行安装、管理、移除应用的包管理器的概念。<code>apt</code> 和 <code>dnf</code> 就是两种较为常见的包管理器。<code>apt</code> 命令是用来管理 DEB 格式的包，<code>dnf</code> 命令是用来管理 RPM 格式的包。这两种包管理器在理论上并不是完全互斥的，尽管在实际的实践中，Linux 发行版通常只会使用到其中的一种。理论上，这两种命令可以运行在同一个系统上，但是会造成安装包的重叠，版本控制也会更加困难，命令也会是冗余的。然而，如果你是在一个混合的 Linux 环境下工作，比如你的工作站运行的是一个发行版，同时需要与运行另外一种发行版的服务器进行交互，那么你最好同时掌握这两种包管理器。</p><h3 id=搜索应用>搜索应用</h3><p>当你通过包管理器安装一个应用时，你需要先知道包的名称。通常，应用的名称和包的名称是一样的。<code>dnf</code> 和 <code>apt</code> 验证要安装的包名的过程是完全相同的。</p><pre tabindex=0><code>$ sudo dnf search zsh
+====== Name Exactly Matched: zsh ======
+zsh.x86_64 : Powerful interactive shell
+[...]
+</code></pre><p>使用 <code>apt</code>:</p><pre tabindex=0><code>$ sudo apt search zsh
+Sorting... Done
+Full Text Search... Done
+csh/stable 20110502-4+deb10u1 amd64
+  Shell with C-like syntax
+
+ddgr/stable 1.6-1 all
+  DuckDuckGo from the terminal
+
+direnv/stable 2.18.2-2 amd64
+  Utility to set directory specific environment variables
+
+draai/stable 20180521-1 all
+  Command-line music player for MPD
+[...]
+</code></pre><p>如果想通过 <code>apt</code> 更快的获取相关的搜索结果，你可以使用 <a href=https://opensource.com/article/18/5/getting-started-regular-expressions>正则表达式</a>：</p><pre tabindex=0><code>apt search ^zsh
+Sorting... Done
+Full Text Search... Done
+zsh/stable 5.7.1-1 amd64
+  shell with lots of features
+[...]
+</code></pre><h3 id=查找应用程序包>查找应用程序包</h3><p>有一些命令是与其它命令捆绑在一起的，都在一个包中。在这种情况下，你可以通过包管理器去了解哪个包提供了你需要的命令。<code>dnf</code> 和 <code>apt</code> 命令在如何搜索这类元数据上是有区别的。</p><p>使用 <code>dnf</code>：</p><pre tabindex=0><code>$ sudo dnf provides pgrep
+procps-ng-3.3.15-6.el8.x86_64 : System and process monitoring utilities
+Repo        : baseos
+Matched from:
+Filename    : /usr/bin/pgrep
+</code></pre><p><code>apt</code> 命令使用子命令 <code>apt-file</code>。要使用 <code>apt-file</code>，你必须先安装它，然后提示它更新缓存：</p><pre tabindex=0><code>$ sudo apt install apt-file
+Reading package lists... Done
+Building dependency tree      
+Reading state information... Done
+The following additional packages will be installed:
+  libapt-pkg-perl libexporter-tiny-perl liblist-moreutils-perl libregexp-assemble-perl
+The following NEW packages will be installed:
+  apt-file libapt-pkg-perl libexporter-tiny-perl liblist-moreutils-perl libregexp-assemble-perl
+0 upgraded, 5 newly installed, 0 to remove and 14 not upgraded.
+Need to get 297 kB of archives.
+After this operation, 825 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+
+$ sudo apt-file update
+[...]
+</code></pre><p>你可以通过 <code>apt-file</code> 搜索命令。你可以使用此命令进行广泛的全局搜索，但假如你知道命令的执行路径，它会更准确：</p><pre tabindex=0><code>$ sudo apt-file search /usr/bin/pgrep
+pgreplay: /usr/bin/pgreplay              
+procps: /usr/bin/pgrep
+</code></pre><h3 id=安装应用程序>安装应用程序</h3><p>使用<code>apt</code> 和 <code>dnf</code> 安装应用程序基本上是相同的：</p><pre tabindex=0><code>$ sudo apt install zsh
+</code></pre><p>使用 <code>dnf</code>，你可以使用同样的方式来安装一个包：</p><pre tabindex=0><code>$ sudo dnf install zsh
+</code></pre><p>许多基于 RPM 的发行版都具有组包安装的特性，它会将有时表面相关的应用程序收集到一个易于安装的目标中。例如，Fedora 中的 <a href=https://labs.fedoraproject.org/en/design-suite/>Design Suite</a> 组包就包含流行的创意应用程序。那些想要某一个创意应用程序的艺术家可能也想要类似的应用程序，选择安装一整个组包一个简单而快速的方法，可以合理地开始建立一个数字工作室。你可以通过 <code>group list</code> 来查看可用的组包（使用 <code>-v</code> 来查看不带空格的组名）：</p><pre tabindex=0><code>$ sudo dnf group list -v
+[...]
+Available Groups:
+   Container Management (container-management)
+   RPM Development Tools (rpm-development-tools)
+   Design Suite (design-suite)
+   Development Tools (development)
+[...]
+</code></pre><p>使用 <code>group install</code> 子命令安装 RPM 组包：</p><pre tabindex=0><code>$ sudo dnf group install design-suite
+</code></pre><p>你可以使用 <code>@</code> 符号来减少输入：</p><pre tabindex=0><code>$ sudo dnf install @design-suite
+</code></pre><h3 id=更新应用程序>更新应用程序</h3><p>使用包管理器的一个优点是，它知道所有已经安装的应用。这样你不必去寻找应用程序的更新版本。相反，你可以通过包管理器去获取更新的版本。</p><p><code>dnf</code> 和 <code>apt</code> 使用的子命令略有不同。因为 <code>apt</code> 保存了一个需要定期更新的缓存信息，它使用 <code>upgrade</code> 子命令来更新应用程序：</p><pre tabindex=0><code>$ sudo apt upgrade
+</code></pre><p>相比之下，<code>dnf</code> 命令在你每次使用时都会更新元信息，所以 <code>update</code> 和 <code>upgrade</code> 子命令是可以互换的：</p><pre tabindex=0><code>$ sudo dnf upgrade
+</code></pre><p>这等同于：</p><pre tabindex=0><code>$ sudo dnf update
+</code></pre><h3 id=移除应用程序>移除应用程序</h3><p>如果你曾经尝试在任何一个平台上手动删除一个应用程序，你就会知道，应用程序删除后，在硬盘上会残留各种文件，比如首选项文件、数据或图标。所以包管理器的另一个优点是，包管理器管理着包中安装的每一个文件，可以很方便的删除：</p><pre tabindex=0><code>$ sudo dnf remove zsh
+</code></pre><p><code>remove</code> 子命令也适用于 <code>apt</code>：</p><pre tabindex=0><code>$ sudo apt remove zsh
+</code></pre><p>使用 <code>apt</code> 命令删除一个包并不会删除已修改的用户配置文件，以防你意外删除了包。如果你想通过 <code>apt</code> 命令删除一个应用及其配置文件，请在你之前删除过的应用程序上使用 <code>purge</code> 子命令：</p><pre tabindex=0><code>$ sudo apt purge zsh
+</code></pre><p><code>apt</code> 和 <code>dnf</code> 都不会删除家目录中的数据和配置文件（即使使用 <code>purge</code> 子命令）。如果想要从家目录中删除数据，你必须手动操作（通常你可以在 <code>~/.config</code> 和 <code>~/.local</code> 文件中找到）。</p><h3 id=了解包管理>了解包管理</h3><p>无论你选择的发行版支持的是 <code>apt</code> 还是 <code>dnf</code>，这些命令的用途大致相同。它们可以帮助你安装、更新和移除包。这两种包管理器是目前最通用的包管理器。它们的语法元素在很大程度上是相同的，所以在两者之间切换非常容易。</p><p><code>apt</code> 和 <code>dnf</code> 还有一些高级功能，例如仓库管理，但这些功能并不像你使用 <code>search</code> 和 <code>install</code> 那样频繁。</p><p>无论你更经常使用哪种包管理器，你都可以下载我们的 <a href=https://opensource.com/downloads/apt-cheat-sheet>apt 备忘单</a> 和 <a href=https://opensource.com/downloads/dnf-cheat-sheet>dnf 备忘单</a>，以便你在最需要的时候可以查询使用语法。</p><hr><p>via: <a href=https://opensource.com/article/21/7/dnf-vs-apt>https://opensource.com/article/21/7/dnf-vs-apt</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/perfiffer>perfiffer</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8/ rel=tag>包管理器</a></li><li class=tags__item><a class="tags__link btn" href=/tags/apt/ rel=tag>apt</a></li><li class=tags__item><a class="tags__link btn" href=/tags/dnf/ rel=tag>dnf</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

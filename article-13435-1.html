@@ -1,0 +1,73 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>3 个到今天仍然有用的 Python 3.2 特性 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="3 个到今天仍然有用的 Python 3.2 特性"><meta property="og:description" content="探索一些未被充分利用但仍然有用的 Python 特性。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13435-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-05-28T20:20:00+00:00"><meta property="article:modified_time" content="2021-05-28T20:20:00+00:00"><meta itemprop=name content="3 个到今天仍然有用的 Python 3.2 特性"><meta itemprop=description content="探索一些未被充分利用但仍然有用的 Python 特性。"><meta itemprop=datePublished content="2021-05-28T20:20:00+00:00"><meta itemprop=dateModified content="2021-05-28T20:20:00+00:00"><meta itemprop=wordCount content="251"><meta itemprop=keywords content="Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>3 个到今天仍然有用的 Python 3.2 特性</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-05-28T20:20:00Z>May 28, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>探索一些未被充分利用但仍然有用的 Python 特性。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202105/28/202023pz86mg88r18o6e22.jpg alt title="Woman using laptop concentrating"></p><p>这是 Python 3.x 首发特性系列文章中的第三篇。其中一些 Python 版本已经推出了一段时间。例如，Python 3.2 是在 2011 年首次发布的，但其中引入的一些很酷、很有用的特性仍然没有被使用。下面是其中的三个。</p><h3 id=argparse-子命令>argparse 子命令</h3><p><code>argparse</code> 模块首次出现在 Python 3.2 中。有许多用于命令行解析的第三方模块。但是内置的 <code>argparse</code> 模块比许多人认为的要强大。</p><p>要记录所有的 <code>argparse</code> 的特性，那需要专门写系列文章。下面是一个例子，说明如何用 <code>argparse</code> 做子命令。</p><p>想象一下，一个命令有两个子命令：<code>negate</code>，需要一个参数，<code>multiply</code>，需要两个参数：</p><pre tabindex=0><code>$ computebot negate 5
+-5
+$ computebot multiply 2 3
+6
+</code></pre><pre tabindex=0><code>import argparse
+
+parser = argparse.ArgumentParser()
+subparsers = parser.add_subparsers()
+</code></pre><p><code>add_subparsers()</code> 方法创建一个对象，你可以向其添加子命令。唯一需要记住的技巧是，你需要添加通过 <code>set_defaults()</code> 调用的子命令：</p><pre tabindex=0><code>negate  = subparsers.add_parser(&#34;negate&#34;)
+negate.set_defaults(subcommand=&#34;negate&#34;)
+negate.add_argument(&#34;number&#34;, type=float)
+</code></pre><pre tabindex=0><code>multiply  = subparsers.add_parser(&#34;multiply&#34;)
+multiply.set_defaults(subcommand=&#34;multiply&#34;)
+multiply.add_argument(&#34;number1&#34;, type=float)
+multiply.add_argument(&#34;number2&#34;, type=float)
+</code></pre><p>我最喜欢的一个 <code>argparse</code> 功能是，因为它把解析和运行分开，测试解析逻辑特别令人愉快。</p><pre tabindex=0><code>parser.parse_args([&#34;negate&#34;, &#34;5&#34;])
+</code></pre><pre tabindex=0><code>    Namespace(number=5.0, subcommand=&#39;negate&#39;)
+</code></pre><pre tabindex=0><code>parser.parse_args([&#34;multiply&#34;, &#34;2&#34;, &#34;3&#34;])
+</code></pre><pre tabindex=0><code>    Namespace(number1=2.0, number2=3.0, subcommand=&#39;multiply&#39;)
+</code></pre><h3 id=contextlibcontextmanager>contextlib.contextmanager</h3><p>上下文是 Python 中一个强大的工具。虽然很多人 <em>使用</em> 它们，但编写一个新的上下文常常看起来像一门黑暗艺术。有了 <code>contextmanager</code> 装饰器，你所需要的只是一个一次性的生成器。</p><p>编写一个打印出做某事所需时间的上下文，就像这样简单：</p><pre tabindex=0><code>import contextlib, timeit
+
+@contextlib.contextmanager
+def timer():
+    before = timeit.default_timer()
+    try:
+        yield
+    finally:
+        after = timeit.default_timer()
+        print(&#34;took&#34;, after - before)
+</code></pre><p>你可以这样使用：</p><pre tabindex=0><code>import time
+
+with timer():
+    time.sleep(10.5)
+</code></pre><pre tabindex=0><code>    took 10.511025413870811`
+</code></pre><h3 id=functoolslru_cache>functools.lru_cache</h3><p>有时，在内存中缓存一个函数的结果是有意义的。例如，想象一下经典的问题：“有多少种方法可以用 25 美分、1 美分、2 美分和 3 美分可以来换取 1 美元？”</p><p>这个问题的代码可以说是非常简单：</p><pre tabindex=0><code>def change_for_a_dollar():
+    def change_for(amount, coins):
+        if amount == 0:
+            return 1
+        if amount &amp;lt; 0 or len(coins) == 0:
+            return 0
+        some_coin = next(iter(coins))
+        return (
+            change_for(amount, coins - set([some_coin]))
+            +
+            change_for(amount - some_coin, coins)
+        )
+    return change_for(100, frozenset([25, 10, 5, 1]))
+</code></pre><p>在我的电脑上，这需要 13ms 左右：</p><pre tabindex=0><code>with timer():
+    change_for_a_dollar()
+</code></pre><pre tabindex=0><code>    took 0.013737603090703487`
+</code></pre><p>事实证明，当你计算有多少种方法可以做一些事情，比如用 50 美分找钱，你会重复使用相同的硬币。你可以使用 <code>lru_cache</code> 来避免重复计算。</p><pre tabindex=0><code>import functools
+
+def change_for_a_dollar():
+    @functools.lru_cache
+    def change_for(amount, coins):
+        if amount == 0:
+            return 1
+        if amount &amp;lt; 0 or len(coins) == 0:
+            return 0
+        some_coin = next(iter(coins))
+        return (
+            change_for(amount, coins - set([some_coin]))
+            +
+            change_for(amount - some_coin, coins)
+        )
+    return change_for(100, frozenset([25, 10, 5, 1]))
+</code></pre><pre tabindex=0><code>with timer():
+    change_for_a_dollar()
+</code></pre><pre tabindex=0><code>    took 0.004180959425866604`
+</code></pre><p>一行的代价是三倍的改进。不错。</p><h3 id=欢迎来到-2011-年>欢迎来到 2011 年</h3><p>尽管 Python 3.2 是在 10 年前发布的，但它的许多特性仍然很酷，而且没有得到充分利用。如果你还没使用，那么将他们添加到你的工具箱中。</p><hr><p>via: <a href=https://opensource.com/article/21/5/python-32>https://opensource.com/article/21/5/python-32</a></p><p>作者：<a href=https://opensource.com/users/moshez>Moshe Zadka</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

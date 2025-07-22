@@ -1,0 +1,116 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>十个鲜为人知的 Linux 命令 - Part 3 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="十个鲜为人知的 Linux 命令 - Part 3"><meta property="og:description" content="我们继续10个鲜为人知Linux命令系列的第三部分。或许你已经知道了这些命令，那你无疑是一个有经验而喜欢探索的Linux用户。
+22. ^foo^bar 命令
+在一个实例中运行修改后的最后一个命令。假设我需要运行一个命令ls -l来 &mldr;"><meta property="og:type" content="article"><meta property="og:url" content="/article-2284-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2013-11-22T22:20:00+00:00"><meta property="article:modified_time" content="2013-11-22T22:20:00+00:00"><meta itemprop=name content="十个鲜为人知的 Linux 命令 - Part 3"><meta itemprop=description content="我们继续10个鲜为人知Linux命令系列的第三部分。或许你已经知道了这些命令，那你无疑是一个有经验而喜欢探索的Linux用户。
+22. ^foo^bar 命令
+在一个实例中运行修改后的最后一个命令。假设我需要运行一个命令ls -l来 &mldr;"><meta itemprop=datePublished content="2013-11-22T22:20:00+00:00"><meta itemprop=dateModified content="2013-11-22T22:20:00+00:00"><meta itemprop=wordCount content="585"><meta itemprop=keywords content="Linux,命令,技巧,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>十个鲜为人知的 Linux 命令 - Part 3</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2013-11-22T22:20:00Z>November 22, 2013</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201311/22/144348a858h8838a8amamy.png alt></p><p>我们继续“10个鲜为人知Linux命令系列”的第三部分。或许你已经知道了这些命令，那你无疑是一个有经验而喜欢探索的Linux用户。</p><h3 id=22-foobar-命令>22. ^foo^bar 命令</h3><p>在一个实例中运行修改后的最后一个命令。假设我需要运行一个命令‘<strong>ls -l</strong>‘来详细列出‘<strong>Desktop</strong>’目录下的内容。意外地，你打了‘<strong>lls -l</strong>‘。所以你需要重新打整个命令或者使用导航键编辑前面的命令。当你的命令很长时这个很痛苦。</p><pre tabindex=0><code>avi@localhost:~/Desktop$ lls -l 
+bash: lls: command not found
+
+avi@localhost:~/Desktop$ ^lls^ls 
+
+ls -l 
+total 7489440 
+
+drwxr-xr-x 2 avi  avi       36864 Nov 13  2012 101MSDCF 
+-rw-r--r-- 1 avi  avi      206833 Nov  5 15:27 1.jpg 
+-rw-r--r-- 1 avi  avi      158951 Nov  5 15:27 2.jpg 
+-rw-r--r-- 1 avi  avi       90624 Nov  5 12:59 Untitled 1.doc
+</code></pre><p><strong>注意</strong>:在上面的替换中我们使用“<strong> typo(被替换的) original_command(原始命令) </strong>”。警告！这个命令可能会非常危险！如果你有意或者无意地打错了系统命令或者任何像<strong>rm -rf</strong>那样的风险命令的话！</p><h3 id=23--filetxt-命令>23. > file.txt 命令</h3><p>这个命令会刷新文件的内容而不需删除然后创建相同的文件。当我们需要反复输出，或者在相同的文件上记录日志时，这个命令就非常有用。</p><p>我有一个有很多文字的‘<strong>test.txt</strong>’文件在我的‘<strong>Desktop</strong>‘上。</p><pre tabindex=0><code>avi@localhost:~/Desktop$ cat test.txt 
+
+Linux 
+GNU 
+Debian 
+Fedora 
+kali 
+ubuntu 
+git 
+Linus 
+Torvalds
+
+
+avi@localhost:~/Desktop$ &gt; test.txt 
+avi@localhost:~/Desktop$ cat test.txt
+</code></pre><p><strong>注意</strong>:再说一次，这个命令可能很危险！永远不要尝试刷新系统文件或者某篇日志文件的内容。如果你这么做了，你可能会遭遇严重的问题！</p><h3 id=24-at-命令>24. at 命令</h3><p>‘<strong>at</strong>‘命令与<a href=http://www.tecmint.com/11-cron-scheduling-task-examples-in-linux/>cron 命令</a>相似也可用于安排一个任务或者在某个特定时刻执行命令。</p><pre tabindex=0><code>avi@localhost:~/Desktop$ echo &#34;ls -l &gt; /dev/pts/0&#34; | at 14:012
+</code></pre><p>或</p><pre tabindex=0><code>avi@localhost:~/Desktop$ echo &#34;ls -l &gt; /dev/pts/0&#34; | at 2:12 PM
+</code></pre><p><strong>示例输出</strong></p><pre tabindex=0><code>-rw-r--r-- 1 avi  avi      220492 Nov  1 13:49 Screenshot-1.png 
+-rw-r--r-- 1 root root        358 Oct 17 10:11 sources.list 
+-rw-r--r-- 1 avi  avi  4695982080 Oct 10 20:29 squeeze.iso 
+..
+..
+-rw-r--r-- 1 avi  avi       90624 Nov  5 12:59 Untitled 1.doc 
+-rw-r--r-- 1 avi  avi       96206 Nov  5 12:56 Untitled 1.odt 
+-rw-r--r-- 1 avi  avi        9405 Nov 12 23:22 Untitled.png
+</code></pre><p><strong>注意</strong>:echo “<strong>ls -l</strong>”的意思是，将这串命令(这里是 <strong>ls -l</strong>)输出在标准终端上。你可以用你需要或者选择的命令替代‘<strong>ls -l</strong>‘。</p><blockquote><p>：重定向输出</p></blockquote><p><strong>/dev/pts/0</strong>: 这是输出设备和/或文件，输出到指定的地方，这里输出在终端（/dev/pts/0）。</p><p>就我而言，此时我的<strong>tty</strong>在**/dev/pts/0**。你可以用<strong>tty</strong>命令检查你的<strong>tty</strong>。</p><pre tabindex=0><code>avi@localhost:~/Desktop$ tty 
+
+/dev/pts/0
+</code></pre><p><strong>注意</strong>: ‘<strong>at</strong>‘会在系统时间匹配到特定时间时会尽快执行。</p><h3 id=25-du--h-max-depth1-命令>25. du -h –max-depth=1 命令</h3><p>下面的命令以人类可读的形式输出当前目录的子目录的大小。</p><pre tabindex=0><code>avi@localhost:/home/avi/Desktop# du -h --max-depth=1 
+
+38M     ./test 
+1.1G    ./shivji 
+42M     ./drupal 
+6.9G    ./101MSDCF 
+16G .
+</code></pre><p><strong>注意</strong>:上面的命令在<a href=http://www.tecmint.com/check-linux-disk-usage-of-files-and-directories/>检查系统使用率</a>是非常有用。</p><h3 id=26-expr-命令>26. expr 命令</h3><p>‘<strong>expr</strong>‘不是那么鲜为人知的命令。这个命令在终端中计算简单的算数时非常有用。</p><pre tabindex=0><code>avi@localhost:/home/avi/Desktop# expr 2 + 3 
+5
+
+avi@localhost:/home/avi/Desktop# expr 6 – 3 
+3
+
+avi@localhost:/home/avi/Desktop# expr 12 / 3 
+4
+
+avi@localhost:/home/avi/Desktop# expr 2 \* 9 
+18
+</code></pre><h3 id=27-look-命令>27. look 命令</h3><p>在终端上从英文字典上查单词以防混淆。比如说，我记不清了是该拼成carrier还是carieer。</p><p>avi@localhost:/home/avi/Documents# look car</p><pre tabindex=0><code>Cara 
+Cara&#39;s 
+…
+... 
+carps 
+carpus 
+carpus&#39;s 
+carrel 
+carrel&#39;s 
+carrels 
+carriage 
+carriage&#39;s 
+carriages 
+carriageway 
+carriageway&#39;s 
+carried 
+carrier 
+carrier&#39;s 
+carriers 
+carries 
+…
+... 
+caryatids
+</code></pre><p>上面的命令会显示字典上所有以&rsquo;car&rsquo;开头的单词。我得到了我想找的。</p><h3 id=28-yes-命令>28. yes 命令</h3><p>另外一个命令在通常基础上并不会经常使用，但是在脚本语言和系统管理时非常有用。</p><p>这个命令会持续地输出给定的字符串，直到由你的中断命令打断。</p><pre tabindex=0><code>avi@localhost:~/Desktop$ yes &#34;Tecmint is one of the best site dedicated to Linux, how to&#34; 
+
+Tecmint is one of the best site dedicated to Linux, how to 
+Tecmint is one of the best site dedicated to Linux, how to 
+Tecmint is one of the best site dedicated to Linux, how to 
+Tecmint is one of the best site dedicated to Linux, how to 
+…
+…
+...
+Tecmint is one of the best site dedicated to Linux, how to 
+Tecmint is one of the best site dedicated to Linux, how to 
+Tecmint is one of the best site dedicated to Linux, how to
+</code></pre><h3 id=29-factor-命令>29. factor 命令</h3><p>factor实际是一个源于数学的命令。这个命令会输出所有给定数字的因数。</p><pre tabindex=0><code>avi@localhost:~/Desktop$ factor 22 
+22: 2 11
+
+avi@localhost:~/Desktop$ factor 21 
+21: 3 7
+
+avi@localhost:~/Desktop$ factor 11 
+11: 11
+</code></pre><h3 id=30-ping--i-60--a-ip_address>30. ping -i 60 -a IP_address</h3><p>我们都用ping命令检测服务器是否连通。我通常ping google，来检测我是否连接到了因特网。</p><p>当你等待或者持续盯着你的终端等待命令的回应或者等待服务器的连接时，有时是很气人的。</p><p>一旦服务器连通就有一个声音如何（译注：下面命令是等60秒PING一次）？</p><pre tabindex=0><code>avi@localhost:~/Desktop$ ping -i 60 -a www.google.com 
+
+PING www.google.com (74.125.200.103) 56(84) bytes of data. 
+64 bytes from www.google.com (74.125.200.103): icmp_req=1 ttl=44 time=105 ms 
+64 bytes from 74.125.200.103: icmp_req=2 ttl=44 time=281 ms
+</code></pre><p>注意，当你发现命令不会返回声音时。请确保你的系统不是静音的，声音已经在‘<strong>sound preferences(声音选项)</strong>‘ 中启用并确保勾选了‘<strong>Enable window and window sound</strong>‘。</p><h3 id=31-tac-命令>31. tac 命令</h3><p>这个命令很有趣，他会以倒序输出文本文件的内容。也就是从最后一行到第一行。</p><p>在home目录下，我的Documents目录下有一个35.txt文件。用<a href=http://www.tecmint.com/13-basic-cat-command-examples-in-linux/>cat 命令</a>检查内容。</p><pre tabindex=0><code>avi@localhost:~/Documents$ cat 35.txt
+</code></pre><p><strong>示例输出</strong></p><blockquote><ol><li>Linux is built with certain powerful tools, which are unavailable in windows.</li><li>One of such important tool is Shell Scripting. Windows however comes with such a tool but as usual it is much weak as compared to it&rsquo;s Linux Counterpart.</li><li>Shell scripting/programming makes it possible to execute command(s), piped to get desired output in order to automate day-to-day usages.</li></ol></blockquote><p>现在用tac命令反转文件内容（译注：当然，我们知道cat反转过来就是tac）。</p><pre tabindex=0><code>avi@localhost:~/Documents$ tac 35.txt 
+</code></pre><p><strong>示例输出</strong></p><blockquote><ol><li>Shell scripting/programming makes it possible to execute command(s), piped to get desired output in order to automate day-to-day usages.</li><li>One of such important tool is Shell Scripting. Windows however comes with such a tool but as usual it is much weak as compared to it&rsquo;s Linux Counterpart.</li><li>Linux is built with certain powerful tools, which are unavailable in windows.</li></ol></blockquote><p>现在结束了。如果你还知道其他一些Linux鲜为人知的命令，你可以在下面评论，那么我们你可以在以后的文章中包含进来。</p><p>不要忘了给我们有价值的评论。我很快会发另外有趣的文章。别走开继续关注 <strong>Tecmint</strong>。</p><hr><p>via: <a href=http://www.tecmint.com/10-lesser-known-commands-for-linux-part-3/>http://www.tecmint.com/10-lesser-known-commands-for-linux-part-3/</a></p><p>译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/linux/ rel=tag>Linux</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4/ rel=tag>命令</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8A%80%E5%B7%A7/ rel=tag>技巧</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

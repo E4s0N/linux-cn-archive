@@ -1,0 +1,124 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>构建一个即时消息应用（八）：Home 页面 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="构建一个即时消息应用（八）：Home 页面"><meta property="og:description" content="让我们在本文中完成 home 页面的开发。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12722-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-10-15T21:32:00+00:00"><meta property="article:modified_time" content="2020-10-15T21:32:00+00:00"><meta itemprop=name content="构建一个即时消息应用（八）：Home 页面"><meta itemprop=description content="让我们在本文中完成 home 页面的开发。"><meta itemprop=datePublished content="2020-10-15T21:32:00+00:00"><meta itemprop=dateModified content="2020-10-15T21:32:00+00:00"><meta itemprop=wordCount content="376"><meta itemprop=keywords content="即时消息,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>构建一个即时消息应用（八）：Home 页面</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-10-15T21:32:00Z>October 15, 2020</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202010/15/213116evlwzdwwv66kmldj.jpg alt></p><p>本文是该系列的第八篇。</p><ul><li><a href=/article-11396-1.html>第一篇: 模式</a></li><li><a href=/article-11510-1.html>第二篇: OAuth</a></li><li><a href=/article-12056-1.html>第三篇: 对话</a></li><li><a href=/article-12680-1.html>第四篇: 消息</a></li><li><a href=/article-12685-1.html>第五篇: 实时消息</a></li><li><a href=/article-12692-1.html>第六篇: 仅用于开发的登录</a></li><li><a href=/article-12704-1.html>第七篇: Access 页面</a></li></ul><p>继续前端部分，让我们在本文中完成 <code>home</code> 页面的开发。 我们将添加一个开始对话的表单和一个包含最新对话的列表。</p><h3 id=对话表单>对话表单</h3><p><img src=/data/attachment/album/202010/15/213638ggtiy84vo4dgxoar.png alt></p><p>转到 <code>static/ages/home-page.js</code> 文件，在 HTML 视图中添加一些标记。</p><pre tabindex=0><code>&lt;form id=&#34;conversation-form&#34;&gt;
+    &lt;input type=&#34;search&#34; placeholder=&#34;Start conversation with...&#34; required&gt;
+&lt;/form&gt;
+</code></pre><p>将该表单添加到我们显示 “auth user” 和 “logout” 按钮部分的下方。</p><pre tabindex=0><code>page.getElementById(&#39;conversation-form&#39;).onsubmit = onConversationSubmit
+</code></pre><p>现在我们可以监听 “submit” 事件来创建对话了。</p><pre tabindex=0><code>import http from &#39;../http.js&#39;
+import { navigate } from &#39;../router.js&#39;
+
+async function onConversationSubmit(ev) {
+    ev.preventDefault()
+
+    const form = ev.currentTarget
+    const input = form.querySelector(&#39;input&#39;)
+
+    input.disabled = true
+
+    try {
+        const conversation = await createConversation(input.value)
+        input.value = &#39;&#39;
+        navigate(&#39;/conversations/&#39; + conversation.id)
+    } catch (err) {
+        if (err.statusCode === 422) {
+            input.setCustomValidity(err.body.errors.username)
+        } else {
+            alert(err.message)
+        }
+        setTimeout(() =&gt; {
+            input.focus()
+        }, 0)
+    } finally {
+        input.disabled = false
+    }
+}
+
+function createConversation(username) {
+    return http.post(&#39;/api/conversations&#39;, { username })
+}
+</code></pre><p>在提交时，我们使用用户名对 <code>/api/conversations</code> 进行 POST 请求，并重定向到 <code>conversation</code> 页面（用于下一篇文章）。</p><h3 id=对话列表>对话列表</h3><p><img src=/data/attachment/album/202010/15/213715tid9ln7yniblyziy.png alt></p><p>还是在这个文件中，我们将创建 <code>homePage()</code> 函数用来先异步加载对话。</p><pre tabindex=0><code>export default async function homePage() {
+    const conversations = await getConversations().catch(err =&gt; {
+        console.error(err)
+        return []
+    })
+    /\*...\*/
+}
+
+function getConversations() {
+    return http.get(&#39;/api/conversations&#39;)
+}
+</code></pre><p>然后，在标记中添加一个列表来渲染对话。</p><pre tabindex=0><code>&lt;ol id=&#34;conversations&#34;&gt;&lt;/ol&gt;
+</code></pre><p>将其添加到当前标记的正下方。</p><pre tabindex=0><code>const conversationsOList = page.getElementById(&#39;conversations&#39;)
+for (const conversation of conversations) {
+    conversationsOList.appendChild(renderConversation(conversation))
+}
+</code></pre><p>因此，我们可以将每个对话添加到这个列表中。</p><pre tabindex=0><code>import { avatar, escapeHTML } from &#39;../shared.js&#39;
+
+function renderConversation(conversation) {
+    const messageContent = escapeHTML(conversation.lastMessage.content)
+    const messageDate = new Date(conversation.lastMessage.createdAt).toLocaleString()
+
+    const li = document.createElement(&#39;li&#39;)
+    li.dataset[&#39;id&#39;] = conversation.id
+    if (conversation.hasUnreadMessages) {
+        li.classList.add(&#39;has-unread-messages&#39;)
+    }
+    li.innerHTML = `
+ &lt;a href=&#34;/conversations/${conversation.id}&#34;&gt;
+ &lt;div&gt;
+ ${avatar(conversation.otherParticipant)}
+ &lt;span&gt;${conversation.otherParticipant.username}&lt;/span&gt;
+ &lt;/div&gt;
+ &lt;div&gt;
+ &lt;p&gt;${messageContent}&lt;/p&gt;
+ &lt;time&gt;${messageDate}&lt;/time&gt;
+ &lt;/div&gt;
+ &lt;/a&gt;
+ `
+    return li
+}
+</code></pre><p>每个对话条目都包含一个指向对话页面的链接，并显示其他参与者信息和最后一条消息的预览。另外，您可以使用 <code>.hasUnreadMessages</code> 向该条目添加一个类，并使用 CSS 进行一些样式设置。也许是粗体字体或强调颜色。</p><p>请注意，我们需要转义信息的内容。该函数来自于 <code>static/shared.js</code> 文件：</p><pre tabindex=0><code>export function escapeHTML(str) {
+    return str
+        .replace(/&amp;/g, &#39;&amp;amp;&#39;)
+        .replace(/&lt;/g, &#39;&amp;lt;&#39;)
+        .replace(/&gt;/g, &#39;&amp;gt;&#39;)
+        .replace(/&#34;/g, &#39;&amp;quot;&#39;)
+        .replace(/&#39;/g, &#39;&amp;#039;&#39;)
+}
+</code></pre><p>这会阻止将用户编写的消息显示为 HTML。如果用户碰巧编写了类似以下内容的代码：</p><pre tabindex=0><code>&lt;script&gt;alert(&#39;lololo&#39;)&lt;/script&gt;
+</code></pre><p>这将非常烦人，因为该脚本将被执行?。所以，永远记住要转义来自不可信来源的内容。</p><h3 id=消息订阅>消息订阅</h3><p>最后但并非最不重要的一点，我想在这里订阅消息流。</p><pre tabindex=0><code>const unsubscribe = subscribeToMessages(onMessageArrive)
+page.addEventListener(&#39;disconnect&#39;, unsubscribe)
+</code></pre><p>在 <code>homePage()</code> 函数中添加这一行。</p><pre tabindex=0><code>function subscribeToMessages(cb) {
+    return http.subscribe(&#39;/api/messages&#39;, cb)
+}
+</code></pre><p>函数 <code>subscribe()</code> 返回一个函数，该函数一旦调用就会关闭底层连接。这就是为什么我把它传递给 “断开连接” disconnect 事件的原因；因此，当用户离开页面时，事件流将被关闭。</p><pre tabindex=0><code>async function onMessageArrive(message) {
+    const conversationLI = document.querySelector(`li[data-id=&#34;${message.conversationID}&#34;]`)
+    if (conversationLI !== null) {
+        conversationLI.classList.add(&#39;has-unread-messages&#39;)
+        conversationLI.querySelector(&#39;a &gt; div &gt; p&#39;).textContent = message.content
+        conversationLI.querySelector(&#39;a &gt; div &gt; time&#39;).textContent = new Date(message.createdAt).toLocaleString()
+        return
+    }
+
+    let conversation
+    try {
+        conversation = await getConversation(message.conversationID)
+        conversation.lastMessage = message
+    } catch (err) {
+        console.error(err)
+        return
+    }
+
+    const conversationsOList = document.getElementById(&#39;conversations&#39;)
+    if (conversationsOList === null) {
+        return
+    }
+
+    conversationsOList.insertAdjacentElement(&#39;afterbegin&#39;, renderConversation(conversation))
+}
+
+function getConversation(id) {
+    return http.get(&#39;/api/conversations/&#39; + id)
+}
+</code></pre><p>每次有新消息到达时，我们都会在 DOM 中查询会话条目。如果找到，我们会将 <code>has-unread-messages</code> 类添加到该条目中，并更新视图。如果未找到，则表示该消息来自刚刚创建的新对话。我们去做一个对 <code>/api/conversations/{conversationID}</code> 的 GET 请求，以获取在其中创建消息的对话，并将其放在对话列表的前面。</p><hr><p>以上这些涵盖了主页的所有内容 ?。 在下一篇文章中，我们将对 conversation 页面进行编码。</p><ul><li><a href=https://github.com/nicolasparada/go-messenger-demo>源代码</a></li></ul><hr><p>via: <a href=https://nicolasparada.netlify.com/posts/go-messenger-home-page/>https://nicolasparada.netlify.com/posts/go-messenger-home-page/</a></p><p>作者：<a href=https://nicolasparada.netlify.com/>Nicolás Parada</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/gxlct008>gxlct008</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8D%B3%E6%97%B6%E6%B6%88%E6%81%AF/ rel=tag>即时消息</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

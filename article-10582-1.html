@@ -1,0 +1,65 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Emacs 创建 OAuth 2.0 的 UML 序列图 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Emacs 创建 OAuth 2.0 的 UML 序列图"><meta property="og:description" content="在审查 OAuth 2.0 实现或编写渗透测试报告时我习惯画出 UML 图。这方便让人理解发生了什么事情，并发现潜在的问题。毕竟，一图抵千言。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10582-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-03-02T21:25:59+00:00"><meta property="article:modified_time" content="2019-03-02T21:25:59+00:00"><meta itemprop=name content="使用 Emacs 创建 OAuth 2.0 的 UML 序列图"><meta itemprop=description content="在审查 OAuth 2.0 实现或编写渗透测试报告时我习惯画出 UML 图。这方便让人理解发生了什么事情，并发现潜在的问题。毕竟，一图抵千言。"><meta itemprop=datePublished content="2019-03-02T21:25:59+00:00"><meta itemprop=dateModified content="2019-03-02T21:25:59+00:00"><meta itemprop=wordCount content="324"><meta itemprop=keywords content="Emacs,UML,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Emacs 创建 OAuth 2.0 的 UML 序列图</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-03-02T21:25:59Z>March 02, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201903/02/212604g7z11twgd785pupl.png alt="OAuth 2.0 abstract protocol flow"></p><p>看起来 <a href=https://tools.ietf.org/html/rfc6749>OAuth 2.0 框架</a> 已经越来越广泛地应用于 web (和 移动) 应用。太棒了！</p><p>虽然协议本身并不复杂，但有很多的使用场景、流程和实现可供选择。正如生活中的大多数事物一样，魔鬼在于细节之中。</p><p>在审查 OAuth 2.0 实现或编写渗透测试报告时我习惯画出 UML 图。这方便让人理解发生了什么事情，并发现潜在的问题。毕竟，一图抵千言。</p><p>使用基于 GPL 开源协议 <a href=https://www.gnu.org/software/emacs/>Emacs</a> 编辑器来实现，再加上基于 GPL 开源协议的工具 <a href=https://plantuml.com>PlantUML</a> (也可以选择基于 Eclipse Public 协议的 <a href=http://www.graphviz.org/>Graphviz</a>) 很容易做到这一点。</p><p>Emacs 是世界上最万能的编辑器。在这种场景中，我们用它来编辑文本，并自动将文本转换成图片。PlantUML 是一个允许你用人类可读的文本来写 UML 并完成该转换的工具。Graphviz 是一个可视化的软件，这里我们可以用它来显示图片。</p><p>下载 <a href=http://plantuml.com/download>预先编译好了的 PlantUML jar 文件</a> ，<a href=https://www.gnu.org/software/emacs/download.html>Emacs</a> 还可以选择下载并安装 <a href=http://www.graphviz.org/Download.php>Graphviz</a>。</p><p>安装并启动 Emacs，然后将下面 Lisp 代码（实际上是配置）写入你的启动文件中（<code>~/.emacs.d/init.d</code>），这段代码将会：</p><ul><li>配置 org 模式（一种用来组织并编辑文本文件的模式）来使用 PlantUML</li><li>将 <code>plantuml</code> 添加到可识别的 “org-babel” 语言中（这让你可以在文本文件中执行源代码）</li><li>将 PlantUML 代码标注为安全的，从而允许执行</li><li>自动显示生成的结果图片</li></ul><pre tabindex=0><code>;; tell org-mode where to find the plantuml JAR file (specify the JAR file)
+(setq org-plantuml-jar-path (expand-file-name &#34;~/plantuml.jar&#34;))
+
+;; use plantuml as org-babel language
+(org-babel-do-load-languages &#39;org-babel-load-languages &#39;((plantuml . t)))
+
+;; helper function
+(defun my-org-confirm-babel-evaluate (lang body)
+&#34;Do not ask for confirmation to evaluate code for specified languages.&#34;
+(member lang &#39;(&#34;plantuml&#34;)))
+
+;; trust certain code as being safe
+(setq org-confirm-babel-evaluate &#39;my-org-confirm-babel-evaluate)
+
+;; automatically show the resulting image
+(add-hook &#39;org-babel-after-execute-hook &#39;org-display-inline-images)
+</code></pre><p>如果你还没有启动文件，那么将该代码加入到 <code>~/.emacs.d/init.el</code> 文件中然后重启 Emacs。</p><p>提示：<code>Control-c Control-f</code> 可以让你创建/打开（新）文件。<code>Control-x Control-s</code> 保存文件，而 <code>Control-x Control-c</code> 退出 Emacs。</p><p>这就结了！</p><p>要测试该配置，可以创建/打开（<code>Control-c Control-f</code>）后缀为 <code>.org</code> 的文件，例如 <code>test.org</code>。这会让 Emacs 切换到 org 模式并识别 “org-babel” 语法。</p><p>输入下面代码，然后在代码中输入 <code>Control-c Control-c</code> 来测试是否安装正常：</p><pre tabindex=0><code>#+BEGIN_SRC plantuml :file test.png
+@startuml
+version
+@enduml
+#+END_SRC
+</code></pre><p>一切顺利的话，你会在 Emacs 中看到文本下面显示了一张图片。</p><blockquote><p><strong>注意：</strong></p><p>要快速插入类似 <code>#+BEGIN_SRC</code> 和 <code>#+END_SRC</code> 这样的代码片段，你可以使用内置的 Easy Templates 系统：输入 <code>&lt;s</code> 然后按下 <code>TAB</code>，它就会自动为你插入模板。</p></blockquote><p>还有更复杂的例子，下面是生成上面图片的 UML 源代码：</p><pre tabindex=0><code>#+BEGIN_SRC plantuml :file t:/oauth2-abstract-protocol-flow.png
+@startuml
+hide footbox
+title Oauth 2.0 Abstract protocol flow
+autonumber
+actor user as &#34;resource owner (user)&#34;
+box &#34;token stays secure&#34; #FAFAFA
+participant client as &#34;client (application)&#34;
+participant authorization as &#34;authorization server&#34;
+database resource as &#34;resource server&#34;
+end box
+
+group user authorizes client
+client -&gt; user : request authorization
+note left
+**grant types**:
+# authorization code
+# implicit
+# password
+# client_credentials
+end note
+user --&gt; client : authorization grant
+end
+
+group token is generated
+client -&gt; authorization : request token\npresent authorization grant
+authorization --&gt; client :var: access token
+note left
+**response types**:
+# code
+# token
+end note
+end group
+
+group resource can be accessed
+client -&gt; resource : request resource\npresent token
+resource --&gt; client : resource
+end group
+@enduml
+#+END_SRC
+</code></pre><p>你难道会不喜欢 Emacs 和开源工具的多功能性吗？</p><hr><p>via: <a href=https://www.onwebsecurity.com/configuration/use-emacs-to-create-oauth-2-0-uml-sequence-diagrams.html>https://www.onwebsecurity.com/configuration/use-emacs-to-create-oauth-2-0-uml-sequence-diagrams.html</a></p><p>作者：<a href=https://www.onwebsecurity.com>Peter Mosmans</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/lujun9972>lujun9972</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/emacs/ rel=tag>Emacs</a></li><li class=tags__item><a class="tags__link btn" href=/tags/uml/ rel=tag>UML</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,51 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 上寻找你正在寻找的东西 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 上寻找你正在寻找的东西"><meta property="og:description" content="怎样在 Linux 系统上使用 find、locate、mlocate、which、 whereis、 whatis 和 apropos 命令寻找文件。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9623-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-05-09T08:44:00+00:00"><meta property="article:modified_time" content="2018-05-09T08:44:00+00:00"><meta itemprop=name content="在 Linux 上寻找你正在寻找的东西"><meta itemprop=description content="怎样在 Linux 系统上使用 find、locate、mlocate、which、 whereis、 whatis 和 apropos 命令寻找文件。"><meta itemprop=datePublished content="2018-05-09T08:44:00+00:00"><meta itemprop=dateModified content="2018-05-09T08:44:00+00:00"><meta itemprop=wordCount content="419"><meta itemprop=keywords content="find,查找,locate,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 上寻找你正在寻找的东西</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-05-09T08:44:00Z>May 09, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>怎样在 Linux 系统上使用 find、locate、mlocate、which、 whereis、 whatis 和 apropos 命令寻找文件。</p></blockquote><p><img src=/data/attachment/album/201805/09/084416d4oorf4r4o42th7z.jpg alt></p><p>在 Linux 系统上找到你要找的文件或命令并不难， 有很多种方法可以寻找。</p><h3 id=find>find</h3><p>最显然的无疑是 <code>find</code> 命令，并且 <code>find</code> 变得比过去几年更容易使用了。它过去需要一个搜索的起始位置，但是现在，如果你想将搜索限制在当下目录中，你还可以使用仅包含文件名或正则表达式的 <code>find</code> 命令。</p><pre tabindex=0><code>$ find e*
+empty
+examples.desktop
+</code></pre><p>这样，它就像 <code>ls</code> 命令一样工作，并没有做太多的搜索。</p><p>对于更专业的搜索，<code>find</code> 命令需要一个起点和一些搜索条件（除非你只是希望它提供该起点目录的递归列表）。命令 <code>find -type f</code> 从当前目录开始将递归列出所有常规文件，而 <code>find ~nemo -type f -empty</code> 将在 nemo 的主目录中找到空文件。</p><pre tabindex=0><code>$ find ~nemo -type f -empty
+/home/nemo/empty
+</code></pre><p>参见：<a href=http://www.networkworld.com/article/2926630/linux/11-pointless-but-awesome-linux-terminal-tricks.html#tk.nww-fsb>11 个好玩的 Linux 终端技巧</a>。</p><h3 id=locate>locate</h3><p><code>locate</code> 命令的名称表明它与 <code>find</code> 命令基本相同，但它的工作原理完全不同。<code>find</code> 命令可以根据各种条件 —— 名称、大小、所有者、权限、状态（如空文件）等等选择文件并作为搜索选择深度，<code>locate</code> 命令通过名为 <code>/var/lib/mlocate/mlocate.db</code> 的文件查找你要查找的内容。该数据文件会定期更新，因此你刚创建的文件的位置它可能无法找到。如果这让你感到困扰，你可以运行 <code>updatedb</code> 命令立即获得更新。</p><pre tabindex=0><code>$ sudo updatedb
+</code></pre><h3 id=mlocate>mlocate</h3><p><code>mlocate</code> 命令的工作类似于 <code>locate</code> 命令，它使用与 <code>locate</code> 相同的 <code>mlocate.db</code> 文件。</p><h3 id=which>which</h3><p><code>which</code> 命令的工作方式与 <code>find</code> 命令和 <code>locate</code> 命令有很大的区别。它使用你的搜索路径（<code>$PATH</code>）并检查其上的每个目录中具有你要查找的文件名的可执行文件。一旦找到一个，它会停止搜索并显示该可执行文件的完整路径。</p><p><code>which</code> 命令的主要优点是它回答了“如果我输入此命令，将运行什么可执行文件？”的问题。它会忽略不可执行文件，并且不会列出系统上带有该名称的所有可执行文件 —— 列出的就是它找到的第一个。如果你想查找具有某个名称的所有可执行文件，则可以像这样运行 <code>find</code> 命令，但是要比非常高效 <code>which</code> 命令用更长的时间。</p><pre tabindex=0><code>$ find / -name locate -perm -a=x 2&gt;/dev/null
+/usr/bin/locate
+/etc/alternatives/locate
+</code></pre><p>在这个 <code>find</code> 命令中，我们在寻找名为 “locate” 的所有可执行文件（任何人都可以运行的文件）。我们也选择了不要查看所有“拒绝访问”的消息，否则这些消息会混乱我们的屏幕。</p><h3 id=whereis>whereis</h3><p><code>whereis</code> 命令与 <code>which</code> 命令非常类似，但它提供了更多信息。它不仅仅是寻找可执行文件，它还寻找手册页（man page）和源文件。像 <code>which</code> 命令一样，它使用搜索路径（<code>$PATH</code>） 来驱动搜索。</p><pre tabindex=0><code>$ whereis locate
+locate: /usr/bin/locate /usr/share/man/man1/locate.1.gz
+</code></pre><h3 id=whatis>whatis</h3><p><code>whatis</code> 命令有其独特的使命。它不是实际查找文件，而是在手册页中查找有关所询问命令的信息，并从手册页的顶部提供该命令的简要说明。</p><pre tabindex=0><code>$ whatis locate
+locate (1) - find files by name
+</code></pre><p>如果你询问你刚刚设置的脚本，它不会知道你指的是什么，并会告诉你。</p><pre tabindex=0><code>$ whatis cleanup
+cleanup: nothing appropriate.
+</code></pre><h3 id=apropos>apropos</h3><p>当你知道你想要做什么，但不知道应该使用什么命令来执行此操作时，<code>apropos</code> 命令很有用。例如，如果你想知道如何查找文件，那么 <code>apropos find</code> 和 <code>apropos locate</code> 会提供很多建议。</p><pre tabindex=0><code>$ apropos find
+File::IconTheme (3pm) - find icon directories
+File::MimeInfo::Applications (3pm) - Find programs to open a file by mimetype
+File::UserDirs (3pm) - find extra media and documents directories
+find (1) - search for files in a directory hierarchy
+findfs (8) - find a filesystem by label or UUID
+findmnt (8) - find a filesystem
+gst-typefind-1.0 (1) - print Media type of file
+ippfind (1) - find internet printing protocol printers
+locate (1) - find files by name
+mlocate (1) - find files by name
+pidof (8) - find the process ID of a running program.
+sane-find-scanner (1) - find SCSI and USB scanners and their device files
+systemd-delta (1) - Find overridden configuration files
+xdg-user-dir (1) - Find an XDG user dir
+$
+$ apropos locate
+blkid (8) - locate/print block device attributes
+deallocvt (1) - deallocate unused virtual consoles
+fallocate (1) - preallocate or deallocate space to a file
+IO::Tty (3pm) - Low-level allocate a pseudo-Tty, import constants.
+locate (1) - find files by name
+mlocate (1) - find files by name
+mlocate.db (5) - a mlocate database
+mshowfat (1) - shows FAT clusters allocated to file
+ntfsfallocate (8) - preallocate space to a file on an NTFS volume
+systemd-sysusers (8) - Allocate system users and groups
+systemd-sysusers.service (8) - Allocate system users and groups
+updatedb (8) - update a database for mlocate
+updatedb.mlocate (8) - update a database for mlocate
+whereis (1) - locate the binary, source, and manual page files for a...
+which (1) - locate a command
+</code></pre><h3 id=总结>总结</h3><p>Linux 上可用于查找和识别文件的命令有很多种，但它们都非常有用。</p><hr><p>via: <a href=https://www.networkworld.com/article/3268768/linux/finding-what-you-re-looking-for-on-linux.html>https://www.networkworld.com/article/3268768/linux/finding-what-you-re-looking-for-on-linux.html</a></p><p>作者：<a href=https://www.networkworld.com/author/Sandra-Henry_Stocker/>Sandra Henry-Stocker</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/find/ rel=tag>find</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%9F%A5%E6%89%BE/ rel=tag>查找</a></li><li class=tags__item><a class="tags__link btn" href=/tags/locate/ rel=tag>locate</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,84 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 LXD 容器运行 Ubuntu Core - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 LXD 容器运行 Ubuntu Core"><meta property="og:description" content="Ubuntu Core 是完全基于 snap 包构建，并且完全事务化的 Ubuntu 版本。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9077-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-11-23T00:42:53+00:00"><meta property="article:modified_time" content="2017-11-23T00:42:53+00:00"><meta itemprop=name content="使用 LXD 容器运行 Ubuntu Core"><meta itemprop=description content="Ubuntu Core 是完全基于 snap 包构建，并且完全事务化的 Ubuntu 版本。"><meta itemprop=datePublished content="2017-11-23T00:42:53+00:00"><meta itemprop=dateModified content="2017-11-23T00:42:53+00:00"><meta itemprop=wordCount content="582"><meta itemprop=keywords content="LXD,容器,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 LXD 容器运行 Ubuntu Core</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-11-23T00:42:53Z>November 23, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201711/23/004218pohu77bt0tlrtvz1.jpg alt></p><h3 id=ubuntu-core-是什么>Ubuntu Core 是什么？</h3><p>Ubuntu Core 是完全基于 snap 包构建，并且完全事务化的 Ubuntu 版本。</p><p>该系统大部分是只读的，所有已安装的应用全部来自 snap 包，完全使用事务化更新。这意味着不管在系统更新还是安装软件的时候遇到问题，整个系统都可以回退到之前的状态并且记录这个错误。</p><p>最新版是在 2016 年 11 月发布的 Ubuntu Core 16。</p><p>注意，Ubuntu Core 限制只能够安装 snap 包（而非 “传统” 软件包），并且有相当数量的 snap 包在当前环境下不能正常运行，或者需要人工干预（创建用户和用户组等）才能正常运行。随着新版的 snapd 和 “core” snap 包发布，Ubuntu Core 每周都会得到改进。</p><h3 id=环境需求>环境需求</h3><p>就 LXD 而言，Ubuntu Core 仅仅相当于另一个 Linux 发行版。也就是说，snapd 需要挂载无特权的 FUSE 和 AppArmor 命名空间以及软件栈，像下面这样：</p><ul><li>一个新版的使用 Ubuntu 官方内核的系统</li><li>一个新版的 LXD</li></ul><h3 id=创建一个-ubuntu-core-容器>创建一个 Ubuntu Core 容器</h3><p>当前 Ubuntu Core 镜像发布在社区的镜像服务器。你可以像这样启动一个新的容器：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc launch images:ubuntu-core/16 ubuntu-core
+Creating ubuntu-core
+Starting ubuntu-core
+</code></pre><p>这个容器启动需要一点点时间，它会先执行第一阶段的加载程序，加载程序会确定使用哪一个镜像（镜像是只读的），并且在系统上设置一个可读层，你不要在这一阶段中断容器执行，这个时候什么都没有，所以执行 <code>lxc exec</code> 将会出错。</p><p>几秒钟之后，执行 <code>lxc list</code> 将会展示容器的 IP 地址，这表明已经启动了 Ubuntu Core：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc list
++-------------+---------+----------------------+----------------------------------------------+------------+-----------+
+|     NAME    |  STATE  |          IPV4        |                      IPV6                    |    TYPE    | SNAPSHOTS |
++-------------+---------+----------------------+----------------------------------------------+------------+-----------+
+| ubuntu-core | RUNNING | 10.90.151.104 (eth0) | 2001:470:b368:b2b5:216:3eff:fee1:296f (eth0) | PERSISTENT | 0         |
++-------------+---------+----------------------+----------------------------------------------+------------+-----------+
+</code></pre><p>之后你就可以像使用其他的交互一样和这个容器进行交互：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc exec ubuntu-core bash
+root@ubuntu-core:~# snap list
+Name       Version     Rev  Developer  Notes
+core       16.04.1     394  canonical  -
+pc         16.04-0.8   9    canonical  -
+pc-kernel  4.4.0-45-4  37   canonical  -
+root@ubuntu-core:~#
+</code></pre><h3 id=更新容器>更新容器</h3><p>如果你一直关注着 Ubuntu Core 的开发，你应该知道上面的版本已经很老了。这是因为被用作 Ubuntu LXD 镜像的代码每隔几个月才会更新。Ubuntu Core 系统在重启时会检查更新并进行自动更新（更新失败会回退）。</p><p>如果你想现在强制更新，你可以这样做：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc exec ubuntu-core bash
+root@ubuntu-core:~# snap refresh
+pc-kernel (stable) 4.4.0-53-1 from &#39;canonical&#39; upgraded
+core (stable) 16.04.1 from &#39;canonical&#39; upgraded
+root@ubuntu-core:~# snap version
+snap 2.17
+snapd 2.17
+series 16
+root@ubuntu-core:~#
+</code></pre><p>然后重启一下 Ubuntu Core 系统，然后看看 snapd 的版本。</p><pre tabindex=0><code>root@ubuntu-core:~# reboot
+root@ubuntu-core:~# 
+
+stgraber@dakara:~$ lxc exec ubuntu-core bash
+root@ubuntu-core:~# snap version
+snap 2.21
+snapd 2.21
+series 16
+root@ubuntu-core:~#
+</code></pre><p>你也可以像下面这样查看所有 snapd 的历史记录：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc exec ubuntu-core snap changes
+ID  Status  Spawn                 Ready                 Summary
+1   Done    2017-01-31T05:14:38Z  2017-01-31T05:14:44Z  Initialize system state
+2   Done    2017-01-31T05:14:40Z  2017-01-31T05:14:45Z  Initialize device
+3   Done    2017-01-31T05:21:30Z  2017-01-31T05:22:45Z  Refresh all snaps in the system
+</code></pre><h3 id=安装-snap-软件包>安装 Snap 软件包</h3><p>以一个最简单的例子开始，经典的 Hello World：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc exec ubuntu-core bash
+root@ubuntu-core:~# snap install hello-world
+hello-world 6.3 from &#39;canonical&#39; installed
+root@ubuntu-core:~# hello-world
+Hello World!
+</code></pre><p>接下来让我们看一些更有用的：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc exec ubuntu-core bash
+root@ubuntu-core:~# snap install nextcloud
+nextcloud 11.0.1snap2 from &#39;nextcloud&#39; installed
+</code></pre><p>之后通过 HTTP 访问你的容器就可以看到刚才部署的 Nextcloud 实例。</p><p>如果你想直接通过 git 测试最新版 LXD，你可以这样做：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc config set ubuntu-core security.nesting true
+stgraber@dakara:~$ lxc exec ubuntu-core bash
+root@ubuntu-core:~# snap install lxd --edge
+lxd (edge) git-c6006fb from &#39;canonical&#39; installed
+root@ubuntu-core:~# lxd init
+Name of the storage backend to use (dir or zfs) [default=dir]: 
+
+We detected that you are running inside an unprivileged container.
+This means that unless you manually configured your host otherwise,
+you will not have enough uid and gid to allocate to your containers.
+
+LXD can re-use your container&#39;s own allocation to avoid the problem.
+Doing so makes your nested containers slightly less safe as they could
+in theory attack their parent container and gain more privileges than
+they otherwise would.
+
+Would you like to have your containers share their parent&#39;s allocation (yes/no) [default=yes]? 
+Would you like LXD to be available over the network (yes/no) [default=no]? 
+Would you like stale cached images to be updated automatically (yes/no) [default=yes]? 
+Would you like to create a new network bridge (yes/no) [default=yes]? 
+What should the new bridge be called [default=lxdbr0]? 
+What IPv4 address should be used (CIDR subnet notation, “auto” or “none”) [default=auto]? 
+What IPv6 address should be used (CIDR subnet notation, “auto” or “none”) [default=auto]? 
+LXD has been successfully configured.
+</code></pre><p>已经设置过的容器不能回退版本，但是可以在 Ubuntu Core 16 中运行另一个 Ubuntu Core 16 容器：</p><pre tabindex=0><code>root@ubuntu-core:~# lxc launch images:ubuntu-core/16 nested-core
+Creating nested-core
+Starting nested-core 
+root@ubuntu-core:~# lxc list
++-------------+---------+---------------------+-----------------------------------------------+------------+-----------+
+|    NAME     |  STATE  |         IPV4        |                       IPV6                    |    TYPE    | SNAPSHOTS |
++-------------+---------+---------------------+-----------------------------------------------+------------+-----------+
+| nested-core | RUNNING | 10.71.135.21 (eth0) | fd42:2861:5aad:3842:216:3eff:feaf:e6bd (eth0) | PERSISTENT | 0         |
++-------------+---------+---------------------+-----------------------------------------------+------------+-----------+
+</code></pre><h3 id=写在最后>写在最后</h3><p>如果你只是想试用一下 Ubuntu Core，这是一个不错的方法。对于 snap 包开发者来说，这也是一个不错的工具来测试你的 snap 包能否在不同的环境下正常运行。</p><p>如果你希望你的系统总是最新的，并且整体可复制，Ubuntu Core 是一个很不错的方案，不过这也会带来一些相应的限制，所以可能不太适合你。</p><p>最后是一个警告，对于测试来说，这些镜像是足够的，但是当前并没有被正式的支持。在不久的将来，官方的 Ubuntu server 可以完整的支持 Ubuntu Core LXD 镜像。</p><h3 id=附录>附录</h3><ul><li>LXD 主站：<a href=https://linuxcontainers.org/lxd>https://linuxcontainers.org/lxd</a></li><li>Github：<a href=https://github.com/lxc/lxd>https://github.com/lxc/lxd</a></li><li>邮件列表：<a href=https://lists.linuxcontainers.org/>https://lists.linuxcontainers.org</a></li><li>IRC：#lxcontainers on irc.freenode.net</li><li>在线试用：<a href=https://linuxcontainers.org/lxd/try-it>https://linuxcontainers.org/lxd/try-it</a></li></ul><hr><p>来自: <a href=https://insights.ubuntu.com/2017/02/27/ubuntu-core-in-lxd-containers/>https://insights.ubuntu.com/2017/02/27/ubuntu-core-in-lxd-containers/</a></p><p>作者：<a href=https://insights.ubuntu.com/author/stgraber/>Stéphane Graber</a> 译者：<a href=https://github.com/aiwhj>aiwhj</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/lxd/ rel=tag>LXD</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%B9%E5%99%A8/ rel=tag>容器</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

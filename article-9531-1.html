@@ -1,0 +1,79 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux 中的 5 个 SSH 别名例子 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux 中的 5 个 SSH 别名例子"><meta property="og:description" content="我们可以用 定义在你的 .bashrc 文件里的别名 或函数来大幅度缩减花在命令行界面（CLI）的时间。但这不是最佳解决之道。最佳办法是在 ssh 配置文件中使用 SSH 别名 。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9531-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-04-09T22:46:53+00:00"><meta property="article:modified_time" content="2018-04-09T22:46:53+00:00"><meta itemprop=name content="Linux 中的 5 个 SSH 别名例子"><meta itemprop=description content="我们可以用 定义在你的 .bashrc 文件里的别名 或函数来大幅度缩减花在命令行界面（CLI）的时间。但这不是最佳解决之道。最佳办法是在 ssh 配置文件中使用 SSH 别名 。"><meta itemprop=datePublished content="2018-04-09T22:46:53+00:00"><meta itemprop=dateModified content="2018-04-09T22:46:53+00:00"><meta itemprop=wordCount content="439"><meta itemprop=keywords content="SSH,别名,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux 中的 5 个 SSH 别名例子</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-04-09T22:46:53Z>April 09, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201804/09/224622yjn5gzaacg86mymc.png alt></p><p>作为一个 Linux 用户，我们常用 <a href=https://www.linuxnix.com/ssh-access-remote-linux-server/>ssh 命令</a> 来登入远程机器。<code>ssh</code> 命令你用得越多，你在键入一些重要的命令上花的时间也越多。我们可以用 <a href=https://www.linuxnix.com/linux-alias-command-explained-with-examples/>定义在你的 .bashrc 文件里的别名</a> 或函数来大幅度缩减花在命令行界面（CLI）的时间。但这不是最佳解决之道。最佳办法是在 <code>ssh</code> 配置文件中使用 <strong>SSH 别名</strong> 。</p><p>这里是我们能把 <code>ssh</code> 命令用得更好的几个例子。</p><p>ssh 登入到 AWS（译注：Amazon Web Services，亚马逊公司旗下云计算服务平台）实例的连接是一种痛。仅仅输入以下命令，每次也完全是浪费你时间。</p><pre tabindex=0><code>ssh -p 3000 -i /home/surendra/mysshkey.pem ec2-user@ec2-54-20-184-202.us-west-2.compute.amazonaws.com
+</code></pre><p>缩短到：</p><pre tabindex=0><code>ssh aws1
+</code></pre><p>调试时连接到系统。</p><pre tabindex=0><code>ssh -vvv the_good_user@red1.taggle.abc.com.au
+</code></pre><p>缩短到：</p><pre tabindex=0><code>ssh xyz
+</code></pre><p>在本篇中，我们将看到如何不使用 bash 别名或函数实现 <code>ssh</code> 命令的缩短。<code>ssh</code> 别名的主要优点是所有的 <code>ssh</code> 命令快捷方式都存储在一个单一文件，如此就易于维护。其他优点是 <strong>对于类似于 SSH 和 SCP 的命令</strong> 我们能用相同的别名。</p><p>在我们进入实际配置之前，我们应该知道 <code>/etc/ssh/ssh_config</code>、<code>/etc/ssh/sshd_config</code> 和 <code>~/.ssh/config</code> 文件三者的区别。以下是对这些文件的解释。</p><h3 id=etcsshssh_config-和-sshconfig-间的区别>/etc/ssh/ssh_config 和 ~/.ssh/config 间的区别</h3><p>系统级别的 SSH 配置项存放在 <code>/etc/ssh/ssh_config</code>，而用户级别的 SSH 配置项存放在 <code>~/.ssh/config</code> 文件中。</p><h3 id=etcsshsshconfig-和-etcsshsshdconfig-间的区别>/etc/ssh/ssh<em>config 和 /etc/ssh/sshd</em>config 间的区别</h3><p>系统级别的 SSH 配置项是在 <code>/etc/ssh/ssh_config</code> 文件中，而系统级别的 SSH <strong>服务端</strong>配置项存放在 <code>/etc/ssh/sshd_config</code> 文件。</p><h3 id=在-sshconfig-文件里配置项的语法>在 ~/.ssh/config 文件里配置项的语法</h3><p><code>~/.ssh/config</code> 文件内容的语法：</p><pre tabindex=0><code>配置项 值
+配置项 值1 值2
+</code></pre><p><strong>例 1：</strong> 创建主机（www.linuxnix.com）的 SSH 别名</p><p>编辑 <code>~/.ssh/config</code> 文件写入以下内容：</p><pre tabindex=0><code>Host tlj
+ User root
+ HostName 18.197.176.13
+ port 22
+</code></pre><p>保存此文件。</p><p>以上 ssh 别名用了</p><ol><li><code>tlj</code> 作为一个别名的名称</li><li><code>root</code> 作为将要登入的用户</li><li><code>18.197.176.13</code> 作为主机的 IP 地址</li><li><code>22</code> 作为访问 SSH 服务的端口</li></ol><p>输出：</p><pre tabindex=0><code>sanne@Surendras-MacBook-Pro:~ &gt; ssh tlj
+Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-93-generic x86_64)
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+Last login: Sat Oct 14 01:00:43 2017 from 20.244.25.231
+root@linuxnix:~# exit
+logout
+Connection to 18.197.176.13 closed.
+</code></pre><p><strong>例 2：</strong> 不用密码用 ssh 密钥登到系统要用 <code>IdentityFile</code> 。</p><p>例：</p><pre tabindex=0><code>Host aws
+ User ec2-users
+ HostName ec2-54-200-184-202.us-west-2.compute.amazonaws.com
+ IdentityFile ~/Downloads/surendra.pem
+ port 22
+</code></pre><p><strong>例 3：</strong> 对同一主机使用不同的别名。在下例中，我们对同一 IP/主机 18.197.176.13 用了 <code>tlj</code>、 <code>linuxnix</code>、<code>linuxnix.com</code> 三个别名。</p><p>~/.ssh/config 文件内容</p><pre tabindex=0><code>Host tlj linuxnix linuxnix.com
+ User root
+ HostName 18.197.176.13
+ port 22
+</code></pre><p><strong>输出：</strong></p><pre tabindex=0><code>sanne@Surendras-MacBook-Pro:~ &gt; ssh tlj
+Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-93-generic x86_64)
+* Documentation: https://help.ubuntu.com
+* Management: https://landscape.canonical.com
+* Support: https://ubuntu.com/advantage
+Get cloud support with Ubuntu Advantage Cloud Guest:
+http://www.ubuntu.com/business/services/cloud
+Last login: Sat Oct 14 01:00:43 2017 from 220.244.205.231
+root@linuxnix:~# exit
+logout
+Connection to 18.197.176.13 closed.
+sanne@Surendras-MacBook-Pro:~ &gt; ssh linuxnix.com
+Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-93-generic x86_64)
+* Documentation: https://help.ubuntu.com
+* Management: https://landscape.canonical.com
+* Support: https://ubuntu.com/advantage
+</code></pre><pre tabindex=0><code>Get cloud support with Ubuntu Advantage Cloud Guest:
+http://www.ubuntu.com/business/services/cloud
+Last login: Sun Oct 15 20:31:08 2017 from 1.129.110.13
+root@linuxnix:~# exit
+logout
+Connection to 138.197.176.103 closed.
+[6571] sanne@Surendras-MacBook-Pro:~ &gt; ssh linuxnix
+Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-93-generic x86_64)
+* Documentation: https://help.ubuntu.com
+* Management: https://landscape.canonical.com
+* Support: https://ubuntu.com/advantage
+Get cloud support with Ubuntu Advantage Cloud Guest:
+http://www.ubuntu.com/business/services/cloud
+Last login: Sun Oct 15 20:31:20 2017 from 1.129.110.13
+root@linuxnix:~# exit
+logout
+Connection to 18.197.176.13 closed.
+</code></pre><p><strong>例 4：</strong> 用相同的 SSH 别名复制文件到远程系统</p><p>语法：</p><pre tabindex=0><code>scp &lt;文件名&gt; &lt;ssh_别名&gt;:&lt;位置&gt;
+</code></pre><p>例子：</p><pre tabindex=0><code>sanne@Surendras-MacBook-Pro:~ &gt; scp abc.txt tlj:/tmp
+abc.txt                           100%   12KB  11.7KB/s   00:01    
+sanne@Surendras-MacBook-Pro:~ &gt;
+</code></pre><p>若我们已经将 ssh 主机设置好一个别名，由于 <code>ssh</code> 和 <code>scp</code> 两者用几乎相同的语法和选项，<code>scp</code> 也可以轻易使用。</p><p>请在下面尝试从本机 <code>scp</code> 一个文件到远程机器。</p><p><strong>例 5：</strong> 解决 Linux 中的 SSH 超时问题。默认情况，如果你不积极地使用终端，你的 ssh 登入就会超时</p><p><a href=https://www.linuxnix.com/how-to-auto-logout/>SSH 超时问题</a> 是一个更痛的点意味着你在一段时间后不得不重新登入到远程机器。我们能在 <code>~/.ssh/config</code> 文件里边恰当地设置 SSH 超时时间来使你的会话不管在什么时间总是激活的。我们将用 2 个能保持会话存活的 SSH 选项来实现这一目的。之一是 <code>ServerAliveInterval</code> 保持你会话存活的秒数和 <code>ServerAliveCountMax</code> 在（经历了一个）给定数值的会话之后初始化会话。</p><pre tabindex=0><code>ServerAliveInterval A
+ServerAliveCountMax B
+</code></pre><p><strong>例：</strong></p><pre tabindex=0><code>Host tlj linuxnix linuxnix.com
+ User root
+ HostName 18.197.176.13
+ port 22
+ ServerAliveInterval 60
+ ServerAliveCountMax 30
+</code></pre><p>在下篇中我们将会看到一些其他的退出方式。</p><hr><p>via: <a href=https://www.linuxnix.com/5-ssh-alias-examples-using-ssh-config-file/>https://www.linuxnix.com/5-ssh-alias-examples-using-ssh-config-file/</a></p><p>作者：<a href=https://www.linuxnix.com>SURENDRA ANNE</a> 译者：<a href=https://github.com/ch-cn>ch-cn</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ssh/ rel=tag>SSH</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%88%AB%E5%90%8D/ rel=tag>别名</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

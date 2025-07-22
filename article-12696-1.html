@@ -1,0 +1,228 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Lynis 扫描 Linux 安全性 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Lynis 扫描 Linux 安全性"><meta property="og:description" content="使用这个全面的开源安全审计工具检查你的 Linux 机器的安全性。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12696-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-10-08T09:55:50+00:00"><meta property="article:modified_time" content="2020-10-08T09:55:50+00:00"><meta itemprop=name content="使用 Lynis 扫描 Linux 安全性"><meta itemprop=description content="使用这个全面的开源安全审计工具检查你的 Linux 机器的安全性。"><meta itemprop=datePublished content="2020-10-08T09:55:50+00:00"><meta itemprop=dateModified content="2020-10-08T09:55:50+00:00"><meta itemprop=wordCount content="1169"><meta itemprop=keywords content="Lynis,安全,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Lynis 扫描 Linux 安全性</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-10-08T09:55:50Z>October 08, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>使用这个全面的开源安全审计工具检查你的 Linux 机器的安全性。</p></blockquote><p><img src=/data/attachment/album/202010/08/095516k6bdgeb6jhiajutm.jpg alt></p><p>你有没有想过你的 Linux 机器到底安全不安全？Linux 发行版众多，每个发行版都有自己的默认设置，你在上面运行着几十个版本各异的软件包，还有众多的服务在后台运行，而我们几乎不知道或不关心这些。</p><p>要想确定安全态势（指你的 Linux 机器上运行的软件、网络和服务的整体安全状态），你可以运行几个命令，得到一些零碎的相关信息，但你需要解析的数据量是巨大的。</p><p>如果能运行一个工具，生成一份关于机器安全状况的报告，那就好得多了。而幸运的是，有一个这样的软件：<a href=https://github.com/CISOfy/lynis>Lynis</a>。它是一个非常流行的开源安全审计工具，可以帮助强化基于 Linux 和 Unix 的系统。根据该项目的介绍：</p><blockquote><p>“它运行在系统本身，可以进行深入的安全扫描。主要目标是测试安全防御措施，并提供进一步强化系统的提示。它还将扫描一般系统信息、易受攻击的软件包和可能的配置问题。Lynis 常被系统管理员和审计人员用来评估其系统的安全防御。”</p></blockquote><h3 id=安装-lynis>安装 Lynis</h3><p>你的 Linux 软件仓库中可能有 Lynis。如果有的话，你可以用以下方法安装它：</p><pre tabindex=0><code>dnf install lynis
+</code></pre><p>或</p><pre tabindex=0><code>apt install lynis
+</code></pre><p>然而，如果你的仓库中的版本不是最新的，你最好从 GitHub 上安装它。（我使用的是 Red Hat Linux 系统，但你可以在任何 Linux 发行版上运行它）。就像所有的工具一样，先在虚拟机上试一试是有意义的。要从 GitHub 上安装它：</p><pre tabindex=0><code>$ cat /etc/redhat-release
+Red Hat Enterprise Linux Server release 7.8 (Maipo)
+$
+$ uname  -r
+3.10.0-1127.el7.x86_64
+$
+$ git clone https://github.com/CISOfy/lynis.git
+Cloning into &#39;lynis&#39;...
+remote: Enumerating objects: 30, done.
+remote: Counting objects: 100% (30/30), done.
+remote: Compressing objects: 100% (30/30), done.
+remote: Total 12566 (delta 15), reused 8 (delta 0), pack-reused 12536
+Receiving objects: 100% (12566/12566), 6.36 MiB | 911.00 KiB/s, done.
+Resolving deltas: 100% (9264/9264), done.
+$
+</code></pre><p>一旦你克隆了这个版本库，那么进入该目录，看看里面有什么可用的。主要的工具在一个叫 <code>lynis</code> 的文件里。它实际上是一个 shell 脚本，所以你可以打开它看看它在做什么。事实上，Lynis 主要是用 shell 脚本来实现的：</p><pre tabindex=0><code>$ cd lynis/
+$ ls
+CHANGELOG.md        CONTRIBUTING.md  db           developer.prf  FAQ             include  LICENSE  lynis.8  README     SECURITY.md
+CODE_OF_CONDUCT.md  CONTRIBUTORS.md  default.prf  extras         HAPPY_USERS.md  INSTALL  lynis    plugins  README.md
+$
+$ file lynis
+lynis: POSIX shell script, ASCII text executable, with very long lines
+$
+</code></pre><h3 id=运行-lynis>运行 Lynis</h3><p>通过给 Lynis 一个 <code>-h</code> 选项来查看帮助部分，以便有个大概了解：</p><pre tabindex=0><code>$ ./lynis -h
+</code></pre><p>你会看到一个简短的信息屏幕，然后是 Lynis 支持的所有子命令。</p><p>接下来，尝试一些测试命令以大致熟悉一下。要查看你正在使用的 Lynis 版本，请运行：</p><pre tabindex=0><code>$ ./lynis show version
+3.0.0
+$
+</code></pre><p>要查看 Lynis 中所有可用的命令：</p><pre tabindex=0><code>$ ./lynis show commands
+
+Commands:
+lynis audit
+lynis configure
+lynis generate
+lynis show
+lynis update
+lynis upload-only
+
+$
+</code></pre><h3 id=审计-linux-系统>审计 Linux 系统</h3><p>要审计你的系统的安全态势，运行以下命令：</p><pre tabindex=0><code>$ ./lynis audit system
+</code></pre><p>这个命令运行得很快，并会返回一份详细的报告，输出结果可能一开始看起来很吓人，但我将在下面引导你来阅读它。这个命令的输出也会被保存到一个日志文件中，所以你可以随时回过头来检查任何可能感兴趣的东西。</p><p>Lynis 将日志保存在这里：</p><pre tabindex=0><code>  Files:
+  - Test and debug information      : /var/log/lynis.log
+  - Report data                     : /var/log/lynis-report.dat
+</code></pre><p>你可以验证是否创建了日志文件。它确实创建了：</p><pre tabindex=0><code>$ ls -l /var/log/lynis.log
+-rw-r-----. 1 root root 341489 Apr 30 05:52 /var/log/lynis.log
+$
+$ ls -l /var/log/lynis-report.dat
+-rw-r-----. 1 root root 638 Apr 30 05:55 /var/log/lynis-report.dat
+$
+</code></pre><h3 id=探索报告>探索报告</h3><p>Lynis 提供了相当全面的报告，所以我将介绍一些重要的部分。作为初始化的一部分，Lynis 做的第一件事就是找出机器上运行的操作系统的完整信息。之后是检查是否安装了什么系统工具和插件：</p><pre tabindex=0><code>[+] Initializing program
+------------------------------------
+  - Detecting OS...                                           [ DONE ]
+  - Checking profiles...                                      [ DONE ]
+
+  ---------------------------------------------------
+  Program version:           3.0.0
+  Operating system:          Linux
+  Operating system name:     Red Hat Enterprise Linux Server 7.8 (Maipo)
+  Operating system version:  7.8
+  Kernel version:            3.10.0
+  Hardware platform:         x86_64
+  Hostname:                  example
+  ---------------------------------------------------
+&lt;&lt;截断&gt;&gt;
+
+[+] System Tools
+------------------------------------
+  - Scanning available tools...
+  - Checking system binaries...
+
+[+] Plugins (phase 1)
+------------------------------------
+ Note: plugins have more extensive tests and may take several minutes to complete
+ 
+  - Plugin: pam
+    [..]
+  - Plugin: systemd
+    [................]
+</code></pre><p>接下来，该报告被分为不同的部分，每个部分都以 <code>[+]</code> 符号开头。下面可以看到部分章节。（哇，要审核的地方有这么多，Lynis 是最合适的工具！）</p><pre tabindex=0><code>[+] Boot and services
+[+] Kernel
+[+] Memory and Processes
+[+] Users, Groups and Authentication
+[+] Shells
+[+] File systems
+[+] USB Devices
+[+] Storage
+[+] NFS
+[+] Name services
+[+] Ports and packages
+[+] Networking
+[+] Printers and Spools
+[+] Software: e-mail and messaging
+[+] Software: firewalls
+[+] Software: webserver
+[+] SSH Support
+[+] SNMP Support
+[+] Databases
+[+] LDAP Services
+[+] PHP
+[+] Squid Support
+[+] Logging and files
+[+] Insecure services
+[+] Banners and identification
+[+] Scheduled tasks
+[+] Accounting
+[+] Time and Synchronization
+[+] Cryptography
+[+] Virtualization
+[+] Containers
+[+] Security frameworks
+[+] Software: file integrity
+[+] Software: System tooling
+[+] Software: Malware
+[+] File Permissions
+[+] Home directories
+[+] Kernel Hardening
+[+] Hardening
+[+] Custom tests
+</code></pre><p>Lynis 使用颜色编码使报告更容易解读。</p><ul><li>绿色。一切正常</li><li>黄色。跳过、未找到，可能有个建议</li><li>红色。你可能需要仔细看看这个</li></ul><p>在我的案例中，大部分的红色标记都是在 “Kernel Hardening” 部分找到的。内核有各种可调整的设置，它们定义了内核的功能，其中一些可调整的设置可能有其安全场景。发行版可能因为各种原因没有默认设置这些，但是你应该检查每一项，看看你是否需要根据你的安全态势来改变它的值：</p><pre tabindex=0><code>[+] Kernel Hardening
+------------------------------------
+  - Comparing sysctl key pairs with scan profile
+    - fs.protected_hardlinks (exp: 1)                         [ OK ]
+    - fs.protected_symlinks (exp: 1)                          [ OK ]
+    - fs.suid_dumpable (exp: 0)                               [ OK ]
+    - kernel.core_uses_pid (exp: 1)                           [ OK ]
+    - kernel.ctrl-alt-del (exp: 0)                            [ OK ]
+    - kernel.dmesg_restrict (exp: 1)                          [ DIFFERENT ]
+    - kernel.kptr_restrict (exp: 2)                           [ DIFFERENT ]
+    - kernel.randomize_va_space (exp: 2)                      [ OK ]
+    - kernel.sysrq (exp: 0)                                   [ DIFFERENT ]
+    - kernel.yama.ptrace_scope (exp: 1 2 3)                   [ DIFFERENT ]
+    - net.ipv4.conf.all.accept_redirects (exp: 0)             [ DIFFERENT ]
+    - net.ipv4.conf.all.accept_source_route (exp: 0)          [ OK ]
+    - net.ipv4.conf.all.bootp_relay (exp: 0)                  [ OK ]
+    - net.ipv4.conf.all.forwarding (exp: 0)                   [ OK ]
+    - net.ipv4.conf.all.log_martians (exp: 1)                 [ DIFFERENT ]
+    - net.ipv4.conf.all.mc_forwarding (exp: 0)                [ OK ]
+    - net.ipv4.conf.all.proxy_arp (exp: 0)                    [ OK ]
+    - net.ipv4.conf.all.rp_filter (exp: 1)                    [ OK ]
+    - net.ipv4.conf.all.send_redirects (exp: 0)               [ DIFFERENT ]
+    - net.ipv4.conf.default.accept_redirects (exp: 0)         [ DIFFERENT ]
+    - net.ipv4.conf.default.accept_source_route (exp: 0)      [ OK ]
+    - net.ipv4.conf.default.log_martians (exp: 1)             [ DIFFERENT ]
+    - net.ipv4.icmp_echo_ignore_broadcasts (exp: 1)           [ OK ]
+    - net.ipv4.icmp_ignore_bogus_error_responses (exp: 1)     [ OK ]
+    - net.ipv4.tcp_syncookies (exp: 1)                        [ OK ]
+    - net.ipv4.tcp_timestamps (exp: 0 1)                      [ OK ]
+    - net.ipv6.conf.all.accept_redirects (exp: 0)             [ DIFFERENT ]
+    - net.ipv6.conf.all.accept_source_route (exp: 0)          [ OK ]
+    - net.ipv6.conf.default.accept_redirects (exp: 0)         [ DIFFERENT ]
+    - net.ipv6.conf.default.accept_source_route (exp: 0)      [ OK ]
+</code></pre><p>看看 SSH 这个例子，因为它是一个需要保证安全的关键领域。这里没有什么红色的东西，但是 Lynis 对我的环境给出了很多强化 SSH 服务的建议：</p><pre tabindex=0><code>[+] SSH Support
+------------------------------------
+  - Checking running SSH daemon                               [ FOUND ]
+    - Searching SSH configuration                             [ FOUND ]
+    - OpenSSH option: AllowTcpForwarding                      [ SUGGESTION ]
+    - OpenSSH option: ClientAliveCountMax                     [ SUGGESTION ]
+    - OpenSSH option: ClientAliveInterval                     [ OK ]
+    - OpenSSH option: Compression                             [ SUGGESTION ]
+    - OpenSSH option: FingerprintHash                         [ OK ]
+    - OpenSSH option: GatewayPorts                            [ OK ]
+    - OpenSSH option: IgnoreRhosts                            [ OK ]
+    - OpenSSH option: LoginGraceTime                          [ OK ]
+    - OpenSSH option: LogLevel                                [ SUGGESTION ]
+    - OpenSSH option: MaxAuthTries                            [ SUGGESTION ]
+    - OpenSSH option: MaxSessions                             [ SUGGESTION ]
+    - OpenSSH option: PermitRootLogin                         [ SUGGESTION ]
+    - OpenSSH option: PermitUserEnvironment                   [ OK ]
+    - OpenSSH option: PermitTunnel                            [ OK ]
+    - OpenSSH option: Port                                    [ SUGGESTION ]
+    - OpenSSH option: PrintLastLog                            [ OK ]
+    - OpenSSH option: StrictModes                             [ OK ]
+    - OpenSSH option: TCPKeepAlive                            [ SUGGESTION ]
+    - OpenSSH option: UseDNS                                  [ SUGGESTION ]
+    - OpenSSH option: X11Forwarding                           [ SUGGESTION ]
+    - OpenSSH option: AllowAgentForwarding                    [ SUGGESTION ]
+    - OpenSSH option: UsePrivilegeSeparation                  [ OK ]
+    - OpenSSH option: AllowUsers                              [ NOT FOUND ]
+    - OpenSSH option: AllowGroups                             [ NOT FOUND ]
+</code></pre><p>我的系统上没有运行虚拟机或容器，所以这些显示的结果是空的：</p><pre tabindex=0><code>[+] Virtualization
+------------------------------------
+
+[+] Containers
+------------------------------------
+</code></pre><p>Lynis 会检查一些从安全角度看很重要的文件的文件权限：</p><pre tabindex=0><code>[+] File Permissions
+------------------------------------
+  - Starting file permissions check
+    File: /boot/grub2/grub.cfg                                [ SUGGESTION ]
+    File: /etc/cron.deny                                      [ OK ]
+    File: /etc/crontab                                        [ SUGGESTION ]
+    File: /etc/group                                          [ OK ]
+    File: /etc/group-                                         [ OK ]
+    File: /etc/hosts.allow                                    [ OK ]
+    File: /etc/hosts.deny                                     [ OK ]
+    File: /etc/issue                                          [ OK ]
+    File: /etc/issue.net                                      [ OK ]
+    File: /etc/motd                                           [ OK ]
+    File: /etc/passwd                                         [ OK ]
+    File: /etc/passwd-                                        [ OK ]
+    File: /etc/ssh/sshd_config                                [ OK ]
+    Directory: /root/.ssh                                     [ SUGGESTION ]
+    Directory: /etc/cron.d                                    [ SUGGESTION ]
+    Directory: /etc/cron.daily                                [ SUGGESTION ]
+    Directory: /etc/cron.hourly                               [ SUGGESTION ]
+    Directory: /etc/cron.weekly                               [ SUGGESTION ]
+    Directory: /etc/cron.monthly                              [ SUGGESTION ]
+</code></pre><p>在报告的底部，Lynis 根据报告的发现提出了建议。每项建议后面都有一个 “TEST-ID”（为了下一部分方便，请将其保存起来）。</p><pre tabindex=0><code> Suggestions (47):
+  ----------------------------
+  * If not required, consider explicit disabling of core dump in /etc/security/limits.conf file [KRNL-5820]
+      https://cisofy.com/lynis/controls/KRNL-5820/
+
+  * Check PAM configuration, add rounds if applicable and expire passwords to encrypt with new values [AUTH-9229]
+      https://cisofy.com/lynis/controls/AUTH-9229/
+</code></pre><p>Lynis 提供了一个选项来查找关于每个建议的更多信息，你可以使用 <code>show details</code> 命令和 TEST-ID 号来访问：</p><pre tabindex=0><code>./lynis show details TEST-ID
+</code></pre><p>这将显示该测试的其他信息。例如，我检查了 SSH-7408 的详细信息：</p><pre tabindex=0><code>$ ./lynis show details SSH-7408
+2020-04-30 05:52:23 Performing test ID SSH-7408 (Check SSH specific defined options)
+2020-04-30 05:52:23 Test: Checking specific defined options in /tmp/lynis.k8JwazmKc6
+2020-04-30 05:52:23 Result: added additional options for OpenSSH &amp;lt; 7.5
+2020-04-30 05:52:23 Test: Checking AllowTcpForwarding in /tmp/lynis.k8JwazmKc6
+2020-04-30 05:52:23 Result: Option AllowTcpForwarding found
+2020-04-30 05:52:23 Result: Option AllowTcpForwarding value is YES
+2020-04-30 05:52:23 Result: OpenSSH option AllowTcpForwarding is in a weak configuration state and should be fixed
+2020-04-30 05:52:23 Suggestion: Consider hardening SSH configuration [test:SSH-7408] [details:AllowTcpForwarding (set YES to NO)] [solution:-]
+</code></pre><h3 id=试试吧>试试吧</h3><p>如果你想更多地了解你的 Linux 机器的安全性，请试试 Lynis。如果你想了解 Lynis 是如何工作的，可以研究一下它的 shell 脚本，看看它是如何收集这些信息的。</p><hr><p>via: <a href=https://opensource.com/article/20/5/linux-security-lynis>https://opensource.com/article/20/5/linux-security-lynis</a></p><p>作者：<a href=https://opensource.com/users/gkamathe>Gaurav Kamathe</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/lynis/ rel=tag>Lynis</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%89%E5%85%A8/ rel=tag>安全</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

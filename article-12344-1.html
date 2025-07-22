@@ -1,0 +1,59 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何使用 Bash history 命令 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何使用 Bash history 命令"><meta property="og:description" content="Bash 的 history 命令在它提供的功能数量上超过了所有其他 Linux Shell 历史接口。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12344-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-06-24T10:16:40+00:00"><meta property="article:modified_time" content="2020-06-24T10:16:40+00:00"><meta itemprop=name content="如何使用 Bash history 命令"><meta itemprop=description content="Bash 的 history 命令在它提供的功能数量上超过了所有其他 Linux Shell 历史接口。"><meta itemprop=datePublished content="2020-06-24T10:16:40+00:00"><meta itemprop=dateModified content="2020-06-24T10:16:40+00:00"><meta itemprop=wordCount content="237"><meta itemprop=keywords content="history,历史,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何使用 Bash history 命令</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-06-24T10:16:40Z>June 24, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>Bash 的 history 命令在它提供的功能数量上超过了所有其他 Linux Shell 历史接口。</p></blockquote><p><img src=/data/attachment/album/202006/24/101620c0uj0dgg0buo9nib.jpg alt></p><p>Bash 有丰富的历史。也就是说，它是一个古老的的 shell，还有一个更古老的 Shell （Bourne shell）的前辈，但是它还有一个很棒的 <code>history</code> 命令，它提供的功能数量超过了所有其他 shell 的历史接口。 <a href=https://opensource.com/resources/what-bash>Bash</a> 版本的 <code>history</code> 可进行反向搜索、快速调用、重写历史记录等。</p><p><code>history</code> 命令与许多其他命令不同。你可能习惯于将命令作为可执行文件放在常见的系统级位置，例如 <code>/usr/bin</code>、<code>/usr/local/bin</code> 或者 <code>~/bin</code>。 内置的 <code>history</code> 命令不在你的 <code>PATH</code> 中并且没有物理位置：</p><pre tabindex=0><code>$ which history
+
+which: no history in [PATH]
+</code></pre><p>相反，<code>history</code> 是 shell 本身的内置函数：</p><pre tabindex=0><code>$ type history
+history is a shell builtin
+$ help history
+history: history [-c] [-d offset] [n] or
+history -anrw [filename] or
+history -ps arg [arg...]
+
+Display or manipulate the history list.
+[...]
+</code></pre><p>出于这个原因，每个 shell 中的历史功能都是独特的，因此你在 Bash 中使用的功能可能无法在 Tcsh 或 Fish 或 Dash 中使用，而在这些 shell 中使用的功能可能也无法在 Bash 中使用。在某些情况下，了解 Bash 可以做什么可能会激发其他 shell 的用户创建有趣的改造来复制 Bash 行为，并且可能会解锁你从未知道的 Bash 功能。</p><h3 id=查看你的-bash-历史>查看你的 Bash 历史</h3><p><code>history</code> 命令最基本、最频繁的用法是查看 shell 会话的历史记录：</p><pre tabindex=0><code>$ echo &#34;hello&#34;
+hello
+$ echo &#34;world&#34;
+world
+$ history
+  1  echo &#34;hello&#34;
+  2  echo &#34;world&#34;
+  3  history
+</code></pre><h3 id=事件指示器>事件指示器</h3><p>事件指示器 Event designator 按事件搜索你的历史记录。在这里，“事件”是指记录在历史中的命令，以换行符划定。换句话说，一行一个事件，以索引号来标记。</p><p>事件指示器大多以感叹号开头，有时也称为 “bang”（<code>!</code>）。</p><p>要从你的历史记录中重新运行命令，请使用感叹号，之后紧跟（之间没有空格）所需命令的索引号。例如，假设第 1 行包含命令 <code>echo "hello"</code>，你想要想再次运行它：</p><pre tabindex=0><code>$ !1
+echo &#34;hello&#34;
+hello
+</code></pre><p>你可以使用相对定位，提供基于你历史中当前位置向后的负数行号。例如，返回到历史中倒数第三个条目：</p><pre tabindex=0><code>$ echo &#34;foo&#34;
+foo
+$ echo &#34;bar&#34;
+bar
+$ echo &#34;baz&#34;
+baz
+$ !-3
+echo &#34;foo&#34;
+foo
+</code></pre><p>如果只想回去一行，那么可以使用速记 <code>!!</code> 代替 <code>!-1</code>。这节省了按键时间！</p><pre tabindex=0><code>$ echo &#34;foo&#34;
+$ !!
+echo &#34;foo&#34;
+foo
+</code></pre><h3 id=字符串搜索>字符串搜索</h3><p>你也可以对条目搜索特定的字符串，反过来搜索要运行命令。要搜索以指定字符串<em>开始</em>的命令，请使用感叹号，之后紧跟（没有空格）要搜索的字符串：</p><pre tabindex=0><code>$ echo &#34;foo&#34;
+$ true
+$ false
+$ !echo
+echo &#34;foo&#34;
+foo
+</code></pre><p>你还可以在任意位置（不仅是开头）搜索包含该字符串的命令。为此，请像之前一样使用 <code>!</code> 加上要搜索的字符串，但在字符串的两端都用问号（<code>?</code>）围绕起来。如果你知道该字符串后紧跟一个换行符，那么可以省略最后的问号（就是在按<em>回车</em>之前输入的最后字符）：</p><pre tabindex=0><code>$ echo &#34;foo&#34;
+$ true
+$ false
+$ !?foo?
+echo &#34;foo&#34;
+foo
+</code></pre><h3 id=字符串替换>字符串替换</h3><p>类似于在行首搜索字符串，你可以搜索字符串并用新字符串替换它，以更改命令：</p><pre tabindex=0><code>$ echo &#34;hello&#34;
+hello
+$ echo &#34;world&#34;
+world
+$ ^hello^foo
+echo &#34;foo&#34;
+foo
+</code></pre><h3 id=让-history-有用>让 history 有用</h3><p>在 Bash 中，<code>history</code> 命令的功能远远超过此处介绍的内容，但这是一个很好的开始, 可以让你习惯使用你的历史记录, 而不是仅仅把它当作一个参考。经常使用 <code>history</code> 命令，并试试无需输入命令即可执行的操作。你可能会感到惊讶！</p><hr><p>via: <a href=https://opensource.com/article/20/6/bash-history-commands>https://opensource.com/article/20/6/bash-history-commands</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/history/ rel=tag>history</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8E%86%E5%8F%B2/ rel=tag>历史</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

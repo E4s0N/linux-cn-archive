@@ -1,0 +1,158 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>让我们做个简单的解释器（二） - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="让我们做个简单的解释器（二）"><meta property="og:description" content="让我们再次深入了解解释器和编译器。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9520-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-04-07T10:31:05+00:00"><meta property="article:modified_time" content="2018-04-07T10:31:05+00:00"><meta itemprop=name content="让我们做个简单的解释器（二）"><meta itemprop=description content="让我们再次深入了解解释器和编译器。"><meta itemprop=datePublished content="2018-04-07T10:31:05+00:00"><meta itemprop=dateModified content="2018-04-07T10:31:05+00:00"><meta itemprop=wordCount content="528"><meta itemprop=keywords content="解释器,编译器,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>让我们做个简单的解释器（二）</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-04-07T10:31:05Z>April 07, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201804/07/103057jm2ojoccjg3jj3ey.jpg alt></p><p>在一本叫做 《高效思考的 5 要素》 的书中，作者 Burger 和 Starbird 讲述了一个关于他们如何研究 Tony Plog 的故事，他是一位举世闻名的交响曲名家，为一些有才华的演奏者开创了一个大师班。这些学生一开始演奏复杂的乐曲，他们演奏的非常好。然后他们被要求演奏非常基础简单的乐曲。当他们演奏这些乐曲时，与之前所演奏的相比，听起来非常幼稚。在他们结束演奏后，老师也演奏了同样的乐曲，但是听上去非常娴熟。差别令人震惊。Tony 解释道，精通简单音符可以让人更好的掌握复杂的部分。这个例子很清晰 —— 要成为真正的名家，必须要掌握简单基础的思想。</p><p>故事中的例子明显不仅仅适用于音乐，而且适用于软件开发。这个故事告诉我们不要忽视繁琐工作中简单基础的概念的重要性，哪怕有时候这让人感觉是一种倒退。尽管熟练掌握一门工具或者框架非常重要，了解它们背后的原理也是极其重要的。正如 Palph Waldo Emerson 所说：</p><blockquote><p>“如果你只学习方法，你就会被方法束缚。但如果你知道原理，就可以发明自己的方法。”</p></blockquote><p>有鉴于此，让我们再次深入了解解释器和编译器。</p><p>今天我会向你们展示一个全新的计算器，与 <a href=/article-9399-1.html>第一部分</a> 相比，它可以做到：</p><ol><li>处理输入字符串任意位置的空白符</li><li>识别输入字符串中的多位整数</li><li>做两个整数之间的减法（目前它仅能加减整数）</li></ol><p>新版本计算器的源代码在这里，它可以做到上述的所有事情：</p><pre tabindex=0><code># 标记类型
+# EOF （end-of-file 文件末尾）标记是用来表示所有输入都解析完成
+INTEGER, PLUS, MINUS, EOF = &#39;INTEGER&#39;, &#39;PLUS&#39;, &#39;MINUS&#39;, &#39;EOF&#39;
+
+
+class Token(object):
+    def __init__(self, type, value):
+        # token 类型: INTEGER, PLUS, MINUS, or EOF
+        self.type = type
+        # token 值: 非负整数值, &#39;+&#39;, &#39;-&#39;, 或无
+        self.value = value
+
+    def __str__(self):
+        &#34;&#34;&#34;String representation of the class instance.
+
+        Examples:
+            Token(INTEGER, 3)
+            Token(PLUS &#39;+&#39;)
+        &#34;&#34;&#34;
+        return &#39;Token({type}, {value})&#39;.format(
+            type=self.type,
+            value=repr(self.value)
+        )
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class Interpreter(object):
+    def __init__(self, text):
+        # 客户端字符输入， 例如. &#34;3 + 5&#34;, &#34;12 - 5&#34;, 
+        self.text = text
+        # self.pos 是 self.text 的索引
+        self.pos = 0
+        # 当前标记实例
+        self.current_token = None
+        self.current_char = self.text[self.pos]
+
+    def error(self):
+        raise Exception(&#39;Error parsing input&#39;)
+
+    def advance(self):
+        &#34;&#34;&#34;Advance the &#39;pos&#39; pointer and set the &#39;current_char&#39; variable.&#34;&#34;&#34;
+        self.pos += 1
+        if self.pos &gt; len(self.text) - 1:
+            self.current_char = None  # Indicates end of input
+        else:
+            self.current_char = self.text[self.pos]
+
+    def skip_whitespace(self):
+        while self.current_char is not None and self.current_char.isspace():
+            self.advance()
+
+    def integer(self):
+        &#34;&#34;&#34;Return a (multidigit) integer consumed from the input.&#34;&#34;&#34;
+        result = &#39;&#39;
+        while self.current_char is not None and self.current_char.isdigit():
+            result += self.current_char
+            self.advance()
+        return int(result)
+
+    def get_next_token(self):
+        &#34;&#34;&#34;Lexical analyzer (also known as scanner or tokenizer)
+
+        This method is responsible for breaking a sentence
+        apart into tokens.
+        &#34;&#34;&#34;
+        while self.current_char is not None:
+
+            if self.current_char.isspace():
+                self.skip_whitespace()
+                continue
+
+            if self.current_char.isdigit():
+                return Token(INTEGER, self.integer())
+
+            if self.current_char == &#39;+&#39;:
+                self.advance()
+                return Token(PLUS, &#39;+&#39;)
+
+            if self.current_char == &#39;-&#39;:
+                self.advance()
+                return Token(MINUS, &#39;-&#39;)
+
+            self.error()
+
+        return Token(EOF, None)
+
+    def eat(self, token_type):
+        # 将当前的标记类型与传入的标记类型作比较，如果他们相匹配，就
+        # “eat” 掉当前的标记并将下一个标记赋给 self.current_token，
+        # 否则抛出一个异常
+        if self.current_token.type == token_type:
+            self.current_token = self.get_next_token()
+        else:
+            self.error()
+
+    def expr(self):
+        &#34;&#34;&#34;Parser / Interpreter
+
+        expr -&gt; INTEGER PLUS INTEGER
+        expr -&gt; INTEGER MINUS INTEGER
+        &#34;&#34;&#34;
+        # 将输入中的第一个标记设置成当前标记
+        self.current_token = self.get_next_token()
+
+        # 当前标记应该是一个整数
+        left = self.current_token
+        self.eat(INTEGER)
+
+        # 当前标记应该是 ‘+’ 或 ‘-’
+        op = self.current_token
+        if op.type == PLUS:
+            self.eat(PLUS)
+        else:
+            self.eat(MINUS)
+
+        # 当前标记应该是一个整数
+        right = self.current_token
+        self.eat(INTEGER)
+        # 在上述函数调用后，self.current_token 就被设为 EOF 标记
+
+        # 这时要么是成功地找到 INTEGER PLUS INTEGER，要么是 INTEGER MINUS INTEGER
+        # 序列的标记，并且这个方法可以仅仅返回两个整数的加或减的结果，就能高效解释客户端的输入
+        if op.type == PLUS:
+            result = left.value + right.value
+        else:
+            result = left.value - right.value
+        return result
+
+
+def main():
+    while True:
+        try:
+            # To run under Python3 replace &#39;raw_input&#39; call
+            # with &#39;input&#39;
+            text = raw_input(&#39;calc&gt; &#39;)
+        except EOFError:
+            break
+        if not text:
+            continue
+        interpreter = Interpreter(text)
+        result = interpreter.expr()
+        print(result)
+
+
+if __name__ == &#39;__main__&#39;:
+    main()
+</code></pre><p>把上面的代码保存到 <code>calc2.py</code> 文件中，或者直接从 <a href=https://github.com/rspivak/lsbasi/blob/master/part2/calc2.py>GitHub</a> 上下载。试着运行它。看看它是不是正常工作：它应该能够处理输入中任意位置的空白符；能够接受多位的整数，并且能够对两个整数做减法和加法。</p><p>这是我在自己的笔记本上运行的示例：</p><pre tabindex=0><code>$ python calc2.py
+calc&gt; 27 + 3
+30
+calc&gt; 27 - 7
+20
+calc&gt;
+</code></pre><p>与 <a href=/article-9399-1.html>第一部分</a> 的版本相比，主要的代码改动有：</p><ol><li><code>get_next_token</code> 方法重写了很多。增加指针位置的逻辑之前是放在一个单独的方法中。</li><li>增加了一些方法：<code>skip_whitespace</code> 用于忽略空白字符，<code>integer</code> 用于处理输入字符的多位整数。</li><li><code>expr</code> 方法修改成了可以识别 “整数 -> 减号 -> 整数” 词组和 “整数 -> 加号 -> 整数” 词组。在成功识别相应的词组后，这个方法现在可以解释加法和减法。</li></ol><p><a href=/article-9399-1.html>第一部分</a> 中你学到了两个重要的概念，叫做 标记 token 和 词法分析 lexical analyzer 。现在我想谈一谈 词法 lexeme 、 解析 parsing 和 解析器 parser 。</p><p>你已经知道了标记。但是为了让我详细的讨论标记，我需要谈一谈词法。词法是什么？ 词法 lexeme 是一个 标记 token 中的字符序列。在下图中你可以看到一些关于标记的例子，这可以让它们之间的关系变得清晰：</p><p><img src=/data/attachment/album/201804/07/103107bhzoz5yjnk21hhac.png alt></p><p>现在还记得我们的朋友，<code>expr</code> 方法吗？我之前说过，这是数学表达式实际被解释的地方。但是你要先识别这个表达式有哪些词组才能解释它，比如它是加法还是减法。<code>expr</code> 方法最重要的工作是：它从 <code>get_next_token</code> 方法中得到流，并找出该标记流的结构，然后解释已经识别出的词组，产生数学表达式的结果。</p><p>在标记流中找出结构的过程，或者换种说法，识别标记流中的词组的过程就叫 解析 parsing 。解释器或者编译器中执行这个任务的部分就叫做 解析器 parser 。</p><p>现在你知道 <code>expr</code> 方法就是你的解释器的部分， 解析 parsing 和 解释 interpreting 都在这里发生 —— <code>expr</code> 方法首先尝试识别（解析）标记流里的 “整数 -> 加法 -> 整数” 或者 “整数 -> 减法 -> 整数” 词组，成功识别后 （解析了） 其中一个词组，这个方法就开始解释它，返回两个整数的和或差。</p><p>又到了练习的时间。</p><p><img src=/data/attachment/album/201804/07/103108ki7c61rrzv0v1vs7.png alt></p><ol><li>扩展这个计算器，让它能够计算两个整数的乘法</li><li>扩展这个计算器，让它能够计算两个整数的除法</li><li>修改代码，让它能够解释包含了任意数量的加法和减法的表达式，比如 “9 - 5 + 3 + 11”</li></ol><p><strong>检验你的理解：</strong></p><ol><li>词法是什么？</li><li>找出标记流结构的过程叫什么，或者换种说法，识别标记流中一个词组的过程叫什么？</li><li>解释器（编译器）执行解析的部分叫什么？</li></ol><p>希望你喜欢今天的内容。在该系列的下一篇文章里你就能扩展计算器从而处理更多复杂的算术表达式。敬请期待。</p><hr><p>via: <a href=https://ruslanspivak.com/lsbasi-part2/>https://ruslanspivak.com/lsbasi-part2/</a></p><p>作者：<a href=https://ruslanspivak.com>Ruslan Spivak</a> 译者：<a href=https://github.com/BriFuture>BriFuture</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%A7%A3%E9%87%8A%E5%99%A8/ rel=tag>解释器</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%BC%96%E8%AF%91%E5%99%A8/ rel=tag>编译器</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

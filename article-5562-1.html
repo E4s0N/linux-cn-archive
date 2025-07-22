@@ -1,0 +1,123 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux 有问必答: 如何在红帽系linux中编译Ixgbe驱动 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux 有问必答: 如何在红帽系linux中编译Ixgbe驱动"><meta property="og:description" content="提问：我想要安装最新版的ixgbe 10G网卡驱动。在CentOS, Fedora 或 RHEL中，我应该如何编译ixgbe驱动？  想要在linux使用Intel的PCI Express 10G网卡（例如，82598，82599，x540），需要安装Ixgbe驱动。如今的Linux发行版都会预安装ixgbe的可加载模块，但是预安装的ixgbe驱动不是完整功能版。如果想要开启和定制所有10G网卡的功能（如，RSS、多队列、虚拟化功能、硬件 offload 等），需要从源码编译安装。 本文基于红帽系平台（如，CentOS，RHEL或Fedora）。Debian系平台，请看这篇文章。  第一步: 安装依赖 首先，安装必要的开发环境和安"><meta property="og:type" content="article"><meta property="og:url" content="/article-5562-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-06-03T03:33:00+00:00"><meta property="article:modified_time" content="2015-06-03T03:33:00+00:00"><meta itemprop=name content="Linux 有问必答: 如何在红帽系linux中编译Ixgbe驱动"><meta itemprop=description content="提问：我想要安装最新版的ixgbe 10G网卡驱动。在CentOS, Fedora 或 RHEL中，我应该如何编译ixgbe驱动？  想要在linux使用Intel的PCI Express 10G网卡（例如，82598，82599，x540），需要安装Ixgbe驱动。如今的Linux发行版都会预安装ixgbe的可加载模块，但是预安装的ixgbe驱动不是完整功能版。如果想要开启和定制所有10G网卡的功能（如，RSS、多队列、虚拟化功能、硬件 offload 等），需要从源码编译安装。 本文基于红帽系平台（如，CentOS，RHEL或Fedora）。Debian系平台，请看这篇文章。  第一步: 安装依赖 首先，安装必要的开发环境和安"><meta itemprop=datePublished content="2015-06-03T03:33:00+00:00"><meta itemprop=dateModified content="2015-06-03T03:33:00+00:00"><meta itemprop=wordCount content="804"><meta itemprop=keywords content="Ixgbe,驱动,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux 有问必答: 如何在红帽系linux中编译Ixgbe驱动</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-06-03T03:33:00Z>June 03, 2015</time></div></div></header><div class="content post__content clearfix"><blockquote><p><strong>提问</strong>：我想要安装最新版的ixgbe 10G网卡驱动。在CentOS, Fedora 或 RHEL中，我应该如何编译ixgbe驱动？</p></blockquote><p>想要在linux使用Intel的PCI Express 10G网卡（例如，82598，82599，x540），需要安装Ixgbe驱动。如今的Linux发行版都会预安装ixgbe的可加载模块，但是预安装的ixgbe驱动不是完整功能版。如果想要开启和定制所有10G网卡的功能（如，RSS、多队列、虚拟化功能、硬件 offload 等），需要从源码编译安装。</p><p>本文基于红帽系平台（如，CentOS，RHEL或Fedora）。Debian系平台，请看<a href=/article-5149-1.html>这篇文章</a>。</p><p><img src=/data/attachment/album/201503/29/204506bzopz2a2ocypcpcc.png alt></p><h3 id=第一步-安装依赖>第一步: 安装依赖</h3><p>首先，安装必要的开发环境和安装匹配的内核头文件</p><pre tabindex=0><code>$ sudo yum install gcc make
+$ sudo yum install kernel-devel
+</code></pre><h3 id=第二步-编译ixgbe>第二步: 编译Ixgbe</h3><p>从<a href=http://sourceforge.net/projects/e1000/files/ixgbe%20stable/>官方页面</a>下载最新Ixgbe源码</p><pre tabindex=0><code>$ wget http://downloads.sourceforge.net/project/e1000/ixgbe%20stable/3.23.2/ixgbe-3.23.2.tar.gz 
+</code></pre><p>请检查支持的内核版本。例如，Ixgbe3.23.2版本支持Linux内核版本2.6.18到3.18.1。</p><p>提取压缩包并编译：</p><pre tabindex=0><code>$ tar -xvf ixgbe-3.23.2.tar.gz
+$ cd ixgbe-3.23.2/src
+$ make 
+</code></pre><p>如果成功，可以在当前目录找到编译完成的驱动（ixgbe.ko）。</p><p>可以运行这个命令来查看编译信息：</p><pre tabindex=0><code>$ modinfo ./ixgbe.ko 
+</code></pre><p>将会输出一个Ixgbe驱动的可用参数列表</p><p><img src=/data/attachment/album/201506/02/223536qiubk36unnbca3s3.jpg alt></p><h3 id=第三步-加载-ixgbe-驱动>第三步: 加载 Ixgbe 驱动</h3><p>这步准备加载已经编译好的驱动。</p><p>如果系统已经加载了Ixgbe驱动，首先需要卸载掉老版本。否则，新版本不能加载。</p><pre tabindex=0><code>$ sudo rmmod ixgbe.ko
+</code></pre><p>然后插入编译完成的驱动到内核中：</p><pre tabindex=0><code>$ sudo insmod ./ixgbe.ko
+</code></pre><p>同时，你可以设置启动参数</p><pre tabindex=0><code>$ sudo insmod ./ixgbe.ko FdirPballoc=3 RSS=16
+</code></pre><p>验证驱动是否加载成功，使用dmesg命令，查看其输出</p><pre tabindex=0><code>$ dmesg 
+</code></pre><hr><pre tabindex=0><code>Intel(R) 10 Gigabit PCI Express Network Driver - version 3.23.2
+Copyright (c) 1999-2014 Intel Corporation.
+ixgbe 0000:21:00.0: PCI INT A -&gt; GSI 64 (level, low) -&gt; IRQ 64
+ixgbe 0000:21:00.0: setting latency timer to 64
+ixgbe: Receive-Side Scaling (RSS) set to 16
+ixgbe: Flow Director packet buffer allocation set to 3
+ixgbe: 0000:21:00.0: ixgbe_check_options: Flow Director will be allocated 256kB of packet buffer
+ixgbe: 0000:21:00.0: ixgbe_check_options: FCoE Offload feature enabled
+ixgbe 0000:21:00.0: irq 87 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 88 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 89 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 90 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 91 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 92 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 93 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 94 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 95 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 96 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 97 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 98 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 99 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 100 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 101 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 102 for MSI/MSI-X
+ixgbe 0000:21:00.0: irq 103 for MSI/MSI-X
+ixgbe 0000:21:00.0: eth3: DCA registration failed: -1
+ixgbe 0000:21:00.0: PCI Express bandwidth of 32GT/s available
+ixgbe 0000:21:00.0: (Speed:5.0GT/s, Width: x8, Encoding Loss:20%)
+ixgbe 0000:21:00.0: eth3: MAC: 2, PHY: 9, SFP+: 3, PBA No: E68793-006
+ixgbe 0000:21:00.0: 90:e2:ba:5b:e9:1c
+ixgbe 0000:21:00.0: eth3: Enabled Features: RxQ: 16 TxQ: 16 FdirHash RSC 
+ixgbe 0000:21:00.0: eth3: Intel(R) 10 Gigabit Network Connection
+ixgbe 0000:21:00.1: PCI INT B -&gt; GSI 68 (level, low) -&gt; IRQ 68
+ixgbe 0000:21:00.1: setting latency timer to 64
+ixgbe: 0000:21:00.1: ixgbe_check_options: FCoE Offload feature enabled
+ixgbe 0000:21:00.0: registered PHC device on eth3
+ixgbe 0000:21:00.1: irq 104 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 105 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 106 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 107 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 108 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 109 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 110 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 111 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 112 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 113 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 114 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 115 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 116 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 117 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 118 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 119 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 120 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 121 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 122 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 123 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 124 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 125 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 126 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 127 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 128 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 129 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 130 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 131 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 132 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 133 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 134 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 135 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 136 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 137 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 138 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 139 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 140 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 141 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 142 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 143 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 144 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 145 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 146 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 147 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 148 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 149 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 150 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 151 for MSI/MSI-X
+ixgbe 0000:21:00.1: irq 152 for MSI/MSI-X
+ADDRCONF(NETDEV_UP): eth3: link is not ready
+8021q: adding VLAN 0 to HW filter on device eth3
+ixgbe 0000:21:00.1: eth4: DCA registration failed: -1
+ixgbe 0000:21:00.1: PCI Express bandwidth of 32GT/s available
+ixgbe 0000:21:00.1: (Speed:5.0GT/s, Width: x8, Encoding Loss:20%)
+ixgbe 0000:21:00.1: eth4: MAC: 2, PHY: 9, SFP+: 4, PBA No: E68793-006
+ixgbe 0000:21:00.1: 90:e2:ba:5b:e9:1e
+ixgbe 0000:21:00.1: eth4: Enabled Features: RxQ: 48 TxQ: 48 FdirHash RSC 
+ixgbe 0000:21:00.1: eth4: Intel(R) 10 Gigabit Network Connection
+ixgbe 0000:21:00.0: eth3: detected SFP+: 3
+ixgbe 0000:21:00.1: registered PHC device on eth4
+ADDRCONF(NETDEV_UP): eth4: link is not ready
+8021q: adding VLAN 0 to HW filter on device eth4
+ixgbe 0000:21:00.1: eth4: detected SFP+: 4
+ixgbe 0000:21:00.0: eth3: NIC Link is Up 10 Gbps, Flow Control: RX/TX
+ADDRCONF(NETDEV_CHANGE): eth3: link becomes ready
+ixgbe 0000:21:00.1: eth4: NIC Link is Up 10 Gbps, Flow Control: RX/TX
+ADDRCONF(NETDEV_CHANGE): eth4: link becomes ready
+eth3: no IPv6 routers present
+eth4: no IPv6 routers present
+</code></pre><h3 id=第四步-安装ixgbe驱动>第四步: 安装Ixgbe驱动</h3><p>当确认驱动已经加载后，就可以安装驱动到系统中了</p><pre tabindex=0><code>$ sudo make install
+</code></pre><p>ixgbe.ko将会安装在下列目录</p><pre tabindex=0><code>/lib/modules/&lt;kernel-version&gt;/kernel/drivers/net/ixgbe
+</code></pre><p>此时，编译好的驱动将在启动时自动加载，也可以通过运行命令加载它：</p><pre tabindex=0><code>$ sudo modprobe ixgbe 
+</code></pre><p><img src=/data/attachment/album/201506/02/223538sop9ridz4yaxxhpg.jpg alt></p><hr><p>via: <a href=http://ask.xmodulo.com/compile-ixgbe-driver-centos-rhel-fedora.html>http://ask.xmodulo.com/compile-ixgbe-driver-centos-rhel-fedora.html</a></p><p>作者：<a href=http://ask.xmodulo.com/author/nanni>Dan Nanni</a> 译者：<a href=http://vicyu.net>Vic020</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ixgbe/ rel=tag>Ixgbe</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E9%A9%B1%E5%8A%A8/ rel=tag>驱动</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

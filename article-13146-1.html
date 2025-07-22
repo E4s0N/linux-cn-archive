@@ -1,0 +1,100 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>LaTex 排版 （2）：表格 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="LaTex 排版 （2）：表格"><meta property="og:description" content="LaTeX 提供了许多工具来创建和定制表格"><meta property="og:type" content="article"><meta property="og:url" content="/article-13146-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-02-23T11:36:54+00:00"><meta property="article:modified_time" content="2021-02-23T11:36:54+00:00"><meta itemprop=name content="LaTex 排版 （2）：表格"><meta itemprop=description content="LaTeX 提供了许多工具来创建和定制表格"><meta itemprop=datePublished content="2021-02-23T11:36:54+00:00"><meta itemprop=dateModified content="2021-02-23T11:36:54+00:00"><meta itemprop=wordCount content="474"><meta itemprop=keywords content="LaTeX,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>LaTex 排版 （2）：表格</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-02-23T11:36:54Z>February 23, 2021</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113655fm74zku5x1xy7h5j.png alt></p><p>LaTeX 提供了许多工具来创建和定制表格，在本系列中，我们将使用 <code>tabular</code> 和 <code>tabularx</code> 环境来创建和定制表。</p><h3 id=基础表格>基础表格</h3><p>要创建表，只需指定环境 <code>\begin{tabular}{列选项}</code>：</p><pre tabindex=0><code>\begin{tabular}{c|c}
+    Release &amp;Codename \\ \hline
+    Fedora Core 1 &amp;Yarrow \\ 
+    Fedora Core 2 &amp;Tettnang \\ 
+    Fedora Core 3 &amp;Heidelberg \\ 
+    Fedora Core 4 &amp;Stentz \\ 
+\end{tabular}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113656b56vdxd4x15evw69.png alt="Basic Table"></p><p>在上面的示例中，花括号中的 ”{c|c}” 表示文本在列中的位置。下表总结了位置参数及其说明。</p><table><thead><tr><th>参数</th><th>位置</th></tr></thead><tbody><tr><td><code>c</code></td><td>将文本置于中间</td></tr><tr><td><code>l</code></td><td>将文本左对齐</td></tr><tr><td><code>r</code></td><td>将文本右对齐</td></tr><tr><td><code>p{宽度}</code></td><td>文本对齐单元格顶部</td></tr><tr><td><code>m{宽度}</code></td><td>文本对齐单元格中间</td></tr><tr><td><code>b{宽度}</code></td><td>文本对齐单元格底部</td></tr></tbody></table><blockquote><p><code>m{宽度}</code> 和 <code>b{宽度}</code> 都要求在最前面指定数组包。</p></blockquote><p>使用上面的例子，让我们来详细讲解使用的要点，并描述你将在本系列中看到的更多选项：</p><table><thead><tr><th>选项</th><th>意义</th></tr></thead><tbody><tr><td><code>&</code></td><td>定义每个单元格，这个符号仅用于第二列</td></tr><tr><td><code>\\</code></td><td>这将终止该行并开始一个新行</td></tr><tr><td>`</td><td>`</td></tr><tr><td><code>\hline</code></td><td>指定表格中的水平线（可选）</td></tr><tr><td><code>*{数量}{格式}</code></td><td>当你有许多列时，可以使用这个，并且是限制重复的有效方法</td></tr><tr><td>`</td><td></td></tr></tbody></table><h3 id=定制表格>定制表格</h3><p>学会了这些选项，让我们使用这些选项创建一个表。</p><pre tabindex=0><code>\begin{tabular}{*{3}{|l|}}
+\hline
+	\textbf{Version} &amp;\textbf{Code name} &amp;\textbf{Year released} \\
+\hline
+	Fedora 6 &amp;Zod &amp;2006 \\ \hline
+	Fedora 7 &amp;Moonshine &amp;2007 \\ \hline
+	Fedora 8 &amp;Werewolf &amp;2007 \\
+\hline
+\end{tabular}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113656kvzgzbqi0l1jiiez.png alt="Customise Table"></p><h3 id=管理长文本>管理长文本</h3><p>如果列中有很多文本，那么它的格式就不好处理，看起来也不好看。</p><p>下面的示例显示了文本的格式长度，我们将在导言区中使用 <code>blindtext</code>，以便生成示例文本。</p><pre tabindex=0><code>\begin{tabular}{|l|l|}\hline
+	Summary &amp;Description \\ \hline
+	Test &amp;\blindtext \\
+\end{tabular}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113656qt28t2a9zz9ydn5a.png alt="Default Formatting"></p><p>正如你所看到的，文本超出了页面宽度；但是，有几个选项可以克服这个问题。</p><ul><li>指定列宽，例如 <code>m{5cm}</code></li><li>利用 <code>tablarx</code> 环境，这需要在导言区中引用 <code>tablarx</code> 宏包。</li></ul><h4 id=使用列宽管理长文本>使用列宽管理长文本</h4><p>通过指定列宽，文本将被折行为如下示例所示的宽度。</p><pre tabindex=0><code>\begin{tabular}{|l|m{14cm}|} \hline
+	Summary &amp;Description \\ \hline
+	Test &amp;\blindtext \\ \hline
+\end{tabular}\vspace{3mm}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113657wvz00wc2kcxdqvtv.png alt="Column Width"></p><h4 id=使用-tabularx-管理长文本>使用 tabularx 管理长文本</h4><p>在我们利用表格之前，我们需要在导言区中加上它。<code>tabularx</code> 方法见以下示例：<code>\begin{tabularx}{宽度}{列选项}</code>。</p><pre tabindex=0><code>\begin{tabularx}{\textwidth}{|l|X|} \hline
+Summary &amp; Tabularx Description\\ \hline
+Text &amp;\blindtext \\ \hline
+\end{tabularx}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113657mvm6uhe7vmhcem34.png alt=Tabularx></p><p>请注意，我们需要处理长文本的列在花括号中指定了大写 <code>X</code>。</p><h3 id=合并行合并列>合并行合并列</h3><p>有时需要合并行或列。本节描述了如何完成。要使用 <code>multirow</code> 和 <code>multicolumn</code>，请将 <code>multirow</code> 添加到导言区。</p><h4 id=合并行>合并行</h4><p><code>multirow</code> 采用以下参数 <code>\multirow{行的数量}{宽度}{文本}</code>，让我们看看下面的示例。</p><pre tabindex=0><code>\begin{tabular}{|l|l|}\hline
+	Release &amp;Codename \\ \hline
+	Fedora Core 4 &amp;Stentz \\ \hline
+	\multirow{2}{*}{MultiRow} &amp;Fedora 8 \\ 
+	&amp;Werewolf \\ \hline
+\end{tabular}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113657jd1y1mbzcd1sbyh1.png alt=MultiRow></p><p>在上面的示例中，指定了两行，<code>*</code> 告诉 LaTeX 自动管理单元格的大小。</p><h4 id=合并列>合并列</h4><p><code>multicolumn</code> 参数是 <code>{multicolumn{列的数量}{单元格选项}{位置}{文本}</code>，下面的示例演示合并列。</p><pre tabindex=0><code>\begin{tabular}{|l|l|l|}\hline
+	Release &amp;Codename &amp;Date \\ \hline
+	Fedora Core 4 &amp;Stentz &amp;2005 \\ \hline
+	\multicolumn{3}{|c|}{Mulit-Column} \\ \hline
+\end{tabular}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113658hn9dvnqd20psdvpn.png alt=Multi-Column></p><h3 id=使用颜色>使用颜色</h3><p>可以为文本、单个单元格或整行指定颜色。此外，我们可以为每一行配置交替的颜色。</p><p>在给表添加颜色之前，我们需要在导言区引用 <code>\usepackage[table]{xcolor}</code>。我们还可以使用以下颜色参考 <a href=https://latexcolor.com>LaTeX Color</a> 或在颜色前缀后面添加感叹号（从 0 到 100 的阴影）来定义颜色。例如，<code>gray！30</code>。</p><pre tabindex=0><code>\definecolor{darkblue}{rgb}{0.0, 0.0, 0.55}
+\definecolor{darkgray}{rgb}{0.66, 0.66, 0.66}
+</code></pre><p>下面的示例演示了一个具有各种颜色的表，<code>\rowcolors</code> 采用以下选项 <code>\rowcolors{起始行颜色}{偶数行颜色}{奇数行颜色}</code>。</p><pre tabindex=0><code>\rowcolors{2}{darkgray}{gray!20}
+\begin{tabular}{c|c}
+	Release &amp;Codename \\ \hline
+	Fedora  Core 1 &amp;Yarrow \\
+	Fedora Core 2 &amp;Tettnang \\
+	Fedora Core 3 &amp;Heidelberg \\
+	Fedora Core 4 &amp;Stentz \\
+\end{tabular}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113658uqg4sszyglqwiklw.png alt="Alt colour table"></p><p>除了上面的例子，<code>\rowcolor</code> 可以用来指定每一行的颜色，这个方法在有合并行时效果最好。以下示例显示将 <code>\rowColors</code> 与合并行一起使用的影响以及如何解决此问题。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113658cupkwcukb81odh8b.png alt="Impact on multi-row"></p><p>你可以看到，在合并行中，只有第一行能显示颜色。想要解决这个问题，需要这样做：</p><pre tabindex=0><code>\begin{tabular}{|l|l|}\hline
+	\rowcolor{darkblue}\textsc{\color{white}Release}  &amp;\textsc{\color{white}Codename} \\ \hline
+	\rowcolor{gray!10}Fedora Core 4 &amp;Stentz \\ \hline
+	\rowcolor{gray!40}&amp;Fedora 8 \\ 
+	\rowcolor{gray!40}\multirow{-2}{*}{Multi-Row} &amp;Werewolf \\ \hline
+\end{tabular}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113658ixxh6wppghlxzlia.png alt=Multi-row></p><p>让我们讲解一下为解决合并行替换颜色问题而实施的更改。</p><ul><li>第一行从合并行上方开始</li><li>行数从 <code>2</code> 更改为 <code>-2</code>，这意味着从上面的行开始读取</li><li><code>\rowcolor</code> 是为每一行指定的，更重要的是，多行必须具有相同的颜色，这样才能获得所需的结果。</li></ul><p>关于颜色的最后一个注意事项是，要更改列的颜色，需要创建新的列类型并定义颜色。下面的示例说明了如何定义新的列颜色。</p><pre tabindex=0><code>\newcolumntype{g}{&gt;{\columncolor{darkblue}}l} 
+</code></pre><p>我们把它分解一下：</p><ul><li><code>\newcolumntype{g}</code>：将字母 <code>g</code> 定义为新列</li><li><code>{>{\columncolor{darkblue}}l}</code>：在这里我们选择我们想要的颜色，并且 <code>l</code> 告诉列左对齐，这可以用 <code>c</code> 或 <code>r</code> 代替。</li></ul><pre tabindex=0><code>\begin{tabular}{g|l} 
+	\textsc{Release}  &amp;\textsc{Codename} \\ \hline
+	Fedora Core 4 &amp;Stentz \\ 
+	&amp;Fedora 8 \\ 
+	\multirow{-2}{*}{Multi-Row} &amp;Werewolf \\ 
+\end{tabular}\
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113659kz79ixig6s6a6gei.png alt="Column Colour"></p><h3 id=横向表>横向表</h3><p>有时，你的表可能有许多列，纵向排列会很不好看。在导言区加入 <code>rotating</code> 包，你将能够创建一个横向表。下面的例子说明了这一点。</p><p>对于横向表，我们将使用 <code>sidewaystable</code> 环境并在其中添加表格环境，我们还指定了其他选项。</p><ul><li><code>\centering</code> 可以将表格放置在页面中心</li><li><code>\caption{}</code> 为表命名</li><li><code>\label{}</code> 这使我们能够引用文档中的表</li></ul><pre tabindex=0><code>\begin{sidewaystable}
+\centering
+\caption{Sideways Table}
+\label{sidetable}
+\begin{tabular}{ll}
+	\rowcolor{darkblue}\textsc{\color{white}Release}  &amp;\textsc{\color{white}Codename} \\ 
+	\rowcolor{gray!10}Fedora Core 4 &amp;Stentz \\ 
+	\rowcolor{gray!40} &amp;Fedora 8 \\ 
+	\rowcolor{gray!40}\multirow{-2}{*}{Multi-Row} &amp;Werewolf \\ 
+\end{tabular}\vspace{3mm}
+\end{sidewaystable}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113659kk7nt07l6gmy6lj2.png alt="Sideways Table"></p><h3 id=列表和表格>列表和表格</h3><p>要将列表包含到表中，可以使用 <code>tabularx</code>，并将列表包含在指定的列中。另一个办法是使用表格格式，但必须指定列宽。</p><h4 id=用-tabularx-处理列表>用 tabularx 处理列表</h4><pre tabindex=0><code>\begin{tabularx}{\textwidth}{|l|X|} \hline
+	Fedora Version &amp;Editions \\ \hline
+	Fedora 32 &amp;\begin{itemize}[noitemsep]
+		\item CoreOS
+		\item Silverblue
+		\item IoT
+	\end{itemize} \\ \hline
+\end{tabularx}\vspace{3mm}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113700myi4lvtptpnknzy8.png alt="List in tabularx"></p><h4 id=用-tabular-处理列表>用 tabular 处理列表</h4><pre tabindex=0><code>\begin{tabular}{|l|m{6cm}|}\hline
+        Fedora Version &amp;amp;amp;amp;Editions \\\ \hline
+    Fedora 32 &amp;amp;amp;amp;\begin{itemize}[noitemsep]
+        \item CoreOS
+        \item Silverblue
+        \item IoT
+    \end{itemize} \\\ \hline
+\end{tabular}
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113700ixz7vtxxtv933r3r.png alt="List in tabular"></p><h3 id=总结>总结</h3><p>LaTeX 提供了许多使用 <code>tablar</code> 和 <code>tablarx</code> 自定义表的方法，你还可以在表环境 （<code>\begin\table</code>） 中添加 <code>tablar</code> 和 <code>tablarx</code> 来添加表的名称和定位表。</p><h3 id=latex-宏包>LaTeX 宏包</h3><p>所需的宏包有如下这些：</p><pre tabindex=0><code>\usepackage{fullpage}
+\usepackage{blindtext}  % add demo text
+\usepackage{array} % used for column positions
+\usepackage{tabularx} % adds tabularx which is used for text wrapping
+\usepackage{multirow} % multi-row and multi-colour support
+\usepackage[table]{xcolor} % add colour to the columns 
+\usepackage{rotating} % for landscape/sideways tables
+</code></pre><h3 id=额外的知识>额外的知识</h3><p>这是一堂关于表的小课，有关表和 LaTex 的更多高级信息，请访问 <a href=https://en.wikibooks.org/wiki/LaTeX/Tables>LaTex Wiki</a></p><p><img src=https://img.linux.net.cn/data/attachment/album/202102/23/113659kz79ixig6s6a6gei.png alt></p><hr><p>via: <a href=https://fedoramagazine.org/latex-typesetting-part-2-tables/>https://fedoramagazine.org/latex-typesetting-part-2-tables/</a></p><p>作者：<a href=https://fedoramagazine.org/author/earlramirez/>Earl Ramirez</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/Chao-zhi>Chao-zhi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/latex/ rel=tag>LaTeX</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

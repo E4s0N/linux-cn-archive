@@ -1,0 +1,44 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Linux 的 diff 和 patch 对文件进行协作 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Linux 的 diff 和 patch 对文件进行协作"><meta property="og:description" content="如果你曾经试图通过电子邮件或聊天来协作处理文件，并且发现自己试图描述需要修改的地方，那么你会喜欢 diff 和 patch 的。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14037-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-12-01T10:26:00+00:00"><meta property="article:modified_time" content="2021-12-01T10:26:00+00:00"><meta itemprop=name content="使用 Linux 的 diff 和 patch 对文件进行协作"><meta itemprop=description content="如果你曾经试图通过电子邮件或聊天来协作处理文件，并且发现自己试图描述需要修改的地方，那么你会喜欢 diff 和 patch 的。"><meta itemprop=datePublished content="2021-12-01T10:26:00+00:00"><meta itemprop=dateModified content="2021-12-01T10:26:00+00:00"><meta itemprop=wordCount content="168"><meta itemprop=keywords content="diff,patch,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Linux 的 diff 和 patch 对文件进行协作</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-12-01T10:26:00Z>December 01, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>如果你曾经试图通过电子邮件或聊天来协作处理文件，并且发现自己试图描述需要修改的地方，那么你会喜欢 <code>diff</code> 和 <code>patch</code> 的。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202112/01/102607jmjbpu1jk1as61j1.jpg alt></p><p>我编辑过很多文本文件。有时是代码。其他时候是角色扮演游戏（RPG）、编程书籍或一般信件的书面文字。有时候，做一个修改，而能让我的协作者把我的修改和他们原来写的东西进行比较就更好了。许多人默认使用办公套件（如 <a href=https://opensource.com/article/21/9/libreoffice-tips>LibreOffice</a>）的注释或更改跟踪功能。不过有时更简单的工具更有意义，为此，你可以看看像 <code>diff</code> 和 <code>patch</code> 这样的工具的编程历史，它们为跟踪和应用共享文件的变化提供了标准化的格式。</p><p>即使对于简单的文件，在同步两个文件时也有复杂性。一些项目被改变，另一些被保留，新的内容被添加，还有一些保持不变，但被移到文件的不同位置。如果接受所有的变化，并且用新文件替换旧文件，就很难复制变化。它也是整体不透明的。如果变化很多，就很难挑出到底发生了什么变化。</p><p>通过 <code>diff</code> 命令，你可以创建一个文件变化的记录，通过 <code>patch</code> 你可以在旧版本上“重放”这些变化，使其与新版本保持一致。</p><h3 id=设置>设置</h3><p>假设你和我正在合作编写一个描述如何泡茶的文件。</p><p>到目前为止，文件 <code>tea.md</code> 包含原始的复制粘贴来的内容：</p><pre tabindex=0><code>烧开水。
+加热茶壶。
+在茶壶中加入茶和水。
+在茶壶上放置一个茶叶滤网。
+浸泡 6 分钟。
+将茶倒入杯中。
+加入牛奶。
+</code></pre><p>这似乎很合理，但总有一些优化可以做，所以你把文件发给我改进。为了澄清泡茶过程，我把文件复制为<code>tea-revision.md</code>，并进行编辑，最后是这样的：</p><pre tabindex=0><code>在烤箱的抽屉中加热茶壶。
+烧开水。
+将茶叶放入茶叶滤网。
+将滤网和水加入茶壶。
+浸泡 6 分钟。用茶壶罩保温。
+将茶倒入杯中。
+可以选择加入温牛奶。
+</code></pre><p>正如预期的那样，一些项目（“烧开水”和“将茶倒入杯中”）没有变化，而其他行（“加热茶壶”）则有增加。有些行是全新的，有些行是相同的，但顺序不同。</p><h3 id=创建一个差异>创建一个差异</h3><p><code>diff</code> 工具会显示两个文件之间的差异。有几种不同的方法来查看结果，但我认为最清楚的是 <code>—unified</code>（简写为 <code>-u</code>）视图，它显示哪些行被增加或减少了。以任何方式改变的行都被视为先减后增的行。默认情况下，<code>diff</code> 将其输出打印到终端。</p><p>向 <code>diff</code> 提供旧文件，然后是新文件：</p><pre tabindex=0><code>$ diff --unified tea.md tea-revised.md 
+--- tea.md      2021-11-13 10:26:25.082110219 +1300
++++ tea-revised.md      2021-11-13 10:26:32.049110664 +1300
+@@ -1,7 +1,7 @@
++在烤箱的抽屉中加热茶壶。
+ 烧开水。
+-加热茶壶。
+-在茶壶中加入茶和水。
+-在茶壶上放置一个茶叶滤网。
+-浸泡 6 分钟。
++将茶叶放入茶叶滤网。
++将滤网和水加入茶壶。
++浸泡 6 分钟。用茶壶罩保温。
+ 将茶倒入杯中。
+-加入牛奶。
++可以选择加入温牛奶。
+</code></pre><p>行首的加号（<code>+</code>）表示在旧文件中增加了一些内容。行首的减号（<code>-</code>）表示被删除或改变的行。</p><h3 id=用-diff-创建一个补丁>用 diff 创建一个补丁</h3><p>补丁文件就是将 <code>diff —unified</code> 命令的输出放到一个文件中。你可以用标准的 Bash 重定向来做这件事：</p><pre tabindex=0><code>$ diff -u tea.md tea-revised.md &gt; tea.patch
+</code></pre><p>该文件的内容与输出到终端的内容完全相同。我喜欢在 <a href=https://opensource.com/article/20/12/emacs>Emacs</a> 中查看补丁文件，它对每一行进行颜色编码，取决于它是被添加还是被减去。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202112/01/102615lyxryrxdetb3nr6r.jpg alt=Emacs中的补丁文件 title="A patch file in Emacs"></p><h3 id=用补丁应用修改>用补丁应用修改</h3><p>一旦我有了补丁文件，我就可以把它发给你，让你审查，并且可以选择应用到你的旧文件中。你可以用 <code>patch</code> 命令来应用一个补丁。</p><pre tabindex=0><code>$ patch tea.md tea.patch
+</code></pre><p>增加了一些行，减少了一些行，最后，你得到了一个与我的版本相同的文件：</p><pre tabindex=0><code>$ cat tea.md
+在烤箱的抽屉中加热茶壶。
+烧开水。
+将茶叶放入茶叶滤网。
+将滤网和水加入茶壶。
+浸泡 6 分钟。用茶壶罩保温。
+将茶倒入杯中。
+可以选择加入温牛奶。
+</code></pre><p>你可以给一个文件打多少次补丁，这是没有限制的。你可以对我的修改进行迭代，生成一个新的补丁，然后发给我审核。发送修改内容而不是结果，可以让每个贡献者审查修改的内容，决定他们要保留或删除的内容，并准确地记录过程。</p><h3 id=安装>安装</h3><p>在 Linux 和 macOS 上，你已经有了 <code>diff</code> 和 <code>patch</code> 命令。在 Windows 上，你可以通过 <a href=https://cygwin.com>Cygwin</a> 获得 <code>diff</code> 和 <code>patch</code>，或者使用 Chocolatey 搜索 <a href=https://community.chocolatey.org/packages/diffutils>diffutils</a> 和 <a href=https://community.chocolatey.org/packages/patch>patch</a>。</p><p>如果你曾经试图通过电子邮件或聊天来协作处理文件，并且发现自己需要 <em>描述</em> 需要修改的地方，那么你会喜欢 <code>diff</code> 和 <code>patch</code>。一个结构严谨的文件，如代码或以行为单位的 <a href=https://opensource.com/article/19/9/introduction-markdown>Markdown</a>，很容易进行差异比较、补丁和维护。</p><hr><p>via: <a href=https://opensource.com/article/21/11/linux-diff-patch>https://opensource.com/article/21/11/linux-diff-patch</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/diff/ rel=tag>diff</a></li><li class=tags__item><a class="tags__link btn" href=/tags/patch/ rel=tag>patch</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,61 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>了解一下 Fossil，一个 Git 的替代品 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="了解一下 Fossil，一个 Git 的替代品"><meta property="og:description" content="Fossil 是一个集版本控制系统、bug 追踪、维基、论坛以及文档解决方案于一体的系统。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12875-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-12-01T17:31:09+00:00"><meta property="article:modified_time" content="2020-12-01T17:31:09+00:00"><meta itemprop=name content="了解一下 Fossil，一个 Git 的替代品"><meta itemprop=description content="Fossil 是一个集版本控制系统、bug 追踪、维基、论坛以及文档解决方案于一体的系统。"><meta itemprop=datePublished content="2020-12-01T17:31:09+00:00"><meta itemprop=dateModified content="2020-12-01T17:31:09+00:00"><meta itemprop=wordCount content="427"><meta itemprop=keywords content="Fossil,版本控制,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>了解一下 Fossil，一个 Git 的替代品</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-12-01T17:31:09Z>December 01, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>Fossil 是一个集版本控制系统、bug 追踪、维基、论坛以及文档解决方案于一体的系统。</p></blockquote><p><img src=/data/attachment/album/202012/01/173057hfhyzyw921zll219.jpg alt></p><p>每个开发者都知道，追踪代码的修改是至关重要的。有时候你会处于好奇或者教育的目的需要展示你的项目开始和进化的历史。有时候你想让其他的开发者参与到你的项目中，因此你需要一种值得信赖的能合并不同代码分支的方法。更极端一点，有时候你为了解决一个问题而修改的代码导致已有的功能不能正常使用。</p><p><a href=https://fossil-scm.org/home/doc/trunk/www/index.wiki>Fossil</a> 源码管理系统是由著名的 <a href=https://www.sqlite.org/index.html>SQLite</a> 数据库的作者开发的一个集版本控制系统、bug 追踪、维基、论坛以及文档解决方案于一体的系统。</p><h3 id=安装-fossil>安装 Fossil</h3><p>Fossil 是一个独立的 C 程序，因此你可以从它的网站上<a href=https://fossil-scm.org/home/uv/download.html>下载</a>后放在环境变量 <a href=https://opensource.com/article/17/6/set-path-linux>PATH</a> 中的任意位置。例如，假定 <code>/usr/local/bin</code> 已经在你的环境变量中（默认情况下是在的）：</p><pre tabindex=0><code>$ wget https://fossil-scm.org/home/uv/fossil-linux-x64-X.Y.tar.gz
+$ sudo tar xvf fossil-linux-x64-X.Y.tar.gz --directory /usr/local/bin
+</code></pre><p>你也可以通过包管理器从软件仓库中找到 Fossil，或者直接从源码编译。</p><h3 id=创建一个-fossil-仓库>创建一个 Fossil 仓库</h3><p>如果你已经有一个代码项目，想用 Fossil 来追踪，那么第一步就是创建一个 Fossil 仓库：</p><pre tabindex=0><code>$ fossil init myproject.fossil
+project-id: 010836ac6112fefb0b015702152d447c8c1d8604
+server-id:  54d837e9dc938ba1caa56d31b99c35a4c9627f44
+admin-user: klaatu (initial password is &#34;14b605&#34;)
+</code></pre><p>创建 Fossil 仓库的过程中会返回三行信息：一个唯一的项目 ID、一个唯一的服务器 ID 以及管理员 ID 和密码。项目 ID 和服务器 ID 是版本数字。管理员凭证表明你对这个仓库的所有权，当你把 Fossil 作为服务器让其他用户来访问时可以使用管理员权限。</p><h3 id=fossil-仓库工作流>Fossil 仓库工作流</h3><p>在你使用 Fossil 仓库之前，你需要先为它的数据创建一个工作路径。你可以把这个过程类比为使用 Python 时创建一个虚拟环境或者解压一个只用来备份的 ZIP 文件。</p><p>创建一个工作目录并进入：</p><pre tabindex=0><code>$ mkdir myprojectdir
+$ cd myprojectdir
+</code></pre><p>把你的 Fossil 打开到刚刚创建的目录：</p><pre tabindex=0><code>$ fossil open ../myproject
+project-name: &lt;unnamed&gt;
+repository:   /home/klaatu/myprojectdir/../myproject
+local-root:   /home/klaatu/myprojectdir/
+config-db:    /home/klaatu/.fossil
+project-code: 010836ac6112fefb0b015702152d447c8c1d8604
+checkout:     9e6cd96dd675544c58a246520ad58cdd460d1559 2020-11-09 04:09:35 UTC
+tags:         trunk
+comment:      initial empty check-in (user: klaatu)
+check-ins:    1
+</code></pre><p>你可能注意到了，Fossil 在你的家目录下创建了一个名为 <code>.fossil</code> 的隐藏文件，用来追踪你的全局 Fossil 配置。这个配置不是只适用于你的一个项目的；这个文件只会在你第一次使用 Fossil 时生成。</p><h4 id=添加文件>添加文件</h4><p>使用 <code>add</code> 和 <code>commit</code> 子命令来向你的仓库添加文件。例如，创建一个简单的 <code>README</code> 文件，把它添加到仓库：</p><pre tabindex=0><code>$ echo &#34;My first Fossil project&#34; &gt; README
+$ fossil add README
+ADDED  README
+$ fossil commit -m &#39;My first commit&#39;
+New_Version: 2472a43acd11c93d08314e852dedfc6a476403695e44f47061607e4e90ad01aa
+</code></pre><h4 id=使用分支>使用分支</h4><p>Fossil 仓库开始时默认使用的主分支名为 <code>trunk</code>。当你想修改代码而又不影响主干代码时，你可以从 trunk 分支切走。创建新分支需要使用 <code>branch</code> 子命令，这个命令需要两个参数：一个新分支的名字，一个新分支的基分支名字。在本例中，只有一个分支 <code>trunk</code>，因此尝试创建一个名为 <code>dev</code> 的新分支：</p><pre tabindex=0><code>$ fossil branch --help
+Usage: fossil branch new BRANCH-NAME BASIS ?OPTIONS?
+$ fossil branch new dev trunk
+New branch: cb90e9c6f23a9c98e0c3656d7e18d320fa52e666700b12b5ebbc4674a0703695
+</code></pre><p>你已经创建了一个新分支，但是你当前所在的分支仍然是 <code>trunk</code>：</p><pre tabindex=0><code>$ fossil branch current
+trunk
+</code></pre><p>使用 <code>checkout</code> 命令切换到你的新分支 <code>dev</code>：</p><pre tabindex=0><code>$ fossil checkout dev
+dev
+</code></pre><h4 id=合并修改>合并修改</h4><p>假设你在 <code>dev</code> 分支中添加了一个新文件，完成了测试，现在想把它合并到 <code>trunk</code>。这个过程叫做<em>合并</em>。</p><p>首先，切回目标分支（本例中目标分支为 <code>trunk</code>）：</p><pre tabindex=0><code>$ fossil checkout trunk
+trunk
+$ ls
+README
+</code></pre><p>这个分支中没有你的新文件（或者你对其他文件的修改），而那些内容是合并的过程需要的信息：</p><pre tabindex=0><code>$ fossil merge dev
+ &#34;fossil undo&#34; is available to undo changes to the working checkout.
+$ ls
+myfile.lua  README
+</code></pre><h3 id=查看-fossil-时间线>查看 Fossil 时间线</h3><p>使用 <code>timeline</code> 选项来查看仓库的历史。这个命令列出了你的仓库的所有活动的详细信息，包括用来表示每次修改的哈希值、每次提交时填写的信息以及提交者：</p><pre tabindex=0><code>$ fossil timeline
+=== 2020-11-09 ===
+06:24:16 [5ef06e668b] added exciting new file (user: klaatu tags: dev)
+06:11:19 [cb90e9c6f2] Create new branch named &#34;dev&#34; (user: klaatu tags: dev)
+06:08:09 [a2bb73e4a3] *CURRENT* some additions were made (user: klaatu tags: trunk)
+06:00:47 [2472a43acd] This is my first commit. (user: klaatu tags: trunk)
+04:09:35 [9e6cd96dd6] initial empty check-in (user: klaatu tags: trunk)
++++ no more data (5) +++
+</code></pre><p><img src=/data/attachment/album/202012/01/173115xvph5vnm6mhhnhnc.jpg alt="Fossil UI" title="Fossil UI"></p><h3 id=公开你的-fossil-仓库>公开你的 Fossil 仓库</h3><p>因为 Fossil 有个内置的 web 界面，所以 Fossil 不像 GitLab 和 Gitea 那样需要主机服务。Fossil 就是它自己的主机服务，只要你把它放在一台机器上就行了。在你公开你的 Fossil 仓库之前，你还需要通过 web 用户界面（UI）来配置一些信息：</p><p>使用 <code>ui</code> 子命令启动一个本地的实例：</p><pre tabindex=0><code>$ pwd
+/home/klaatu/myprojectdir/
+$ fossil ui
+</code></pre><p>“Users” 和 “Settings” 是安全相关的，“Configuration” 是项目属性相关的（包括一个合适的标题）。web 界面不仅仅是一个方便的功能。 它是能在生产环境中使用并作为 Fossil 项目的宿主机来使用的。它还有一些其他的高级选项，比如用户管理（或者叫自我管理）、在同一个服务器上与其他的 Fossil 仓库进行单点登录（SSO）。</p><p>当配置完成后，关掉 web 界面并按下 <code>Ctrl+C</code> 来停止 UI 引擎。像提交代码一样提交你的 web 修改。</p><pre tabindex=0><code>$ fossil commit -m &#39;web ui updates&#39;
+New_Version: 11fe7f2855a3246c303df00ec725d0fca526fa0b83fa67c95db92283e8273c60
+</code></pre><p>现在你可以配置你的 Fossil 服务器了。</p><ol><li>把你的 Fossil 仓库（本例中是 <code>myproject.fossil</code>）复制到服务器，你只需要这一个文件。</li><li>如果你的服务器没有安装 Fossil，就在你的服务器上安装 Fossil。在服务器上安装的过程跟在本地一样。</li><li>在你的 <code>cgi-bin</code> 目录下（或它对应的目录，这取决于你的 HTTP 守护进程）创建一个名为 <code>repo_myproject.cgi</code> 的文件：</li></ol><pre tabindex=0><code>#!/usr/local/bin/fossil
+repository: /home/klaatu/public_html/myproject.fossil
+</code></pre><p>添加可执行权限：</p><pre tabindex=0><code>$ chmod +x repo_myproject.cgi
+</code></pre><p>你需要做的都已经做完了。现在可以通过互联网访问你的项目了。</p><p>你可以通过 CGI 脚本来访问 web UI，例如 <code>https://example.com/cgi-bin/repo_myproject.cgi</code>。</p><p>你也可以通过命令行来进行交互：</p><pre tabindex=0><code>$ fossil clone https://klaatu@example.com/cgi-bin/repo_myproject.cgi
+</code></pre><p>在本地的克隆仓库中工作时，你需要使用 <code>push</code> 子命令把本地的修改推送到远程的仓库，使用 <code>pull</code> 子命令把远程的修改拉取到本地仓库：</p><pre tabindex=0><code>$ fossil push https://klaatu@example.com/cgi-bin/repo_myproject.cgi
+</code></pre><h3 id=使用-fossil-作为独立的托管>使用 Fossil 作为独立的托管</h3><p>Fossil 将大量的权力交到了你的手中（以及你的合作者的手中），让你不再依赖托管服务。本文只是简单的介绍了基本概念。你的代码项目还会用到很多有用的 Fossil 功能。尝试一下 Fossil。它不仅会改变你对版本控制的理解；它会让你不再考虑其他的版本控制系统。</p><hr><p>via: <a href=https://opensource.com/article/20/11/fossil>https://opensource.com/article/20/11/fossil</a></p><p>作者：<a href=https://opensource.com/users/klaatu>Klaatu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/lxbwolf>lxbwolf</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/fossil/ rel=tag>Fossil</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/ rel=tag>版本控制</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

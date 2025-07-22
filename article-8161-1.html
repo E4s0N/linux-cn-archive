@@ -1,0 +1,59 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Ganglia 对 Linux 网格和集群服务器进行实时监控 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Ganglia 对 Linux 网格和集群服务器进行实时监控"><meta property="og:description" content="本文将向你介绍 Ganglia，它是一个易于扩展的监控系统。使用它可以实时查看 Linux 服务器和集群（图形化展示）中的各项性能指标。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8161-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-01-31T07:57:00+00:00"><meta property="article:modified_time" content="2017-01-31T07:57:00+00:00"><meta itemprop=name content="使用 Ganglia 对 Linux 网格和集群服务器进行实时监控"><meta itemprop=description content="本文将向你介绍 Ganglia，它是一个易于扩展的监控系统。使用它可以实时查看 Linux 服务器和集群（图形化展示）中的各项性能指标。"><meta itemprop=datePublished content="2017-01-31T07:57:00+00:00"><meta itemprop=dateModified content="2017-01-31T07:57:00+00:00"><meta itemprop=wordCount content="415"><meta itemprop=keywords content="监控,Ganglia,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Ganglia 对 Linux 网格和集群服务器进行实时监控</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-01-31T07:57:00Z>January 31, 2017</time></div></div></header><div class="content post__content clearfix"><p>从系统管理员接手服务器和主机管理以来，像应用监控这样的工具就成了他们的好帮手。其中比较有名的有 <a href=/article-5741-1.html>Nagios</a>、 <a href=http://www.tecmint.com/install-and-configure-zabbix-monitoring-on-debian-centos-rhel/>Zabbix</a>、 <a href=http://www.tecmint.com/install-icinga-in-centos-7/>Icinga</a> 和 Centreon。以上这些是重量级的监控工具，让一个新手管理员来设置，并使用其中的高级特性是有些困难的。</p><p>本文将向你介绍 Ganglia，它是一个易于扩展的监控系统。使用它可以实时查看 Linux 服务器和集群（图形化展示）中的各项性能指标。</p><p><img src=/data/attachment/album/201701/30/221223k0qc7e5k5p8q8ccr.jpg alt></p><p><strong>Ganglia</strong> 能够让你以<strong>集群</strong>（按服务器组）和<strong>网格</strong>（按地理位置）的方式更好地组织服务器。</p><p>这样，我们可以创建一个包含所有远程主机的网格，然后将那些机器按照其它标准分组成小的集合。</p><p>此外， Ganglia 的 web 页面对移动设备进行过优化，也允许你导出 <code>csv</code> 和 <code>.json</code> 格式的数据。</p><p>我们的测试环境包括一个安装 Ganglia 的主节点服务器 CentOS 7 （IP 地址 192.168.0.29），和一个作为被监控端的 Ubuntu 14.04 主机（192.168.0.32）。我们将通过 Ganglia 的 Web 页面来监控这台 Ubuntu 主机。</p><p>下面的例子可以给大家提供参考，CentOS7 作为主节点，Ubuntu 作为被监控对象。</p><h3 id=安装和配置-ganglia>安装和配置 Ganglia</h3><p>请遵循以下步骤，在主节点服务器安装监控工具。</p><p>1、 启用 <a href=/article-2324-1.html>EPEL 仓库</a> ，然后安装 Ganglia 和相关工具：</p><pre tabindex=0><code># yum update &amp;&amp; yum install epel-release
+# yum install ganglia rrdtool ganglia-gmetad ganglia-gmond ganglia-web
+</code></pre><p>在上面这步随 Ganglia 将安装一些应用，它们的功能如下：</p><ul><li><code>rrdtool</code>，Round-Robin 数据库，它是一个储存并图形化显示随着时间变化的数据的工具；</li><li><code>ganglia-gmetad</code> 一个守护进程，用来收集被监控主机的数据。被监控主机与主节点主机都要安装 Ganglia-gmond（监控守护进程本身）；</li><li><code>ganglia-web</code> 提供 Web 前端，用于显示监控系统的历史数据和图形。 2、 使用 Apache 提供的基本认证功能，为 Ganglia Web 界面（<code>/usr/share/ganglia</code>）配置身份认证。</li></ul><p>如果你想了解更多高级安全机制，请参阅 Apache 文档的 <a href=http://httpd.apache.org/docs/current/howto/auth.html>授权与认证</a>部分。</p><p>为完成这个目标，我们需要创建一个用户名并设定一个密码，以访问被 Apache 保护的资源。在本例中，我们先来创建一个叫 <code>adminganglia</code> 的用户名，然后给它分配一个密码，它将被储存在 <code>/etc/httpd/auth.basic</code>（可以随意选择另一个目录 和/或 文件名， 只要 Apache 对此有读取权限就可以。）</p><pre tabindex=0><code># htpasswd -c /etc/httpd/auth.basic adminganglia
+</code></pre><p>给 adminganglia 输入两次密码完成密码设置。</p><p>3、 修改配置文件 <code>/etc/httpd/conf.d/ganglia.conf</code>：</p><pre tabindex=0><code>Alias /ganglia /usr/share/ganglia
+&lt;Location /ganglia&gt;
+AuthType basic
+AuthName &#34;Ganglia web UI&#34;
+AuthBasicProvider file
+AuthUserFile &#34;/etc/httpd/auth.basic&#34;
+Require user adminganglia
+&lt;/Location&gt;
+</code></pre><p>4、 编辑 <code>/etc/ganglia/gmetad.conf</code>：</p><p>首先，使用 <code>gridname</code> 指令来为网格设置一个描述性名称。</p><pre tabindex=0><code>gridname &#34;Home office&#34;
+</code></pre><p>然后，使用 <code>data_source</code> 指令，后面跟集群名（服务器组）、轮询时间间隔（秒）、主节点主机和被监控节点的 IP 地址：</p><pre tabindex=0><code>data_source &#34;Labs&#34; 60 192.168.0.29:8649 # 主节点
+data_source &#34;Labs&#34; 60 192.168.0.32 # 被监控节点
+</code></pre><p>5、 编辑 <code>/etc/ganglia/gmond.conf</code>。</p><p>a) 确保集群的配置类似下面。</p><pre tabindex=0><code>cluster {
+name = &#34;Labs&#34; # gmetad.conf 中的  data_source 指令的名字
+owner = &#34;unspecified&#34;
+latlong = &#34;unspecified&#34;
+url = &#34;unspecified&#34;
+}
+</code></pre><p>b) 在 <code>udp_send_chanel</code> 中，注释掉 <code>mcast_join</code>：</p><pre tabindex=0><code>udp_send_channel   {
+# mcast_join = 239.2.11.71
+host = localhost
+port = 8649
+ttl = 1
+}
+</code></pre><p>c) 在 <code>udp_recv_channel</code> 中，注释掉 <code>mcast_join</code> 和 <code>bind</code> 部分：</p><pre tabindex=0><code>udp_recv_channel {
+# mcast_join = 239.2.11.71 ## comment out
+port = 8649
+# bind = 239.2.11.71 ## comment out
+}
+</code></pre><p>保存并退出。</p><p>6、打开 8649/udp 端口，使用 SELinux 确保 php 脚本（通过 Apache 运行）能够连接到网络：</p><pre tabindex=0><code># firewall-cmd --add-port=8649/udp
+# firewall-cmd --add-port=8649/udp --permanent
+# setsebool -P httpd_can_network_connect 1
+</code></pre><p>7、重启 Apache、gmetad、gmond，并确保它们启用了“开机启动”。</p><pre tabindex=0><code># systemctl restart httpd gmetad gmond
+# systemctl enable httpd gmetad httpd
+</code></pre><p>至此，我们现在能够打开 Ganglia 的 Web 页面 <code>http://192.168.0.29/ganglia</code> 并用步骤 2 中设置的凭证登录。</p><p>[<img src=/data/attachment/album/201701/30/221336o9lqkr3cl49prq3w.png alt="Gangila Web Interface">][5]</p><p><em>Gangila Web 页面</em></p><p>8、 在 <strong>Ubuntu</strong> 主机上，只需安装 Ganglia-monitor，等同于 CentOS 上的 ganglia-gmond：</p><pre tabindex=0><code>$ sudo aptitude update &amp;&amp; aptitude install ganglia-monitor
+</code></pre><p>9、 编辑被监控主机的 <code>/etc/ganglia/gmond.conf</code> 文件。与主节点主机上是相同的文件，除了被注释掉的 <code>cluster</code>, <code>udp_send_channel</code> ， <code>udp_recv_channel</code> 这里不应被注释：</p><pre tabindex=0><code>cluster {
+name = &#34;Labs&#34; # The name in the data_source directive in gmetad.conf
+owner = &#34;unspecified&#34;
+latlong = &#34;unspecified&#34;
+url = &#34;unspecified&#34;
+}
+udp_send_channel   {
+mcast_join = 239.2.11.71
+host = localhost
+port = 8649
+ttl = 1
+}
+udp_recv_channel {
+mcast_join = 239.2.11.71 ## comment out
+port = 8649
+bind = 239.2.11.71 ## comment out
+}
+</code></pre><p>之后重启服务。</p><pre tabindex=0><code>$ sudo service ganglia-monitor restart
+</code></pre><p>10、 刷新页面，你将在 Home office grid / Labs cluster 中看到两台主机的各种统计及图形化的展示（用下拉菜单选择集群，本例中为 Labs）：</p><p><img src=/data/attachment/album/201701/30/221337ca5dp7aay7n1rgts.png alt="Ganglia Home Office Grid Report"></p><p><em>Ganglia 中 Home office 网格报告</em></p><p>使用菜单按钮（如上指出的），你可以获取到每台服务器和集群的信息。还可以使用 对比主机Compare Hosts选项卡来比较集群中所有服务器的状态。</p><p>可以使用正则表达式选择一组服务器，立刻就可以看到它们性能的对比：</p><p><img src=/data/attachment/album/201701/30/221338lf3qe08cvl0xsq8q.png alt="Ganglia Host Server Information"></p><p><em>Ganglia 服务器信息</em></p><p>我最喜欢的一个特点是对移动端有友好的总结界面，可以通过 Mobile 选项来访问。选择你感兴趣的集群，然后选中一个主机。</p><p><img src=/data/attachment/album/201701/30/221339bq8x7zmwjwawfwqf.png alt="Ganglia Mobile Friendly Summary View"></p><p><em>Ganglia 移动端总结截图</em></p><h3 id=总结>总结</h3><p>本篇文章向大家介绍了 Ganglia，它是一个功能强大、扩展性很好的监控工具，主要用来监控集群和网格。它可以随意安装，便捷的组合各种功能（你甚至可以尝试一下<a href=http://ganglia.info/>官方网站</a>提供的 Demo）。</p><p>此时，你可能会发现许多知名的 IT 或非 IT 的企业在使用 Ganglia。除了我们在文章中提及的之外，还有很多理由这样做，其中易用性，统计的图形化（在名字旁附上脸部照片更清晰，不是吗）可能是最重要的原因。</p><p>但是请不要拘泥于本篇文章，尝试一下自己去做。如果你有任何问题，欢迎给我留言。</p><hr><p>via: <a href=http://www.tecmint.com/install-configure-ganglia-monitoring-centos-linux/>http://www.tecmint.com/install-configure-ganglia-monitoring-centos-linux/</a></p><p>作者：<a href=http://www.tecmint.com/author/gacanepa/>Gabriel Cánepa</a> 译者：<a href=https://github.com/ivo-wang>ivo-wang</a> 校对：<a href=https://github.com/jasminepeng>jasminepeng</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 组织编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%9B%91%E6%8E%A7/ rel=tag>监控</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ganglia/ rel=tag>Ganglia</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

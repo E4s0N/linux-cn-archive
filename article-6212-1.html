@@ -1,0 +1,139 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Node.js 4.0 中的 ES 6 特性介绍 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Node.js 4.0 中的 ES 6 特性介绍"><meta property="og:description" content="Node.js 4.0.0 已经发布了。这是和 io.js 合并之后的首个稳定版本，它带来了一系列的新特性，支持 ES 6的大部分特性。已经有很多 ES 6 的特性介绍了，这里我们介绍一下该怎么使用它们。  1. 模板字符串 如果你要在 JavaScript 中创建多行字符串，你可能会使用如下的语法： var message = .join(&rsquo;\n&rsquo;); 对于少量字符串这还算合适，但是如果比较多就会显得混乱。不过，有个聪明的开发者提出了一个叫multiline的技巧： var multiline = require(&lsquo;multiline&rsquo;); var message = multiline(function () {/* The quick brown fox jumps over the l"><meta property="og:type" content="article"><meta property="og:url" content="/article-6212-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-09-14T15:03:35+00:00"><meta property="article:modified_time" content="2015-09-14T15:03:35+00:00"><meta itemprop=name content="Node.js 4.0 中的 ES 6 特性介绍"><meta itemprop=description content="Node.js 4.0.0 已经发布了。这是和 io.js 合并之后的首个稳定版本，它带来了一系列的新特性，支持 ES 6的大部分特性。已经有很多 ES 6 的特性介绍了，这里我们介绍一下该怎么使用它们。  1. 模板字符串 如果你要在 JavaScript 中创建多行字符串，你可能会使用如下的语法： var message = .join(&rsquo;\n&rsquo;); 对于少量字符串这还算合适，但是如果比较多就会显得混乱。不过，有个聪明的开发者提出了一个叫multiline的技巧： var multiline = require(&lsquo;multiline&rsquo;); var message = multiline(function () {/* The quick brown fox jumps over the l"><meta itemprop=datePublished content="2015-09-14T15:03:35+00:00"><meta itemprop=dateModified content="2015-09-14T15:03:35+00:00"><meta itemprop=wordCount content="476"><meta itemprop=keywords content="Node.js,ES6,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Node.js 4.0 中的 ES 6 特性介绍</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-09-14T15:03:35Z>September 14, 2015</time></div></div></header><div class="content post__content clearfix"><p><a href=/article-6181-1.html>Node.js 4.0.0 已经发布了</a>。这是和 io.js 合并之后的首个稳定版本，它带来了一系列的新特性，支持 ES 6的大部分特性。已经有很多 <a href=https://nodejs.org/en/docs/es6/>ES 6 的特性</a>介绍了，这里我们介绍一下该怎么使用它们。</p><p><img src=/data/attachment/album/201509/14/150337fbb1xe1b53z770n3.jpg alt></p><h3 id=1-模板字符串>1. 模板字符串</h3><p>如果你要在 JavaScript 中创建多行字符串，你可能会使用如下的语法：</p><pre tabindex=0><code>var message = [
+    &#39;The quick brown fox&#39;,
+    &#39;jumps over&#39;,
+    &#39;the lazy dog&#39;
+].join(&#39;\n&#39;);
+</code></pre><p>对于少量字符串这还算合适，但是如果比较多就会显得混乱。不过，有个聪明的开发者提出了一个叫 <a href=https://github.com/sindresorhus/multiline>multiline</a> 的技巧：</p><pre tabindex=0><code>var multiline = require(&#39;multiline&#39;);
+var message = multiline(function () {/*
+    The quick brown fox
+    jumps over
+    the lazy dog
+*/});
+</code></pre><p>幸运的是，ES 6 为我们带来了<a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings>模板字符串</a>:</p><pre tabindex=0><code>var message = `
+    The quick brown fox
+        jumps over
+        the lazy dog
+`;
+</code></pre><p>此外，它还给我们带来了字符串内插：</p><pre tabindex=0><code>var name = &#39;Schroedinger&#39;;
+
+// 不要这样做 ...
+var message = &#39;Hello &#39; + name + &#39;, how is your cat?&#39;;
+var message = [&#39;Hello &#39;, name, &#39;, how is your cat?&#39;].join(&#39;&#39;);
+var message = require(&#39;util&#39;).format(&#39;Hello %s, how is your cat?&#39;, name);
+
+// 应该这样做 ...
+var message = `Hello ${name}, how is your cat?`;
+</code></pre><p><a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings>在 MDN 上查看模板字符串的细节</a>.</p><h3 id=2-类>2. 类</h3><p>在 ES5 中定义类看起来有点奇怪，也比较麻烦：</p><pre tabindex=0><code>var Pet = function (name) {
+    this._name = name;
+};
+
+Pet.prototype.sayHello = function () {
+    console.log(&#39;*scratch*&#39;);
+};
+
+Object.defineProperty(Pet.prototype, &#39;name&#39;, {
+  get: function () {
+    return this._name;
+  }
+});
+
+
+var Cat = function (name) {
+    Pet.call(this, name);
+};
+
+require(&#39;util&#39;).inherits(Cat, Pet);
+
+Cat.prototype.sayHello = function () {
+    Pet.prototype.sayHello.call(this);
+    console.log(&#39;miaaaauw&#39;);
+};
+</code></pre><p>幸运的是，在 Node.js 中可以使用新的 ES6 格式：</p><pre tabindex=0><code>class Pet {
+    constructor(name) {
+        this._name = name;
+    }
+    sayHello() {
+        console.log(&#39;*scratch*&#39;);
+    }
+    get name() {
+        return this._name;
+    }
+}
+
+class Cat extends Pet {
+    constructor(name) {
+        super(name);
+    }
+    sayHello() {
+        super.sayHello();
+        console.log(&#39;miaaaauw&#39;);
+    }
+}
+</code></pre><p>有 extends 关键字、构造子、调用超类及属性，是不是很棒？还不止这些，<a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes>看看 MDN 上的更详细的介绍。</a></p><h3 id=3-箭头函数>3. 箭头函数</h3><p>在函数里面对 <code>this</code> 的动态绑定总是会导致一些混乱，人们一般是这样用的：</p><pre tabindex=0><code>Cat.prototype.notifyListeners = function () {
+    var self = this;
+    this._listeners.forEach(function (listener) {
+        self.notifyListener(listener);
+    });
+};
+</code></pre><pre tabindex=0><code>Cat.prototype.notifyListeners = function () {
+    this._listeners.forEach(function (listener) {
+        this.notifyListener(listener);
+    }.bind(this));
+};
+</code></pre><p>现在你可以使用胖箭头函数了：</p><pre tabindex=0><code>Cat.prototype.notifyListeners = function () {
+    this._listeners.forEach((listener) =&gt; {
+        this.notifyListener(listener);
+    });
+};
+</code></pre><p><a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions>了解箭头函数的更多细节。</a>.</p><h3 id=4-对象字面量>4. 对象字面量</h3><p>使用对象字面量，你现在有了很漂亮的快捷方式：</p><pre tabindex=0><code>var age = 10, name = &#39;Petsy&#39;, size = 32;
+
+// 不要这样做 ...
+var cat = {
+    age: age,
+    name: name,
+    size: size
+};
+
+// ... 而是这样做 ...
+var cat = {
+    age,
+    name,
+    size
+};
+</code></pre><p>此外，你现在可以很容易地 <a href=https://github.com/lukehoban/es6features#enhanced-object-literals>给你的对象字面量添加函数</a>。</p><h3 id=5-promise>5. Promise</h3><p>不用再依赖像 <code>bluebird</code> 或 <code>Q</code>这样的第三方库了，你现在可以使用 <a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise>原生的 promise</a>. 它们公开了如下 API：</p><pre tabindex=0><code>var p1 = new Promise(function (resolve, reject) {});
+var p2 = Promise.resolve(20);
+var p3 = Promise.reject(new Error());
+var p4 = Promise.all(p1, p2);
+var p5 = Promise.race(p1, p2);
+
+// 显然
+p1.then(() =&gt; {}).catch(() =&gt; {});
+</code></pre><h3 id=6-字符串方法>6. 字符串方法</h3><p>我们也有了一系列新的字符串功能：</p><pre tabindex=0><code>// 在几种情况下可以替代 `indexOf()`
+name.startsWith(&#39;a&#39;)
+name.endsWith(&#39;c&#39;);
+name.includes(&#39;b&#39;);
+
+// 重复字符串三次
+name.repeat(3);
+</code></pre><p>去告诉那些使用 Ruby 的家伙吧！字符串现在也 <a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/ECMAScript_6_support_in_Mozilla#Additions_to_the_String_object>对 unicode 支持更好了</a>。</p><h3 id=7-let-和-const>7. let 和 const</h3><p>猜猜下列函数调用的返回值：</p><pre tabindex=0><code>var x = 20;
+(function () {
+    if (x === 20) {
+        var x = 30;
+    }
+    return x;
+}()); // -&gt; undefined
+</code></pre><p>是的， <code>undefined</code>。使用 <code>let</code> 替代 <code>var</code> ，你会得到预期的行为：</p><pre tabindex=0><code>let x = 20;
+(function () {
+    if (x === 20) {
+        let x = 30;
+    }
+    return x;
+}()); // -&gt; 20
+</code></pre><p>原因是什么呢？ <code>var</code> 是函数作用域，而 <code>let</code> 是块级作用域（如大部分人所预期的）。因此，可以说 <code>let</code> 是一个新<code>var</code>。 你可以<a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let>在 MDN 上了解更多细节</a>。</p><p>此外，Node.js 也<a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const>支持 const 关键字</a>了，它可以防止你为同一个引用赋予不同的值：</p><pre tabindex=0><code>var MY_CONST = 42; // no, no
+const MY_CONST = 42; // yes, yes
+
+MY_CONST = 10 // 使用了 const ，这就不行了
+</code></pre><h3 id=结语>结语</h3><p>Node.js 4.0.0 带来了更多的 ES6 特性，我希望这七个例子可以吸引你升级到最新版本。</p><p>还有更多的语言特性呢（例如，maps/sets, 符号和生成器，这里只提到了一点）。你可以看看 <a href=https://nodejs.org/en/docs/es6/>Node.js 4.0.0 的 ES6 概览</a>。 赶快升级吧！</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/node.js/ rel=tag>Node.js</a></li><li class=tags__item><a class="tags__link btn" href=/tags/es6/ rel=tag>ES6</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

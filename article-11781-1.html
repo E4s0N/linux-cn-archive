@@ -1,0 +1,57 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Bash 脚本发送包含几天内到期的用户账号列表的电子邮件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Bash 脚本发送包含几天内到期的用户账号列表的电子邮件"><meta property="og:description" content="大多数团队忘记更改服务帐户密码，这可能导致日常工作的中断，即使他们配置有基于 SSH 密钥的身份验证。如果用户帐户密码过期，基于SSH密钥的身份验证和 cronjob 将不起作用。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11781-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-01-13T23:21:09+00:00"><meta property="article:modified_time" content="2020-01-13T23:21:09+00:00"><meta itemprop=name content="使用 Bash 脚本发送包含几天内到期的用户账号列表的电子邮件"><meta itemprop=description content="大多数团队忘记更改服务帐户密码，这可能导致日常工作的中断，即使他们配置有基于 SSH 密钥的身份验证。如果用户帐户密码过期，基于SSH密钥的身份验证和 cronjob 将不起作用。"><meta itemprop=datePublished content="2020-01-13T23:21:09+00:00"><meta itemprop=dateModified content="2020-01-13T23:21:09+00:00"><meta itemprop=wordCount content="269"><meta itemprop=keywords content="密码,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Bash 脚本发送包含几天内到期的用户账号列表的电子邮件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-01-13T23:21:09Z>January 13, 2020</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202001/13/232047vfxkrr47mn7eapda.jpg alt></p><p>密码强制策略对所有操作系统和应用程序都是通用的。如果要<a href=/article-11709-1.html>在 Linux 上实现密码强制策略</a>，请参阅以下文章。</p><p>默认情况下，大多数公司都会强制执行密码强制策略，但根据公司的要求，密码的时间周期会有所不同。通常每个人都使用 90 天的密码周期。用户只会在他们使用的一些服务器上<a href=https://www.2daygeek.com/linux-passwd-chpasswd-command-set-update-change-users-password-in-linux-using-shell-script/>更改密码</a>，而不会在他们不经常使用的服务器上更改密码。</p><p>特别地，大多数团队忘记更改服务帐户密码，这可能导致日常工作的中断，即使他们配置有<a href=https://www.2daygeek.com/configure-setup-passwordless-ssh-key-based-authentication-linux/>基于 SSH 密钥的身份验证</a>。如果用户帐户密码过期，基于SSH密钥的身份验证和 <a href=https://www.2daygeek.com/linux-crontab-cron-job-to-schedule-jobs-task/>cronjob</a> 将不起作用。</p><p>为了避免这种情况，我们创建了一个 <a href=https://www.2daygeek.com/category/shell-script/>shell 脚本</a>来向你发送 10 天内到期的用户帐户列表。</p><p>本教程中包含两个 <a href=https://www.2daygeek.com/category/bash-script/>bash 脚本</a>可以帮助你收集系统中用户到期天数的信息。</p><h3 id=1-检查-10-天后到期的用户帐户列表>1) 检查 10 天后到期的用户帐户列表</h3><p>此脚本将帮助你在终端上检查 10 天内到期的用户帐户列表。</p><pre tabindex=0><code># vi /opt/script/user-password-expiry.sh
+</code></pre><pre tabindex=0><code>#!/bin/sh
+/tmp/user-expiry-1.txt
+/tmp/user-expiry.txt
+echo &#34;-------------------------------------------------&#34;
+echo &#34;UserName  The number of days the password expires&#34;
+echo &#34;-------------------------------------------------&#34;
+for usern in u1 u2 u3 u4
+do
+today=$(date +%s)
+userexpdate=$(chage -l $usern | grep &#39;Password expires&#39; |cut -d: -f2)
+passexp=$(date -d &#34;$userexpdate&#34; &#34;+%s&#34;)
+exp=`expr \( $passexp - $today \)`
+expday=`expr \( $exp / 86400 \)`
+echo &#34;$usern $expday&#34; &gt;&gt; /tmp/user-expiry.txt
+done
+cat /tmp/user-expiry.txt | awk &#39;$2 &lt;= 10&#39; &gt; /tmp/user-expiry-1.txt
+cat /tmp/user-expiry-1.txt | column -t
+</code></pre><p>将文件 <code>user-password-expiry.sh</code> 设置为可执行的 Linux 文件权限。</p><pre tabindex=0><code># chmod +x /opt/script/user-password-expiry.sh
+</code></pre><p>你将得到如下输出，但用户与天数可能不同。</p><pre tabindex=0><code># sh /opt/script/user-password-expiry.sh
+
+-------------------------------------------------
+UserName  The number of days the password expires
+-------------------------------------------------
+u1         -25
+u2          9
+u3          3
+u4          5
+</code></pre><h3 id=2-发送包含-10-天内到期的用户帐户列表的电子邮件>2) 发送包含 10 天内到期的用户帐户列表的电子邮件</h3><p>此脚本将发送一封包含 10 天内到期的用户帐户列表的邮件。</p><pre tabindex=0><code># vi /opt/script/user-password-expiry-mail.sh
+</code></pre><pre tabindex=0><code>#!/bin/sh
+SUBJECT=&#34;Information About User Password Expiration on &#34;`date`&#34;&#34;
+MESSAGE=&#34;/tmp/user-expiry.txt&#34;
+MESSAGE1=&#34;/tmp/user-expiry-1.txt&#34;
+TO=&#34;magesh.m@rentacenter.com&#34;
+echo &#34;-------------------------------------------------&#34; &gt;&gt; $MESSAGE1
+echo &#34;UserName  The number of days the password expires&#34; &gt;&gt; $MESSAGE1
+echo &#34;-------------------------------------------------&#34; &gt;&gt; $MESSAGE1
+for usern in u1 u2 u3 u4
+do
+today=$(date +%s)
+userexpdate=$(chage -l $usern | grep &#39;Password expires&#39; |cut -d: -f2)
+passexp=$(date -d &#34;$userexpdate&#34; &#34;+%s&#34;)
+exp=`expr \( $passexp - $today \)`
+expday=`expr \( $exp / 86400 \)`
+echo &#34;$usern $expday&#34; &gt;&gt; $MESSAGE
+done
+cat $MESSAGE | awk &#39;$2 &lt;= 10&#39; &gt;&gt; $MESSAGE1
+mail -s &#34;$SUBJECT&#34; &#34;$TO&#34; &lt; $MESSAGE1
+rm $MESSAGE
+rm $MESSAGE1
+</code></pre><p>将文件 <code>user-password-expiry-mail.sh</code> 设置为可执行的 Linux 文件权限。</p><pre tabindex=0><code># chmod +x /opt/script/user-password-expiry-mail.sh
+</code></pre><p>最后，添加一个 <a href=https://www.2daygeek.com/linux-crontab-cron-job-to-schedule-jobs-task/>cronjob</a> 去自动执行脚本。每天早上 8 点运行一次。</p><pre tabindex=0><code># crontab -e
+0 8 * * * /bin/bash /opt/script/user-password-expiry-mail.sh
+</code></pre><p>你将收到一封与第一个脚本输出类似的电子邮件。</p><hr><p>via: <a href=https://www.2daygeek.com/bash-script-to-check-user-account-password-expiry-linux/>https://www.2daygeek.com/bash-script-to-check-user-account-password-expiry-linux/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/qianmingtian>qianmingtian</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AF%86%E7%A0%81/ rel=tag>密码</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

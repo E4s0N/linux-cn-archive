@@ -1,0 +1,35 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>构建一个即时消息应用（一）：模式 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="构建一个即时消息应用（一）：模式"><meta property="og:description" content="这是一系列关于构建“即时消息”应用的新帖子。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11396-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-09-27T21:15:15+00:00"><meta property="article:modified_time" content="2019-09-27T21:15:15+00:00"><meta itemprop=name content="构建一个即时消息应用（一）：模式"><meta itemprop=description content="这是一系列关于构建“即时消息”应用的新帖子。"><meta itemprop=datePublished content="2019-09-27T21:15:15+00:00"><meta itemprop=dateModified content="2019-09-27T21:15:15+00:00"><meta itemprop=wordCount content="197"><meta itemprop=keywords content><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>构建一个即时消息应用（一）：模式</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-09-27T21:15:15Z>September 27, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201909/27/211458n44f7jvp77lfxxm0.jpg alt></p><p>这是一系列关于构建“即时消息”应用的新帖子。你应该对这类应用并不陌生。有了它们的帮助，我们才可以与朋友畅聊无忌。<a href=https://www.messenger.com/>Facebook Messenger</a>、<a href=https://www.whatsapp.com/>WhatsApp</a> 和 <a href=https://www.skype.com/>Skype</a> 就是其中的几个例子。正如你所看到的那样，这些应用允许我们发送图片、传输视频、录制音频、以及和一大帮子人聊天等等。当然，我们的教程应用将会尽量保持简单，只在两个用户之间发送文本消息。</p><p>我们将会用 <a href=https://www.cockroachlabs.com/>CockroachDB</a> 作为 SQL 数据库，用 <a href=https://golang.org/>Go</a> 作为后端语言，并且用 JavaScript 来制作 web 应用。</p><p>这是第一篇帖子，我们将会讲述数据库的设计。</p><pre tabindex=0><code>CREATE TABLE users (
+    id SERIAL NOT NULL PRIMARY KEY,
+    username STRING NOT NULL UNIQUE,
+    avatar_url STRING,
+    github_id INT NOT NULL UNIQUE
+);
+</code></pre><p>显然，这个应用需要一些用户。我们这里采用社交登录的形式。由于我选用了 <a href=https://github.com/>GitHub</a>，所以这里需要保存一个对 GitHub 用户 ID 的引用。</p><pre tabindex=0><code>CREATE TABLE conversations (
+    id SERIAL NOT NULL PRIMARY KEY,
+    last_message_id INT,
+    INDEX (last_message_id DESC)
+);
+</code></pre><p>每个对话都会引用最近一条消息。每当我们输入一条新消息时，我们都会更新这个字段。我会在后面添加外键约束。</p><p>… 你可能会想，我们可以先对对话进行分组，然后再通过这样的方式获取最近一条消息。但这样做会使查询变得更加复杂。</p><pre tabindex=0><code>CREATE TABLE participants (
+    user_id INT NOT NULL REFERENCES users ON DELETE CASCADE,
+    conversation_id INT NOT NULL REFERENCES conversations ON DELETE CASCADE,
+    messages_read_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (user_id, conversation_id)
+);
+</code></pre><p>尽管之前我提到过对话只会在两个用户之间进行，但我们还是采用了允许向对话中添加多个参与者的设计。因此，在对话和用户之间有一个参与者表。</p><p>为了知道用户是否有未读消息，我们在消息表中添加了“读取时间”（<code>messages_read_at</code>）字段。每当用户在对话中读取消息时，我们都会更新它的值，这样一来，我们就可以将它与对话中最后一条消息的“创建时间”（<code>created_at</code>）字段进行比较。</p><pre tabindex=0><code>CREATE TABLE messages (
+    id SERIAL NOT NULL PRIMARY KEY,
+    content STRING NOT NULL,
+    user_id INT NOT NULL REFERENCES users ON DELETE CASCADE,
+    conversation_id INT NOT NULL REFERENCES conversations ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    INDEX(created_at DESC)
+);
+</code></pre><p>尽管我们将消息表放在最后，但它在应用中相当重要。我们用它来保存对创建它的用户以及它所出现的对话的引用。而且还可以根据“创建时间”（<code>created_at</code>）来创建索引以完成对消息的排序。</p><pre tabindex=0><code>ALTER TABLE conversations
+ADD CONSTRAINT fk_last_message_id_ref_messages
+FOREIGN KEY (last_message_id) REFERENCES messages ON DELETE SET NULL;
+</code></pre><p>我在前面已经提到过这个外键约束了，不是吗:D</p><p>有这四张表就足够了。你也可以将这些查询保存到一个文件中，并将其通过管道传送到 Cockroach CLI。</p><p>首先，我们需要启动一个新节点：</p><pre tabindex=0><code>cockroach start --insecure --host 127.0.0.1
+</code></pre><p>然后创建数据库和这些表：</p><pre tabindex=0><code>cockroach sql --insecure -e &#34;CREATE DATABASE messenger&#34;
+cat schema.sql | cockroach sql --insecure -d messenger
+</code></pre><p>这篇帖子就到这里。在接下来的部分中，我们将会介绍「登录」，敬请期待。</p><ul><li><a href=https://github.com/nicolasparada/go-messenger-demo>源代码</a></li></ul><hr><p>via: <a href=https://nicolasparada.netlify.com/posts/go-messenger-schema/>https://nicolasparada.netlify.com/posts/go-messenger-schema/</a></p><p>作者：<a href=https://nicolasparada.netlify.com/>Nicolás Parada</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/PsiACE>PsiACE</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux 中国</a> 荣誉推出</p></div></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

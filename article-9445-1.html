@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 pelican 和 Github pages 来搭建博客 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 pelican 和 Github pages 来搭建博客"><meta property="og:description" content="这是一篇帮助你发布由 Github 托管的个人博客的教程。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9445-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-03-15T00:07:46+00:00"><meta property="article:modified_time" content="2018-03-15T00:07:46+00:00"><meta itemprop=name content="使用 pelican 和 Github pages 来搭建博客"><meta itemprop=description content="这是一篇帮助你发布由 Github 托管的个人博客的教程。"><meta itemprop=datePublished content="2018-03-15T00:07:46+00:00"><meta itemprop=dateModified content="2018-03-15T00:07:46+00:00"><meta itemprop=wordCount content="559"><meta itemprop=keywords content="博客,GitHub,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 pelican 和 Github pages 来搭建博客</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-03-15T00:07:46Z>March 15, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201803/15/000741hoox33xquo1xxep1.jpg alt></p><p>今天我将谈一下<a href=https://rsip22.github.io>我这个博客</a>是如何搭建的。在我们开始之前，我希望你熟悉使用 Github 并且可以搭建一个 Python 虚拟环境来进行开发。如果你不能做到这些，我推荐你去学习一下 <a href=https://tutorial.djangogirls.org>Django Girls 教程</a>，它包含以上和更多的内容。</p><p>这是一篇帮助你发布由 Github 托管的个人博客的教程。为此，你需要一个正常的 Github 用户账户 (而不是一个工程账户)。</p><p>你要做的第一件事是创建一个放置代码的 Github 仓库。如果你想要你的博客仅仅指向你的用户名 (比如 rsip22.github.io) 而不是一个子文件夹 (比如 rsip22.github.io/blog)，你必须创建一个带有全名的仓库。</p><p><img src=/data/attachment/album/201803/15/000754z0le03e80k033k5x.png alt></p><p><em>Github 截图，打开了创建新仓库的菜单，正在以 &lsquo;rsip22.github.io&rsquo; 名字创建一个新的仓库</em></p><p>我推荐你使用 <code>README</code>、用于 Python 的 <code>.gitignore</code> 和 <a href=https://www.gnu.org/licenses/license-list.html>一个自由软件许可证</a> 初始化你的仓库。如果你使用自由软件许可证，你仍然拥有这些代码，但是你使得其他人能从中受益，允许他们学习和复用它，并且更重要的是允许他们享有这些代码。</p><p>既然仓库已经创建好了，那我们就克隆到本机中将用来保存代码的文件夹下：</p><pre tabindex=0><code>$ git clone https://github.com/YOUR_USERNAME/YOUR_USERNAME.github.io.git
+</code></pre><p>并且切换到新的目录：</p><pre tabindex=0><code> $ cd YOUR_USERNAME.github.io
+</code></pre><p>因为 Github Pages 偏好运行的方式是从 master 分支提供文件，你必须将你的源代码放到新的分支，防止 Pelican 产生的静态文件输出到 master 分支。为此，你必须创建一个名为 source 的分支。</p><pre tabindex=0><code>$ git checkout -b source
+</code></pre><p>用你的系统所安装的 Pyhton 3 创建该虚拟环境（virtualenv）。</p><p>在 GNU/Linux 系统中，命令可能如下:</p><pre tabindex=0><code>$ python3 -m venv venv
+</code></pre><p>或者像这样：</p><pre tabindex=0><code>$ virtualenv --python=python3.5 venv
+</code></pre><p>并且激活它:</p><pre tabindex=0><code>$ source venv/bin/activate
+</code></pre><p>在虚拟环境里，你需要安装 pelican 和它的依赖包。你也应该安装 ghp-import （来帮助我们发布到 Github 上）和 Markdown （为了使用 markdown 语法来写文章）。运行如下命令：</p><pre tabindex=0><code>(venv)$ pip install pelican markdown ghp-import
+</code></pre><p>一旦完成，你就可以使用 <code>pelican-quickstart</code> 开始创建你的博客了：</p><pre tabindex=0><code>(venv)$ pelican-quickstart
+</code></pre><p>这将会提示我们一系列的问题。在回答它们之前，请看一下如下我的答案：</p><pre tabindex=0><code>&gt; Where do you want to create your new web site? [.] ./
+&gt; What will be the title of this web site? Renata&#39;s blog
+&gt; Who will be the author of this web site? Renata
+&gt; What will be the default language of this web site? [pt] en
+&gt; Do you want to specify a URL prefix? e.g., http://example.com (Y/n) n
+&gt; Do you want to enable article pagination? (Y/n) y
+&gt; How many articles per page do you want? [10] 10
+&gt; What is your time zone? [Europe/Paris] America/Sao_Paulo
+&gt; Do you want to generate a Fabfile/Makefile to automate generation and publishing? (Y/n) Y **# PAY ATTENTION TO THIS!**
+&gt; Do you want an auto-reload &amp; simpleHTTP script to assist with theme and site development? (Y/n) n
+&gt; Do you want to upload your website using FTP? (y/N) n
+&gt; Do you want to upload your website using SSH? (y/N) n
+&gt; Do you want to upload your website using Dropbox? (y/N) n
+&gt; Do you want to upload your website using S3? (y/N) n
+&gt; Do you want to upload your website using Rackspace Cloud Files? (y/N) n
+&gt; Do you want to upload your website using GitHub Pages? (y/N) y
+&gt; Is this your personal page (username.github.io)? (y/N) y
+ Done. Your new project is available at /home/username/YOUR_USERNAME.github.io
+</code></pre><p>关于时区，应该指定为 TZ 时区（这里是全部列表： <a href=https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>tz 数据库时区列表</a>）。</p><p>现在，继续往下走并开始创建你的第一篇博文！你可能想在你喜爱的代码编辑器里打开工程目录并且找到里面的 <code>content</code> 文件夹。然后创建一个新文件，它可以被命名为 <code>my-first-post.md</code> （别担心，这只是为了测试，以后你可以改变它）。在文章内容之前，应该以元数据开始，这些元数据标识标题、日期、目录及更多，像下面这样:</p><pre tabindex=0><code>.lang=&#34;markdown&#34; # DON&#39;T COPY this line, it exists just for highlighting purposes
+
+Title: My first post
+Date: 2017-11-26 10:01
+Modified: 2017-11-27 12:30
+Category: misc
+Tags: first, misc
+Slug: My-first-post
+Authors: Your name
+Summary: What does your post talk about? Write here.
+
+This is the *first post* from my Pelican blog. **YAY!**
+</code></pre><p>让我们看看它长什么样?</p><p>进入终端，产生静态文件并且启动服务器。要这么做，使用下面命令：</p><pre tabindex=0><code>(venv)$ make html &amp;&amp; make serve
+</code></pre><p>当这条命令正在运行，你应该可以在你喜爱的 web 浏览器地址栏中键入 <code>localhost:8000</code> 来访问它。</p><p><img src=/data/attachment/album/201803/15/000756ohdoz6m3acswc1yd.png alt></p><p><em>博客主页的截图。它有一个带有 Renata&rsquo;s blog 标题的头部，第一篇博文在左边，文章的信息在右边，链接和社交在底部</em></p><p>相当简洁，对吧?</p><p>现在，如果你想在文章中放一张图片，该怎么做呢？好，首先你在放置文章的内容目录里创建一个目录。为了引用简单，我们将这个目录命名为 <code>image</code>。现在你必须让 Pelican 使用它。找到 <code>pelicanconf.py</code> 文件，这个文件是你配置系统的地方，并且添加一个包含你的图片目录的变量：</p><pre tabindex=0><code>.lang=&#34;python&#34; # DON&#39;T COPY this line, it exists just for highlighting purposes
+
+STATIC_PATHS = [&#39;images&#39;]
+</code></pre><p>保存它。打开文章并且以如下方式添加图片：</p><pre tabindex=0><code>.lang=&#34;markdown&#34; # DON&#39;T COPY this line, it exists just for highlighting purposes
+
+![Write here a good description for people who can&#39;t see the image]({filename}/images/IMAGE_NAME.jpg)
+</code></pre><p>你可以在终端中随时按下 <code>CTRL+C</code> 来中断服务器。但是你应该再次启动它并检查图片是否正确。你能记住怎么样做吗？</p><pre tabindex=0><code>(venv)$ make html &amp;&amp; make serve
+</code></pre><p>在你代码完工之前的最后一步：你应该确保任何人都可以使用 ATOM 或 RSS 流来读你的文章。找到 <code>pelicanconf.py</code> 文件，这个文件是你配置系统的地方，并且编辑关于 RSS 流产生的部分:</p><pre tabindex=0><code>.lang=&#34;python&#34; # DON&#39;T COPY this line, it exists just for highlighting purposes
+
+FEED_ALL_ATOM = &#39;feeds/all.atom.xml&#39;
+FEED_ALL_RSS = &#39;feeds/all.rss.xml&#39;
+AUTHOR_FEED_RSS = &#39;feeds/%s.rss.xml&#39;
+RSS_FEED_SUMMARY_ONLY = False
+</code></pre><p>保存所有，这样你才可以将代码上传到 Github 上。你可以通过添加所有文件，使用一个信息（“first commit”）来提交它，并且使用 <code>git push</code>。你将会被问起你的 Github 登录名和密码。</p><pre tabindex=0><code>$ git add -A &amp;&amp; git commit -a -m &#39;first commit&#39; &amp;&amp; git push --all
+</code></pre><p>还有&mldr;记住在最开始的时候，我给你说的怎样防止 Pelican 产生的静态文件输出 master 分支吗。现在对你来说是时候产生它们了：</p><pre tabindex=0><code>$ make github
+</code></pre><p>你将会被再次问及 Github 登录名和密码。好了！你的新博客应该创建在 <code>https://YOUR_USERNAME.github.io</code>。</p><p>如果你在过程中任何一步遇到一个错误，请重新读一下这篇手册，尝试并看看你是否能发现错误发生的部分，因为这是调试的第一步。有时甚至一些简单的东西比如一个错字或者 Python 中错误的缩进都可以给我们带来麻烦。说出来并向网上或你的社区求助。</p><p>对于如何使用 Markdown 来写文章，你可以读一下 <a href=https://daringfireball.net/projects/markdown/syntax>Daring Fireball Markdown 指南</a>。</p><p>为了获取其它主题，我建议你访问 <a href=http://www.pelicanthemes.com/>Pelican 主题</a>。</p><p>这篇文章改编自 <a href=https://a-slide.github.io/blog/github-pelican>Adrien Leger 的使用一个 Bottstrap3 主题来搭建由 Github 托管的 Pelican 博客</a>。</p><hr><p>via: <a href=https://rsip22.github.io/blog/create-a-blog-with-pelican-and-github-pages.html>https://rsip22.github.io/blog/create-a-blog-with-pelican-and-github-pages.html</a></p><p>作者：<a href=https://rsip22.github.io>rsip22</a> 译者：<a href=https://github.com/liuxinyu123>liuxinyu123</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8D%9A%E5%AE%A2/ rel=tag>博客</a></li><li class=tags__item><a class="tags__link btn" href=/tags/github/ rel=tag>GitHub</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

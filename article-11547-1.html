@@ -1,0 +1,108 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 bmon 查看网络带宽使用情况 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 bmon 查看网络带宽使用情况"><meta property="og:description" content="介绍一下 bmon，这是一个监视和调试工具，可捕获网络统计信息并使它们易于理解。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11547-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-11-07T01:03:00+00:00"><meta property="article:modified_time" content="2019-11-07T01:03:00+00:00"><meta itemprop=name content="用 bmon 查看网络带宽使用情况"><meta itemprop=description content="介绍一下 bmon，这是一个监视和调试工具，可捕获网络统计信息并使它们易于理解。"><meta itemprop=datePublished content="2019-11-07T01:03:00+00:00"><meta itemprop=dateModified content="2019-11-07T01:03:00+00:00"><meta itemprop=wordCount content="713"><meta itemprop=keywords content="bmon,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 bmon 查看网络带宽使用情况</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-11-07T01:03:00Z>November 07, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>介绍一下 bmon，这是一个监视和调试工具，可捕获网络统计信息并使它们易于理解。</p></blockquote><p><img src=/data/attachment/album/201911/07/010237a8gb5oqddvl3bnd0.jpg alt></p><p><code>bmon</code> 是一种监视和调试工具，可在终端窗口中捕获网络统计信息，并提供了如何以易于理解的形式显示以及显示多少数据的选项。</p><p>要检查系统上是否安装了 <code>bmon</code>，请使用 <code>which</code> 命令：</p><pre tabindex=0><code>$ which bmon
+/usr/bin/bmon
+</code></pre><h3 id=获取-bmon>获取 bmon</h3><p>在 Debian 系统上，使用 <code>sudo apt-get install bmon</code> 安装该工具。</p><p>对于 Red Hat 和相关发行版，你可以使用 <code>yum install bmon</code> 或 <code>sudo dnf install bmon</code> 进行安装。或者，你可能必须使用更复杂的安装方式，例如使用以下命令，这些命令首先使用 root 帐户或 sudo 来设置所需的 <code>libconfuse</code>：</p><pre tabindex=0><code># wget https://github.com/martinh/libconfuse/releases/download/v3.2.2/confuse-3.2.2.zip
+# unzip confuse-3.2.2.zip &amp;&amp; cd confuse-3.2.2
+# sudo PATH=/usr/local/opt/gettext/bin:$PATH ./configure
+# make
+# make install
+# git clone https://github.com/tgraf/bmon.git &amp;&amp;ammp; cd bmon
+# ./autogen.sh
+# ./configure
+# make
+# sudo make install
+</code></pre><p>前面五行会安装 <code>libconfuse</code>，而后面五行会获取并安装 <code>bmon</code> 本身。</p><h3 id=使用-bmon>使用 bmon</h3><p>启动 <code>bmon</code> 的最简单方法是在命令行中键入 <code>bmon</code>。根据你正在使用的窗口的大小，你能够查看并显示各种数据。</p><p>显示区域的顶部将显示你的网络接口的统计信息：环回接口（lo）和可通过网络访问的接口（例如 eth0）。如果你的终端窗口只有区区几行高，下面这就是你可能会看到的所有内容，它将看起来像这样：</p><pre tabindex=0><code>lo bmon 4.0
+Interfaces                     x RX bps pps     %x TX bps pps     %
+ &gt;lo                           x      4B0      x0     0 0     4B        0
+    qdisc none (noqueue) x      0 0      x      0 0
+  enp0s25                      x    244B0      x1     0 0   470B        2
+    qdisc none (fq_codel)      x      0 0      x      0 0   462B        2
+q Increase screen height to see graphical statistics qq
+
+
+q Press d to enable detailed statistics qq
+q Press i to enable additional information qq
+ Wed Oct 23 14:36:27 2019 Press ? for help
+</code></pre><p>在此示例中，网络接口是 enp0s25。请注意列出的接口下方的有用的 “Increase screen height” 提示。拉伸屏幕以增加足够的行（无需重新启动 bmon），你将看到一些图形：</p><pre tabindex=0><code>Interfaces                     x RX bps       pps     %x TX bps       pps     %
+ &gt;lo                           x      0         0      x      0         0
+    qdisc none (noqueue)       x      0         0      x      0         0
+  enp0s25                      x    253B        3      x   2.65KiB      6
+    qdisc none (fq_codel)      x      0         0      x   2.62KiB      6
+qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+                              (RX Bytes/second)
+    0.00 ............................................................
+    0.00 ............................................................
+    0.00 ............................................................
+    0.00 ............................................................
+    0.00 ............................................................
+    0.00 ............................................................
+         1   5   10   15   20   25   30   35   40   45   50   55   60
+                              (TX Bytes/second)
+    0.00 ............................................................
+    0.00 ............................................................
+    0.00 ............................................................
+    0.00 ............................................................
+    0.00 ............................................................
+    0.00 ............................................................
+         1   5   10   15   20   25   30   35   40   45   50   55   60
+</code></pre><p>但是请注意，该图形未显示值。这是因为它正在显示环回 “>lo” 接口。按下箭头键指向公共网络接口，你将看到一些流量。</p><pre tabindex=0><code>Interfaces                     x RX bps       pps     %x TX bps       pps     %
+  lo                           x      0         0      x      0         0
+    qdisc none (noqueue)       x      0         0      x      0         0
+ &gt;enp0s25                      x    151B        2      x   1.61KiB      3
+    qdisc none (fq_codel)      x      0         0      x   1.60KiB      3
+qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+       B                      (RX Bytes/second)
+  635.00 ...............................|............................
+  529.17 .....|.........................|....|.......................
+  423.33 .....|................|..|..|..|..|.|.......................
+  317.50 .|..||.|..||.|..|..|..|..|..|..||.||||......................
+  211.67 .|..||.|..||.|..||||.||.|||.||||||||||......................
+  105.83 ||||||||||||||||||||||||||||||||||||||......................
+         1   5   10   15   20   25   30   35   40   45   50   55   60
+     KiB                      (TX Bytes/second)
+    4.59 .....................................|......................
+    3.83 .....................................|......................
+    3.06 ....................................||......................
+    2.30 ....................................||......................
+    1.53 |||..............|..|||.|...|.|||.||||......................
+    0.77 ||||||||||||||||||||||||||||||||||||||......................
+         1   5   10   15   20   25   30   35   40   45   50   55   60
+
+
+q Press d to enable detailed statistics qq
+q Press i to enable additional information qq
+ Wed Oct 23 16:42:06 2019 Press ? for help
+</code></pre><p>通过更改接口，你可以查看显示了网络流量的图表。但是请注意，默认值是按每秒字节数显示的。要按每秒位数来显示，你可以使用 <code>bmon -b</code> 启动该工具。</p><p>如果你的窗口足够大并按下 <code>d</code> 键，则可以显示有关网络流量的详细统计信息。你看到的统计信息示例如下所示。由于其宽度太宽，该显示分为左右两部分。</p><p>左侧：</p><pre tabindex=0><code>RX        TX   │                  RX      TX   │
+ Bytes          11.26MiB  11.26MiB│ Packets       25.91K  25.91K  │
+ Collisions         -         0   │ Compressed        0       0   │
+ Errors             0         0   │ FIFO Error        0       0   │
+ ICMPv6             2         2   │ ICMPv6 Checksu    0       -   │
+ Ip6 Broadcast      0         0   │ Ip6 Broadcast     0       0   │
+ Ip6 Delivers       8         -   │ Ip6 ECT(0) Pac    0       -   │
+ Ip6 Header Err     0         -   │ Ip6 Multicast     0     152B  │
+ Ip6 Non-ECT Pa     8         -   │ Ip6 Reasm/Frag    0       0   │
+ Ip6 Reassembly     0         -   │ Ip6 Too Big Er    0       -   │
+ Ip6Discards        0         0   │ Ip6Octets       530B    530B  │
+ Missed Error       0         -   │ Multicast         -       0   │
+ Window Error       -         0   │                               │
+</code></pre><p>右侧：</p><pre tabindex=0><code>│                  RX      TX   │                  RX      TX
+│ Abort Error       -       0   │ Carrier Error     -       0
+│ CRC Error         0       -   │ Dropped           0       0
+│ Frame Error       0       -   │ Heartbeat Erro    -
+│ ICMPv6 Errors     0       0   │ Ip6 Address Er    0       -
+│ Ip6 CE Packets    0       -   │ Ip6 Checksum E    0       -
+│ Ip6 ECT(1) Pac    0       -   │ Ip6 Forwarded     -       0
+│ Ip6 Multicast     0       2   │ Ip6 No Route      0       0
+│ Ip6 Reasm/Frag    0       0   │ Ip6 Reasm/Frag    0       0
+│ Ip6 Truncated     0       -   │ Ip6 Unknown Pr    0       -
+│ Ip6Pkts           8       8   │ Length Error      0
+│ No Handler        0       -   │ Over Error        0       -
+</code></pre><p>如果按下 <code>i</code> 键，将显示网络接口上的其他信息。</p><p>左侧：</p><pre tabindex=0><code>MTU                        1500 | Flags    broadcast,multicast,up |
+Address       00:1d:09:77:9d:08 | Broadcast ff:ff:ff:ff:ff:ff     |
+Family                   unspec | Alias                           |
+</code></pre><p>右侧：</p><pre tabindex=0><code>| Operstate                 up | IfIndex                   2 |
+| Mode                 default | TXQlen                 1000 |
+| Qdisc               fq_codel |
+</code></pre><p>如果你按下 <code>?</code> 键，将会出现一个帮助菜单，其中简要介绍了如何在屏幕上移动光标、选择要显示的数据以及控制图形如何显示。</p><p>要退出 <code>bmon</code>，输入 <code>q</code>，然后输入 <code>y</code> 以响应提示来确认退出。</p><p>需要注意的一些重要事项是：</p><ul><li><code>bmon</code> 会将其显示调整为终端窗口的大小</li><li>显示区域底部显示的某些选项仅在窗口足够大可以容纳数据时才起作用</li><li>除非你使用 <code>-R</code>（例如 <code>bmon -R 5</code>）来减慢显示速度，否则每秒更新一次显示</li></ul><hr><p>via: <a href=https://www.networkworld.com/article/3447936/viewing-network-bandwidth-usage-with-bmon.html>https://www.networkworld.com/article/3447936/viewing-network-bandwidth-usage-with-bmon.html</a></p><p>作者：<a href=https://www.networkworld.com/author/Sandra-Henry_Stocker/>Sandra Henry-Stocker</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/bmon/ rel=tag>bmon</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

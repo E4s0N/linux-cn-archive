@@ -1,0 +1,83 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>帮助你排序文本文件的 Awk 命令行或脚本 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="帮助你排序文本文件的 Awk 命令行或脚本"><meta property="og:description" content="Awk 是一个强大的工具，可以执行某些可能由其它常见实用程序（包括 sort）来完成的任务。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11684-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-12-17T09:53:45+00:00"><meta property="article:modified_time" content="2019-12-17T09:53:45+00:00"><meta itemprop=name content="帮助你排序文本文件的 Awk 命令行或脚本"><meta itemprop=description content="Awk 是一个强大的工具，可以执行某些可能由其它常见实用程序（包括 sort）来完成的任务。"><meta itemprop=datePublished content="2019-12-17T09:53:45+00:00"><meta itemprop=dateModified content="2019-12-17T09:53:45+00:00"><meta itemprop=wordCount content="409"><meta itemprop=keywords content="awk,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>帮助你排序文本文件的 Awk 命令行或脚本</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-12-17T09:53:45Z>December 17, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>Awk 是一个强大的工具，可以执行某些可能由其它常见实用程序（包括 <code>sort</code>）来完成的任务。</p></blockquote><p><img src=/data/attachment/album/201912/17/095222q7m5da4h8facvmtv.jpg alt></p><p>Awk 是个普遍存在的 Unix 命令，用于扫描和处理包含可预测模式的文本。但是，由于它具有函数功能，因此也可以合理地称之为编程语言。</p><p>令人困惑的是，有不止一个 awk。（或者，如果你认为只有一个，那么其它几个就是克隆。）有 <code>awk</code>（由Aho、Weinberger 和 Kernighan 编写的原始程序），然后有 <code>nawk</code> 、<code>mawk</code> 和 GNU 版本的 <code>gawk</code>。GNU 版本的 awk 是该实用程序的一个高度可移植的自由软件版本，具有几个独特的功能，因此本文是关于 GNU awk 的。</p><p>虽然它的正式名称是 <code>gawk</code>，但在 GNU+Linux 系统上，它的别名是 <code>awk</code>，并用作该命令的默认版本。 在其他没有带有 GNU awk 的系统上，你必须先安装它并将其称为 <code>gawk</code>，而不是 <code>awk</code>。本文互换使用术语 <code>awk</code> 和 <code>gawk</code>。</p><p><code>awk</code> 既是命令语言又是编程语言，这使其成为一个强大的工具，可以处理原本留给 <code>sort</code>、<code>cut</code>、<code>uniq</code> 和其他常见实用程序的任务。幸运的是，开源中有很多冗余空间，因此，如果你面临是否使用 <code>awk</code> 的问题，答案可能是肯定的“随便”。</p><p><code>awk</code> 的灵活之美在于，如果你已经确定使用 <code>awk</code> 来完成一项任务，那么无论接下来发生什么，你都可以继续使用 <code>awk</code>。这包括对数据排序而不是按交付给你的顺序的永恒需求。</p><h3 id=样本数据集>样本数据集</h3><p>在探索 <code>awk</code> 的排序方法之前，请生成要使用的样本数据集。保持简单，这样你就不会为极端情况和意想不到的复杂性所困扰。这是本文使用的样本集：</p><pre tabindex=0><code>Aptenodytes;forsteri;Miller,JF;1778;Emperor
+Pygoscelis;papua;Wagler;1832;Gentoo
+Eudyptula;minor;Bonaparte;1867;Little Blue
+Spheniscus;demersus;Brisson;1760;African
+Megadyptes;antipodes;Milne-Edwards;1880;Yellow-eyed
+Eudyptes;chrysocome;Viellot;1816;Sothern Rockhopper
+Torvaldis;linux;Ewing,L;1996;Tux
+</code></pre><p>这是一个很小的数据集，但它提供了多种数据类型：</p><ul><li>属名和种名，彼此相关但又是分开的</li><li>姓，有时是以逗号开头的首字母缩写</li><li>代表日期的整数</li><li>任意术语</li><li>所有字段均以分号分隔</li></ul><p>根据你的教育背景，你可能会认为这是二维数组或表格，或者只是行分隔的数据集合。你如何看待它只是你的问题，而 <code>awk</code> 只认识文本。由你决定告诉 <code>awk</code> 你想如何解析它。</p><h3 id=只想排序>只想排序</h3><p>如果你只想按特定的可定义字段（例如电子表格中的“单元格”）对文本数据集进行排序，则可以使用 <a href=https://opensource.com/article/19/10/get-sorted-sort>sort 命令</a>。</p><h3 id=字段和记录>字段和记录</h3><p>无论输入的格式如何，都必须在其中找到模式才可以专注于对你重要的数据部分。在此示例中，数据由两个因素定界：行和字段。每行都代表一个新的<em>记录</em>，就如你在电子表格或数据库转储中看到的一样。在每一行中，都有用分号（<code>;</code>）分隔的不同的<em>字段</em>（将其视为电子表格中的单元格）。</p><p><code>awk</code> 一次只处理一条记录，因此，当你在构造发给 <code>awk</code> 的这指令时，你可以只关注一行记录。写下你想对一行数据执行的操作，然后在下一行进行测试（无论是心理上还是用 <code>awk</code> 进行测试），然后再进行其它的一些测试。最后，你要对你的 <code>awk</code> 脚本要处理的数据做好假设，以便可以按你要的数据结构提供给你数据。</p><p>在这个例子中，很容易看到每个字段都用分号隔开。为简单起见，假设你要按每行的第一字段对列表进行排序。</p><p>在进行排序之前，你必须能够让 <code>awk</code> 只关注在每行的第一个字段上，因此这是第一步。终端中 awk 命令的语法为 <code>awk</code>，后跟相关选项，最后是要处理的数据文件。</p><pre tabindex=0><code>$ awk --field-separator=&#34;;&#34; &#39;{print $1;}&#39; penguins.list
+Aptenodytes
+Pygoscelis
+Eudyptula
+Spheniscus
+Megadyptes
+Eudyptes
+Torvaldis
+</code></pre><p>因为字段分隔符是对 Bash shell 具有特殊含义的字符，所以必须将分号括在引号中或在其前面加上反斜杠。此命令仅用于证明你可以专注于特定字段。你可以使用另一个字段的编号尝试相同的命令，以查看数据的另一个“列”的内容：</p><pre tabindex=0><code>$ awk --field-separator=&#34;;&#34; &#39;{print $3;}&#39; penguins.list
+Miller,JF
+Wagler
+Bonaparte
+Brisson
+Milne-Edwards
+Viellot
+Ewing,L
+</code></pre><p>我们尚未进行任何排序，但这是良好的基础。</p><h3 id=脚本编程>脚本编程</h3><p><code>awk</code> 不仅仅是命令，它是一种具有索引、数组和函数的编程语言。这很重要，因为这意味着你可以获取要排序的字段列表，将列表存储在内存中，进行处理，然后打印结果数据。对于诸如此类的一系列复杂操作，在文本文件中进行操作会更容易，因此请创建一个名为 <code>sort.awk</code> 的新文件并输入以下文本：</p><pre tabindex=0><code>#!/bin/gawk -f
+
+BEGIN {
+        FS=&#34;;&#34;;
+}
+</code></pre><p>这会将该文件建立为 <code>awk</code> 脚本，该脚本中包含执行的行。</p><p><code>BEGIN</code> 语句是 <code>awk</code> 提供的特殊设置功能，用于只需要执行一次的任务。定义内置变量 <code>FS</code>，它代表 字段分隔符 field separator ，并且与你在 <code>awk</code> 命令中使用 <code>--field-separator</code> 设置的值相同，它只需执行一次，因此它包含在 <code>BEGIN</code> 语句中。</p><h4 id=awk-中的数组>awk 中的数组</h4><p>你已经知道如何通过使用 <code>$</code> 符号和字段编号来收集特定字段的值，但是在这种情况下，你需要将其存储在数组中而不是将其打印到终端。这是通过 <code>awk</code> 数组完成的。<code>awk</code> 数组的重要之处在于它包含键和值。 想象一下有关本文的内容；它看起来像这样：<code>author:"seth",title:"How to sort with awk",length:1200</code>。诸如作者、标题和长度之类的元素是键，跟着的内容为值。</p><p>在排序的上下文中这样做的好处是，你可以将任何字段分配为键，将任何记录分配为值，然后使用内置的 <code>awk</code> 函数 <code>asorti()</code>（按索引排序）按键进行排序。现在，随便假设你<em>只</em>想按第二个字段排序。</p><p><em>没有</em>被特殊关键字 <code>BEGIN</code> 或 <code>END</code> 引起来的 <code>awk</code> 语句是在每个记录都要执行的循环。这是脚本的一部分，该脚本扫描数据中的模式并进行相应的处理。每次 <code>awk</code> 将注意力转移到一条记录上时，都会执行 <code>{}</code> 中的语句（除非以 <code>BEGIN</code> 或 <code>END</code> 开头）。</p><p>要将键和值添加到数组，请创建一个包含数组的变量（在本示例脚本中，我将其称为 <code>ARRAY</code>，虽然不是很原汁原味，但很清楚），然后在方括号中分配给它键，用等号（<code>=</code>）连接值。</p><pre tabindex=0><code>{   # dump each field into an array
+    ARRAY[$2] = $R;
+}
+</code></pre><p>在此语句中，第二个字段的内容（<code>$2</code>）用作关键字，而当前记录（<code>$R</code>）用作值。</p><h3 id=asorti-函数>asorti() 函数</h3><p>除了数组之外，<code>awk</code> 还具有一些基本函数，你可以将它们用作常见任务的快速简便的解决方案。GNU awk中引入的函数之一 <code>asorti()</code> 提供了按键（<em>索引</em>）或值对数组进行排序的功能。</p><p>你只能在对数组进行填充后对其进行排序，这意味着此操作不能对每个新记录都触发，而只能在脚本的最后阶段进行。为此，<code>awk</code> 提供了特殊的 <code>END</code> 关键字。与 <code>BEGIN</code> 相反，<code>END</code> 语句仅在扫描了所有记录之后才触发一次。</p><p>将这些添加到你的脚本：</p><pre tabindex=0><code>END {
+    asorti(ARRAY,SARRAY);
+    # get length
+    j = length(SARRAY);
+   
+    for (i = 1; i &amp;lt;= j; i++) {
+        printf(&#34;%s %s\n&#34;, SARRAY[i],ARRAY[SARRAY[i]])
+    }
+}
+</code></pre><p><code>asorti()</code> 函数获取 <code>ARRAY</code> 的内容，按索引对其进行排序，然后将结果放入名为 <code>SARRAY</code> 的新数组（我在本文中发明的任意名称，表示“排序的 ARRAY”）。</p><p>接下来，将变量 <code>j</code>（另一个任意名称）分配给 <code>length()</code> 函数的结果，该函数计算 <code>SARRAY</code> 中的项数。</p><p>最后，使用 <code>for</code> 循环使用 <code>printf()</code> 函数遍历 <code>SARRAY</code> 中的每一项，以打印每个键，然后在 <code>ARRAY</code> 中打印该键的相应值。</p><h3 id=运行该脚本>运行该脚本</h3><p>要运行你的 <code>awk</code> 脚本，先使其可执行：</p><pre tabindex=0><code>$ chmod +x sorter.awk
+</code></pre><p>然后针对 <code>penguin.list</code> 示例数据运行它：</p><pre tabindex=0><code>$ ./sorter.awk penguins.list
+antipodes Megadyptes;antipodes;Milne-Edwards;1880;Yellow-eyed
+chrysocome Eudyptes;chrysocome;Viellot;1816;Sothern Rockhopper
+demersus Spheniscus;demersus;Brisson;1760;African
+forsteri Aptenodytes;forsteri;Miller,JF;1778;Emperor
+linux Torvaldis;linux;Ewing,L;1996;Tux
+minor Eudyptula;minor;Bonaparte;1867;Little Blue
+papua Pygoscelis;papua;Wagler;1832;Gentoo
+</code></pre><p>如你所见，数据按第二个字段排序。</p><p>这有点限制。最好可以在运行时灵活选择要用作排序键的字段，以便可以在任何数据集上使用此脚本并获得有意义的结果。</p><h3 id=添加命令选项>添加命令选项</h3><p>你可以通过在脚本中使用字面值 <code>var</code> 将命令变量添加到 <code>awk</code> 脚本中。更改脚本，以使迭代子句在创建数组时使用 <code>var</code>：</p><pre tabindex=0><code>{ # dump each field into an array
+    ARRAY[$var] = $R;
+}
+</code></pre><p>尝试运行该脚本，以便在执行脚本时使用 <code>-v var</code> 选项将其按第三字段排序：</p><pre tabindex=0><code>$ ./sorter.awk -v var=3 penguins.list
+Bonaparte Eudyptula;minor;Bonaparte;1867;Little Blue
+Brisson Spheniscus;demersus;Brisson;1760;African
+Ewing,L Torvaldis;linux;Ewing,L;1996;Tux
+Miller,JF Aptenodytes;forsteri;Miller,JF;1778;Emperor
+Milne-Edwards Megadyptes;antipodes;Milne-Edwards;1880;Yellow-eyed
+Viellot Eudyptes;chrysocome;Viellot;1816;Sothern Rockhopper
+Wagler Pygoscelis;papua;Wagler;1832;Gentoo
+</code></pre><h3 id=修正>修正</h3><p>本文演示了如何在纯 GNU awk 中对数据进行排序。你可以对脚本进行改进，以便对你有用，花一些时间在<code>gawk</code> 的手册页上研究 <a href=https://www.gnu.org/software/gawk/manual/html_node/Built_002din.html#Built_002din>awk 函数</a>并自定义脚本以获得更好的输出。</p><p>这是到目前为止的完整脚本：</p><pre tabindex=0><code>#!/usr/bin/awk -f
+# GPLv3 appears here
+# usage: ./sorter.awk -v var=NUM FILE
+
+BEGIN { FS=&#34;;&#34;; }
+
+{ # dump each field into an array
+    ARRAY[$var] = $R;
+}
+
+END {
+    asorti(ARRAY,SARRAY);
+    # get length
+    j = length(SARRAY);
+   
+    for (i = 1; i &amp;lt;= j; i++) {
+        printf(&#34;%s %s\n&#34;, SARRAY[i],ARRAY[SARRAY[i]])
+    }
+}
+</code></pre><hr><p>via: <a href=https://opensource.com/article/19/11/how-sort-awk>https://opensource.com/article/19/11/how-sort-awk</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/awk/ rel=tag>awk</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

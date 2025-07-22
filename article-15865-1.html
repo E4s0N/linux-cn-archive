@@ -1,0 +1,84 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>创建你的第一个使用 OpenAI ChatGPT API 的程序 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="创建你的第一个使用 OpenAI ChatGPT API 的程序"><meta property="og:description" content="以下是如何使用 OpenAI ChatGPT AI 创建聊天助手的 Python 程序的方法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15865-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-06-01T07:13:00+00:00"><meta property="article:modified_time" content="2023-06-01T07:13:00+00:00"><meta itemprop=name content="创建你的第一个使用 OpenAI ChatGPT API 的程序"><meta itemprop=description content="以下是如何使用 OpenAI ChatGPT AI 创建聊天助手的 Python 程序的方法。"><meta itemprop=datePublished content="2023-06-01T07:13:00+00:00"><meta itemprop=dateModified content="2023-06-01T07:13:00+00:00"><meta itemprop=wordCount content="735"><meta itemprop=keywords content="OpenAI,ChatGPT,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>创建你的第一个使用 OpenAI ChatGPT API 的程序</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-06-01T07:13:00Z>June 01, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202306/01/071320acb1o8okoczg9ok9.jpg alt></p><blockquote><p>以下是如何使用 OpenAI ChatGPT AI 创建聊天助手的 Python 程序的方法。</p></blockquote><p>易于使用的 AI “ChatGPT” 已经以 API <a href=https://openai.com/blog/introducing-chatgpt-and-whisper-apis>提供</a>。ChatGPT 的创造者 OpenAI 宣布，模型（&lsquo;gpt-3.5-turbo&rsquo;）现在适用于自定义产品和解决方案。而且成本也非常实惠。目前的价格为每 1000 个令牌 0.002 美元。</p><p>该模型目前与 Whisper API 一起提供，后者也用于文本到语音解决方案。该 API 目前具备以下功能：</p><ul><li>创建自定义的对话代理和机器人</li><li>为你编写 Python 代码</li><li>起草电子邮件或任何你想要的文档</li><li>你可以将自然语言界面集成到你当前的产品/应用/服务或软件中，为你的消费者提供服务</li><li>语言翻译服务</li><li>成为许多科目的导师</li><li>模拟视频游戏角色</li></ul><p>正如你所见，机会无限。</p><p>如果你计划尝试该 API 并开始使用它，这里有一个简单的指南，为你提供逐步指导。</p><h3 id=openai-chatgpt-api-入门指南>OpenAI ChatGPT API: 入门指南</h3><h4 id=先决条件>先决条件</h4><p>确保你拥有一个 OpenAI 账户。如果你没有，<a href=https://chat.openai.com/>访问此页面</a> 并创建一个账户。你也可以使用你的谷歌或微软账号。</p><p>创建一个账户后，生成一个专属于你的 API 密钥。访问 <a href=https://platform.openai.com/account/api-keys>此页面</a> 并创建一个新的秘密密钥。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202306/01/071432a4luqkfkzekulf7k.jpg alt="创建 OpenAI API 密钥的位置"></p><p>记录该密钥或在安全的地方保存它。基于安全原因，它将不会从 OpenAI 账户部分再次可见。而且不要与任何人分享此密钥。如果你计划使用企业解决方案，请向你的组织查询 API 密钥。由于该密钥与你的付费 OpenAI 计划相关，因此请谨慎使用。</p><h3 id=设置环境>设置环境</h3><h4 id=安装-python-和-pip>安装 Python 和 pip</h4><p>本指南使用 Python 编程语言来调用 OpenAI API 密钥。你可以使用 Java 或其他任何语言来调用它。</p><p>首先，请确保你在 Linux 或 Windows 中已经安装了 Python。如果没有，请按照以下指南安装 Python。如果你使用现代 Linux 发行版（例如 Ubuntu），Python 应该已经安装好了。</p><ul><li><a href=https://www.debugpoint.com/install-python-windows/>如何在 Windows 上安装 Python</a></li><li><a href=https://www.debugpoint.com/install-python-3-11-ubuntu/>如何在 Ubuntu 及其他 Linux 上安装最新版 Python</a></li></ul><p>在安装 Python 后，确保 <code>pip</code> 在 Linux 发行版中可用。运行以下命令进行安装。对于 Windows，你应该已经在 Python 安装的一部分中安装了它。</p><p>Ubuntu、Debian 和其他基于 Debian 的发行版：</p><pre tabindex=0><code>sudo apt install python3-pip
+</code></pre><p>Fedora、RHEL、CentOS 等：</p><pre tabindex=0><code>sudo dnf install python3-pip
+</code></pre><p>Arch Linux：</p><pre tabindex=0><code>sudo pacman -S python-pip
+</code></pre><h4 id=将-openai-api-密钥设置为环境变量>将 OpenAI API 密钥设置为环境变量</h4><p>上述步骤中创建的 API 密钥，你可以直接在程序中使用。但这并不是最佳实践。</p><p>最佳实践是从文件或你系统的环境变量中调用它。</p><p>对于 Windows，请设置一个任何名字的环境变量，例如 <code>API-KEY</code>。并添加密钥值。</p><p>对于 Linux，请使用超级用户权限打开 <code>/etc/environment</code> 文件并添加密钥。例如：</p><pre tabindex=0><code>API-KEY=&#34;&lt;你的密钥&gt;&#34;
+</code></pre><p>对于基于文件的密钥访问，请在你的代码中使用以下语句：</p><pre tabindex=0><code>openai.api_key_path = &lt;你的 API 密钥路径&gt;
+</code></pre><p>对于直接在代码中访问（不建议），你可以在你的代码中使用以下语句：</p><pre tabindex=0><code>openai.api_key = &#34;你的密钥&#34;
+</code></pre><p><strong>注意</strong>：如果验证失败，OpenAI API 将抛出以下错误。你需要验证你的密钥值、路径和其他参数以进行更正：<code>openai.error.AuthenticationError: No API key provided</code>。</p><h4 id=安装-openai-api>安装 OpenAI API</h4><p>最后一步是安装 OpenAI 的 Python 库。打开终端或命令窗口，使用以下命令安装 OpenAI API。</p><pre tabindex=0><code>pip install openai
+</code></pre><p>在此阶段，你已经准备好撰写你的第一个程序了！</p><h3 id=编写助手程序逐步>编写助手程序（逐步）</h3><p>OpenAI API 提供了各种接口模式。例如“聊天补完”、“代码补完”、“图像生成”等。在本指南中，我将使用 API 的“聊天补完”功能。使用此功能，我们可以创建一个简单的对话聊天机器人。</p><p>首先，你需要导入 OpenAI 库。你可以使用以下语句在你的 Python 程序中完成：</p><pre tabindex=0><code>import openai
+</code></pre><p>在这个语句之后，你应该确保启用你的 API 密钥。你可以使用上面解释的任何方法来完成。</p><pre tabindex=0><code>openai.api_key=&#34;your key here&#34;
+</code></pre><pre tabindex=0><code>openai.api_key=&#34;your environment variable&#34;
+</code></pre><pre tabindex=0><code>openai.api_key_path = &lt;your path to API key&gt;
+</code></pre><p>OpenAI 聊天 API 的基本功能如下所示。<code>openai.ChatCompletion.create</code> 函数以 JSON 格式接受多个参数。这些参数的形式是 “角色”（<code>role</code>） 和 “内容”（<code>content</code>）：</p><pre tabindex=0><code>openai.ChatCompletion.create(   
+  model = &#34;gpt-3.5-turbo&#34;,   
+  messages = [         
+    {&#34;role&#34;: &#34;system&#34;, &#34;content&#34;: &#34;You are a helpful assistant.&#34;},
+    {&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: &#34;Who won the world series in 2020?&#34;},
+    {&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: &#34;The Los Angeles Dodgers won the World Series in 2020.&#34;},
+    {&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: &#34;Where was it played?&#34;}     
+  ]
+)
+</code></pre><p><strong>说明：</strong></p><p><code>role</code>: 有效的值为 <code>system</code>、<code>user</code>、<code>assistant</code></p><ul><li><code>system</code>: 指示 API 如何行动。基本上，它是 OpenAI 的主提示。</li><li><code>user</code>: 你要问的问题。这是单个或多个会话中的用户输入。它可以是多行文本。</li><li><code>assistant</code>: 当你编写对话时，你需要使用此角色来添加响应。这样，API 就会记住讨论的内容。</li></ul><p><strong>注意</strong>：在一个单一的消息中，你可以发送多个角色。如上述代码片段所示的行为、你的问题和历史记录。</p><p>让我们定义一个数组来保存 OpenAI 的完整消息。然后向用户展示提示并接受 <code>system</code> 指令。</p><pre tabindex=0><code>messages = []
+system_message = input(&#34;What type of chatbot you want me to be?&#34;)
+messages.append({&#34;role&#34;:&#34;system&#34;,&#34;content&#34;:system_message})
+</code></pre><p>一旦设置好了，再次提示用户进行关于对话的进一步提问。你可以使用 Python 的 <code>input</code> 函数（或任何其他文件输入方法），并为角色 <code>user</code> 设置 <code>content</code>。</p><pre tabindex=0><code>print(&#34;Alright! I am ready to be your friendly chatbot&#34; + &#34;\n&#34; + &#34;You can now type your messages.&#34;)
+message = input(&#34;&#34;)
+messages.append({&#34;role&#34;:&#34;user&#34;,&#34;content&#34;: message})
+</code></pre><p>现在，你已经准备好了具有基本 JSON 输入的数组，用于调用“聊天补完”服务的 <code>create</code> 函数。</p><pre tabindex=0><code>response=openai.ChatCompletion.create(model=&#34;gpt-3.5-turbo&#34;,messages=messages)
+</code></pre><p>现在，你可以对其进行适当的格式化，要么打印响应，要么解析响应。响应是以 JSON 格式提供的。输出响应提供了 <code>choices</code> 数组。响应在 <code>message</code> JSON 对象下提供，其中包括 <code>content</code> 值。</p><p>对于此示例，我们可以读取 <code>choices</code> 数组中的第一个对象并读取其 <code>content</code>。</p><pre tabindex=0><code>reply = response[&#34;choices&#34;][0][&#34;message&#34;][&#34;content&#34;]
+print(reply)
+</code></pre><p>最后，它将为你提供来自 API 的输出。</p><h3 id=运行代码>运行代码</h3><p>你可以从你的 <a href=https://www.debugpoint.com/5-best-python-ide-code-editor/>喜好的 Python IDE</a> 或直接从命令行运行代码。</p><pre tabindex=0><code>python OpenAIDemo2.py
+</code></pre><h4 id=未格式化的-json-输出>未格式化的 JSON 输出</h4><p>以下是使用未格式化的 JSON 输出运行上述程序供你参考。正如你所看到的，响应在 <code>choices</code> 数组下具有 <code>content</code>。</p><pre tabindex=0><code>[debugpoint@fedora python]$ python OpenAIDemo2.py
+What type of chatbot you want me to be?a friendly friend
+Alright! I am ready to be your friendly chatbot
+You can now type your messages.
+what do you think about kindness?
+{
+  &#34;choices&#34;: [
+    {
+      &#34;finish_reason&#34;: &#34;stop&#34;,
+      &#34;index&#34;: 0,
+      &#34;message&#34;: {
+        &#34;content&#34;: &#34;As an AI language model, I don&#39;t have personal opinions, but I can tell you that kindness is a very positive and essential trait to have. Kindness is about being considerate and compassionate towards others, which creates positive emotions and reduces negativity. People who are kind towards others are more likely to inspire kindness and compassion in return. It is an important quality that helps to build positive relationships, promote cooperation, and create a more peaceful world.&#34;,
+        &#34;role&#34;: &#34;assistant&#34;
+      }
+    }
+  ],
+  &#34;created&#34;: &lt;removed&gt;,
+  &#34;id&#34;: &#34;chatcmpl-&lt;removed&gt;&#34;,
+  &#34;model&#34;: &#34;gpt-3.5-turbo-0301&#34;,
+  &#34;object&#34;: &#34;chat.completion&#34;,
+  &#34;usage&#34;: {
+    &#34;completion_tokens&#34;: 91,
+    &#34;prompt_tokens&#34;: 22,
+    &#34;total_tokens&#34;: 113
+  }
+}
+</code></pre><h4 id=格式化的输出>格式化的输出</h4><p>这是一个适当的对话式输出。</p><pre tabindex=0><code>[debugpoint@fedora python]$ python OpenAIDemo2.py
+What type of chatbot you want me to be?a friendly friend
+Alright! I am ready to be your friendly chatbot
+You can now type your messages.
+what do you think about artificial general intelligence?
+</code></pre><pre tabindex=0><code>As an AI language model, I am programmed to be neutral and not have personal opinions. However, artificial general intelligence (AGI) is a fascinating field of study. AGI refers to the development of machines and algorithms that can perform any intellectual task that a human being can. The potential benefits and risks of AGI are still widely debated, with some experts worried about the implications of machines reaching human-like intelligence. However, many believe that AGI has the potential to revolutionize fields such as healthcare, education, and transportation. The key is to ensure that AGI is developed in a responsible and ethical manner.
+</code></pre><h3 id=完整代码>完整代码</h3><p>这是上面演示中使用的完整代码。</p><pre tabindex=0><code>import openai
+
+openai.api_key = &#34;&lt;your key&gt;&#34;
+messages = []
+system_message = input(&#34;What type of chatbot you want me to be?&#34;)
+messages.append({&#34;role&#34;:&#34;system&#34;,&#34;content&#34;:system_message})
+
+print(&#34;Alright! I am ready to be your friendly chatbot&#34; + &#34;\n&#34; + &#34;You can now type your messages.&#34;)
+message = input(&#34;&#34;)
+messages.append({&#34;role&#34;:&#34;user&#34;,&#34;content&#34;: message})
+
+response = openai.ChatCompletion.create(
+  model=&#34;gpt-3.5-turbo&#34;,
+  messages=messages
+)
+
+reply = response[&#34;choices&#34;][0][&#34;message&#34;][&#34;content&#34;]
+print(reply)
+</code></pre><h3 id=总结>总结</h3><p>希望这篇简单的指南能让你开始尝试 OpenAI CharGPT API。你可以将上述步骤扩展到更复杂的会话式聊天机器人。此外，你还可以使用 OpenAI 的其他产品。</p><p>请不要错过我后续的教程，我将会实验和分享给大家。最后，请不要忘记关注我们，以便及时获取我们的文章。</p><p>如果上述步骤对你有帮助，请在评论框中告诉我。</p><p>干杯！</p><blockquote><p><strong><a href=https://platform.openai.com/docs/guides/chat/introduction>参考资料</a></strong></p></blockquote><p><em>（题图：MJ/b206dd48-f698-4800-bccc-19ea11a17ea6）</em></p><hr><p>via: <a href=https://www.debugpoint.com/openai-chatgpt-api-python>https://www.debugpoint.com/openai-chatgpt-api-python</a></p><p>作者：<a href=https://www.debugpoint.com/author/admin1/>Arindam</a> 选题：<a href=https://github.com/lkxed/>lkxed</a> 译者：ChatGPT 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/openai/ rel=tag>OpenAI</a></li><li class=tags__item><a class="tags__link btn" href=/tags/chatgpt/ rel=tag>ChatGPT</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

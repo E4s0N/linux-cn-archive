@@ -1,0 +1,134 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>查看 Linux 发行版名称和版本号的 8 种方法 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="查看 Linux 发行版名称和版本号的 8 种方法"><meta property="og:description" content="如果你加入了一家新公司，要为开发团队安装所需的软件并重启服务，这个时候首先要弄清楚它们运行在什么发行版以及哪个版本的系统上，你才能正确完成后续的工作。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9586-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-04-28T22:49:32+00:00"><meta property="article:modified_time" content="2018-04-28T22:49:32+00:00"><meta itemprop=name content="查看 Linux 发行版名称和版本号的 8 种方法"><meta itemprop=description content="如果你加入了一家新公司，要为开发团队安装所需的软件并重启服务，这个时候首先要弄清楚它们运行在什么发行版以及哪个版本的系统上，你才能正确完成后续的工作。"><meta itemprop=datePublished content="2018-04-28T22:49:32+00:00"><meta itemprop=dateModified content="2018-04-28T22:49:32+00:00"><meta itemprop=wordCount content="650"><meta itemprop=keywords content="发行版,版本,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>查看 Linux 发行版名称和版本号的 8 种方法</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-04-28T22:49:32Z>April 28, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201804/28/224918l0adwv0a6vfii1sn.jpg alt></p><p>如果你加入了一家新公司，要为开发团队安装所需的软件并重启服务，这个时候首先要弄清楚它们运行在什么发行版以及哪个版本的系统上，你才能正确完成后续的工作。作为系统管理员，充分了解系统信息是首要的任务。</p><p>查看 Linux 发行版名称和版本号有很多种方法。你可能会问，为什么要去了解这些基本信息呢？</p><p>因为对于诸如 RHEL、Debian、openSUSE、Arch Linux 这几种主流发行版来说，它们各自拥有不同的包管理器来管理系统上的软件包，如果不知道所使用的是哪一个发行版的系统，在软件包安装的时候就会无从下手，而且由于大多数发行版都是用 systemd 命令而不是 SysVinit 脚本，在重启服务的时候也难以执行正确的命令。</p><p>下面来看看可以使用那些基本命令来查看 Linux 发行版名称和版本号。</p><h3 id=方法总览>方法总览</h3><ul><li><code>lsb_release</code> 命令</li><li><code>/etc/*-release</code> 文件</li><li><code>uname</code> 命令</li><li><code>/proc/version</code> 文件</li><li><code>dmesg</code> 命令</li><li>YUM 或 DNF 命令</li><li>RPM 命令</li><li>APT-GET 命令</li></ul><h3 id=方法-1-lsb_release-命令>方法 1： lsb_release 命令</h3><p>LSB（ Linux 标准库 Linux Standard Base ）能够打印发行版的具体信息，包括发行版名称、版本号、代号等。</p><pre tabindex=0><code># lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description: Ubuntu 16.04.3 LTS
+Release: 16.04
+Codename: xenial
+</code></pre><h3 id=方法-2-etc-release-文件>方法 2： /etc/*-release 文件</h3><p>release 文件通常被视为操作系统的标识。在 <code>/etc</code> 目录下放置了很多记录着发行版各种信息的文件，每个发行版都各自有一套这样记录着相关信息的文件。下面是一组在 Ubuntu/Debian 系统上显示出来的文件内容。</p><pre tabindex=0><code># cat /etc/issue
+Ubuntu 16.04.3 LTS \n \l
+
+# cat /etc/issue.net
+Ubuntu 16.04.3 LTS
+
+# cat /etc/lsb-release
+DISTRIB_ID=Ubuntu
+DISTRIB_RELEASE=16.04
+DISTRIB_CODENAME=xenial
+DISTRIB_DESCRIPTION=&#34;Ubuntu 16.04.3 LTS&#34;
+
+# cat /etc/os-release
+NAME=&#34;Ubuntu&#34;
+VERSION=&#34;16.04.3 LTS (Xenial Xerus)&#34;
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME=&#34;Ubuntu 16.04.3 LTS&#34;
+VERSION_ID=&#34;16.04&#34;
+HOME_URL=&#34;http://www.ubuntu.com/&#34;
+SUPPORT_URL=&#34;http://help.ubuntu.com/&#34;
+BUG_REPORT_URL=&#34;http://bugs.launchpad.net/ubuntu/&#34;
+VERSION_CODENAME=xenial
+UBUNTU_CODENAME=xenial
+
+# cat /etc/debian_version
+9.3
+</code></pre><p>下面这一组是在 RHEL/CentOS/Fedora 系统上显示出来的文件内容。其中 <code>/etc/redhat-release</code> 和 <code>/etc/system-release</code> 文件是指向 <code>/etc/[发行版名称]-release</code> 文件的一个连接。</p><pre tabindex=0><code># cat /etc/centos-release
+CentOS release 6.9 (Final)
+
+# cat /etc/fedora-release
+Fedora release 27 (Twenty Seven)
+
+# cat /etc/os-release
+NAME=Fedora
+VERSION=&#34;27 (Twenty Seven)&#34;
+ID=fedora
+VERSION_ID=27
+PRETTY_NAME=&#34;Fedora 27 (Twenty Seven)&#34;
+ANSI_COLOR=&#34;0;34&#34;
+CPE_NAME=&#34;cpe:/o:fedoraproject:fedora:27&#34;
+HOME_URL=&#34;https://fedoraproject.org/&#34;
+SUPPORT_URL=&#34;https://fedoraproject.org/wiki/Communicating_and_getting_help&#34;
+BUG_REPORT_URL=&#34;https://bugzilla.redhat.com/&#34;
+REDHAT_BUGZILLA_PRODUCT=&#34;Fedora&#34;
+REDHAT_BUGZILLA_PRODUCT_VERSION=27
+REDHAT_SUPPORT_PRODUCT=&#34;Fedora&#34;
+REDHAT_SUPPORT_PRODUCT_VERSION=27
+PRIVACY_POLICY_URL=&#34;https://fedoraproject.org/wiki/Legal:PrivacyPolicy&#34;
+
+# cat /etc/redhat-release
+Fedora release 27 (Twenty Seven)
+
+# cat /etc/system-release
+Fedora release 27 (Twenty Seven)
+</code></pre><h3 id=方法-3-uname-命令>方法 3： uname 命令</h3><p>uname（unix name 的意思） 是一个打印系统信息的工具，包括内核名称、版本号、系统详细信息以及所运行的操作系统等等。</p><ul><li><strong>建议阅读：</strong> <a href=https://www.2daygeek.com/check-find-determine-running-installed-linux-kernel-version/>6种查看系统 Linux 内核的方法</a></li></ul><pre tabindex=0><code># uname -a
+Linux localhost.localdomain 4.12.14-300.fc26.x86_64 #1 SMP Wed Sep 20 16:28:07 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+</code></pre><p>以上运行结果说明使用的操作系统版本是 Fedora 26。</p><h3 id=方法-4-procversion-文件>方法 4： /proc/version 文件</h3><p>这个文件记录了 Linux 内核的版本、用于编译内核的 gcc 的版本、内核编译的时间，以及内核编译者的用户名。</p><pre tabindex=0><code># cat /proc/version
+Linux version 4.12.14-300.fc26.x86_64 ([email protected]) (gcc version 7.2.1 20170915 (Red Hat 7.2.1-2) (GCC) ) #1 SMP Wed Sep 20 16:28:07 UTC 2017
+</code></pre><h3 id=方法-5-dmesg-命令>方法 5： dmesg 命令</h3><p>dmesg（ 展示信息 display message 或 驱动程序信息 driver message ）是大多数类 Unix 操作系统上的一个命令，用于打印内核的消息缓冲区的信息。</p><pre tabindex=0><code># dmesg | grep &#34;Linux&#34;
+[ 0.000000] Linux version 4.12.14-300.fc26.x86_64 ([email protected]) (gcc version 7.2.1 20170915 (Red Hat 7.2.1-2) (GCC) ) #1 SMP Wed Sep 20 16:28:07 UTC 2017
+[ 0.001000] SELinux: Initializing.
+[ 0.001000] SELinux: Starting in permissive mode
+[ 0.470288] SELinux: Registering netfilter hooks
+[ 0.616351] Linux agpgart interface v0.103
+[ 0.630063] usb usb1: Manufacturer: Linux 4.12.14-300.fc26.x86_64 ehci_hcd
+[ 0.688949] usb usb2: Manufacturer: Linux 4.12.14-300.fc26.x86_64 ohci_hcd
+[ 2.564554] SELinux: Disabled at runtime.
+[ 2.564584] SELinux: Unregistering netfilter hooks
+</code></pre><h3 id=方法-6-yumdnf-命令>方法 6： Yum/Dnf 命令</h3><p>Yum（ Yellowdog 更新器修改版 Yellowdog Updater Modified ）是 Linux 操作系统上的一个包管理工具，而 <code>yum</code> 命令被用于一些基于 RedHat 的 Linux 发行版上安装、更新、查找、删除软件包。</p><ul><li><strong>建议阅读：</strong> <a href=https://www.2daygeek.com/yum-command-examples-manage-packages-rhel-centos-systems/>在 RHEL/CentOS 系统上使用 yum 命令管理软件包</a></li></ul><pre tabindex=0><code># yum info nano
+Loaded plugins: fastestmirror, ovl
+Loading mirror speeds from cached hostfile
+ * base: centos.zswap.net
+ * extras: mirror2.evolution-host.com
+ * updates: centos.zswap.net
+Available Packages
+Name : nano
+Arch : x86_64
+Version : 2.3.1
+Release : 10.el7
+Size : 440 k
+Repo : base/7/x86_64
+Summary : A small text editor
+URL : http://www.nano-editor.org
+License : GPLv3+
+Description : GNU nano is a small and friendly text editor.
+</code></pre><p>下面的 <code>yum repolist</code> 命令执行后显示了 yum 的基础源仓库、额外源仓库、更新源仓库都来自 CentOS 7 仓库。</p><pre tabindex=0><code># yum repolist
+Loaded plugins: fastestmirror, ovl
+Loading mirror speeds from cached hostfile
+ * base: centos.zswap.net
+ * extras: mirror2.evolution-host.com
+ * updates: centos.zswap.net
+repo id repo name status
+base/7/x86_64 CentOS-7 - Base 9591
+extras/7/x86_64 CentOS-7 - Extras 388
+updates/7/x86_64 CentOS-7 - Updates 1929
+repolist: 11908
+</code></pre><p>使用 <code>dnf</code> 命令也同样可以查看发行版名称和版本号。</p><ul><li><strong>建议阅读：</strong> <a href=https://www.2daygeek.com/dnf-command-examples-manage-packages-fedora-system/>在 Fedora 系统上使用 DNF（YUM 的一个分支）命令管理软件包</a></li></ul><pre tabindex=0><code># dnf info nano
+Last metadata expiration check: 0:01:25 ago on Thu Feb 15 01:59:31 2018.
+Installed Packages
+Name : nano
+Version : 2.8.7
+Release : 1.fc27
+Arch : x86_64
+Size : 2.1 M
+Source : nano-2.8.7-1.fc27.src.rpm
+Repo : @System
+From repo : fedora
+Summary : A small text editor
+URL : https://www.nano-editor.org
+License : GPLv3+
+Description : GNU nano is a small and friendly text editor.
+</code></pre><h3 id=方法-7-rpm-命令>方法 7： RPM 命令</h3><p>RPM（ 红帽包管理器 RedHat Package Manager ）是在 CentOS、Oracle Linux、Fedora 这些基于 RedHat 的操作系统上的一个强大的命令行包管理工具，同样也可以帮助我们查看系统的版本信息。</p><ul><li><strong>建议阅读：</strong> <a href=https://www.2daygeek.com/rpm-command-examples/>在基于 RHEL 的系统上使用 RPM 命令管理软件包</a></li></ul><pre tabindex=0><code># rpm -q nano
+nano-2.8.7-1.fc27.x86_64
+</code></pre><h3 id=方法-8-apt-get-命令>方法 8： APT-GET 命令</h3><p>Apt-Get（ 高级打包工具 Advanced Packaging Tool ）是一个强大的命令行工具，可以自动下载安装新软件包、更新已有的软件包、更新软件包列表索引，甚至更新整个 Debian 系统。</p><ul><li><strong>建议阅读：</strong> <a href=https://www.2daygeek.com/apt-get-apt-cache-command-examples-manage-packages-debian-ubuntu-systems/>在基于 Debian 的系统上使用 Apt-Get 和 Apt-Cache 命令管理软件包</a></li></ul><pre tabindex=0><code># apt-cache policy nano
+nano:
+ Installed: 2.5.3-2ubuntu2
+ Candidate: 2.5.3-2ubuntu2
+ Version table:
+ * 2.5.3-2ubuntu2 500
+ 500 http://nova.clouds.archive.ubuntu.com/ubuntu xenial-updates/main amd64 Packages
+ 100 /var/lib/dpkg/status
+ 2.5.3-2 500
+ 500 http://nova.clouds.archive.ubuntu.com/ubuntu xenial/main amd64 Packages
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/check-find-linux-distribution-name-and-version/>https://www.2daygeek.com/check-find-linux-distribution-name-and-version/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 译者：<a href=https://github.com/HankChow>HankChow</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8F%91%E8%A1%8C%E7%89%88/ rel=tag>发行版</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%89%88%E6%9C%AC/ rel=tag>版本</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

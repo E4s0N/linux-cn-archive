@@ -1,0 +1,88 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在Ubuntu下用jailkit建立一个受限Shell - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在Ubuntu下用jailkit建立一个受限Shell"><meta property="og:description" content="Jailkit和jailed Shell
+受限shell（Jailed Shell）是一类被限制的shell，它看起来非常像真实的Shell，但是它不允许查看和修改真实的文件系统的任何部分。Shell内的文件系统不同于底层的文件系统。这种功能是通过chro &mldr;"><meta property="og:type" content="article"><meta property="og:url" content="/article-2379-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2013-12-16T10:22:00+00:00"><meta property="article:modified_time" content="2013-12-16T10:22:00+00:00"><meta itemprop=name content="在Ubuntu下用jailkit建立一个受限Shell"><meta itemprop=description content="Jailkit和jailed Shell
+受限shell（Jailed Shell）是一类被限制的shell，它看起来非常像真实的Shell，但是它不允许查看和修改真实的文件系统的任何部分。Shell内的文件系统不同于底层的文件系统。这种功能是通过chro &mldr;"><meta itemprop=datePublished content="2013-12-16T10:22:00+00:00"><meta itemprop=dateModified content="2013-12-16T10:22:00+00:00"><meta itemprop=wordCount content="514"><meta itemprop=keywords content="Ubuntu,jailkit,受限Shell,Jailed Shell,技巧,教程,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在Ubuntu下用jailkit建立一个受限Shell</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2013-12-16T10:22:00Z>December 16, 2013</time></div></div></header><div class="content post__content clearfix"><h3 id=jailkit和jailed-shell>Jailkit和jailed Shell</h3><p>受限shell（Jailed Shell）是一类被限制的shell，它看起来非常像真实的Shell，但是它不允许查看和修改真实的文件系统的任何部分。Shell内的文件系统不同于底层的文件系统。这种功能是通过chroot和其他多种程序实现的。举例来说，给用户建立一个linux shell去让他“玩玩”，或者在一个限定的环境里运行一些程序的所有功能等等。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201312/16/101526nljtayfyza44ayf3.png alt></p><p>在这个教程里我们将会探讨在Ubuntu下用jailkit建立一个受限shell。Jailkit是一个让你快速建立一个受限shell的工具，将受限用户放到里面，并配置那些要在受限制环境里运行的程序。</p><p>Jailkit 从这里下载：<a href=http://olivier.sessink.nl/jailkit/>http://olivier.sessink.nl/jailkit/</a></p><h3 id=在ubuntudebian-上安装-jailkit>在Ubuntu/Debian 上安装 jailkit</h3><ol><li>因为jaikit需要在系统上编译，首先，我们需要有用于编译的那些工具。所以，安装如下包：</li></ol><pre tabindex=0><code>$ sudo apt-get install build-essential autoconf automake libtool flex bison debhelper binutils-gold
+</code></pre><ol start=2><li>从下述URL下载Jailkit，或者访问它的网站以下载最新版本的，如果有了更新版本的话。<a href=http://olivier.sessink.nl/jailkit/jailkit-2.16.tar.gz>http://olivier.sessink.nl/jailkit/jailkit-2.16.tar.gz</a></li></ol><pre tabindex=0><code>$ wget http://olivier.sessink.nl/jailkit/jailkit-2.16.tar.gz
+</code></pre><ol start=3><li>解压</li></ol><pre tabindex=0><code>$ tar -vxzf jailkit-2.16.tar.gz
+</code></pre><ol start=4><li>编译并创建deb软件包</li></ol><p>Jailkit已经包含了用于编译成deb软件包的代码和配置，可以直接安装在Debian系的Linux上。运行下列命令来完成它。</p><pre tabindex=0><code>$ cd jailkit-2.16/
+$ sudo ./debian/rules binary
+</code></pre><ol start=5><li>安装deb软件包</li></ol><p>上述命令创建的deb软件包叫做： jailkit<em>2.16-1</em>amd64.deb.</p><pre tabindex=0><code>$ cd ..
+$ sudo dpkg -i jailkit_2.16-1_amd64.deb
+</code></pre><p>就是这样，现在Jailkit已经安装完成了。Jailkit有许多命令可以用来设置一个基于chroot的受限环境，如下是这些命令：</p><pre tabindex=0><code>$ jk_
+jk_addjailuser   jk_chrootlaunch  jk_cp            jk_jailuser      jk_lsh           jk_uchroot       
+jk_check         jk_chrootsh      jk_init          jk_list          jk_socketd       jk_update
+</code></pre><p>上述命令都有man帮助信息，如果你使用它们时，可以参考。</p><h3 id=配置jailed-shell>配置Jailed Shell</h3><ol><li>配置受限环境</li></ol><p>我们需要建立一个目录来存放所有受限环境的配置。目录随便放在什么地方，比如我们可以创建个/opt/jail的目录。</p><pre tabindex=0><code>$ sudo mkdir /opt/jail
+</code></pre><p>这个目录应为Root所有。用chown改变属主。</p><pre tabindex=0><code>$ sudo chown root:root /opt/jail
+</code></pre><ol start=2><li>设置在受限环境中可用的程序</li></ol><p>任何程序想要在受限环境中执行则必须用jk_init命令拷贝到目录中。</p><p>例如：</p><pre tabindex=0><code>$ sudo jk_init -v /jail basicshell 
+$ sudo jk_init -v /jail editors 
+$ sudo jk_init -v /jail extendedshell 
+$ sudo jk_init -v /jail netutils 
+$ sudo jk_init -v /jail ssh 
+$ sudo jk_init -v /jail sftp
+$ sudo jk_init -v /jail jk_lsh
+</code></pre><p>或一次性解决：</p><pre tabindex=0><code>$ sudo jk_init -v /opt/jail netutils basicshell jk_lsh openvpn ssh sftp
+</code></pre><p>像basicshell, editors, netutils是一些组名，其中包含多个程序。复制到jail shell中的每个组都是可执行文件、库文件等的集合。比如<strong>basicshell</strong>就在jail提供有bash, ls, cat, chmod, mkdir, cp, cpio, date, dd, echo, egrep等程序。</p><p>完整的程序列表设置，你可以在/etc/jailkit/jk_init.ini中查看。</p><blockquote><p>jk_lsh (Jailkit limited shell) - 这是一个重要的部分，必须添加到受限环境中。</p></blockquote><ol start=3><li>创建将被监禁的用户</li></ol><p>需要将一个用户放入jail里。可以先创建一个</p><pre tabindex=0><code>$ sudo adduser robber
+Adding user `robber&#39; ...
+Adding new group `robber&#39; (1005) ...
+Adding new user `robber&#39; (1006) with group `robber&#39; ...
+Creating home directory `/home/robber&#39; ...
+Copying files from `/etc/skel&#39; ...  
+Enter new UNIX password: 
+Retype new UNIX password: 
+passwd: password updated successfully
+Changing the user information for robber
+Enter the new value, or press ENTER for the default
+    Full Name []: 
+    Room Number []: 
+    Work Phone []: 
+    Home Phone []: 
+    Other []: 
+Is the information correct? [Y/n] y
+</code></pre><p>注意:目前创建的是一个在实际文件系统中的普通用户，并没有添加到受限环境中。</p><p>在下一步这个用户会被放到受限环境里。</p><p>这时候如果你查看/etc/passwd文件，你会在文件最后看到跟下面差不多的一个条目。</p><pre tabindex=0><code>robber:x:1006:1005:,,,:/home/robber:/bin/bash
+</code></pre><p>这是我们新创建的用户，最后部分的/bin/bash指示了这个用户如果登入了那么它可以在系统上正常的Shell访问
+4. 限制用户</p><p>现在是时候将用户限制</p><pre tabindex=0><code>$ sudo jk_jailuser -m -j /opt/jail/ robber
+</code></pre><p>执行上列命令后，用户robber将会被限制。</p><p>如果你现在再观察/etc/passwd文件，会发现类似下面的最后条目。</p><pre tabindex=0><code>robber:x:1006:1005:,,,:/opt/jail/./home/robber:/usr/sbin/jk_chrootsh
+</code></pre><p>注意:最后两部分表明用户主目录和shell类型已经被改变了。现在用户的主目录在/opt/jail(受限环境)中。用户的Shell是一个名叫jk_chrootsh的特殊程序，会提供Jailed Shell。</p><p>jk_chrootsh这是个特殊的shell，每当用户登入系统时，它都会将用户放入受限环境中。</p><p>到目前为止受限配置已经几乎完成了。但是如果你试图用ssh连接，那么注定会失败,像这样：</p><pre tabindex=0><code>$ ssh robber@localhost
+robber@localhost&#39;s password: 
+Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-25-generic x86_64)
+* Documentation:  https://help.ubuntu.com/
+13 packages can be updated.
+0 updates are security updates.
+*** /dev/sda7 will be checked for errors at next reboot ***
+*** /dev/sda8 will be checked for errors at next reboot ***
+Last login: Sat Jun 23 12:45:13 2012 from localhost
+Connection to localhost closed.
+$
+</code></pre><p>连接会立马关闭，这意味着用户已经活动在一个受限制的shell中。
+5. 给在jail中的用户Bash Shell</p><p>下个重要的事情是给用户在限制环境中的一个正确的bash shell。</p><p>打开下面的文件</p><pre tabindex=0><code>/opt/jail/etc/passwd
+</code></pre><p>这是个jail中的password文件。类似如下</p><pre tabindex=0><code>root:x:0:0:root:/root:/bin/bash
+robber:x:1006:1005:,,,:/home/robber:/usr/sbin/jk_lsh
+</code></pre><p>将/usr/sbin/jk_lsh改为/bin/bash</p><pre tabindex=0><code>root:x:0:0:root:/root:/bin/bash
+robber:x:1006:1005:,,,:/home/robber:/bin/bash
+</code></pre><p>保存文件并退出。
+6. 登入限制环境</p><p>现在让我们再次登入受限环境</p><pre tabindex=0><code>$ ssh robber@localhost
+robber@localhost&#39;s password: 
+Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-25-generic x86_64)
+ * Documentation:  https://help.ubuntu.com/
+13 packages can be updated.
+0 updates are security updates.
+*** /dev/sda7 will be checked for errors at next reboot ***
+*** /dev/sda8 will be checked for errors at next reboot ***
+Last login: Sat Jun 23 12:46:01 2012 from localhost
+bash: groups: command not found
+I have no name!@desktop:~$
+</code></pre><p>受限环境说&rsquo;I have no name!&rsquo;，哈哈。现在我们在受限环境中有了个完整功能的bash shell。</p><p>现在看看实际的环境。受限环境中的根目录实际就是真实文件系统中的/opt/jail。但这只有我们自己知道，受限用户并不知情。</p><pre tabindex=0><code>I have no name!@desktop:~$ cd /
+I have no name!@desktop:/$ ls
+bin  dev  etc  home  lib  lib64  run  usr  var
+I have no name!@desktop:/$
+</code></pre><p>也只有我们通过jk_cp拷贝到jail中的命令能使用。</p><p>如果登入失败，请检查一下/var/log/auth.log的错误信息。</p><p>现在尝试运行一些网络命令，类似wget的命令。</p><pre tabindex=0><code>$ wget http://www.google.com/
+</code></pre><p>如果你获得类似的错误提示：</p><pre tabindex=0><code>$ wget http://www.google.com/
+--2012-06-23 12:56:43--  http://www.google.com/
+Resolving www.google.com (www.google.com)... failed: Name or service not known.
+wget: unable to resolve host address `www.google.com&#39;
+</code></pre><p>你可以通过运行下列两条命令来解决这个问题:</p><pre tabindex=0><code>$ sudo jk_cp -v -j /opt/jail /lib/x86_64-linux-gnu/libnss_files.so.2
+$ sudo jk_cp -v -j /opt/jail /lib/x86_64-linux-gnu/libnss_dns.so.2
+</code></pre><p>这样才能正确的定位到libnss<em>files.so和libnss</em>dns.so</p><h3 id=在限制环境中运行程序或服务>在限制环境中运行程序或服务</h3><p>现在配置已经完成了。可以在限制/安全的环境里运行程序或服务。要在限制环境中启动一个程序或守护进程可以用<strong>jk_chrootlaunch</strong>命令。</p><pre tabindex=0><code>$ sudo jk_chrootlaunch -j /opt/jail -u robber -x /some/command/in/jail
+</code></pre><p>jk_chrootlaunch工具可以在限制环境中启动一个特殊的进程同时指定用户特权。如果守护进程启动失败，请检查/var/log/syslog/错误信息。</p><p>在限制环境中运行程序之前，该程序必须已经用jk_cp命令复制到jail中。</p><blockquote><p>jk_cp -　将文件包括权限信息和库文件复制到jail的工具　</p></blockquote><p>进一步阅读有关其他jailkit命令信息，可以阅读文档，<a href=http://olivier.sessink.nl/jailkit/>http://olivier.sessink.nl/jailkit/</a></p><hr><p>via: <a href=http://www.binarytides.com/install-jailkit-ubuntu-debian/>http://www.binarytides.com/install-jailkit-ubuntu-debian/</a></p><p>via: <a href=http://www.binarytides.com/setup-jailed-shell-jailkit-ubuntu/>http://www.binarytides.com/setup-jailed-shell-jailkit-ubuntu/</a></p><p>译者：<a href=https://github.com/Luoxcat>Luoxcat</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ubuntu/ rel=tag>Ubuntu</a></li><li class=tags__item><a class="tags__link btn" href=/tags/jailkit/ rel=tag>jailkit</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8F%97%E9%99%90shell/ rel=tag>受限Shell</a></li><li class=tags__item><a class="tags__link btn" href=/tags/jailed-shell/ rel=tag>Jailed Shell</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8A%80%E5%B7%A7/ rel=tag>技巧</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%99%E7%A8%8B/ rel=tag>教程</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

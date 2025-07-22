@@ -1,0 +1,53 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何识别 Linux 上的文件分身 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何识别 Linux 上的文件分身"><meta property="og:description" content="Linux 系统上的一些文件可能出现在多个位置。按照本文指示查找并识别这些“同卵双胞胎”，还可以了解为什么硬链接会如此有利。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10777-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-04-25T11:23:34+00:00"><meta property="article:modified_time" content="2019-04-25T11:23:34+00:00"><meta itemprop=name content="如何识别 Linux 上的文件分身"><meta itemprop=description content="Linux 系统上的一些文件可能出现在多个位置。按照本文指示查找并识别这些“同卵双胞胎”，还可以了解为什么硬链接会如此有利。"><meta itemprop=datePublished content="2019-04-25T11:23:34+00:00"><meta itemprop=dateModified content="2019-04-25T11:23:34+00:00"><meta itemprop=wordCount content="294"><meta itemprop=keywords content="文件,相同,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何识别 Linux 上的文件分身</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-04-25T11:23:34Z>April 25, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>Linux 系统上的一些文件可能出现在多个位置。按照本文指示查找并识别这些“同卵双胞胎”，还可以了解为什么硬链接会如此有利。</p></blockquote><p><img src=/data/attachment/album/201904/25/112343qc5rzb5xt5kstorr.jpg alt="Archana Jarajapu \(CC BY 2.0\)"></p><p>识别使用同一个磁盘空间的文件依赖于利用文件使用相同的 inode 这一事实。这种数据结构存储除了文件名和内容之外的所有信息。如果两个或多个文件具有不同的名称和文件系统位置，但共享一个 inode，则它们还共享内容、所有权、权限等。</p><p>这些文件通常被称为“硬链接”，不像符号链接（即软链接）那样仅仅通过包含它们的名称指向其他文件，符号链接很容易在文件列表中通过第一个位置的 <code>l</code> 和引用文件的 <code>-></code> 符号识别出来。</p><pre tabindex=0><code>$ ls -l my*
+-rw-r--r-- 4 shs shs   228 Apr 12 19:37 myfile
+lrwxrwxrwx 1 shs shs     6 Apr 15 11:18 myref -&gt; myfile
+-rw-r--r-- 4 shs shs   228 Apr 12 19:37 mytwin
+</code></pre><p>在单个目录中的硬链接并不是很明显，但它仍然非常容易找到。如果使用 <code>ls -i</code> 命令列出文件并按 inode 编号排序，则可以非常容易地挑选出硬链接。在这种类型的 <code>ls</code> 输出中，第一列显示 inode 编号。</p><pre tabindex=0><code>$ ls -i | sort -n | more
+ ...
+ 788000 myfile  &lt;==
+ 788000 mytwin  &lt;==
+ 801865 Name_Labels.pdf
+ 786692 never leave home angry
+ 920242 NFCU_Docs
+ 800247 nmap-notes
+</code></pre><p>扫描输出，查找相同的 inode 编号，任何匹配都会告诉你想知道的内容。</p><p>另一方面，如果你只是想知道某个特定文件是否是另一个文件的硬链接，那么有一种方法比浏览数百个文件的列表更简单，即 <code>find</code> 命令的 <code>-samefile</code> 选项将帮助你完成工作。</p><pre tabindex=0><code>$ find . -samefile myfile
+./myfile
+./save/mycopy
+./mytwin
+</code></pre><p>注意，提供给 <code>find</code> 命令的起始位置决定文件系统会扫描多少来进行匹配。在上面的示例中，我们正在查看当前目录和子目录。</p><p>使用 <code>find</code> 的 <code>-ls</code> 选项添加输出的详细信息可能更有说服力：</p><pre tabindex=0><code>$ find . -samefile myfile -ls
+ 788000    4 -rw-r--r--   4 shs    shs      228 Apr 12 19:37 ./myfile
+ 788000    4 -rw-r--r--   4 shs    shs      228 Apr 12 19:37 ./save/mycopy
+ 788000    4 -rw-r--r--   4 shs    shs      228 Apr 12 19:37 ./mytwin
+</code></pre><p>第一列显示 inode 编号，然后我们会看到文件权限、链接、所有者、文件大小、日期信息以及引用相同磁盘内容的文件的名称。注意，在这种情况下，链接字段是 “4” 而不是我们可能期望的 “3”。这告诉我们还有另一个指向同一个 inode 的链接（但不在我们的搜索范围内）。</p><p>如果你想在一个目录中查找所有硬链接的实例，可以尝试以下的脚本来创建列表并为你查找副本：</p><pre tabindex=0><code>#!/bin/bash
+
+# seaches for files sharing inodes
+
+prev=&#34;&#34;
+
+# list files by inode
+ls -i | sort -n &gt; /tmp/$0
+
+# search through file for duplicate inode #s
+while read line
+do
+    inode=`echo $line | awk &#39;{print $1}&#39;`
+    if [ &#34;$inode&#34; == &#34;$prev&#34; ]; then
+        grep $inode /tmp/$0
+    fi
+    prev=$inode
+done &lt; /tmp/$0
+
+# clean up
+rm /tmp/$0
+</code></pre><pre tabindex=0><code>$ ./findHardLinks
+ 788000 myfile
+ 788000 mytwin
+</code></pre><p>你还可以使用 <code>find</code> 命令按 inode 编号查找文件，如命令中所示。但是，此搜索可能涉及多个文件系统，因此可能会得到错误的结果。因为相同的 inode 编号可能会在另一个文件系统中使用，代表另一个文件。如果是这种情况，文件的其他详细信息将不相同。</p><pre tabindex=0><code>$ find / -inum 788000 -ls 2&gt; /dev/null
+ 788000   4 -rw-r--r--   4 shs   shs    228 Apr 12 19:37 /tmp/mycopy
+ 788000   4 -rw-r--r--   4 shs   shs    228 Apr 12 19:37 /home/shs/myfile
+ 788000   4 -rw-r--r--   4 shs   shs    228 Apr 12 19:37 /home/shs/save/mycopy
+ 788000   4 -rw-r--r--   4 shs   shs    228 Apr 12 19:37 /home/shs/mytwin
+</code></pre><p>注意，错误输出被重定向到 <code>/dev/null</code>，这样我们就不必查看所有 “Permission denied” 错误，否则这些错误将显示在我们不允许查看的其他目录中。</p><p>此外，扫描包含相同内容但不共享 inode 的文件（即，简单的文本拷贝）将花费更多的时间和精力。</p><hr><p>via: <a href=https://www.networkworld.com/article/3387961/how-to-identify-duplicate-files-on-linux.html>https://www.networkworld.com/article/3387961/how-to-identify-duplicate-files-on-linux.html</a></p><p>作者：<a href=https://www.networkworld.com/author/Sandra-Henry_Stocker/>Sandra Henry-Stocker</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%96%87%E4%BB%B6/ rel=tag>文件</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%9B%B8%E5%90%8C/ rel=tag>相同</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,290 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 RHEL/CentOS 系统上使用 YUM history 命令回滚升级操作 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 RHEL/CentOS 系统上使用 YUM history 命令回滚升级操作"><meta property="og:description" content="yum history 命令允许系统管理员将系统回滚到上一个状态，但由于某些限制，回滚不是在所有情况下都能成功，有时 yum 命令可能什么都不做，有时可能会删掉一些其他的包。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9250-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-01-18T08:47:00+00:00"><meta property="article:modified_time" content="2018-01-18T08:47:00+00:00"><meta itemprop=name content="在 RHEL/CentOS 系统上使用 YUM history 命令回滚升级操作"><meta itemprop=description content="yum history 命令允许系统管理员将系统回滚到上一个状态，但由于某些限制，回滚不是在所有情况下都能成功，有时 yum 命令可能什么都不做，有时可能会删掉一些其他的包。"><meta itemprop=datePublished content="2018-01-18T08:47:00+00:00"><meta itemprop=dateModified content="2018-01-18T08:47:00+00:00"><meta itemprop=wordCount content="1238"><meta itemprop=keywords content="升级,yum,dnf,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 RHEL/CentOS 系统上使用 YUM history 命令回滚升级操作</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-01-18T08:47:00Z>January 18, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201801/18/094229orftygtv7zdnlkmf.png alt></p><p>为服务器打补丁是 Linux 系统管理员的一项重要任务，为的是让系统更加稳定，性能更加优化。厂商经常会发布一些安全/高危的补丁包，相关软件需要升级以防范潜在的安全风险。</p><p>Yum （Yellowdog Update Modified） 是 CentOS 和 RedHat 系统上用的 RPM 包管理工具，<code>yum history</code> 命令允许系统管理员将系统回滚到上一个状态，但由于某些限制，回滚不是在所有情况下都能成功，有时 <code>yum</code> 命令可能什么都不做，有时可能会删掉一些其他的包。</p><p>我建议你在升级之前还是要做一个完整的系统备份，而 <code>yum history</code> 并不能用来替代系统备份的。系统备份能让你将系统还原到任意时候的节点状态。</p><p><strong>推荐阅读：</strong></p><ul><li><a href=https://www.2daygeek.com/yum-command-examples-manage-packages-rhel-centos-systems/>在 RHEL/CentOS 系统上使用 YUM 命令管理软件包</a></li><li><a href=https://www.2daygeek.com/dnf-command-examples-manage-packages-fedora-system/>在 Fedora 系统上使用 DNF （YUM 的一个分支）命令管理软件包</a></li><li><a href=https://www.2daygeek.com/display-date-time-linux-bash-history-command/>如何让 history 命令显示日期和时间</a></li></ul><p>某些情况下，安装的应用程序在升级了补丁之后不能正常工作或者出现一些错误（可能是由于库不兼容或者软件包升级导致的），那该怎么办呢？</p><p>与应用开发团队沟通，并找出导致库和软件包的问题所在，然后使用 <code>yum history</code> 命令进行回滚。</p><p><strong>注意：</strong></p><ul><li>它不支持回滚 selinux，selinux-policy-*，kernel，glibc （以及依赖 glibc 的包，比如 gcc）。</li><li>不建议将系统降级到更低的版本（比如 CentOS 6.9 降到 CentOS 6.8），这会导致系统处于不稳定的状态</li></ul><p>让我们先来看看系统上有哪些包可以升级，然后挑选出一些包来做实验。</p><pre tabindex=0><code># yum update
+Loaded plugins: fastestmirror, security
+Setting up Update Process
+Loading mirror speeds from cached hostfile
+epel/metalink | 12 kB 00:00
+ * epel: mirror.csclub.uwaterloo.ca
+base | 3.7 kB 00:00
+dockerrepo | 2.9 kB 00:00
+draios | 2.9 kB 00:00
+draios/primary_db | 13 kB 00:00
+epel | 4.3 kB 00:00
+epel/primary_db | 5.9 MB 00:00
+extras | 3.4 kB 00:00
+updates | 3.4 kB 00:00
+updates/primary_db | 2.5 MB 00:00
+Resolving Dependencies
+--&gt; Running transaction check
+---&gt; Package git.x86_64 0:1.7.1-8.el6 will be updated
+---&gt; Package git.x86_64 0:1.7.1-9.el6_9 will be an update
+---&gt; Package httpd.x86_64 0:2.2.15-60.el6.centos.4 will be updated
+---&gt; Package httpd.x86_64 0:2.2.15-60.el6.centos.5 will be an update
+---&gt; Package httpd-tools.x86_64 0:2.2.15-60.el6.centos.4 will be updated
+---&gt; Package httpd-tools.x86_64 0:2.2.15-60.el6.centos.5 will be an update
+---&gt; Package perl-Git.noarch 0:1.7.1-8.el6 will be updated
+---&gt; Package perl-Git.noarch 0:1.7.1-9.el6_9 will be an update
+--&gt; Finished Dependency Resolution
+
+Dependencies Resolved
+
+=================================================================================================
+ Package Arch Version Repository Size
+=================================================================================================
+Updating:
+ git x86_64 1.7.1-9.el6_9 updates 4.6 M
+ httpd x86_64 2.2.15-60.el6.centos.5 updates 836 k
+ httpd-tools x86_64 2.2.15-60.el6.centos.5 updates 80 k
+ perl-Git noarch 1.7.1-9.el6_9 updates 29 k
+
+Transaction Summary
+=================================================================================================
+Upgrade 4 Package(s)
+
+Total download size: 5.5 M
+Is this ok [y/N]: n
+</code></pre><p>你会发现 <code>git</code> 包可以被升级，那我们就用它来实验吧。运行下面命令获得软件包的版本信息（当前安装的版本和可以升级的版本）。</p><pre tabindex=0><code># yum list git
+Loaded plugins: fastestmirror, security
+Setting up Update Process
+Loading mirror speeds from cached hostfile
+ * epel: mirror.csclub.uwaterloo.ca
+Installed Packages
+git.x86_64 1.7.1-8.el6 @base
+Available Packages
+git.x86_64 1.7.1-9.el6_9 updates
+</code></pre><p>运行下面命令来将 <code>git</code> 从 <code>1.7.1-8</code> 升级到 <code>1.7.1-9</code>。</p><pre tabindex=0><code># yum update git
+Loaded plugins: fastestmirror, presto
+Setting up Update Process
+Loading mirror speeds from cached hostfile
+ * base: repos.lax.quadranet.com
+ * epel: fedora.mirrors.pair.com
+ * extras: mirrors.seas.harvard.edu
+ * updates: mirror.sesp.northwestern.edu
+Resolving Dependencies
+--&gt; Running transaction check
+---&gt; Package git.x86_64 0:1.7.1-8.el6 will be updated
+--&gt; Processing Dependency: git = 1.7.1-8.el6 for package: perl-Git-1.7.1-8.el6.noarch
+---&gt; Package git.x86_64 0:1.7.1-9.el6_9 will be an update
+--&gt; Running transaction check
+---&gt; Package perl-Git.noarch 0:1.7.1-8.el6 will be updated
+---&gt; Package perl-Git.noarch 0:1.7.1-9.el6_9 will be an update
+--&gt; Finished Dependency Resolution
+
+Dependencies Resolved
+
+=================================================================================================
+ Package Arch Version Repository Size
+=================================================================================================
+Updating:
+ git x86_64 1.7.1-9.el6_9 updates 4.6 M
+Updating for dependencies:
+ perl-Git noarch 1.7.1-9.el6_9 updates 29 k
+
+Transaction Summary
+=================================================================================================
+Upgrade 2 Package(s)
+
+Total download size: 4.6 M
+Is this ok [y/N]: y
+Downloading Packages:
+Setting up and reading Presto delta metadata
+Processing delta metadata
+Package(s) data still to download: 4.6 M
+(1/2): git-1.7.1-9.el6_9.x86_64.rpm | 4.6 MB 00:00
+(2/2): perl-Git-1.7.1-9.el6_9.noarch.rpm | 29 kB 00:00
+-------------------------------------------------------------------------------------------------
+Total 5.8 MB/s | 4.6 MB 00:00
+Running rpm_check_debug
+Running Transaction Test
+Transaction Test Succeeded
+Running Transaction
+ Updating : perl-Git-1.7.1-9.el6_9.noarch 1/4
+ Updating : git-1.7.1-9.el6_9.x86_64 2/4
+ Cleanup : perl-Git-1.7.1-8.el6.noarch 3/4
+ Cleanup : git-1.7.1-8.el6.x86_64 4/4
+ Verifying : git-1.7.1-9.el6_9.x86_64 1/4
+ Verifying : perl-Git-1.7.1-9.el6_9.noarch 2/4
+ Verifying : git-1.7.1-8.el6.x86_64 3/4
+ Verifying : perl-Git-1.7.1-8.el6.noarch 4/4
+
+Updated:
+ git.x86_64 0:1.7.1-9.el6_9
+
+Dependency Updated:
+ perl-Git.noarch 0:1.7.1-9.el6_9
+
+Complete!
+</code></pre><p>验证升级后的 <code>git</code> 版本.</p><pre tabindex=0><code># yum list git
+Installed Packages
+git.x86_64 1.7.1-9.el6_9 @updates
+
+或
+# rpm -q git
+git-1.7.1-9.el6_9.x86_64
+</code></pre><p>现在我们成功升级这个软件包，可以对它进行回滚了。步骤如下。</p><h3 id=使用-yum-history-命令回滚升级操作>使用 YUM history 命令回滚升级操作</h3><p>首先，使用下面命令获取 yum 操作的 id。下面的输出很清晰地列出了所有需要的信息，例如操作 id、谁做的这个操作（用户名）、操作日期和时间、操作的动作（安装还是升级）、操作影响的包数量。</p><pre tabindex=0><code># yum history
+或
+# yum history list all
+Loaded plugins: fastestmirror, presto
+ID | Login user | Date and time | Action(s) | Altered
+-------------------------------------------------------------------------------
+ 13 | root | 2017-08-18 13:30 | Update | 2
+ 12 | root | 2017-08-10 07:46 | Install | 1
+ 11 | root | 2017-07-28 17:10 | E, I, U | 28 EE
+ 10 | root | 2017-04-21 09:16 | E, I, U | 162 EE
+ 9 | root | 2017-02-09 17:09 | E, I, U | 20 EE
+ 8 | root | 2017-02-02 10:45 | Install | 1
+ 7 | root | 2016-12-15 06:48 | Update | 1
+ 6 | root | 2016-12-15 06:43 | Install | 1
+ 5 | root | 2016-12-02 10:28 | E, I, U | 23 EE
+ 4 | root | 2016-10-28 05:37 | E, I, U | 13 EE
+ 3 | root | 2016-10-18 12:53 | Install | 1
+ 2 | root | 2016-09-30 10:28 | E, I, U | 31 EE
+ 1 | root | 2016-07-26 11:40 | E, I, U | 160 EE
+</code></pre><p>上面命令显示有两个包受到了影响，因为 <code>git</code> 还升级了它的依赖包 <code>perl-Git</code>。 运行下面命令来查看关于操作的详细信息。</p><pre tabindex=0><code># yum history info 13
+Loaded plugins: fastestmirror, presto
+Transaction ID : 13
+Begin time : Fri Aug 18 13:30:52 2017
+Begin rpmdb : 420:f5c5f9184f44cf317de64d3a35199e894ad71188
+End time : 13:30:54 2017 (2 seconds)
+End rpmdb : 420:d04a95c25d4526ef87598f0dcaec66d3f99b98d4
+User : root
+Return-Code : Success
+Command Line : update git
+Transaction performed with:
+ Installed rpm-4.8.0-55.el6.x86_64 @base
+ Installed yum-3.2.29-81.el6.centos.noarch @base
+ Installed yum-plugin-fastestmirror-1.1.30-40.el6.noarch @base
+ Installed yum-presto-0.6.2-1.el6.noarch @anaconda-CentOS-201207061011.x86_64/6.3
+Packages Altered:
+ Updated git-1.7.1-8.el6.x86_64 @base
+ Update 1.7.1-9.el6_9.x86_64 @updates
+ Updated perl-Git-1.7.1-8.el6.noarch @base
+ Update 1.7.1-9.el6_9.noarch @updates
+history info
+</code></pre><p>运行下面命令来回滚 <code>git</code> 包到上一个版本。</p><pre tabindex=0><code># yum history undo 13
+Loaded plugins: fastestmirror, presto
+Undoing transaction 53, from Fri Aug 18 13:30:52 2017
+ Updated git-1.7.1-8.el6.x86_64 @base
+ Update 1.7.1-9.el6_9.x86_64 @updates
+ Updated perl-Git-1.7.1-8.el6.noarch @base
+ Update 1.7.1-9.el6_9.noarch @updates
+Loading mirror speeds from cached hostfile
+ * base: repos.lax.quadranet.com
+ * epel: fedora.mirrors.pair.com
+ * extras: repo1.dal.innoscale.net
+ * updates: mirror.vtti.vt.edu
+Resolving Dependencies
+--&gt; Running transaction check
+---&gt; Package git.x86_64 0:1.7.1-8.el6 will be a downgrade
+---&gt; Package git.x86_64 0:1.7.1-9.el6_9 will be erased
+---&gt; Package perl-Git.noarch 0:1.7.1-8.el6 will be a downgrade
+---&gt; Package perl-Git.noarch 0:1.7.1-9.el6_9 will be erased
+--&gt; Finished Dependency Resolution
+
+Dependencies Resolved
+
+=================================================================================================
+ Package Arch Version Repository Size
+=================================================================================================
+Downgrading:
+ git x86_64 1.7.1-8.el6 base 4.6 M
+ perl-Git noarch 1.7.1-8.el6 base 29 k
+
+Transaction Summary
+=================================================================================================
+Downgrade 2 Package(s)
+
+Total download size: 4.6 M
+Is this ok [y/N]: y
+Downloading Packages:
+Setting up and reading Presto delta metadata
+Processing delta metadata
+Package(s) data still to download: 4.6 M
+(1/2): git-1.7.1-8.el6.x86_64.rpm | 4.6 MB 00:00
+(2/2): perl-Git-1.7.1-8.el6.noarch.rpm | 29 kB 00:00
+-------------------------------------------------------------------------------------------------
+Total 3.4 MB/s | 4.6 MB 00:01
+Running rpm_check_debug
+Running Transaction Test
+Transaction Test Succeeded
+Running Transaction
+ Installing : perl-Git-1.7.1-8.el6.noarch 1/4
+ Installing : git-1.7.1-8.el6.x86_64 2/4
+ Cleanup : perl-Git-1.7.1-9.el6_9.noarch 3/4
+ Cleanup : git-1.7.1-9.el6_9.x86_64 4/4
+ Verifying : git-1.7.1-8.el6.x86_64 1/4
+ Verifying : perl-Git-1.7.1-8.el6.noarch 2/4
+ Verifying : git-1.7.1-9.el6_9.x86_64 3/4
+ Verifying : perl-Git-1.7.1-9.el6_9.noarch 4/4
+
+Removed:
+ git.x86_64 0:1.7.1-9.el6_9 perl-Git.noarch 0:1.7.1-9.el6_9
+
+Installed:
+ git.x86_64 0:1.7.1-8.el6 perl-Git.noarch 0:1.7.1-8.el6
+
+Complete!
+</code></pre><p>回滚后，使用下面命令来检查降级包的版本。</p><pre tabindex=0><code># yum list git
+或
+# rpm -q git
+git-1.7.1-8.el6.x86_64
+</code></pre><h3 id=使用yum-downgrade-命令回滚升级>使用YUM downgrade 命令回滚升级</h3><p>此外，我们也可以使用 YUM <code>downgrade</code> 命令回滚升级。</p><pre tabindex=0><code># yum downgrade git-1.7.1-8.el6 perl-Git-1.7.1-8.el6
+Loaded plugins: search-disabled-repos, security, ulninfo
+Setting up Downgrade Process
+Resolving Dependencies
+--&gt; Running transaction check
+---&gt; Package git.x86_64 0:1.7.1-8.el6 will be a downgrade
+---&gt; Package git.x86_64 0:1.7.1-9.el6_9 will be erased
+---&gt; Package perl-Git.noarch 0:1.7.1-8.el6 will be a downgrade
+---&gt; Package perl-Git.noarch 0:1.7.1-9.el6_9 will be erased
+--&gt; Finished Dependency Resolution
+
+Dependencies Resolved
+
+=================================================================================================
+ Package Arch Version Repository Size
+=================================================================================================
+Downgrading:
+ git x86_64 1.7.1-8.el6 base 4.6 M
+ perl-Git noarch 1.7.1-8.el6 base 29 k
+
+Transaction Summary
+=================================================================================================
+Downgrade 2 Package(s)
+
+Total download size: 4.6 M
+Is this ok [y/N]: y
+Downloading Packages:
+(1/2): git-1.7.1-8.el6.x86_64.rpm | 4.6 MB 00:00
+(2/2): perl-Git-1.7.1-8.el6.noarch.rpm | 28 kB 00:00
+-------------------------------------------------------------------------------------------------
+Total 3.7 MB/s | 4.6 MB 00:01
+Running rpm_check_debug
+Running Transaction Test
+Transaction Test Succeeded
+Running Transaction
+ Installing : perl-Git-1.7.1-8.el6.noarch 1/4
+ Installing : git-1.7.1-8.el6.x86_64 2/4
+ Cleanup : perl-Git-1.7.1-9.el6_9.noarch 3/4
+ Cleanup : git-1.7.1-9.el6_9.x86_64 4/4
+ Verifying : git-1.7.1-8.el6.x86_64 1/4
+ Verifying : perl-Git-1.7.1-8.el6.noarch 2/4
+ Verifying : git-1.7.1-9.el6_9.x86_64 3/4
+ Verifying : perl-Git-1.7.1-9.el6_9.noarch 4/4
+
+Removed:
+ git.x86_64 0:1.7.1-9.el6_9 perl-Git.noarch 0:1.7.1-9.el6_9
+
+Installed:
+ git.x86_64 0:1.7.1-8.el6 perl-Git.noarch 0:1.7.1-8.el6
+
+Complete!
+</code></pre><p>注意： 你也需要降级依赖包，否则它会删掉当前版本的依赖包而不是对依赖包做降级，因为 <code>downgrade</code> 命令无法处理依赖关系。</p><h3 id=至于-fedora-用户>至于 Fedora 用户</h3><p>命令是一样的，只需要将包管理器名称从 <code>yum</code> 改成 <code>dnf</code> 就行了。</p><pre tabindex=0><code># dnf list git
+# dnf history
+# dnf history info
+# dnf history undo
+# dnf list git
+# dnf downgrade git-1.7.1-8.el6 perl-Git-1.7.1-8.el6
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/rollback-fallback-updates-downgrade-packages-centos-rhel-fedora/>https://www.2daygeek.com/rollback-fallback-updates-downgrade-packages-centos-rhel-fedora/</a></p><p>作者：<a href=https://www.2daygeek.com/author/2daygeek/>2daygeek</a> 译者：<a href=https://github.com/lujun9972>lujun9972</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8D%87%E7%BA%A7/ rel=tag>升级</a></li><li class=tags__item><a class="tags__link btn" href=/tags/yum/ rel=tag>yum</a></li><li class=tags__item><a class="tags__link btn" href=/tags/dnf/ rel=tag>dnf</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

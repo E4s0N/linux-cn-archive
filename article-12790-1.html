@@ -1,0 +1,61 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>命令行生存指南：强制早睡 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="命令行生存指南：强制早睡"><meta property="og:description" content="你会不会经常陷入这么一个情景：计划晚上早点睡叫，然而无奈总是一不小心玩过头了。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12790-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-11-04T19:11:00+00:00"><meta property="article:modified_time" content="2020-11-04T19:11:00+00:00"><meta itemprop=name content="命令行生存指南：强制早睡"><meta itemprop=description content="你会不会经常陷入这么一个情景：计划晚上早点睡叫，然而无奈总是一不小心玩过头了。"><meta itemprop=datePublished content="2020-11-04T19:11:00+00:00"><meta itemprop=dateModified content="2020-11-04T19:11:00+00:00"><meta itemprop=wordCount content="259"><meta itemprop=keywords content="关机,命令行生存指南,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>命令行生存指南：强制早睡</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-11-04T19:11:00Z>November 04, 2020</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202011/04/190932kgror11gnrg0c6pg.jpg alt></p><blockquote><p>作为一个工程师，我们经常与命令行打交道，但除了工作用的命令，你是否尝试过让命令来替代你生活中方方面面？</p><p>为了让更多的爱好者可以用命令行作为自己的有效工具，Linux 中国特别邀请了三位作者，撰写了《命令行生存指南》，希望可以通过这个系列的文章，让你换一个视角，来看待命令行的存在。如果你想体验一下不一样的命令行，那就不妨来看看今天的《命令行生存指南》。</p><p>本次的内容为试读内容，也欢迎你针对今天的内容提出自己的意见和建议。</p></blockquote><h3 id=操作概述>操作概述</h3><p>你会不会经常陷入这么一个情景：计划晚上早点睡叫，然而无奈总是一不小心玩过头了。你需要一种方法强制让你到时间了就要关机去睡觉了，这该怎么做呢？</p><p>Kgotobed 是一个很变态的内核模块。它会强制 Linux 在特定时间关闭，而你却毫无办法（即使你是 root 用户）。</p><h3 id=概念和术语>概念和术语</h3><p>内核模块允许 Linux 内核在运行时动态地向其中插入和删除代码。这些模块是具有独立功能的程序，可以被单独编译，但无法独立运行。模块在运行时作为内核的一部分在内核空间内运行。</p><h3 id=操作实战>操作实战</h3><h4 id=场景一使用-kgotobed-强制关机>场景一：使用 Kgotobed 强制关机</h4><table><thead><tr><th>难度</th><th>★★★</th></tr></thead><tbody><tr><td>演示发行版</td><td>archlinux</td></tr><tr><td>涉及命令</td><td><code>gotobed</code></td></tr></tbody></table><h5 id=安装>安装</h5><p>在 archlinux 上要安装 <code>kgotobed</code>，首先需要安装 <code>dkms</code> 和 <code>linux-headers</code> 这两个包：</p><pre tabindex=0><code>sudo pacman -S dkms linux-headers --noconfirm
+</code></pre><p>然后去 github 上克隆它的源代码：</p><pre tabindex=0><code>git clone https://github.com/nikital/kgotobed.git
+</code></pre><p>最后我们对源代码进行手工编译：</p><pre tabindex=0><code>cd kgotobed/
+sudo make install
+</code></pre><p><code>make install</code> 命令会完成以下三件事情：</p><ol><li>通过 DKMS 注册 <code>kgotobed.ko</code></li><li>安装 <code>gotobed</code> 命令到 <code>/usr/local/bin</code> 下</li><li>在 systemd 中注册、启用并运行 <code>kgotobed.service</code></li></ol><h5 id=使用>使用</h5><p>直接运行 <code>gotobed</code> 就能看到设置的强行关机的时间：</p><pre tabindex=0><code>[vagrant@archlinux kgotobed]$ gotobed 22:00
+Current bedtime is 2018-04-13 01:00:00
+Setting bedtime to 2018-04-12 22:00:00
+Bedtime will be in 10 hours 32 minutes
+</code></pre><p>不过你不能把时间调到更晚……</p><pre tabindex=0><code>[vagrant@archlinux kgotobed]$ gotobed 2:00
+Current bedtime is 2018-04-13 01:00:00
+Error: Attempting to postpone bed time, it doesn&#39;t work like this...
+</code></pre><p>要想调整默认时间，你需要修改 <code>/etc/systemd/system/kgotobed.service</code>。</p><p>原始的 <code>kgotobed.service</code> 内容如下所示：</p><pre tabindex=0><code>[Unit]
+Description=kgotobed: Poweroff at bedtime
+After=dkms.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/sbin/modprobe kgotobed
+Environment=TIME=01:00
+ExecStart=/usr/local/bin/gotobed -f ${TIME}
+
+[Install]
+WantedBy=multi-user.target
+</code></pre><p>我们将其中的 <code>TIME=01:00</code> 改成 <code>TIME=02:00</code> 后重启系统，再次执行 <code>gotobed</code> 可以看到时间已经修改了：</p><pre tabindex=0><code>[vagrant@archlinux ~]$ gotobed 
+Current bedtime is 2018-04-13 02:00:00
+</code></pre><h5 id=删除-kgotobed>删除 kgotobed</h5><p>要逃脱强制关机的命运，几乎唯一的办法就是卸载 kgotobed 了。</p><p>我们可以在源代码目录中执行 <code>make uninstall</code> 进行卸载：</p><pre tabindex=0><code>[vagrant@archlinux ~]$ cd kgotobed/
+[vagrant@archlinux kgotobed]$ sudo make uninstall
+dkms remove kgotobed/1.0 --all
+
+-------- Uninstall Beginning --------
+Module:  kgotobed
+Version: 1.0
+Kernel:  4.15.15-1-ARCH (x86_64)
+-------------------------------------
+
+Status: Before uninstall, this module version was ACTIVE on this kernel.
+
+kgotobed.ko:
+ - Uninstallation
+   - Deleting from: /usr/lib/modules/4.15.15-1-ARCH/extra//
+ - Original module
+   - No original module was found for this module on this kernel.
+   - Use the dkms install command to reinstall any previous module version.
+
+depmod...........
+
+DKMS: uninstall completed.
+
+------------------------------
+Deleting module version: 1.0
+completely from the DKMS tree.
+------------------------------
+Done.
+rm -f /usr/local/bin/gotobed
+rm -f /etc/systemd/system/kgotobed.service
+systemctl daemon-reload
+[vagrant@archlinux kgotobed]$ 
+</code></pre><h3 id=小练习>小练习</h3><p>请按照自己的需求更改强制关机的时间。</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%85%B3%E6%9C%BA/ rel=tag>关机</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%94%9F%E5%AD%98%E6%8C%87%E5%8D%97/ rel=tag>命令行生存指南</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

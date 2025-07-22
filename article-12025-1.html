@@ -1,0 +1,245 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>针对大型文件系统可以试试此 Bash 脚本 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="针对大型文件系统可以试试此 Bash 脚本"><meta property="og:description" content="一个可以列出文件、目录、可执行文件和链接的简单脚本。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12025-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-03-23T09:51:32+00:00"><meta property="article:modified_time" content="2020-03-23T09:51:32+00:00"><meta itemprop=name content="针对大型文件系统可以试试此 Bash 脚本"><meta itemprop=description content="一个可以列出文件、目录、可执行文件和链接的简单脚本。"><meta itemprop=datePublished content="2020-03-23T09:51:32+00:00"><meta itemprop=dateModified content="2020-03-23T09:51:32+00:00"><meta itemprop=wordCount content="951"><meta itemprop=keywords content="脚本,Bash,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>针对大型文件系统可以试试此 Bash 脚本</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-03-23T09:51:32Z>March 23, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>一个可以列出文件、目录、可执行文件和链接的简单脚本。</p></blockquote><p><img src=/data/attachment/album/202003/23/095140ntfm3vrzz7meyn2z.png alt="bash logo on green background" title="bash logo on green background"></p><p>你是否曾经想列出目录中的所有文件，但仅列出文件，而不列出其它的。仅列出目录呢？如果有这种需求的话，那么下面的脚本可能正是你一直在寻找的，它在 GPLv3 下开源。</p><p>当然，你可以使用 <code>find</code> 命令：</p><pre tabindex=0><code>find . -maxdepth 1 -type f -print
+</code></pre><p>但这键入起来很麻烦，输出也不友好，并且缺少 <code>ls</code> 命令拥有的一些改进。你还可以结合使用 <code>ls</code> 和 <code>grep</code> 来达到相同的结果：</p><pre tabindex=0><code>ls -F . | grep -v /
+</code></pre><p>但是，这又有点笨拙。下面这个脚本提供了一种简单的替代方法。</p><h3 id=用法>用法</h3><p>该脚本提供了四个主要功能，具体取决于你调用它的名称：<code>lsf</code> 列出文件，<code>lsd</code> 列出目录，<code>lsx</code> 列出可执行文件以及 <code>lsl</code> 列出链接。</p><p>通过符号链接无需安装该脚本的多个副本。这样可以节省空间并使脚本更新更容易。</p><p>该脚本通过使用 <code>find</code> 命令进行搜索，然后在找到的每个项目上运行 <code>ls</code>。这样做的好处是，任何给脚本的参数都将传递给 <code>ls</code> 命令。因此，例如，这可以列出所有文件，甚至包括以点开头的文件：</p><pre tabindex=0><code>lsf -a
+</code></pre><p>要以长格式列出目录，请使用 <code>lsd</code> 命令：</p><pre tabindex=0><code>lsd -l
+</code></pre><p>你可以提供多个参数，以及文件和目录路径。</p><p>下面提供了当前目录的父目录和 <code>/usr/bin</code> 目录中所有文件的长分类列表：</p><pre tabindex=0><code>lsf -F -l .. /usr/bin
+</code></pre><p>目前该脚本不处理递归，仅列出当前目录中的文件。</p><pre tabindex=0><code>lsf -R
+</code></pre><p>该脚本不会深入子目录，这个不足有一天可能会进行修复。</p><h3 id=内部>内部</h3><p>该脚本采用自上而下的方式编写，其初始化功能位于脚本的开头，而工作主体则接近结尾。脚本中只有两个真正重要的功能。函数 <code>parse_args()</code> 会仔细分析命令行，将选项与路径名分开，并处理脚本中的 <code>ls</code> 命令行选项中的特定选项。</p><p><code>list_things_in_dir()</code> 函数以目录名作为参数并在其上运行 <code>find</code> 命令。找到的每个项目都传递给 <code>ls</code> 命令进行显示。</p><h3 id=总结>总结</h3><p>这是一个可以完成简单功能的简单脚本。它节省了时间，并且在使用大型文件系统时可能会非常有用。</p><h3 id=脚本>脚本</h3><pre tabindex=0><code>#!/bin/bash
+
+# Script to list:
+#      directories (if called &#34;lsd&#34;)
+#      files       (if called &#34;lsf&#34;)
+#      links       (if called &#34;lsl&#34;)
+#  or  executables (if called &#34;lsx&#34;)
+# but not any other type of filesystem object.
+# FIXME: add lsp   (list pipes)
+#
+# Usage:
+#   &lt;command_name&gt; [switches valid for ls command] [dirname...]
+#
+# Works with names that includes spaces and that start with a hyphen.
+#
+# Created by Nick Clifton.
+# Version 1.4
+# Copyright (c) 2006, 2007 Red Hat.
+#
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 3, or (at your
+# option) any later version.
+
+# It is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# ToDo:
+#  Handle recursion, eg:  lsl -R
+#  Handle switches that take arguments, eg --block-size
+#  Handle --almost-all, --ignore-backups, --format and --ignore
+
+main ()
+{
+  init
+ 
+  parse_args ${1+&#34;$@&#34;}
+
+  list_objects
+
+  exit 0
+}
+
+report ()
+{
+  echo $prog&#34;: &#34; ${1+&#34;$@&#34;}
+}
+
+fail ()
+{
+  report &#34; Internal error: &#34; ${1+&#34;$@&#34;}
+  exit 1
+}
+
+# Initialise global variables.
+init ()
+{
+  # Default to listing things in the current directory.
+  dirs[0]=&#34;.&#34;;
+ 
+  # num_dirs is the number of directories to be listed minus one.
+  # This is because we are indexing the dirs[] array from zero.
+  num_dirs=0;
+ 
+  # Default to ignoring things that start with a period.
+  no_dots=1
+ 
+  # Note - the global variables &#39;type&#39; and &#39;opts&#39; are initialised in
+  # parse_args function.
+}
+
+# Parse our command line
+parse_args ()
+{
+  local no_more_args
+
+  no_more_args=0 ;
+
+  prog=`basename $0` ;
+
+  # Decide if we are listing files or directories.
+  case $prog in
+    lsf | lsf.sh)
+      type=f
+      opts=&#34;&#34;;
+      ;;
+    lsd | lsd.sh)
+      type=d
+      # The -d switch to &#34;ls&#34; is presumed when listing directories.
+      opts=&#34;-d&#34;;
+      ;;
+    lsl | lsl.sh)
+      type=l
+      # Use -d to prevent the listed links from being followed.
+      opts=&#34;-d&#34;;
+      ;;
+    lsx | lsx.sh)
+      type=f
+      find_extras=&#34;-perm /111&#34;
+      ;;    
+    *)
+      fail &#34;Unrecognised program name: &#39;$prog&#39;, expected either &#39;lsd&#39;, &#39;lsf&#39;, &#39;lsl&#39; or &#39;lsx&#39;&#34;
+      ;;
+  esac
+
+  # Locate any additional command line switches for ls and accumulate them.
+  # Likewise accumulate non-switches to the directories list.
+  while [ $# -gt 0 ]
+  do
+    case &#34;$1&#34; in
+      # FIXME: Handle switches that take arguments, eg --block-size
+      # FIXME: Properly handle --almost-all, --ignore-backups, --format
+      # FIXME:   and --ignore
+      # FIXME: Properly handle --recursive
+      -a | -A | --all | --almost-all)
+        no_dots=0;
+        ;;
+      --version)
+        report &#34;version 1.2&#34;
+        exit 0
+        ;;
+      --help)
+        case $type in
+          d) report &#34;a version of &#39;ls&#39; that lists only directories&#34; ;;
+          l) report &#34;a version of &#39;ls&#39; that lists only links&#34; ;;
+          f) if [ &#34;x$find_extras&#34; = &#34;x&#34; ] ; then
+               report &#34;a version of &#39;ls&#39; that lists only files&#34; ;
+             else
+              report &#34;a version of &#39;ls&#39; that lists only executables&#34;;
+             fi ;;
+        esac
+        exit 0
+        ;;
+      --)
+        # A switch to say that all further items on the command line are
+        # arguments and not switches.
+        no_more_args=1 ;
+        ;;
+      -*)
+        if [ &#34;x$no_more_args&#34; = &#34;x1&#34; ] ;
+        then
+          dirs[$num_dirs]=&#34;$1&#34;;
+          let &#34;num_dirs++&#34;
+        else
+          # Check for a switch that just uses a single dash, not a double
+          # dash.  This could actually be multiple switches combined into
+          # one word, eg &#34;lsd -alF&#34;.  In this case, scan for the -a switch.
+          # XXX: FIXME: The use of =~ requires bash v3.0+.
+          if [[ &#34;x${1:1:1}&#34; != &#34;x-&#34; &amp;&amp; &#34;x$1&#34; =~ &#34;x-.*a.*&#34; ]] ;
+          then
+            no_dots=0;
+          fi
+          opts=&#34;$opts $1&#34;;
+        fi
+        ;;
+      *)
+        dirs[$num_dirs]=&#34;$1&#34;;
+        let &#34;num_dirs++&#34;
+        ;;
+    esac
+    shift
+  done
+
+  # Remember that we are counting from zero not one.
+  if [ $num_dirs -gt 0 ] ;
+  then
+    let &#34;num_dirs--&#34;
+  fi
+}
+
+list_things_in_dir ()
+{
+  local dir
+
+  # Paranoia checks - the user should never encounter these.
+  if test &#34;x$1&#34; = &#34;x&#34; ;
+  then
+    fail &#34;list_things_in_dir called without an argument&#34;
+  fi
+
+  if test &#34;x$2&#34; != &#34;x&#34; ;
+  then
+    fail &#34;list_things_in_dir called with too many arguments&#34;
+  fi
+
+  # Use quotes when accessing $dir in order to preserve
+  # any spaces that might be in the directory name.
+  dir=&#34;${dirs[$1]}&#34;;
+
+  # Catch directory names that start with a dash - they
+  # confuse pushd.
+  if test &#34;x${dir:0:1}&#34; = &#34;x-&#34; ;
+  then
+    dir=&#34;./$dir&#34;
+  fi
+ 
+  if [ -d &#34;$dir&#34; ]
+  then
+    if [ $num_dirs -gt 0 ]
+    then
+      echo &#34;  $dir:&#34;
+    fi
+
+    # Use pushd rather passing the directory name to find so that the
+    # names that find passes on to xargs do not have any paths prepended.
+    pushd &#34;$dir&#34; &gt; /dev/null
+    if [ $no_dots -ne 0 ] ; then
+      find . -maxdepth 1 -type $type $find_extras -not -name &#34;.*&#34; -printf &#34;%f\000&#34; \
+        | xargs --null --no-run-if-empty ls $opts -- ;
+    else
+      find . -maxdepth 1 -type $type $find_extras -printf &#34;%f\000&#34; \
+        | xargs --null --no-run-if-empty ls $opts -- ;
+    fi
+    popd &gt; /dev/null
+  else
+    report &#34;directory &#39;$dir&#39; could not be found&#34;
+  fi
+}
+
+list_objects ()
+{
+  local i
+
+  i=0;
+  while [ $i -le $num_dirs ]
+  do
+    list_things_in_dir i
+    let &#34;i++&#34;
+  done
+}
+
+# Invoke main
+main ${1+&#34;$@&#34;}
+</code></pre><hr><p>via: <a href=https://opensource.com/article/20/2/script-large-files>https://opensource.com/article/20/2/script-large-files</a></p><p>作者：<a href=https://opensource.com/users/nickclifton>Nick Clifton</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%84%9A%E6%9C%AC/ rel=tag>脚本</a></li><li class=tags__item><a class="tags__link btn" href=/tags/bash/ rel=tag>Bash</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

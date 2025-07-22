@@ -1,0 +1,55 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 WebAssembly 中写 “Hello World”？ - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 WebAssembly 中写 “Hello World”？"><meta property="og:description" content="通过这个分步教程，开始用人类可读的文本编写 WebAssembly。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13250-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-03-30T09:59:00+00:00"><meta property="article:modified_time" content="2021-03-30T09:59:00+00:00"><meta itemprop=name content="如何在 WebAssembly 中写 “Hello World”？"><meta itemprop=description content="通过这个分步教程，开始用人类可读的文本编写 WebAssembly。"><meta itemprop=datePublished content="2021-03-30T09:59:00+00:00"><meta itemprop=dateModified content="2021-03-30T09:59:00+00:00"><meta itemprop=wordCount content="310"><meta itemprop=keywords content="WebAssembly,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 WebAssembly 中写 “Hello World”？</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-03-30T09:59:00Z>March 30, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>通过这个分步教程，开始用人类可读的文本编写 WebAssembly。</p></blockquote><p><img src=/data/attachment/album/202103/30/095907r6ecev48dw0l9w44.jpg alt title="Hello World inked on bread"></p><p>WebAssembly 是一种字节码格式，<a href=https://developer.mozilla.org/en-US/docs/WebAssembly#browser_compatibility>几乎所有的浏览器</a> 都可以将它编译成其宿主操作系统的机器代码。除了 JavaScript 和 WebGL 之外，WebAssembly 还满足了将应用移植到浏览器中以实现平台独立的需求。作为 C++ 和 Rust 的编译目标，WebAssembly 使 Web 浏览器能够以接近原生的速度执行代码。</p><p>当谈论 WebAssembly 应用时，你必须区分三种状态：</p><ol><li><strong>源码（如 C++ 或 Rust）：</strong> 你有一个用兼容语言编写的应用，你想把它在浏览器中执行。</li><li><strong>WebAssembly 字节码：</strong> 你选择 WebAssembly 字节码作为编译目标。最后，你得到一个 <code>.wasm</code> 文件。</li><li><strong>机器码（opcode）：</strong> 浏览器加载 <code>.wasm</code> 文件，并将其编译成主机系统的相应机器码。</li></ol><p>WebAssembly 还有一种文本格式，用人类可读的文本表示二进制格式。为了简单起见，我将其称为 <strong>WASM-text</strong>。WASM-text 可以比作高级汇编语言。当然，你不会基于 WASM-text 来编写一个完整的应用，但了解它的底层工作原理是很好的（特别是对于调试和性能优化）。</p><p>本文将指导你在 WASM-text 中创建经典的 “Hello World” 程序。</p><h3 id=创建-wat-文件>创建 .wat 文件</h3><p>WASM-text 文件通常以 <code>.wat</code> 结尾。第一步创建一个名为 <code>helloworld.wat</code> 的空文本文件，用你最喜欢的文本编辑器打开它，然后粘贴进去：</p><pre tabindex=0><code>(module
+    ;; 从 JavaScript 命名空间导入
+    (import  &#34;console&#34;  &#34;log&#34; (func  $log (param  i32  i32))) ;; 导入 log 函数
+    (import  &#34;js&#34;  &#34;mem&#34; (memory  1)) ;; 导入 1 页 内存（64kb）
+   
+    ;; 我们的模块的数据段
+    (data (i32.const 0) &#34;Hello World from WebAssembly!&#34;)
+   
+    ;; 函数声明：导出 helloWorld()，无参数
+    (func (export  &#34;helloWorld&#34;)
+        i32.const 0  ;; 传递偏移 0 到 log
+        i32.const 29  ;; 传递长度 29 到 log（示例文本的字符串长度）
+        call  $log
+        )
+)
+</code></pre><p>WASM-text 格式是基于 S 表达式的。为了实现交互，JavaScript 函数用 <code>import</code> 语句导入，WebAssembly 函数用 <code>export</code> 语句导出。在这个例子中，从 <code>console</code> 模块中导入 <code>log</code> 函数，它需要两个类型为 <code>i32</code> 的参数作为输入，以及一页内存（64KB）来存储字符串。</p><p>字符串将被写入偏移量 为 <code>0</code> 的数据段。数据段是你的内存的 叠加投影 overlay ，内存是在 JavaScript 部分分配的。</p><p>函数用关键字 <code>func</code> 标记。当进入函数时，栈是空的。在调用另一个函数之前，函数参数会被压入栈中（这里是偏移量和长度）（见 <code>call $log</code>）。当一个函数返回一个 <code>f32</code> 类型时（例如），当离开函数时，一个 <code>f32</code> 变量必须保留在栈中（但在本例中不是这样）。</p><h3 id=创建-wasm-文件>创建 .wasm 文件</h3><p>WASM-text 和 WebAssembly 字节码是 1:1 对应的，这意味着你可以将 WASM-text 转换成字节码（反之亦然）。你已经有了 WASM-text，现在将创建字节码。</p><p>转换可以通过 <a href=https://github.com/webassembly/wabt>WebAssembly Binary Toolkit</a>（WABT）来完成。从该链接克隆仓库，并按照安装说明进行安装。</p><p>建立工具链后，打开控制台并输入以下内容，将 WASM-text 转换为字节码：</p><pre tabindex=0><code>wat2wasm helloworld.wat -o helloworld.wasm
+</code></pre><p>你也可以用以下方法将字节码转换为 WASM-text：</p><pre tabindex=0><code>wasm2wat helloworld.wasm -o helloworld_reverse.wat
+</code></pre><p>一个从 <code>.wasm</code> 文件创建的 <code>.wat</code> 文件不包括任何函数或参数名称。默认情况下，WebAssembly 用它们的索引来识别函数和参数。</p><h3 id=编译-wasm-文件>编译 .wasm 文件</h3><p>目前，WebAssembly 只与 JavaScript 共存，所以你必须编写一个简短的脚本来加载和编译 <code>.wasm</code> 文件并进行函数调用。你还需要在 WebAssembly 模块中定义你要导入的函数。</p><p>创建一个空的文本文件，并将其命名为 <code>helloworld.html</code>，然后打开你喜欢的文本编辑器并粘贴进去：</p><pre tabindex=0><code>&lt;!DOCTYPE  html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta  charset=&#34;utf-8&#34;&gt;
+    &lt;title&gt;Simple template&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;script&gt;
+   
+      var memory = new  WebAssembly.Memory({initial:1});
+
+      function  consoleLogString(offset, length) {
+        var  bytes = new  Uint8Array(memory.buffer, offset, length);
+        var  string = new  TextDecoder(&#39;utf8&#39;).decode(bytes);
+        console.log(string);
+      };
+
+      var  importObject = {
+        console: {
+          log:  consoleLogString
+        },
+        js : {
+          mem:  memory
+        }
+      };
+     
+      WebAssembly.instantiateStreaming(fetch(&#39;helloworld.wasm&#39;), importObject)
+      .then(obj  =&gt; {
+        obj.instance.exports.helloWorld();
+      });
+     
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p><code>WebAssembly.Memory(...)</code> 方法返回一个大小为 64KB 的内存页。函数 <code>consoleLogString</code> 根据长度和偏移量从该内存页读取一个字符串。这两个对象作为 <code>importObject</code> 的一部分传递给你的 WebAssembly 模块。</p><p>在你运行这个例子之前，你可能必须允许 Firefox 从这个目录中访问文件，在地址栏输入 <code>about:config</code>，并将 <code>privacy.file_unique_origin</code> 设置为 <code>true</code>：</p><p><img src=/data/attachment/album/202103/30/095912pamnmaayg1y1nzla.png alt="Firefox setting" title="Firefox setting"></p><blockquote><p><strong>注意：</strong> 这样做会使你容易受到 <a href=https://www.mozilla.org/en-US/security/advisories/mfsa2019-21/#CVE-2019-11730>CVE-2019-11730</a> 安全问题的影响。</p></blockquote><p>现在，在 Firefox 中打开 <code>helloworld.html</code>，按下 <code>Ctrl+K</code> 打开开发者控制台。</p><p><img src=/data/attachment/album/202103/30/095912ji88ttpuu4grsd4t.png alt="Debugger output" title="Debugger output"></p><h3 id=了解更多>了解更多</h3><p>这个 Hello World 的例子只是 MDN 的 <a href=https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format>了解 WebAssembly 文本格式</a> 文档中的教程之一。如果你想了解更多关于 WebAssembly 的知识以及它的工作原理，可以看看这些文档。</p><hr><p>via: <a href=https://opensource.com/article/21/3/hello-world-webassembly>https://opensource.com/article/21/3/hello-world-webassembly</a></p><p>作者：<a href=https://opensource.com/users/hansic99>Stephan Avenwedde</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/webassembly/ rel=tag>WebAssembly</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

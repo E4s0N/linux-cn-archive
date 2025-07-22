@@ -1,0 +1,62 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Ubuntu 上使用 pm2 和 Nginx 部署 Node.js 应用 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Ubuntu 上使用 pm2 和 Nginx 部署 Node.js 应用"><meta property="og:description" content="pm2 是一个 Node.js 应用的进程管理器，它可以让你的应用程序保持运行，还有一个内建的负载均衡器。它非常简单而且强大，你可以零间断重启或重新加载你的 node 应用，它也允许你为你的 node 应用创建集群。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8494-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-05-09T09:41:31+00:00"><meta property="article:modified_time" content="2017-05-09T09:41:31+00:00"><meta itemprop=name content="如何在 Ubuntu 上使用 pm2 和 Nginx 部署 Node.js 应用"><meta itemprop=description content="pm2 是一个 Node.js 应用的进程管理器，它可以让你的应用程序保持运行，还有一个内建的负载均衡器。它非常简单而且强大，你可以零间断重启或重新加载你的 node 应用，它也允许你为你的 node 应用创建集群。"><meta itemprop=datePublished content="2017-05-09T09:41:31+00:00"><meta itemprop=dateModified content="2017-05-09T09:41:31+00:00"><meta itemprop=wordCount content="433"><meta itemprop=keywords content="Node.js,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Ubuntu 上使用 pm2 和 Nginx 部署 Node.js 应用</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-05-09T09:41:31Z>May 09, 2017</time></div></div></header><div class="content post__content clearfix"><p>pm2 是一个 Node.js 应用的进程管理器，它可以让你的应用程序保持运行，还有一个内建的负载均衡器。它非常简单而且强大，你可以零间断重启或重新加载你的 node 应用，它也允许你为你的 node 应用创建集群。</p><p>在这篇博文中，我会向你展示如何安装和配置 pm2 用于这个简单的 &lsquo;Express&rsquo; 应用，然后配置 Nginx 作为运行在 pm2 下的 node 应用的反向代理。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094125eoba2938fs6bbft8.jpeg alt></p><p>前提：</p><ul><li>Ubuntu 16.04 - 64bit</li><li>Root 权限</li></ul><h3 id=第一步---安装-nodejs-lts>第一步 - 安装 Node.js LTS</h3><p>在这篇指南中，我们会从零开始我们的实验。首先，我们需要在服务器上安装 Node.js。我会使用 Nodejs LTS 6.x 版本，它能从 nodesource 仓库中安装。</p><p>从 Ubuntu 仓库安装 <code>python-software-properties</code> 软件包并添加 “nodesource” Nodejs 仓库。</p><pre tabindex=0><code>sudo apt-get install -y python-software-properties 
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+</code></pre><p>安装最新版本的 Nodejs LTS：</p><pre tabindex=0><code>sudo apt-get install -y nodejs
+</code></pre><p>安装完成后，查看 node 和 npm 版本。</p><pre tabindex=0><code>node -v
+npm -v
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094133atjt617aqa474gn7.png alt="检查 node.js 版本"></p><h3 id=第二步---生成-express-示例-app>第二步 - 生成 Express 示例 App</h3><p>我会使用 <code>express-generator</code> 软件包生成的简单 web 应用框架进行示例安装。<code>express-generator</code> 可以使用 <code>npm</code> 命令安装。</p><p>用 <code>npm</code>安装 <code>express-generator</code>：</p><pre tabindex=0><code>npm install express-generator -g
+</code></pre><ul><li><code>-g</code> ： 在系统内部安装软件包。</li></ul><p>我会以普通用户运行应用程序，而不是 root 或者超级用户。我们首先需要创建一个新的用户。</p><p>创建一个名为 <code>yume</code> 的用户：</p><pre tabindex=0><code>useradd -m -s /bin/bash yume
+passwd yume
+</code></pre><p>使用 <code>su</code> 命令登录到新用户：</p><pre tabindex=0><code>su - yume
+</code></pre><p>下一步，用 <code>express</code> 命令生成一个新的简单 web 应用程序：</p><pre tabindex=0><code>express hakase-app
+</code></pre><p>命令会创建新项目目录 <code>hakase-app</code>。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094134eh6pdfw5db5zt36d.png alt="用 express-generator 生成应用框架"></p><p>进入到项目目录并安装应用需要的所有依赖。</p><pre tabindex=0><code>cd hakase-app
+npm install
+</code></pre><p>然后用下面的命令测试并启动一个新的简单应用程序：</p><pre tabindex=0><code>DEBUG=myapp:* npm start
+</code></pre><p>默认情况下，我们的 express 应用会运行在 <code>3000</code> 端口。现在访问服务器的 IP 地址：192.168.33.10:3000 ：</p><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094134xybbltoby405m9tt.png alt="express nodejs 运行在 3000 端口"></p><p>这个简单 web 应用框架现在以 &lsquo;yume&rsquo; 用户运行在 3000 端口。</p><h3 id=第三步---安装-pm2>第三步 - 安装 pm2</h3><p>pm2 是一个 node 软件包，可以使用 <code>npm</code> 命令安装。（用 root 权限，如果你仍然以 yume 用户登录，那么运行命令 <code>exit</code> 再次成为 root 用户）：</p><pre tabindex=0><code>npm install pm2 -g
+</code></pre><p>现在我们可以为我们的 web 应用使用 pm2 了。</p><p>进入应用目录 <code>hakase-app</code>：</p><pre tabindex=0><code>su - yume
+cd ~/hakase-app/
+</code></pre><p>这里你可以看到一个名为 <code>package.json</code> 的文件，用 <code>cat</code> 命令显示它的内容。</p><pre tabindex=0><code>cat package.json
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094135od7q91mmsmz781ei.png alt="配置 express nodejs 服务"></p><p>你可以看到 <code>start</code> 行有一个 nodejs 用于启动 express 应用的命令。我们会和 pm2 进程管理器一起使用这个命令。</p><p>像下面这样使用 <code>pm2</code> 命令运行 express 应用：</p><pre tabindex=0><code>pm2 start ./bin/www
+</code></pre><p>现在你可以看到像下面这样的结果：</p><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094135jq154wgd8044b0mk.png alt="使用 pm2 运行 nodejs app"></p><p>我们的 express 应用正在 <code>pm2</code> 中运行，名称为 <code>www</code>，id 为 <code>0</code>。你可以用 show 选项 <code>show nodeid|name</code> 获取更多 pm2 下运行的应用的信息。</p><pre tabindex=0><code>pm2 show www
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094135ittndmwv8s4wlrfz.png alt="pm2 服务状态"></p><p>如果你想看我们应用的日志，你可以使用 logs 选项。它包括访问和错误日志，你还可以看到应用程序的 HTTP 状态。</p><pre tabindex=0><code>pm2 logs www
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094136spevmc3f3mq9e9vd.png alt="pm2 服务日志"></p><p>你可以看到我们的程序正在运行。现在，让我们来让它开机自启动。</p><pre tabindex=0><code>pm2 startup systemd
+</code></pre><ul><li><code>systemd</code>： Ubuntu 16 使用的是 systemd。</li></ul><p>你会看到要用 root 用户运行命令的信息。使用 <code>exit</code> 命令回到 root 用户然后运行命令。</p><pre tabindex=0><code>sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u yume --hp /home/yume
+</code></pre><p>它会为启动应用程序生成 systemd 配置文件。当你重启服务器的时候，应用程序就会自动运行。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094136a39om17sgc3cddco.png alt="pm2 添加服务到开机自启动"></p><h3 id=第四步---安装和配置-nginx-作为反向代理>第四步 - 安装和配置 Nginx 作为反向代理</h3><p>在这篇指南中，我们会使用 Nginx 作为 node 应用的反向代理。Ubuntu 仓库中有 Nginx，用 <code>apt</code> 命令安装它：</p><pre tabindex=0><code>sudo apt-get install -y nginx
+</code></pre><p>下一步，进入到 <code>sites-available</code> 目录并创建新的虚拟主机配置文件。</p><pre tabindex=0><code>cd /etc/nginx/sites-available/
+vim hakase-app
+</code></pre><p>粘贴下面的配置：</p><pre tabindex=0><code>upstream hakase-app {
+    # Nodejs app upstream
+    server 127.0.0.1:3000;
+    keepalive 64;
+}
+
+# Server on port 80
+server {
+    listen 80;
+    server_name hakase-node.co;
+    root /home/yume/hakase-app;
+
+    location / {
+        # Proxy_pass configuration
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection &#34;upgrade&#34;;
+        proxy_max_temp_file_size 0;
+        proxy_pass http://hakase-app/;
+        proxy_redirect off;
+        proxy_read_timeout 240s;
+    }
+}
+</code></pre><p>保存文件并退出 vim。</p><p>在配置中：</p><ul><li>node 应用使用域名 <code>hakase-node.co</code> 运行。</li><li>所有来自 nginx 的流量都会被转发到运行在 <code>3000</code> 端口的 node app。</li></ul><p>测试 Nginx 配置确保没有错误。</p><pre tabindex=0><code>nginx -t
+</code></pre><p>启用 Nginx 并使其开机自启动。</p><pre tabindex=0><code>systemctl start nginx
+systemctl enable nginx
+</code></pre><h3 id=第五步---测试>第五步 - 测试</h3><p>打开你的 web 浏览器并访问域名（我的是）：<a href=http://hakase-app.co/>http://hakase-app.co</a> 。</p><p>你可以看到 express 应用正在 Nginx web 服务器中运行。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094136te6tdg2cg59eeree.png alt="Nodejs app 在 pm2 和 Nginx 中运行"></p><p>下一步，重启你的服务器，确保你的 node app 能开机自启动：</p><pre tabindex=0><code>pm2 save
+sudo reboot
+</code></pre><p>如果你再次登录到了你的服务器，检查 node app 进程。以 <code>yume</code> 用户运行下面的命令。</p><pre tabindex=0><code>su - yume
+pm2 status www
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201705/09/094137rl8ls23l4jijm8z8.png alt="nodejs 在 pm2 下开机自启动"></p><p>Node 应用在 pm2 中运行并使用 Nginx 作为反向代理。</p><h3 id=链接>链接</h3><ul><li><a href=https://www.ubuntu.com/>Ubuntu</a></li><li><a href=https://nodejs.org/en/>Node.js</a></li><li><a href=https://www.nginx.com/>Nginx</a></li></ul><hr><p>via: <a href=https://www.howtoforge.com/tutorial/how-to-deploy-nodejs-applications-with-pm2-and-nginx-on-ubuntu/>https://www.howtoforge.com/tutorial/how-to-deploy-nodejs-applications-with-pm2-and-nginx-on-ubuntu/</a></p><p>作者：<a href=https://www.howtoforge.com/tutorial/how-to-deploy-nodejs-applications-with-pm2-and-nginx-on-ubuntu/>Muhammad Arul</a> 译者：<a href=https://github.com/ictlyh>ictlyh</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/node.js/ rel=tag>Node.js</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

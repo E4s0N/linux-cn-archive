@@ -1,0 +1,109 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>想玩 BGP 路由器么？用 CentOS 做一个 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="想玩 BGP 路由器么？用 CentOS 做一个"><meta property="og:description" content="在之前的教程中，我对如何简单地使用Quagga把CentOS系统变成一个不折不扣地OSPF路由器做了一些介绍。Quagga是一个开源路由软件套件。在这个教程中，我将会重点讲讲如何把一个Linux系统变成一个BGP路由器，还是使用Quagga，演示如何建立BGP与其它BGP路由器对等。 在我们进入细节之前，一些BGP的背景知识还是必要的。边界网关协议（即BGP）是互联网的域间路由协议的实际标准。在BGP术语中，全球互联网是由成千上万相关联的自治系统(AS)组成，其中每一个AS代表每一个特定运营商提供的一个网络管理域（据说，美国前总统乔治.布什都有自己的 AS"><meta property="og:type" content="article"><meta property="og:url" content="/article-4609-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-01-07T15:45:00+00:00"><meta property="article:modified_time" content="2015-01-07T15:45:00+00:00"><meta itemprop=name content="想玩 BGP 路由器么？用 CentOS 做一个"><meta itemprop=description content="在之前的教程中，我对如何简单地使用Quagga把CentOS系统变成一个不折不扣地OSPF路由器做了一些介绍。Quagga是一个开源路由软件套件。在这个教程中，我将会重点讲讲如何把一个Linux系统变成一个BGP路由器，还是使用Quagga，演示如何建立BGP与其它BGP路由器对等。 在我们进入细节之前，一些BGP的背景知识还是必要的。边界网关协议（即BGP）是互联网的域间路由协议的实际标准。在BGP术语中，全球互联网是由成千上万相关联的自治系统(AS)组成，其中每一个AS代表每一个特定运营商提供的一个网络管理域（据说，美国前总统乔治.布什都有自己的 AS"><meta itemprop=datePublished content="2015-01-07T15:45:00+00:00"><meta itemprop=dateModified content="2015-01-07T15:45:00+00:00"><meta itemprop=wordCount content="552"><meta itemprop=keywords content="BGP,路由器,Quagga,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>想玩 BGP 路由器么？用 CentOS 做一个</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-01-07T15:45:00Z>January 07, 2015</time></div></div></header><div class="content post__content clearfix"><p>在<a href=http://linux.cn/article-4232-1.html>之前的教程中</a>，我对如何简单地使用Quagga把CentOS系统变成一个不折不扣地OSPF路由器做了一些介绍。Quagga是一个开源路由软件套件。在这个教程中，我将会重点讲讲<strong>如何把一个Linux系统变成一个BGP路由器，还是使用Quagga</strong>，演示如何建立BGP与其它BGP路由器对等。</p><p>在我们进入细节之前，一些BGP的背景知识还是必要的。边界网关协议（即BGP）是互联网的域间路由协议的实际标准。在BGP术语中，全球互联网是由成千上万相关联的自治系统(AS)组成，其中每一个AS代表每一个特定运营商提供的一个网络管理域（<a href=http://weibo.com/3181671860/BngyXxEUF>据说</a>，美国前总统乔治.布什都有自己的 AS 编号）。</p><p><img src=/data/attachment/album/201501/07/154558kbbm5uvzzddk53xy.jpg alt></p><p>为了使其网络在全球范围内路由可达，每一个AS需要知道如何在英特网中到达其它的AS。这时候就需要BGP出来扮演这个角色了。BGP是一个AS去与相邻的AS交换路由信息的语言。这些路由信息通常被称为BGP线路或者BGP前缀。包括AS号(ASN；全球唯一号码)以及相关的IP地址块。一旦所有的BGP线路被当地的BGP路由表学习和记录，每一个AS将会知道如何到达互联网的任何公网IP。</p><p>在不同域(AS)之间路由的能力是BGP被称为外部网关协议(EGP)或者域间协议的主要原因。就如一些路由协议，例如OSPF、IS-IS、RIP和EIGRP都是内部网关协议(IGPs)或者域内路由协议，用于处理一个域内的路由.</p><h3 id=测试方案>测试方案</h3><p>在这个教程中，让我们来使用以下拓扑。</p><p><img src=/data/attachment/album/201501/07/154600t22tj2uumo8ttfuk.jpg alt></p><p>我们假设运营商A想要建立一个BGP来与运营商B对等交换路由。它们的AS号和IP地址空间的细节如下所示：</p><ul><li><strong>运营商 A</strong>: ASN (100)， IP地址空间 (100.100.0.0/22)， 分配给BGP路由器eth1网卡的IP地址(100.100.1.1)</li><li><strong>运营商 B</strong>: ASN (200)， IP地址空间 (200.200.0.0/22)， 分配给BGP路由器eth1网卡的IP地址(200.200.1.1)</li></ul><p>路由器A和路由器B使用100.100.0.0/30子网来连接到对方。从理论上来说，任何子网从运营商那里都是可达的、可互连的。在真实场景中，建议使用掩码为30位的公网IP地址空间来实现运营商A和运营商B之间的连通。</p><h3 id=在-centos中安装quagga>在 CentOS中安装Quagga</h3><p>如果Quagga还没安装好，我们可以使用yum来安装Quagga。</p><pre tabindex=0><code># yum install quagga 
+</code></pre><p>如果你正在使用的是CentOS7系统，你需要应用一下策略来设置SELinux。否则，SElinux将会阻止Zebra守护进程写入它的配置目录。如果你正在使用的是CentOS6，你可以跳过这一步。</p><pre tabindex=0><code># setsebool -P zebra_write_config 1 
+</code></pre><p>Quagga软件套件包含几个守护进程，这些进程可以协同工作。关于BGP路由，我们将把重点放在建立以下2个守护进程。</p><ul><li><strong>Zebra</strong>:一个核心守护进程用于内核接口和静态路由.</li><li><strong>BGPd</strong>:一个BGP守护进程.</li></ul><h3 id=配置日志记录>配置日志记录</h3><p>在Quagga被安装后，下一步就是配置Zebra来管理BGP路由器的网络接口。我们通过创建一个Zebra配置文件和启用日志记录来开始第一步。</p><pre tabindex=0><code># cp /usr/share/doc/quagga-XXXXX/zebra.conf.sample /etc/quagga/zebra.conf 
+</code></pre><p>在CentOS6系统中：</p><pre tabindex=0><code># service zebra start
+# chkconfig zebra on
+</code></pre><p>在CentOS7系统中:</p><pre tabindex=0><code># systemctl start zebra
+# systemctl enable zebra 
+</code></pre><p>Quagga提供了一个叫做vtysh特有的命令行工具，你可以输入与路由器厂商(例如Cisco和Juniper)兼容和支持的命令。我们将使用vtysh shell来配置BGP路由在教程的其余部分。</p><p>启动vtysh shell 命令，输入：</p><pre tabindex=0><code># vtysh
+</code></pre><p>提示将被改成该主机名，这表明你是在vtysh shell中。</p><pre tabindex=0><code>Router-A#
+</code></pre><p>现在我们将使用以下命令来为Zebra配置日志文件：</p><pre tabindex=0><code>Router-A# configure terminal
+Router-A(config)# log file /var/log/quagga/quagga.log
+Router-A(config)# exit
+</code></pre><p>永久保存Zebra配置：</p><pre tabindex=0><code>Router-A# write
+</code></pre><p>在路由器B操作同样的步骤。</p><h3 id=配置对等的ip地址>配置对等的IP地址</h3><p>下一步，我们将在可用的接口上配置对等的IP地址。</p><pre tabindex=0><code>Router-A# show interface   #显示接口信息
+</code></pre><hr><pre tabindex=0><code>Interface eth0 is up, line protocol detection is disabled
+. . . . .
+Interface eth1 is up, line protocol detection is disabled
+. . . . .
+</code></pre><p>配置eth0接口的参数：</p><pre tabindex=0><code>site-A-RTR# configure terminal
+site-A-RTR(config)# interface eth0
+site-A-RTR(config-if)# ip address 100.100.0.1/30
+site-A-RTR(config-if)# description &#34;to Router-B&#34;
+site-A-RTR(config-if)# no shutdown
+site-A-RTR(config-if)# exit
+</code></pre><p>继续配置eth1接口的参数：</p><pre tabindex=0><code>site-A-RTR(config)# interface eth1
+site-A-RTR(config-if)# ip address 100.100.1.1/24
+site-A-RTR(config-if)# description &#34;test ip from provider A network&#34;
+site-A-RTR(config-if)# no shutdown
+site-A-RTR(config-if)# exit
+</code></pre><p>现在确认配置：</p><pre tabindex=0><code>Router-A# show interface 
+</code></pre><hr><pre tabindex=0><code>Interface eth0 is up, line protocol detection is disabled
+  Description: &#34;to Router-B&#34;
+  inet 100.100.0.1/30 broadcast 100.100.0.3
+Interface eth1 is up, line protocol detection is disabled
+  Description: &#34;test ip from provider A network&#34;
+  inet 100.100.1.1/24 broadcast 100.100.1.255
+</code></pre><hr><pre tabindex=0><code>Router-A# show interface description   #显示接口描述
+</code></pre><hr><pre tabindex=0><code>Interface       Status  Protocol  Description
+eth0            up      unknown   &#34;to Router-B&#34;
+eth1            up      unknown   &#34;test ip from provider A network&#34;
+</code></pre><p>如果一切看起来正常，别忘记保存配置。</p><pre tabindex=0><code>Router-A# write
+</code></pre><p>同样地，在路由器B重复一次配置。</p><p>在我们继续下一步之前，确认下彼此的IP是可以ping通的。</p><pre tabindex=0><code>Router-A# ping 100.100.0.2 
+</code></pre><hr><pre tabindex=0><code>PING 100.100.0.2 (100.100.0.2) 56(84) bytes of data.
+64 bytes from 100.100.0.2: icmp_seq=1 ttl=64 time=0.616 ms
+</code></pre><p>下一步，我们将继续配置BGP对等和前缀设置。</p><h3 id=配置bgp对等>配置BGP对等</h3><p>Quagga守护进程负责BGP的服务叫bgpd。首先我们来准备它的配置文件。</p><pre tabindex=0><code># cp /usr/share/doc/quagga-XXXXXXX/bgpd.conf.sample /etc/quagga/bgpd.conf 
+</code></pre><p>在CentOS6系统中：</p><pre tabindex=0><code># service bgpd start
+# chkconfig bgpd on
+</code></pre><p>在CentOS7中：</p><pre tabindex=0><code># systemctl start bgpd
+# systemctl enable bgpd
+</code></pre><p>现在，让我们来进入Quagga 的shell。</p><pre tabindex=0><code># vtysh
+</code></pre><p>第一步，我们要确认当前没有已经配置的BGP会话。在一些版本，我们可能会发现一个AS号为7675的BGP会话。由于我们不需要这个会话，所以把它移除。</p><pre tabindex=0><code>Router-A# show running-config 
+</code></pre><hr><pre tabindex=0><code>... ... ...
+router bgp 7675
+ bgp router-id 200.200.1.1
+... ... ... 
+</code></pre><p>我们将移除一些预先配置好的BGP会话，并建立我们所需的会话取而代之。</p><pre tabindex=0><code>Router-A# configure terminal
+Router-A(config)# no router bgp 7675
+Router-A(config)# router bgp 100
+Router-A(config)# no auto-summary
+Router-A(config)# no synchronizaiton
+Router-A(config-router)# neighbor 100.100.0.2 remote-as 200
+Router-A(config-router)# neighbor 100.100.0.2 description &#34;provider B&#34;
+Router-A(config-router)# exit
+Router-A(config)# exit
+Router-A# write 
+</code></pre><p>路由器B将用同样的方式来进行配置，以下配置提供作为参考。</p><pre tabindex=0><code>Router-B# configure terminal
+Router-B(config)# no router bgp 7675
+Router-B(config)# router bgp 200
+Router-B(config)# no auto-summary
+Router-B(config)# no synchronizaiton
+Router-B(config-router)# neighbor 100.100.0.1 remote-as 100
+Router-B(config-router)# neighbor 100.100.0.1 description &#34;provider A&#34;
+Router-B(config-router)# exit
+Router-B(config)# exit
+Router-B# write 
+</code></pre><p>当相关的路由器都被配置好，两台路由器之间的对等将被建立。现在让我们通过运行下面的命令来确认：</p><pre tabindex=0><code>Router-A# show ip bgp summary 
+</code></pre><p><img src=/data/attachment/album/201501/07/154603leep0g6o6upn1iz1.jpg alt></p><p>从输出中，我们可以看到"State/PfxRcd"部分。如果对等关闭，输出将会显示"Idle"或者"Active&rsquo;。请记住，单词&rsquo;Active&rsquo;这个词在路由器中总是不好的意思。它意味着路由器正在积极地寻找邻居、前缀或者路由。当对等是up状态，&ldquo;State/PfxRcd"下的输出状态将会从特殊邻居接收到前缀号。</p><p>在这个例子的输出中，BGP对等只是在AS100和AS200之间呈up状态。因此没有前缀被更改，所以最右边列的数值是0。</p><h3 id=配置前缀通告>配置前缀通告</h3><p>正如一开始提到，AS 100将以100.100.0.0/22作为通告，在我们的例子中AS 200将同样以200.200.0.0/22作为通告。这些前缀需要被添加到BGP配置如下。</p><p>在路由器-A中：</p><pre tabindex=0><code>Router-A# configure terminal
+Router-A(config)# router bgp 100
+Router-A(config)# network 100.100.0.0/22
+Router-A(config)# exit
+Router-A# write
+</code></pre><p>在路由器-B中：</p><pre tabindex=0><code>Router-B# configure terminal
+Router-B(config)# router bgp 200
+Router-B(config)# network 200.200.0.0/22
+Router-B(config)# exit
+Router-B# write 
+</code></pre><p>在这一点上，两个路由器会根据需要开始通告前缀。</p><h3 id=测试前缀通告>测试前缀通告</h3><p>首先，让我们来确认前缀的数量是否被改变了。</p><pre tabindex=0><code>Router-A# show ip bgp summary 
+</code></pre><p><img src=/data/attachment/album/201501/07/154606essbo620j8jjv1yn.jpg alt></p><p>为了查看所接收的更多前缀细节，我们可以使用以下命令，这个命令用于显示邻居100.100.0.2所接收到的前缀总数。</p><pre tabindex=0><code> Router-A# show ip bgp neighbors 100.100.0.2 advertised-routes 
+</code></pre><p><img src=/data/attachment/album/201501/07/154608ftnnsiqierqwneie.jpg alt></p><p>查看哪一个前缀是我们从邻居接收到的：</p><pre tabindex=0><code>Router-A# show ip bgp neighbors 100.100.0.2 routes 
+</code></pre><p><img src=/data/attachment/album/201501/07/154611kvted9t0smtdcvcc.jpg alt></p><p>我们也可以查看所有的BGP路由器：</p><pre tabindex=0><code>Router-A# show ip bgp 
+</code></pre><p><img src=/data/attachment/album/201501/07/154613yvaa0hnl06yy1n1y.jpg alt></p><p>以上的命令都可以被用于检查哪个路由器通过BGP在路由器表中被学习到。</p><pre tabindex=0><code>Router-A# show ip route 
+</code></pre><hr><pre tabindex=0><code>代码: K - 内核路由, C - 已链接 , S - 静态 , R - 路由信息协议 , O - 开放式最短路径优先协议,
+
+       I - 中间系统到中间系统的路由选择协议, B - 边界网关协议, &gt; - 选择路由, * - FIB 路由
+
+C&gt;* 100.100.0.0/30 is directly connected, eth0
+C&gt;* 100.100.1.0/24 is directly connected, eth1
+B&gt;* 200.200.0.0/22 [20/0] via 100.100.0.2, eth0, 00:06:45
+</code></pre><hr><pre tabindex=0><code>Router-A# show ip route bgp 
+</code></pre><hr><pre tabindex=0><code>B&gt;* 200.200.0.0/22 [20/0] via 100.100.0.2, eth0, 00:08:13
+</code></pre><p>BGP学习到的路由也将会在Linux路由表中出现。</p><pre tabindex=0><code>[root@Router-A~]# ip route 
+</code></pre><hr><pre tabindex=0><code>100.100.0.0/30 dev eth0  proto kernel  scope link  src 100.100.0.1
+100.100.1.0/24 dev eth1  proto kernel  scope link  src 100.100.1.1
+200.200.0.0/22 via 100.100.0.2 dev eth0  proto zebra
+</code></pre><p>最后，我们将使用ping命令来测试连通。结果将成功ping通。</p><pre tabindex=0><code>[root@Router-A~]# ping 200.200.1.1 -c 2
+</code></pre><p>总而言之，本教程将重点放在如何在CentOS系统中运行一个基本的BGP路由器。这个教程让你开始学习BGP的配置，一些更高级的设置例如设置过滤器、BGP属性调整、本地优先级和预先路径准备等，我将会在后续的教程中覆盖这些主题。</p><p>希望这篇教程能给大家一些帮助。</p><hr><p>via: <a href=http://xmodulo.com/centos-bgp-router-quagga.html>http://xmodulo.com/centos-bgp-router-quagga.html</a></p><p>作者：<a href=http://xmodulo.com/author/sarmed>Sarmed Rahman</a> 译者：<a href=https://github.com/disylee>disylee</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/bgp/ rel=tag>BGP</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%B7%AF%E7%94%B1%E5%99%A8/ rel=tag>路由器</a></li><li class=tags__item><a class="tags__link btn" href=/tags/quagga/ rel=tag>Quagga</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

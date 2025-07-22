@@ -1,0 +1,79 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Python 解析参数 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Python 解析参数"><meta property="og:description" content="使用 argparse 模块像专业人士一样解析参数。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11144-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-07-24T21:04:07+00:00"><meta property="article:modified_time" content="2019-07-24T21:04:07+00:00"><meta itemprop=name content="使用 Python 解析参数"><meta itemprop=description content="使用 argparse 模块像专业人士一样解析参数。"><meta itemprop=datePublished content="2019-07-24T21:04:07+00:00"><meta itemprop=dateModified content="2019-07-24T21:04:07+00:00"><meta itemprop=wordCount content="354"><meta itemprop=keywords content="参数,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Python 解析参数</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-07-24T21:04:07Z>July 24, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>使用 argparse 模块像专业人士一样解析参数。</p></blockquote><p><img src=/data/attachment/album/201907/24/210351h99gzcttqmk7c7mx.jpg alt></p><p>如果你在使用 <a href=https://www.python.org/>Python</a> 进行开发，你可能会在终端中使用命令，即使只是为了启动 Python 脚本或使用 <a href=https://pip.pypa.io/en/stable/installing/>pip</a> 安装 Python 模块。命令可能简单而单一：</p><pre tabindex=0><code>$ ls
+</code></pre><p>命令也可能需要参数：</p><pre tabindex=0><code>$ ls example
+</code></pre><p>命令也可以有选项或标志：</p><pre tabindex=0><code>$ ls --color example
+</code></pre><p>有时选项也有参数：</p><pre tabindex=0><code>$ sudo firewall-cmd  --list-all --zone home
+</code></pre><h3 id=参数>参数</h3><p>POSIX shell 会自动将你输入的内容作为命令分成数组。例如，这是一个简单的命令：</p><pre tabindex=0><code>$ ls example
+</code></pre><p>命令 <code>ls</code> 的位置是 <code>$0</code>，参数 <code>example</code> 位置是 <code>$1</code>。</p><p>你<strong>可以</strong>写一个循环迭代每项。确定它是否是命令、选项还是参数。并据此采取行动。幸运的是，已经有一个名为 <a href=https://pypi.org/project/argparse/>argparse</a> 的模块。</p><h3 id=argparse>argparse</h3><p>argparse 模块很容易集成到 Python 程序中，并有多种便利功能。例如，如果你的用户更改选项的顺序或使用一个不带参数的选项（称为<strong>布尔</strong>，意味着选项可以打开或关闭设置），然后另一个需要参数（例如 <code>--color red</code>），argparse 可以处理多种情况。如果你的用户忘记了所需的选项，那么 argparse 模块可以提供友好的错误消息。</p><p>要在应用中使用 argparse，首先要定义为用户提供的选项。你可以接受几种不同的参数，而语法一致又简单。</p><p>这是一个简单的例子：</p><pre tabindex=0><code>#!/usr/bin/env python
+import argparse
+import sys
+
+def getOptions(args=sys.argv[1:]):
+    parser = argparse.ArgumentParser(description=&#34;Parses command.&#34;)
+    parser.add_argument(&#34;-i&#34;, &#34;--input&#34;, help=&#34;Your input file.&#34;)
+    parser.add_argument(&#34;-o&#34;, &#34;--output&#34;, help=&#34;Your destination output file.&#34;)
+    parser.add_argument(&#34;-n&#34;, &#34;--number&#34;, type=int, help=&#34;A number.&#34;)
+    parser.add_argument(&#34;-v&#34;, &#34;--verbose&#34;,dest=&#39;verbose&#39;,action=&#39;store_true&#39;, help=&#34;Verbose mode.&#34;)
+    options = parser.parse_args(args)
+    return options
+</code></pre><p>此示例代码创建一个名为 <code>getOptions</code> 的函数，并告诉 Python 查看每个可能的参数，前面有一些可识别的字符串（例如 <code>--input</code> 或者 <code>-i</code>）。 Python 找到的任何选项都将作为 <code>options</code> 对象从函数中返回（<code>options</code> 是一个任意名称，且没有特殊含义。它只是一个包含函数已解析的所有参数的摘要的数据对象）。</p><p>默认情况下，Python 将用户给出的任何参数视为字符串。如果需要提取整数（数字），则必须指定选项 <code>type=int</code>，如示例代码中的 <code>--number</code> 选项。</p><p>如果你有一个只是关闭和打开功能的参数，那么你必须使用 <code>boolean</code> 类型，就像示例代码中的 <code>--verbose</code> 标志一样。这种选项只保存 <code>True</code> 或 <code>False</code>，用户用来指定是否使用标志。如果使用该选项，那么会激活 <code>stored_true</code>。</p><p>当 <code>getOptions</code> 函数运行时，你就可以使用 <code>options</code> 对象的内容，并让程序根据用户调用命令的方式做出决定。你可以使用测试打印语句查看 <code>options</code> 的内容。将其添加到示例文件的底部：</p><pre tabindex=0><code>print(getOptions())
+</code></pre><p>然后带上参数运行代码：</p><pre tabindex=0><code>$ python3 ./example.py -i foo -n 4
+Namespace(input=&#39;foo&#39;, number=4, output=None, verbose=False)
+</code></pre><h3 id=检索值>检索值</h3><p>示例代码中的 <code>options</code> 对象包含了用户提供的选项后面的值（或派生的布尔值）。例如，在示例代码中，可以通过 <code>options.number</code> 来检索 <code>--number</code>。</p><pre tabindex=0><code>options = getOptions(sys.argv[1:])
+
+if options.verbose:
+    print(&#34;Verbose mode on&#34;)
+else:
+    print(&#34;Verbose mode off&#34;)
+
+print(options.input)
+print(options.output)
+print(options.number)
+
+# 这里插入你的 Python 代码
+</code></pre><p>示例中的布尔选项 <code>--verbose</code> 是通过测试 <code>options.verbose</code> 是否为 <code>True</code>（意味着用户使用了 <code>--verbose</code> 标志）或 <code>False</code>（用户没有使用 <code>--verbose</code> 标志），并采取相应的措施。</p><h3 id=帮助和反馈>帮助和反馈</h3><p>argparse 还包含一个内置的 <code>--help</code>（简写 <code>-h</code>）选项，它提供了有关如何使用命令的提示。这是从你的代码派生的，因此生成此帮助系统不需要额外的工作：</p><pre tabindex=0><code>$ ./example.py --help
+usage: example.py [-h] [-i INPUT] [-o OUTPUT] [-n NUMBER] [-v]
+
+Parses command.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        Your input file.
+  -o OUTPUT, --output OUTPUT
+                        Your destination output file.
+  -n NUMBER, --number NUMBER
+                        A number.
+  -v, --verbose         Verbose mode.
+</code></pre><h3 id=像专业人士一样用-python-解析>像专业人士一样用 Python 解析</h3><p>这是一个简单的示例，来演示如何在 Python 应用中的解析参数以及如何快速有效地记录它的语法。下次编写 Python 脚本时，请使用 argparse 为其提供一些选项。你以后会感到自得，你的命令不会像一个快速的临时脚本，更像是一个“真正的” Unix 命令！</p><p>以下是可用于测试的示例代码：</p><pre tabindex=0><code>#!/usr/bin/env python3
+# GNU All-Permissive License
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.  This file is offered as-is,
+# without any warranty.
+
+import argparse
+import sys
+
+def getOptions(args=sys.argv[1:]):
+    parser = argparse.ArgumentParser(description=&#34;Parses command.&#34;)
+    parser.add_argument(&#34;-i&#34;, &#34;--input&#34;, help=&#34;Your input file.&#34;)
+    parser.add_argument(&#34;-o&#34;, &#34;--output&#34;, help=&#34;Your destination output file.&#34;)
+    parser.add_argument(&#34;-n&#34;, &#34;--number&#34;, type=int, help=&#34;A number.&#34;)
+    parser.add_argument(&#34;-v&#34;, &#34;--verbose&#34;,dest=&#39;verbose&#39;,action=&#39;store_true&#39;, help=&#34;Verbose mode.&#34;)
+    options = parser.parse_args(args)
+    return options
+
+options = getOptions(sys.argv[1:])
+
+if options.verbose:
+    print(&#34;Verbose mode on&#34;)
+else:
+    print(&#34;Verbose mode off&#34;)
+
+print(options.input)
+print(options.output)
+print(options.number)
+</code></pre><hr><p>via: <a href=https://opensource.com/article/19/7/parse-arguments-python>https://opensource.com/article/19/7/parse-arguments-python</a></p><p>作者：<a href=https://opensource.com/users/seth/users/notsag>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8F%82%E6%95%B0/ rel=tag>参数</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

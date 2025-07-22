@@ -1,0 +1,62 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>ps_mem：一个用于精确报告 Linux 核心内存用量的简单 Python 脚本 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="ps_mem：一个用于精确报告 Linux 核心内存用量的简单 Python 脚本"><meta property="og:description" content="ps_mem 是一个可以帮助我们精确获取 Linux 中各个程序核心内存使用情况的简单 python 脚本。这个工具和其它的区别在于其精确显示核心内存使用情况。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8639-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-06-26T16:56:00+00:00"><meta property="article:modified_time" content="2017-06-26T16:56:00+00:00"><meta itemprop=name content="ps_mem：一个用于精确报告 Linux 核心内存用量的简单 Python 脚本"><meta itemprop=description content="ps_mem 是一个可以帮助我们精确获取 Linux 中各个程序核心内存使用情况的简单 python 脚本。这个工具和其它的区别在于其精确显示核心内存使用情况。"><meta itemprop=datePublished content="2017-06-26T16:56:00+00:00"><meta itemprop=dateModified content="2017-06-26T16:56:00+00:00"><meta itemprop=wordCount content="474"><meta itemprop=keywords content="监控,内存,ps_mem,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>ps_mem：一个用于精确报告 Linux 核心内存用量的简单 Python 脚本</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-06-26T16:56:00Z>June 26, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201706/26/165617wobmm87558zh2obd.jpg alt></p><p><a href=https://github.com/pixelb/ps_mem>ps_mem</a> 是一个可以帮助我们精确获取 Linux 中各个程序核心内存使用情况的简单 python 脚本。虽然在 Linux 上有很多可用于查看内存使用情况的工具，比如 <code>free</code>、<code>vmstat</code>、<code>smem</code>、<code>top</code> 等，但这个工具和其它的区别在于其精确显示核心内存使用情况。</p><p>它会分别计算一个程序私有内存总量和共享内存总量，并以更准确的方式给出了总的内存使用量。很明显的，它将帮助大家知道系统中哪个程序正在占用更多的内存。</p><p>你可以通过包管理器、<code>pip</code> 、或直接运行 <code>ps_mem.py</code> 脚本等多种方式来安装 <code>ps_mem</code> 工具。需要注意的是：需要有 root 权限。</p><p>另外，推荐阅读以下内存工具：</p><ul><li><a href=http://www.2daygeek.com/free-command-to-check-memory-usage-statistics-in-linux/>free – 一个在 Linux 上查看内存用量统计（可用和已用）的标准工具</a></li><li><a href=http://www.2daygeek.com/smem-linux-memory-usage-statistics-reporting-tool/>smem – Linux 内存报告/统计工具</a></li><li><a href=http://www.2daygeek.com/linux-vmstat-command-examples-tool-report-virtual-memory-statistics/>vmstat – 一个好用的用于虚拟内存统计的标准工具</a></li></ul><h3 id=通过包管理器安装-ps_mem>通过包管理器安装 ps_mem</h3><p>基于 RHEL 的系统默认仓库就包含 ps_mem 工具，所以我们可以简单地通过包管理器进行安装。</p><p>对于 RHEL/CentOS ，使用 <a href=http://www.2daygeek.com/yum-command-examples/>yum 包管理器</a> 安装 <code>ps_mem</code> 包：</p><pre tabindex=0><code>$ sudo yum install ps_mem
+</code></pre><p>对于Fedora ，使用 <a href=http://www.2daygeek.com/dnf-command-examples/>dnf 包管理器</a> 安装 ps_mem 包：</p><pre tabindex=0><code>$ sudo dnf install ps_mem
+</code></pre><p>对于 Arch Linux ，使用 <a href=http://www.2daygeek.com/pacman-command-examples/>pacman 包管理器</a> 安装 ps_mem 包：</p><pre tabindex=0><code>$ sudo pacman -S ps_mem
+</code></pre><h3 id=通过-pip-安装-ps_mem>通过 pip 安装 ps_mem</h3><p><code>pip</code> 是在 Linux 上推荐使用的一种安装 Python 包的工具。可以使用 <code>pip</code> 命令而不是包管理器去获取最新的版本。使用 <code>pip</code> 包前，请确保你的系统上已安装过 <code>pip</code> 包。否则，先使用发行版本的包管理器安装 <code>python-pip</code> 包。</p><p>对于基于 Debian 的系统：</p><pre tabindex=0><code>$ sudo apt-get install python-pip
+</code></pre><p>对于基于 RHEL/CentOS 的系统：</p><pre tabindex=0><code>$ sudo yum install python-pip
+</code></pre><p>对于 Fedora</p><pre tabindex=0><code>$ sudo dnf install python-pip
+</code></pre><p>对于 openSUSE</p><pre tabindex=0><code>$ sudo zypper install python-pip
+</code></pre><p>对于基于 Arch Linux 的系统：</p><pre tabindex=0><code>$ sudo pacman -S python-pip
+</code></pre><p>最后，在 Linux 上运行 <code>pip</code> 工具安装 <code>ps_mem</code> ：</p><pre tabindex=0><code>$ sudo pip install ps_mem
+</code></pre><h3 id=直接运行-ps_mempy-脚本>直接运行 ps_mem.py 脚本</h3><p>我们也可以从开发者 github 页面下载文件，并直接运行 <code>ps_mem.py</code> 脚本。</p><pre tabindex=0><code>$ git clone https://github.com/pixelb/ps_mem.git &amp;&amp; cd ps_mem
+$ sudo python ps_mem.py
+</code></pre><h3 id=ps_mem-使用方法>ps_mem 使用方法</h3><p>不带任何参数直接运行 <code>ps_mem</code> 以精确获取每个程序的的核心内存使用情况。</p><pre tabindex=0><code>$ sudo ps_mem
+ Private  +   Shared  =  RAM used   Program
+
+  1.6 MiB + 438.5 KiB =   2.1 MiB   packagekitd
+  1.7 MiB + 498.0 KiB =   2.1 MiB   indicator-application-service
+912.0 KiB +   1.3 MiB =   2.2 MiB   window-stack-bridge
+  2.0 MiB + 350.5 KiB =   2.3 MiB   gnome-keyring-daemon
+  1.8 MiB + 575.0 KiB =   2.3 MiB   whoopsie
+  2.4 MiB + 304.5 KiB =   2.7 MiB   systemd-journald
+  2.7 MiB + 157.5 KiB =   2.8 MiB   ibus-engine-simple
+  2.7 MiB + 182.0 KiB =   2.9 MiB   ibus-dconf
+  2.7 MiB + 332.5 KiB =   3.0 MiB   NetworkManager
+  3.1 MiB + 169.5 KiB =   3.2 MiB   polkitd
+  1.9 MiB +   1.7 MiB =   3.6 MiB   systemd (2)
+  3.4 MiB + 172.5 KiB =   3.6 MiB   deja-dup-monitor
+  2.9 MiB + 685.0 KiB =   3.6 MiB   zeitgeist-datahub
+  2.9 MiB + 848.0 KiB =   3.7 MiB   python2.7
+. . . . . .
+222.1 MiB +   9.4 MiB = 231.5 MiB   compiz
+286.2 MiB +  11.8 MiB = 298.0 MiB   firefox
+---------------------------------
+                          1.3 GiB
+=================================
+</code></pre><p>输出中打印出全路径：</p><pre tabindex=0><code>$ sudo ps_mem -s
+ Private  +   Shared  =  RAM used   Program
+
+  3.2 MiB + 951.0 KiB =   4.1 MiB   /usr/lib/evolution/evolution-addressbook-factory
+  3.7 MiB + 826.5 KiB =   4.5 MiB   /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+  3.7 MiB + 853.0 KiB =   4.6 MiB   /usr/lib/unity-settings-daemon/unity-fallback-mount-helper
+. . .  . . .
+131.9 MiB + 168.0 KiB = 132.1 MiB   /usr/sbin/mysqld
+222.1 MiB +   9.4 MiB = 231.5 MiB   /usr/bin/compiz
+286.2 MiB +  11.8 MiB = 298.1 MiB   /usr/lib/firefox/firefox
+---------------------------------
+                          1.3 GiB
+=================================
+</code></pre><p>只显示特定的 PID 列表的内存使用情况：</p><pre tabindex=0><code>$ sudo ps_mem -p 2886,4386
+ Private  +   Shared  =  RAM used   Program
+
+ 13.5 MiB +   2.9 MiB =  16.4 MiB   gnome-terminal-server
+286.2 MiB +  11.8 MiB = 298.0 MiB   firefox
+---------------------------------
+                        314.4 MiB
+=================================
+</code></pre><p>每 N 秒打印进程内存。以下命令每 2 秒报告一次内存使用情况：</p><pre tabindex=0><code>$ sudo ps_mem w 2
+</code></pre><p>只显示内存总量：</p><pre tabindex=0><code>$ sudo ps_mem -t
+1329884160
+</code></pre><hr><p>via: <a href=http://www.2daygeek.com/ps_mem-report-core-memory-usage-accurately-in-linux/>http://www.2daygeek.com/ps_mem-report-core-memory-usage-accurately-in-linux/</a></p><p>作者：<a href=http://www.2daygeek.com/author/2daygeek/>2DAYGEEK</a> 译者：<a href=https://github.com/xllc>xllc</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%9B%91%E6%8E%A7/ rel=tag>监控</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%86%85%E5%AD%98/ rel=tag>内存</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ps_mem/ rel=tag>ps_mem</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

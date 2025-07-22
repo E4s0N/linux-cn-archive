@@ -1,0 +1,83 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>SQL 入门 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="SQL 入门"><meta property="og:description" content="使用 SQL 构建一个关系数据库比你想的更容易。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9537-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-04-12T08:37:27+00:00"><meta property="article:modified_time" content="2018-04-12T08:37:27+00:00"><meta itemprop=name content="SQL 入门"><meta itemprop=description content="使用 SQL 构建一个关系数据库比你想的更容易。"><meta itemprop=datePublished content="2018-04-12T08:37:27+00:00"><meta itemprop=dateModified content="2018-04-12T08:37:27+00:00"><meta itemprop=wordCount content="296"><meta itemprop=keywords content="SQL,数据库,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>SQL 入门</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-04-12T08:37:27Z>April 12, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>使用 SQL 构建一个关系数据库比你想的更容易。</p></blockquote><p><img src=/data/attachment/album/201804/12/083722owub5u7i75w8bw7b.jpg alt></p><p>使用 SQL 构建数据库比大多数人想象得要简单。实际上，你甚至不需要成为一个有经验的程序员就可以使用 SQL 创建数据库。在本文中，我将解释如何使用 MySQL 5.6 来创建简单的关系型数据库管理系统（RDMS）。在开始之前，我想顺便感谢一下 <a href=http://sqlfiddle.com>SQL Fiddle</a>，这是我用来运行脚本的工具。它提供了一个用于测试简单脚本的有用的沙箱。</p><p>在本教程中，我将构建一个使用如下实体关系图（ERD）中显示的简单架构的数据库。数据库列出了学生和正在学习的课程。为了保持简单，我使用了两个实体（即表），只有一种关系和依赖。这两个实体称为 <code>dbo_students</code> 和 <code>dbo_courses</code>。</p><p><img src=/data/attachment/album/201804/12/083731bl7i3z5pglitpdyi.png alt></p><p>数据库的多样性是一对多的，因为每门课程可以包含很多学生，但每个学生只能学习一门课程。</p><p>关于术语的快速说明：</p><ol><li>一张表称为一个实体。</li><li>一个字段称为一个属性。</li><li>一条记录称为一个元组。</li><li>用于构建数据库的脚本称为架构。</li></ol><h3 id=构建架构>构建架构</h3><p>要构建数据库，使用 <code>CREATE TABLE &lt;表名></code> 命令，然后定义每个字段的名称和数据类型。数据库使用 <code>VARCHAR(n)</code> （字符串）和 <code>INT(n)</code> （整数），其中 <code>n</code> 表示可以存储的值的长度。例如 <code>INT(2)</code> 可以是 <code>01</code>。</p><p>这是用于创建两个表的代码：</p><pre tabindex=0><code>CREATE TABLE dbo_students
+(
+  student_id INT(2) AUTO_INCREMENT NOT NULL,
+  student_name VARCHAR(50),
+  course_studied INT(2),
+  PRIMARY KEY (student_id)
+);
+
+CREATE TABLE dbo_courses
+(
+  course_id INT(2) AUTO_INCREMENT NOT NULL,
+  course_name VARCHAR(30),
+  PRIMARY KEY (course_id)
+);
+</code></pre><p><code>NOT NULL</code> 意味着字段不能为空，<code>AUTO_INCREMENT</code> 意味着当一个新的元组被添加时，ID 号将自动生成，是对先前存储的 ID 号加 1，以强化各实体之间的完整参照性。 <code>PRIMARY KEY</code> 是每个表的惟一标识符属性。这意味着每个元组都有自己的不同的标识。</p><h3 id=关系作为一种约束>关系作为一种约束</h3><p>就目前来看，这两张表格是独立存在的，没有任何联系或关系。要连接它们，必须标识一个外键。在 <code>dbo_students</code> 中，外键是 <code>course_studied</code>，其来源在 <code>dbo_courses</code> 中，意味着该字段被引用。SQL 中的特定命令为 <code>CONSTRAINT</code>，并且将使用另一个名为 <code>ALTER TABLE</code> 的命令添加这种关系，这样即使在架构构建完毕后，也可以编辑表。</p><p>以下代码将关系添加到数据库构造脚本中：</p><pre tabindex=0><code>ALTER TABLE dbo_students
+ADD CONSTRAINT FK_course_studied
+FOREIGN KEY (course_studied) REFERENCES dbo_courses(course_id);
+</code></pre><p>使用 <code>CONSTRAINT</code> 命令实际上并不是必要的，但这是一个好习惯，因为它意味着约束可以被命名并且使维护更容易。现在数据库已经完成了，是时候添加一些数据了。</p><h3 id=将数据添加到数据库>将数据添加到数据库</h3><p><code>INSERT INTO &lt;表名></code> 是用于直接选择要添加哪些属性（即字段）数据的命令。首先声明实体名称，然后声明属性，下边是添加到实体的数据，从而创建一个元组。如果指定了 <code>NOT NULL</code>，这表示该属性不能留空。以下代码将展示如何向表中添加记录：</p><pre tabindex=0><code>INSERT INTO dbo_courses(course_id,course_name)
+VALUES(001,&#39;Software Engineering&#39;);
+INSERT INTO dbo_courses(course_id,course_name)
+VALUES(002,&#39;Computer Science&#39;);
+INSERT INTO dbo_courses(course_id,course_name)
+VALUES(003,&#39;Computing&#39;);
+
+INSERT INTO dbo_students(student_id,student_name,course_studied)
+VALUES(001,&#39;student1&#39;,001);
+INSERT INTO dbo_students(student_id,student_name,course_studied)
+VALUES(002,&#39;student2&#39;,002);
+INSERT INTO dbo_students(student_id,student_name,course_studied)
+VALUES(003,&#39;student3&#39;,002);
+INSERT INTO dbo_students(student_id,student_name,course_studied)
+VALUES(004,&#39;student4&#39;,003);
+</code></pre><p>现在数据库架构已经完成并添加了数据，现在是时候在数据库上运行查询了。</p><h3 id=查询>查询</h3><p>查询遵循使用以下命令的集合结构：</p><pre tabindex=0><code>SELECT &lt;attributes&gt;
+FROM &lt;entity&gt;
+WHERE &lt;condition&gt;
+</code></pre><p>要显示 <code>dbo_courses</code> 实体内的所有记录并显示课程代码和课程名称，请使用 <code>*</code> 。 这是一个通配符，它消除了键入所有属性名称的需要。（在生产数据库中不建议使用它。）此处查询的代码是：</p><pre tabindex=0><code>SELECT *
+FROM dbo_courses
+</code></pre><p>此处查询的输出显示表中的所有元组，因此可显示所有可用课程：</p><pre tabindex=0><code>| course_id |          course_name |
+|-----------|----------------------|
+|         1 | Software Engineering |
+|         2 |     Computer Science |
+|         3 |            Computing |
+</code></pre><p>在后面的文章中，我将使用三种类型的连接之一来解释更复杂的查询：内连接、外连接和交叉连接。</p><p>这是完整的脚本：</p><pre tabindex=0><code>CREATE TABLE dbo_students
+(
+  student_id INT(2) AUTO_INCREMENT NOT NULL,
+  student_name VARCHAR(50),
+  course_studied INT(2),
+  PRIMARY KEY (student_id)
+);
+
+CREATE TABLE dbo_courses
+(
+  course_id INT(2) AUTO_INCREMENT NOT NULL,
+  course_name VARCHAR(30),
+  PRIMARY KEY (course_id)
+);
+
+ALTER TABLE dbo_students
+ADD CONSTRAINT FK_course_studied
+FOREIGN KEY (course_studied) REFERENCES dbo_courses(course_id);
+
+INSERT INTO dbo_courses(course_id,course_name)
+VALUES(001,&#39;Software Engineering&#39;);
+INSERT INTO dbo_courses(course_id,course_name)
+VALUES(002,&#39;Computer Science&#39;);
+INSERT INTO dbo_courses(course_id,course_name)
+VALUES(003,&#39;Computing&#39;);
+
+INSERT INTO dbo_students(student_id,student_name,course_studied)
+VALUES(001,&#39;student1&#39;,001);
+INSERT INTO dbo_students(student_id,student_name,course_studied)
+VALUES(002,&#39;student2&#39;,002);
+INSERT INTO dbo_students(student_id,student_name,course_studied)
+VALUES(003,&#39;student3&#39;,002);
+INSERT INTO dbo_students(student_id,student_name,course_studied)
+VALUES(004,&#39;student4&#39;,003);
+
+SELECT *
+FROM dbo_courses
+</code></pre><h3 id=学习更多>学习更多</h3><p>SQL 并不困难；我认为它比编程简单，并且该语言对于不同的数据库系统是通用的。 请注意，实体关系图中 <code>dbo.&lt;实体></code> （LCTT 译注：文章中使用的是 <code>dbo_&lt;实体></code>）不是必需的实体命名约定；我之所以使用，仅仅是因为它是 Microsoft SQL Server 中的标准。</p><p>如果你想了解更多，在网络上这方面的最佳指南是 <a href=https://www.w3schools.com/sql/default.asp>W3Schools.com</a> 中对所有数据库平台的 SQL 综合指南。</p><p>请随意使用我的数据库。另外，如果你有任何建议或疑问，请在评论中回复。</p><hr><p>via: <a href=https://opensource.com/article/18/2/getting-started-sql>https://opensource.com/article/18/2/getting-started-sql</a></p><p>作者：<a href=https://opensource.com/users/aaroncocker>Aaron Cocker</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/sql/ rel=tag>SQL</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ rel=tag>数据库</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

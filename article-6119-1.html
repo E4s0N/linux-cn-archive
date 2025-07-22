@@ -1,0 +1,105 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Bash 下如何逐行读取一个文件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Bash 下如何逐行读取一个文件"><meta property="og:description" content="在 Linux 或类 UNIX 系统下如何使用 KSH 或 BASH shell 逐行读取一个文件？ 在 Linux、OSX、 *BSD 或者类 Unix 系统下你可以使用 ​​while..do..done 的 bash 循环来逐行读取一个文件。 在 Bash Unix 或者 Linux shell 中逐行读取一个文件的语法 对于 bash、ksh、 zsh 和其他的 shells 语法如下 while read -r line; do COMMAND; done  input.file  通过 -r 选项传递给 read 命令以防止阻止解释其中的反斜杠转义符。 在 read 命令之前添加 IFS= 选项，来防止首尾的空白字符被去掉。 while IFS= read -r line; do COMMAND_on $line; done"><meta property="og:type" content="article"><meta property="og:url" content="/article-6119-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-08-31T10:06:52+00:00"><meta property="article:modified_time" content="2015-08-31T10:06:52+00:00"><meta itemprop=name content="Bash 下如何逐行读取一个文件"><meta itemprop=description content="在 Linux 或类 UNIX 系统下如何使用 KSH 或 BASH shell 逐行读取一个文件？ 在 Linux、OSX、 *BSD 或者类 Unix 系统下你可以使用 ​​while..do..done 的 bash 循环来逐行读取一个文件。 在 Bash Unix 或者 Linux shell 中逐行读取一个文件的语法 对于 bash、ksh、 zsh 和其他的 shells 语法如下 while read -r line; do COMMAND; done  input.file  通过 -r 选项传递给 read 命令以防止阻止解释其中的反斜杠转义符。 在 read 命令之前添加 IFS= 选项，来防止首尾的空白字符被去掉。 while IFS= read -r line; do COMMAND_on $line; done"><meta itemprop=datePublished content="2015-08-31T10:06:52+00:00"><meta itemprop=dateModified content="2015-08-31T10:06:52+00:00"><meta itemprop=wordCount content="474"><meta itemprop=keywords content="bash,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Bash 下如何逐行读取一个文件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-08-31T10:06:52Z>August 31, 2015</time></div></div></header><div class="content post__content clearfix"><p>在 Linux 或类 UNIX 系统下如何使用 KSH 或 BASH shell 逐行读取一个文件？</p><p>在 Linux、OSX、 *BSD 或者类 Unix 系统下你可以使用 ​​while..do..done 的 bash 循环来逐行读取一个文件。</p><h3 id=在-bash-unix-或者-linux-shell-中逐行读取一个文件的语法>在 Bash Unix 或者 Linux shell 中逐行读取一个文件的语法</h3><p>对于 bash、ksh、 zsh 和其他的 shells 语法如下</p><pre tabindex=0><code>while read -r line; do COMMAND; done &lt; input.file
+</code></pre><p>通过 -r 选项传递给 read 命令以防止阻止解释其中的反斜杠转义符。</p><p>在 read 命令之前添加 <code>IFS=</code> 选项，来防止首尾的空白字符被去掉。</p><pre tabindex=0><code>while IFS= read -r line; do COMMAND_on $line; done &lt; input.file
+</code></pre><p>这是更适合人类阅读的语法:</p><pre tabindex=0><code>#!/bin/bash
+input=&#34;/path/to/txt/file&#34;
+while IFS= read -r var
+do
+  echo &#34;$var&#34;
+done &lt; &#34;$input&#34;
+</code></pre><p><strong>示例</strong></p><p>下面是一些例子:</p><pre tabindex=0><code>#!/bin/ksh
+file=&#34;/home/vivek/data.txt&#34;
+while IFS= read line
+do
+    # display $line or do somthing with $line
+    echo &#34;$line&#34;
+done &lt;&#34;$file&#34;
+</code></pre><p>在 bash shell 中相同的例子:</p><pre tabindex=0><code>#!/bin/bash
+file=&#34;/home/vivek/data.txt&#34;
+while IFS= read -r line
+do
+    # display $line or do somthing with $line
+    printf &#39;%s\n&#39; &#34;$line&#34;
+done &lt;&#34;$file&#34;
+</code></pre><p>你还可以看看这个更好的:</p><pre tabindex=0><code>#!/bin/bash
+file=&#34;/etc/passwd&#34;
+while IFS=: read -r f1 f2 f3 f4 f5 f6 f7
+do
+    # display fields using f1, f2,..,f7
+    printf &#39;Username: %s, Shell: %s, Home Dir: %s\n&#39; &#34;$f1&#34; &#34;$f7&#34; &#34;$f6&#34;
+done &lt;&#34;$file&#34;
+</code></pre><p>示例输出:</p><p><img src=/data/attachment/album/201508/31/100655ossrheluxqrrfhrr.jpg alt="Fig.01: Bash shell scripting- read file line by line demo outputs"></p><p><em>图01：Bash 脚本：读取文件并逐行输出文件</em></p><h3 id=bash-脚本逐行读取文本文件并创建为-pdf-文件>Bash 脚本：逐行读取文本文件并创建为 pdf 文件</h3><p>我的输入文件如下（faq.txt）:</p><pre tabindex=0><code>4|http://www.cyberciti.biz/faq/mysql-user-creation/|Mysql User Creation: Setting Up a New MySQL User Account
+4096|http://www.cyberciti.biz/faq/ksh-korn-shell/|What is UNIX / Linux Korn Shell?
+4101|http://www.cyberciti.biz/faq/what-is-posix-shell/|What Is POSIX Shell?
+17267|http://www.cyberciti.biz/faq/linux-check-battery-status/|Linux: Check Battery Status Command
+17245|http://www.cyberciti.biz/faq/restarting-ntp-service-on-linux/|Linux Restart NTPD Service Command
+17183|http://www.cyberciti.biz/faq/ubuntu-linux-determine-your-ip-address/|Ubuntu Linux: Determine Your IP Address
+17172|http://www.cyberciti.biz/faq/determine-ip-address-of-linux-server/|HowTo: Determine an IP Address My Linux Server
+16510|http://www.cyberciti.biz/faq/unix-linux-restart-php-service-command/|Linux / Unix: Restart PHP Service Command
+8292|http://www.cyberciti.biz/faq/mounting-harddisks-in-freebsd-with-mount-command/|FreeBSD: Mount Hard Drive / Disk Command
+8190|http://www.cyberciti.biz/faq/rebooting-solaris-unix-server/|Reboot a Solaris UNIX System
+</code></pre><p>我的 bash 脚本:</p><pre tabindex=0><code>#!/bin/bash
+# Usage: Create pdf files from input (wrapper script)
+# Author: Vivek Gite &lt;Www.cyberciti.biz&gt; under GPL v2.x+
+#---------------------------------------------------------
+
+#Input file
+_db=&#34;/tmp/wordpress/faq.txt&#34;
+
+#Output location
+o=&#34;/var/www/prviate/pdf/faq&#34;
+
+_writer=&#34;~/bin/py/pdfwriter.py&#34;
+
+# If file exists 
+if [[ -f &#34;$_db&#34; ]]
+then
+    # read it
+    while IFS=&#39;|&#39; read -r pdfid pdfurl pdftitle
+    do
+        local pdf=&#34;$o/$pdfid.pdf&#34;
+        echo &#34;Creating $pdf file ...&#34;
+    #Genrate pdf file
+        $_writer --quiet --footer-spacing 2 \
+        --footer-left &#34;nixCraft is GIT UL++++ W+++ C++++ M+ e+++ d-&#34; \
+        --footer-right &#34;Page [page] of [toPage]&#34; --footer-line \
+        --footer-font-size 7 --print-media-type &#34;$pdfurl&#34; &#34;$pdf&#34;
+    done &lt;&#34;$_db&#34;
+fi
+</code></pre><h3 id=技巧从-bash-变量中读取>技巧：从 bash 变量中读取</h3><p>让我们看看如何在 Debian 或者 Ubuntu Linux 下列出所有安装过的 php 包，请输入：</p><pre tabindex=0><code># 我将输出内容赋值到一个变量名为 $list中 #
+
+list=$(dpkg --list php\* | awk &#39;/ii/{print $2}&#39;)
+printf &#39;%s\n&#39; &#34;$list&#34;
+</code></pre><p>示例输出:</p><pre tabindex=0><code>php-pear
+php5-cli
+php5-common
+php5-fpm
+php5-gd
+php5-json
+php5-memcache
+php5-mysql
+php5-readline
+php5-suhosin-extension
+</code></pre><p>你现在可以从 $list 中看到它们，并安装这些包：</p><pre tabindex=0><code>#!/bin/bash
+# BASH can iterate over $list variable using a &#34;here string&#34; #
+while IFS= read -r pkg
+do
+    printf &#39;Installing php package %s...\n&#39; &#34;$pkg&#34;
+    /usr/bin/apt-get -qq install $pkg
+done &lt;&lt;&lt; &#34;$list&#34;
+printf &#39;*** Do not forget to run php5enmod and restart the server (httpd or php5-fpm) ***\n&#39;
+</code></pre><p>示例输出:</p><pre tabindex=0><code>Installing php package php-pear...
+Installing php package php5-cli...
+Installing php package php5-common...
+Installing php package php5-fpm...
+Installing php package php5-gd...
+Installing php package php5-json...
+Installing php package php5-memcache...
+Installing php package php5-mysql...
+Installing php package php5-readline...
+Installing php package php5-suhosin-extension...
+
+*** Do not forget to run php5enmod and restart the server (httpd or php5-fpm) ***
+</code></pre><hr><p>via: <a href=http://www.cyberciti.biz/faq/unix-howto-read-line-by-line-from-file/>http://www.cyberciti.biz/faq/unix-howto-read-line-by-line-from-file/</a></p><p>作者： VIVEK GIT 译者：<a href=https://github.com/strugglingyouth>strugglingyouth</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/bash/ rel=tag>bash</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

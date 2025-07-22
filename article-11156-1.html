@@ -1,0 +1,36 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 中不使用 useradd 命令如何创建用户账号 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 中不使用 useradd 命令如何创建用户账号"><meta property="og:description" content="Linux 中有三个命令可以用来创建用户账号。你尝试过在 Linux 中手动创建用户吗？我的意思是不使用上面说的三个命令。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11156-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-07-28T20:07:45+00:00"><meta property="article:modified_time" content="2019-07-28T20:07:45+00:00"><meta itemprop=name content="在 Linux 中不使用 useradd 命令如何创建用户账号"><meta itemprop=description content="Linux 中有三个命令可以用来创建用户账号。你尝试过在 Linux 中手动创建用户吗？我的意思是不使用上面说的三个命令。"><meta itemprop=datePublished content="2019-07-28T20:07:45+00:00"><meta itemprop=dateModified content="2019-07-28T20:07:45+00:00"><meta itemprop=wordCount content="198"><meta itemprop=keywords content="用户,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 中不使用 useradd 命令如何创建用户账号</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-07-28T20:07:45Z>July 28, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201907/28/200732enjn6u0mrr61nz62.jpg alt></p><p>Linux 中有三个命令可以用来创建用户账号。你尝试过在 Linux 中手动创建用户吗？我的意思是不使用上面说的三个命令。</p><p>如果你不知道怎么做，本文可以手把手教你，并向你展示细节部分。</p><p>你可能想，这怎么可能？别担心，正如我们多次提到的那样，在 Linux 上任何事都可以搞定。这只是其中一例。</p><p>是的，我们可以做到的。想了解更多吗？</p><ul><li><a href=https://www.2daygeek.com/linux-user-account-creation-useradd-adduser-newusers/>在 Linux 中创建用户的三种方法</a></li><li><a href=https://www.2daygeek.com/linux-bulk-users-creation-useradd-newusers/>在 Linux 中批量创建用户的两种方法</a></li></ul><p>话不多说，让我们开始吧。</p><p>首先，我们要找出最后创建的 UID 和 GID 信息。 掌握了这些信息之后，就可以继续下一步。</p><pre tabindex=0><code># cat /etc/passwd | tail -1
+tuser1:x:1153:1154:Test User:/home/tuser1:/bin/bash
+</code></pre><p>根据以上输出，最后创建的用户 UID 是 1153，GID 是 1154。为了试验，我们将在系统中添加 <code>tuser2</code> 用户。</p><p>现在，在<code>/etc/passwd</code> 文件中添加一条用户信息。 总共七个字段，你需要添加一些必要信息。</p><pre tabindex=0><code>+-----------------------------------------------------------------------+
+|username:password:UID:GID:Comments:User Home Directory:User Login Shell|
++-----------------------------------------------------------------------+
+    |         |     |   |      |            |                  |
+    1         2     3   4      5            6                  7
+</code></pre><ol><li>用户名：这个字段表示用户名称。字符长度必须在 1 到 32 之间。</li><li>密码（<code>x</code>）：表示存储在 <code>/etc/shadow</code> 文件中的加密密码。</li><li>用户 ID：表示用户的 ID（UID），每个用户都有独一无二的 UID。UID 0 保留给 root 用户，UID 1-99 保留给系统用户，UID 100-999 保留给系统账号/组。</li><li>组 ID：表示用户组的 ID（GID），每个用户组都有独一无二的 GID，存储在 <code>/etc/group</code> 文件中。</li><li>注释/用户 ID 信息：这个字段表示备注，用于描述用户信息。</li><li>主目录（<code>/home/$USER</code>）：表示用户的主目录。</li><li>shell（<code>/bin/bash</code>）：表示用户使用的 shell。</li></ol><p>在文件最后添加用户信息。</p><pre tabindex=0><code># vi /etc/passwd
+
+tuser2:x:1154:1155:Test User2:/home/tuser2:/bin/bash
+</code></pre><p>你需要创建相同名字的用户组。同样地，在 <code>/etc/group</code> 文件中添加用户组信息。</p><pre tabindex=0><code># vi /etc/group
+
+tuser2:x:1155:
+</code></pre><p>做完以上两步之后，给用户设置一个密码。</p><pre tabindex=0><code># passwd tuser2
+
+Changing password for user tuser2.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+</code></pre><p>最后，试着登录新创建的用户。</p><pre tabindex=0><code># ssh [email protected]
+
+[email protected]&#39;s password:
+Creating directory &#39;/home/tuser2&#39;.
+
+$ls -la
+
+total 16
+drwx------.  2 tuser2 tuser2   59 Jun 17 09:46 .
+drwxr-xr-x. 15 root   root   4096 Jun 17 09:46 ..
+-rw-------.  1 tuser2 tuser2   18 Jun 17 09:46 .bash_logout
+-rw-------.  1 tuser2 tuser2  193 Jun 17 09:46 .bash_profile
+-rw-------.  1 tuser2 tuser2  231 Jun 17 09:46 .bashrc
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/linux-user-account-creation-in-manual-method/>https://www.2daygeek.com/linux-user-account-creation-in-manual-method/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/hello-wn>hello-wn</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%94%A8%E6%88%B7/ rel=tag>用户</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

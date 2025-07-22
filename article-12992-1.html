@@ -1,0 +1,102 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>学习使用 Sed 文本编辑器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="学习使用 Sed 文本编辑器"><meta property="og:description" content="Sed 缺少通常的文本框，而是按照用户的命令直接写入到文件上。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12992-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-01-07T00:24:17+00:00"><meta property="article:modified_time" content="2021-01-07T00:24:17+00:00"><meta itemprop=name content="学习使用 Sed 文本编辑器"><meta itemprop=description content="Sed 缺少通常的文本框，而是按照用户的命令直接写入到文件上。"><meta itemprop=datePublished content="2021-01-07T00:24:17+00:00"><meta itemprop=dateModified content="2021-01-07T00:24:17+00:00"><meta itemprop=wordCount content="525"><meta itemprop=keywords content="sed,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>学习使用 Sed 文本编辑器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-01-07T00:24:17Z>January 07, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>Sed 缺少通常的文本框，而是按照用户的命令直接写入到文件上。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202101/07/002353st8vgivu78yzp77v.jpg alt></p><p><code>sed</code> 命令是为 AT&amp;T 最初的 Unix 操作系统第 7 版创建的，此后，可能每一个 Unix 和 Linux 操作系统都包含了它。<code>sed</code> 应用程序是一个 <em>流编辑器</em>，与文本编辑器不同的是，它不会打开一个视觉缓冲区，将文件的数据加载到其中进行处理。相反，它根据在终端输入的命令或脚本中的一系列命令，逐行对文件进行操作。</p><h3 id=安装>安装</h3><p>如果你使用的是 Linux、BSD 或 macOS，那么你已经安装了 GNU 或 BSD 版的 <code>sed</code>。这是两个不同的原始 <code>sed</code> 命令的重新实现，虽然它们很相似，但也有一些小的区别。GNU <code>sed</code> 通常被认为是功能最丰富的 <code>sed</code>，而且它在这些平台上都可以广泛使用。</p><p>如果你找不到 GNU <code>sed</code>（在非 Linux 系统上通常被称为 <code>gsed</code>），那么你可以<a href=http://www.gnu.org/software/sed/>从 GNU 网站上下载它的源代码</a>。安装 GNU <code>sed</code> 的好处是，可以使用它的额外功能，但它也可以被限制为只符合 <code>sed</code> 的 <a href=https://opensource.com/article/19/7/what-posix-richard-stallman-explains>POSIX</a> 规范，如果你需要移植性的话。</p><p>在 Windows 上，你可以用 <a href=https://opensource.com/article/20/3/chocolatey>Chocolatey</a> 来<a href=https://chocolatey.org/packages/sed>安装</a> GNU <code>sed</code>。</p><h3 id=sed-如何工作>Sed 如何工作</h3><p><code>sed</code> 应用程序一次只处理一行。因为它没有视觉显示，所以它在内存中创建了一个模式空间：一个包含输入流的当前行的空间（去掉任何尾部的换行符）。一旦填充了模式空间，你对 <code>sed</code> 的指令就会被执行。有时你的指令是有条件的，有时是无条件的，所以这些指令的结果取决于你如何使用 <code>sed</code>。</p><p>当命令结束时，<code>sed</code> 会将模式空间的内容打印到输出流中。默认的输出流是<strong>标准输出</strong>，但可以将其重定向到一个文件，甚至使用 <code>--in-place=.bak</code> 选项重定向到同一个文件中。</p><p>然后再从下一个输入行开始循环。</p><p><code>sed</code>命令的语法是：</p><pre tabindex=0><code>$ sed --options [optional SCRIPT] [INPUT FILE or STREAM]
+</code></pre><h4 id=找到你要编辑的内容>找到你要编辑的内容</h4><p>在可视化编辑器中，你通常不需要考虑太多，就能在文本文件中找到你想要修改的内容。你的眼睛（或屏幕阅读器）会扫描文本，找到你想改变的单词或你想插入或删除文本的地方，然后你就可以开始输入了。而 <code>sed</code> 没有交互模式，所以你需要告诉它必须满足什么条件才能运行特定的命令。</p><p>在这些例子中，假设一个名为 <code>example.txt</code> 的文件包含了这样的文字：</p><pre tabindex=0><code>hello
+world
+This is line three.
+Here is the final line.
+</code></pre><h4 id=行号>行号</h4><p>指定行号告诉 <code>sed</code> 只对文件中的那一行进行操作。</p><p>例如，下面这条命令选择文件的第 1 行并打印出来。因为 <code>sed</code> 在处理后的默认操作也是打印一行到<strong>标准输出</strong>，这样做的效果就是重复第一行：</p><pre tabindex=0><code>$ sed &#39;1p&#39; example.txt
+hello
+hello
+world
+This is line three.
+Here is the final line.
+</code></pre><p>你也可以步进式指定行号。例如，<code>1~2</code> 表示每两行选择一行（“从第一行开始每两行选择一行”）。指令 <code>1~3</code> 表示从第一行开始，每三行选择一行：</p><pre tabindex=0><code>$ sed &#39;1p&#39; example.txt
+hello
+hello
+world
+This is line three.
+Here is the final line.
+Here is the final line.
+</code></pre><h4 id=行定位>行定位</h4><p>你可以通过使用 <code>$</code> 作为选择器，只对文件的最后一行进行操作：</p><pre tabindex=0><code>$ sed &#39;$p&#39; example.txt
+hello
+world
+This is line three.
+Here is the final line.
+Here is the final line.
+</code></pre><p>在 GNU <code>sed</code> 中，你可以选择多行（例如，<code>sed '1,$p'</code> 打印第一行和最后一行）。</p><h4 id=反转>反转</h4><p>任何数字或位置的选择，你都可以用感叹号（<code>!</code>）字符反转。下面这将选择除第一行以外的所有行：</p><pre tabindex=0><code>$ sed &#39;1!p&#39; example.txt
+hello
+world
+world
+This is line three.
+This is line three.
+Here is the final line.
+Here is the final line.
+</code></pre><h4 id=模式匹配>模式匹配</h4><p>你可以把模式匹配想象成文字处理器或浏览器中的<strong>查找</strong>操作。你提供一个词（一个 <em>模式</em>），然后选择了结果。模式匹配的语法是 <code>/pattern/</code>：</p><pre tabindex=0><code>$ sed &#39;/hello/p&#39; example.txt
+hello
+hello
+world
+This is line three.
+Here is the final line.
+$ sed &#39;/line/p&#39; example.txt
+hello
+world
+This is line three.
+This is line three.
+Here is the final line.
+Here is the final line.
+</code></pre><h3 id=用-sed-编辑>用 Sed 编辑</h3><p>一旦你找到了你要编辑的内容，你就可以执行你想要的任何操作。你可以用 <code>sed</code> 中的命令来执行编辑。<code>sed</code> 中的命令不是 <code>sed</code> 命令本身。如果这样说有帮助的话，可以把它们看作是“动作”或“动词”或“指令”。</p><p><code>sed</code> 中的命令是单个字母，例如前面例子中使用的<strong>打印</strong>命令的 <code>p</code>。它们一开始可能很难记忆，但和所有事情一样，你会随着练习而了解它们。</p><h4 id=p-代表打印>p 代表打印</h4><p><code>p</code> 指令打印当前模式空间中的任何内容。</p><h4 id=d-用于删除>d 用于删除</h4><p><code>d</code> 指令删除模式空间：</p><pre tabindex=0><code>$ sed &#39;$d&#39; example.txt
+hello
+world
+This is line three.
+$ sed &#39;1d&#39; example.txt
+world
+This is line three.
+Here is the final line.
+</code></pre><h4 id=s-用于搜索和替换>s 用于搜索和替换</h4><p><code>s</code> 命令搜索一个模式并将其替换为其他东西。这可能是 <code>sed</code> 最流行和最随意的用法，而且它通常是用户学习的第一个（有时也是唯一的）<code>sed</code> 命令。几乎可以肯定它是文本编辑中最有用的命令：</p><pre tabindex=0><code>$ sed &#39;s/world/opensource.com/&#39; example.txt
+hello
+opensource.com
+This is line three.
+Here is the final line.
+</code></pre><p>在你的替换文本中，也可以使用一些特殊的功能。例如，<code>\L</code> 将替换文本转换为小写，<code>\l</code> 则只转换下一个字符。还有其他一些功能，列在 <code>sed</code> 文档中（你可以用 <code>info sed</code> 命令查看）。</p><p>替换子句中的特殊字符 <code>&</code> 指的是匹配到的模式：</p><pre tabindex=0><code>$ sed &#39;s/is/\U&amp;/&#39; example.txt
+hello
+world
+ThIS is line three.
+Here IS the final line.
+</code></pre><p>你也可以通过特殊的标志来影响 <code>s</code> 如何处理它找到的内容。<code>g</code>（应该是指 <em>全局</em>）标志告诉 <code>s</code> 对行上找到的所有匹配项进行替换，而不仅仅是第一个匹配项：</p><pre tabindex=0><code>$ sed &#39;s/is/\U&amp;/g&#39; example.txt
+hello
+world
+ThIS IS line three.
+Here IS the final line.
+</code></pre><p>其他重要的标志还包括用一个数字来表示要影响第几个出现的匹配模式：</p><pre tabindex=0><code>$ sed &#39;s/is/\U&amp;/2&#39; example.txt
+hello
+world
+This IS line three.
+Here is the final line.
+</code></pre><p><code>w</code> 标志，后面跟着一个文件名，_只有_在有变化的情况下，才会将匹配的行写入文件：</p><pre tabindex=0><code>$ sed &#39;s/is/\U&amp;/w sed.log&#39; example.txt
+hello
+world
+ThIS is line three.
+Here IS the final line.
+$ cat sed.log
+ThIS is line three.
+Here IS the final line.
+</code></pre><p>标志可以组合：</p><pre tabindex=0><code>$ sed &#39;s/is/\U&amp;/2w sed.log&#39; example.txt
+hello
+world
+This IS line three.
+Here is the final line.
+$ cat sed.log
+This IS line three.
+</code></pre><h3 id=脚本>脚本</h3><p>有很多很棒的网站都有 <code>sed</code> “单行脚本”，它们给你提供了面向任务的 <code>sed</code> 命令来解决常见的问题。然而，自己学习 <code>sed</code> 可以让你写出自己的单行脚本，而且这些单行脚本可以根据你的具体需求来定制。</p><p><code>sed</code> 的脚本可以在终端中写成一行，也可以保存到文件中，然后用 <code>sed</code> 本身执行。我倾向于把小脚本写成一个命令，因为我发现自己在现实生活中很少重复使用 <code>sed</code> 命令。当我写一个 <code>sed</code> 脚本时，通常都是针对一个文件的。例如，在写完这篇文章的初稿后，我用 <code>sed</code> 来规范 “sed” 的大小写，而这是我可能永远也不会再做的任务。</p><p>你可以向 <code>sed</code> 发出一系列不同的命令，用分号（<code>;</code>）分开。</p><pre tabindex=0><code>$ sed &#39;3t ; s/line/\U&amp;/&#39; example.txt
+hello
+world
+This is LINE three.
+This is the final line.
+</code></pre><h3 id=带括号的范围改变>带括号的范围改变</h3><p>你也可以用大括号（<code>{}</code>）限制哪些结果受到影响。当你将 <code>sed</code> 命令用大括号括起来时，它们只适用于特定的选择。例如，“line” 字出现在样本文本的两行中。你可以通过声明所需的匹配条件（<code>$</code> 表示最后一行），并将你希望执行的 <code>s</code> 命令放在紧随其后的括号中，强制 <code>sed</code> 只影响最后一行：</p><pre tabindex=0><code>$ sed &#39;$ {s/line/\U&amp;/}&#39; example.txt
+hello
+world
+This is line three.
+This is the final LINE.
+</code></pre><h3 id=学习-sed>学习 Sed</h3><p>你可以用 <code>sed</code> 做的事情比本文所解释的多得多。我甚至还没有涉及到分支（<code>b</code>）、测试（<code>t</code>）、保留空格（<code>H</code>）和许多其他功能。就像 <a href=https://opensource.com/article/20/12/gnu-ed>ed</a> 一样，<code>sed</code> 可能不是你要用来创建文档的文本编辑器，甚至不是你需要做的每一个脚本任务中使用的文本编辑器，但它是你作为 POSIX 用户的一个强大的选择。学习 <code>sed</code> 命令的结构以及如何编写简短的脚本可以快速修改大量的文本。阅读 GNU <code>sed</code> 的<code>info</code> 页面，或者 BSD <code>sed</code> 的手册页，看看 <code>sed</code> 能为你做什么。</p><hr><p>via: <a href=https://opensource.com/article/20/12/sed>https://opensource.com/article/20/12/sed</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/sed/ rel=tag>sed</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

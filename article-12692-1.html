@@ -1,0 +1,65 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>构建一个即时消息应用（六）：仅用于开发的登录 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="构建一个即时消息应用（六）：仅用于开发的登录"><meta property="og:description" content="在这篇文章中，我们将添加一个为任何用户提供登录的端点，只需提供用户名即可。该端点仅用于开发。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12692-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-10-07T10:15:00+00:00"><meta property="article:modified_time" content="2020-10-07T10:15:00+00:00"><meta itemprop=name content="构建一个即时消息应用（六）：仅用于开发的登录"><meta itemprop=description content="在这篇文章中，我们将添加一个为任何用户提供登录的端点，只需提供用户名即可。该端点仅用于开发。"><meta itemprop=datePublished content="2020-10-07T10:15:00+00:00"><meta itemprop=dateModified content="2020-10-07T10:15:00+00:00"><meta itemprop=wordCount content="238"><meta itemprop=keywords content="即时消息,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>构建一个即时消息应用（六）：仅用于开发的登录</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-10-07T10:15:00Z>October 07, 2020</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202010/07/101437garmhgi9aza9f9fz.jpg alt></p><p>本文是该系列的第六篇。</p><ul><li><a href=/article-11396-1.html>第一篇: 模式</a></li><li><a href=/article-11510-1.html>第二篇: OAuth</a></li><li><a href=/article-12056-1.html>第三篇: 对话</a></li><li><a href=/article-12680-1.html>第四篇: 消息</a></li><li><a href=/article-12685-1.html>第五篇: 实时消息</a></li></ul><p>我们已经实现了通过 GitHub 登录，但是如果想把玩一下这个 app，我们需要几个用户来测试它。在这篇文章中，我们将添加一个为任何用户提供登录的端点，只需提供用户名即可。该端点仅用于开发。</p><p>首先在 <code>main()</code> 函数中添加此路由。</p><pre tabindex=0><code>router.HandleFunc(&#34;POST&#34;, &#34;/api/login&#34;, requireJSON(login))
+</code></pre><h3 id=登录>登录</h3><p>此函数处理对 <code>/api/login</code> 的 POST 请求，其中 JSON body 只包含用户名，并以 JSON 格式返回通过认证的用户、令牌和过期日期。</p><pre tabindex=0><code>func login(w http.ResponseWriter, r \*http.Request) {
+    if origin.Hostname() != &#34;localhost&#34; {
+        http.NotFound(w, r)
+        return
+    }
+
+    var input struct {
+        Username string `json:&#34;username&#34;`
+    }
+    if err := json.NewDecoder(r.Body).Decode(&amp;input); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+    defer r.Body.Close()
+
+    var user User
+    if err := db.QueryRowContext(r.Context(), `
+ SELECT id, avatar\_url
+ FROM users
+ WHERE username = $1
+ `, input.Username).Scan(
+        &amp;user.ID,
+        &amp;user.AvatarURL,
+    ); err == sql.ErrNoRows {
+        http.Error(w, &#34;User not found&#34;, http.StatusNotFound)
+        return
+    } else if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not query user: %v&#34;, err))
+        return
+    }
+
+    user.Username = input.Username
+
+    exp := time.Now().Add(jwtLifetime)
+    token, err := issueToken(user.ID, exp)
+    if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not create token: %v&#34;, err))
+        return
+    }
+
+    respond(w, map[string]interface{}{
+        &#34;authUser&#34;:  user,
+        &#34;token&#34;:     token,
+        &#34;expiresAt&#34;: exp,
+    }, http.StatusOK)
+}
+</code></pre><p>首先，它检查我们是否在本地主机上，或者响应为 <code>404 Not Found</code>。它解码主体跳过验证，因为这只是为了开发。然后在数据库中查询给定用户名的用户，如果没有，则返回 <code>404 NOT Found</code>。然后，它使用用户 ID 作为主题发布一个新的 JSON Web 令牌。</p><pre tabindex=0><code>func issueToken(subject string, exp time.Time) (string, error) {
+    token, err := jwtSigner.Encode(jwt.Claims{
+        Subject:    subject,
+        Expiration: json.Number(strconv.FormatInt(exp.Unix(), 10)),
+    })
+    if err != nil {
+        return &#34;&#34;, err
+    }
+    return string(token), nil
+}
+</code></pre><p>该函数执行的操作与 <a href=/article-11510-1.html>前文</a> 相同。我只是将其移过来以重用代码。</p><p>创建令牌后，它将使用用户、令牌和到期日期进行响应。</p><h3 id=种子用户>种子用户</h3><p>现在，你可以将要操作的用户添加到数据库中。</p><pre tabindex=0><code>INSERT INTO users (id, username) VALUES
+    (1, &#39;john&#39;),
+    (2, &#39;jane&#39;);
+</code></pre><p>你可以将其保存到文件中，并通过管道将其传送到 Cockroach CLI。</p><pre tabindex=0><code>cat seed_users.sql | cockroach sql --insecure -d messenger
+</code></pre><hr><p>就是这样。一旦将代码部署到生产环境并使用自己的域后，该登录功能将不可用。</p><p>本文也结束了所有的后端开发部分。</p><ul><li><a href=https://github.com/nicolasparada/go-messenger-demo>源代码</a></li></ul><hr><p>via: <a href=https://nicolasparada.netlify.com/posts/go-messenger-dev-login/>https://nicolasparada.netlify.com/posts/go-messenger-dev-login/</a></p><p>作者：<a href=https://nicolasparada.netlify.com/>Nicolás Parada</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/gxlct008>gxlct008</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8D%B3%E6%97%B6%E6%B6%88%E6%81%AF/ rel=tag>即时消息</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

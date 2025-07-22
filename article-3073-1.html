@@ -1,0 +1,50 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>让 Ubuntu 上的 Unity 在线搜索功能见鬼去吧！ - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="让 Ubuntu 上的 Unity 在线搜索功能见鬼去吧！"><meta property="og:description" content="无论何时，你开始在 Unity Dash 搜索计算机中的应用程序或文件时，你的检索词将被自动发送给第三方，如亚马逊，并且第三方将依据您的搜索词显示相关结果（主要是广告）。如果你不喜欢这个功能，感觉真的打扰到你，你可以禁用它。 例如，当我在 Unity Dash 中输入 Terminal 时，将显示 Terminal 应用和 web 上其他第三方的东东（我要发狂了！我不想要这些！）。  正如上面的截图所见，Unity显示内置的 Terminal 应用、引用链接、天气链接和其他第三方的推荐，如电影等。这是非常恼人的并且在 Unity Dash 上看起来很糟。同时，它显示了太多"><meta property="og:type" content="article"><meta property="og:url" content="/article-3073-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-05-23T14:24:39+00:00"><meta property="article:modified_time" content="2014-05-23T14:24:39+00:00"><meta itemprop=name content="让 Ubuntu 上的 Unity 在线搜索功能见鬼去吧！"><meta itemprop=description content="无论何时，你开始在 Unity Dash 搜索计算机中的应用程序或文件时，你的检索词将被自动发送给第三方，如亚马逊，并且第三方将依据您的搜索词显示相关结果（主要是广告）。如果你不喜欢这个功能，感觉真的打扰到你，你可以禁用它。 例如，当我在 Unity Dash 中输入 Terminal 时，将显示 Terminal 应用和 web 上其他第三方的东东（我要发狂了！我不想要这些！）。  正如上面的截图所见，Unity显示内置的 Terminal 应用、引用链接、天气链接和其他第三方的推荐，如电影等。这是非常恼人的并且在 Unity Dash 上看起来很糟。同时，它显示了太多"><meta itemprop=datePublished content="2014-05-23T14:24:39+00:00"><meta itemprop=dateModified content="2014-05-23T14:24:39+00:00"><meta itemprop=wordCount content="253"><meta itemprop=keywords content="Ubuntu,Unity 搜索,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>让 Ubuntu 上的 Unity 在线搜索功能见鬼去吧！</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-05-23T14:24:39Z>May 23, 2014</time></div></div></header><div class="content post__content clearfix"><p>无论何时，你开始在 Unity Dash 搜索计算机中的应用程序或文件时，你的检索词将被自动发送给第三方，如亚马逊，并且第三方将依据您的搜索词显示相关结果（主要是广告）。如果你不喜欢这个功能，感觉真的打扰到你，你可以禁用它。</p><p>例如，当我在 Unity Dash 中输入 “Terminal” 时，将显示 “Terminal” 应用和 web 上其他第三方的东东（我要发狂了！我不想要这些！）。</p><p><img src=/data/attachment/album/201405/23/142452j5q8x29lol542zqx.png alt></p><p>正如上面的截图所见，Unity显示内置的 <strong>Terminal</strong> 应用、引用链接、天气链接和其他第三方的推荐，如电影等。这是非常恼人的并且在 Unity Dash 上看起来很糟。同时，它显示了太多的搜索结果，并使我迷惑。</p><p>如果你像我一样不需要这个功能，在你的终端输入以下命令：</p><pre tabindex=0><code>wget -q -O - https://fixubuntu.com/fixubuntu.sh | bash
+</code></pre><p>上述脚本的内容如下：</p><pre tabindex=0><code>#!/bin/bash
+
+GS=&#34;/usr/bin/gsettings&#34;
+CCUL=&#34;com.canonical.Unity.lenses&#34;
+
+# Figure out the version of Ubuntu that you&#39;re running
+V=`/usr/bin/lsb_release -rs`
+# The privacy problems started with 12.10, so earlier versions should do nothing
+if awk &#34;BEGIN {exit !($V &lt; 12.10 || $V &gt;= 14.10)}&#34;; then
+  echo &#34;Good news! This version of Ubuntu is not known to invade your privacy.&#34;
+else
+
+  # Check Canonical schema is present. Take first match, ignoring case.
+  SCHEMA=&#34;`$GS list-schemas | grep -i $CCUL | head -1`&#34;
+  if [ -z &#34;$SCHEMA&#34; ]
+    then
+    printf &#34;Error: could not find Canonical schema %s.\n&#34; &#34;$CCUL&#34; 1&gt;&amp;2
+    exit 1
+  else
+    CCUL=&#34;$SCHEMA&#34;
+  fi
+
+  # Turn off &#34;Remote Search&#34;, so search terms in Dash don&#39;t get sent to the internet
+  $GS set $CCUL remote-content-search none
+
+  # If you&#39;re using earlier than 13.10, uninstall unity-lens-shopping
+  if [ $V \&lt; 13.10 ]; then
+    sudo apt-get remove -y unity-lens-shopping
+
+  # If you&#39;re using a later version, disable remote scopes
+  else
+    $GS set $CCUL disabled-scopes \
+      &#34;[&#39;more_suggestions-amazon.scope&#39;, &#39;more_suggestions-u1ms.scope&#39;,
+      &#39;more_suggestions-populartracks.scope&#39;, &#39;music-musicstore.scope&#39;,
+      &#39;more_suggestions-ebay.scope&#39;, &#39;more_suggestions-ubuntushop.scope&#39;,
+      &#39;more_suggestions-skimlinks.scope&#39;]&#34;
+  fi;
+
+  # Block connections to Ubuntu&#39;s ad server, just in case
+  if ! grep -q &#34;127.0.0.1 productsearch.ubuntu.com&#34; /etc/hosts; then
+    echo -e &#34;\n127.0.0.1 productsearch.ubuntu.com&#34; | sudo tee -a /etc/hosts &gt;/dev/null
+  fi
+
+  echo &#34;All done. Enjoy your privacy.&#34;
+fi
+</code></pre><p>再次，我进入到 Unity dash 的终端。现在 Unity 只显示终端应用，而不是无用的垃圾，现在 Unity Dash 看起来还不错。</p><p><img src=/data/attachment/album/201405/23/142506wqlkzmqexqvrqqz5.png alt></p><p>全部搞定，让那些杂乱的东西再也不要回来了。</p><p>欢呼~!</p><p><strong>更新</strong>:这一招只适用Unity desktop。如果你使用其他的比如GNOME，LXDE或Xfce，你不用这么做。同时，这个在线搜索功能将不会包含在Ubuntu 14.10和即将推出的版本中。</p><p>Source & Reference: <a href=https://fixubuntu.com/>Fixubuntu</a></p><hr><p>via: <a href=http://www.unixmen.com/disable-unity-online-search-feature-ubuntu-14-04-lts-older-versions/>http://www.unixmen.com/disable-unity-online-search-feature-ubuntu-14-04-lts-older-versions/</a></p><p>译者：<a href=https://github.com/tenght>tenght</a> 校对：<a href=https://github.com/carolinewuyan>Caroline</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ubuntu/ rel=tag>Ubuntu</a></li><li class=tags__item><a class="tags__link btn" href=/tags/unity-%E6%90%9C%E7%B4%A2/ rel=tag>Unity 搜索</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

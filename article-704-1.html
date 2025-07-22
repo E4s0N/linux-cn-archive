@@ -1,0 +1,44 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Vim 复制粘帖格式错乱问题的解决办法 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Vim 复制粘帖格式错乱问题的解决办法"><meta property="og:description" content="原文：Vim 复制粘帖格式错乱问题的解决办法
+有时候，复制文本（尤其是代码）到 Vim，会出现格式错乱的问题。看样子，应该是自动缩进惹得祸。本文不去深究原因，直接给出解决方法。
+
+paste 模式
+运行如下命令，进  &mldr;
+
+"><meta property="og:type" content="article"><meta property="og:url" content="/article-704-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2012-07-25T08:21:00+00:00"><meta property="article:modified_time" content="2012-07-25T08:21:00+00:00"><meta itemprop=name content="Vim 复制粘帖格式错乱问题的解决办法"><meta itemprop=description content="原文：Vim 复制粘帖格式错乱问题的解决办法
+有时候，复制文本（尤其是代码）到 Vim，会出现格式错乱的问题。看样子，应该是自动缩进惹得祸。本文不去深究原因，直接给出解决方法。
+
+paste 模式
+运行如下命令，进  &mldr;
+
+"><meta itemprop=datePublished content="2012-07-25T08:21:00+00:00"><meta itemprop=dateModified content="2012-07-25T08:21:00+00:00"><meta itemprop=wordCount content="160"><meta itemprop=keywords content="Vim,复制,粘帖,解决办法,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Vim 复制粘帖格式错乱问题的解决办法</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2012-07-25T08:21:00Z>July 25, 2012</time></div></div></header><div class="content post__content clearfix"><p>原文：<a href=http://www.cbug.org/2012/07/23/vim-copy-paste.html>Vim 复制粘帖格式错乱问题的解决办法</a></p><p>有时候，复制文本（尤其是代码）到 Vim，会出现格式错乱的问题。看样子，应该是自动缩进惹得祸。本文不去深究原因，直接给出解决方法。</p><ol><li>paste 模式</li></ol><hr><p>运行如下命令，进入 paste 模式：</p><pre tabindex=0><code>:set paste
+</code></pre><p>进入 paste 模式后，按 i 键进入插入模式，然后再粘帖，文本格式不会错乱了。但粘帖后还需要按 进入普通模式并执行如下命令结束 paste 模式：</p><pre tabindex=0><code>:set nopaste
+</code></pre><h2 id=2-快捷键一>显然，这样非常麻烦。下面我们进行改进。
+2. 快捷键一</h2><p>我们可以利用设置快捷键来简化上面的两个命令。在 ~/.vimrc 中加入如下两行：</p><pre tabindex=0><code>map  :set paste
+map  :set nopaste
+</code></pre><h2 id=3-快捷键二>这样，在普通模式下按 F10 （你也可以用自己喜欢的按键）就会进入 paste 模式，按 i 进入插入模式后粘帖，然后按 回到普通模式，再按 F11 结束 paste 模式。
+这样虽然方便了，但占用了两个按键。下面我们继续改进。
+3. 快捷键二</h2><p>在 ~/.vimrc 中加入如下内容：</p><pre tabindex=0><code>set pastetoggle=
+</code></pre><h2 id=4-vim-寄存器一>这样就可以把上面的 F10 和 F11 合并为一个快捷键来切换 paste 模式了。
+还有更好的办法么？当然！
+4. Vim 寄存器一</h2><p>关于 Vim 寄存器的详细信息请执行命令 “:help registers” 查看。
+对于“剪切板”这个概念，Linux 下有两个东西：一个叫做选择缓冲区(X11 selection buffer)，另一个才是剪切板(clipboard)。鼠标或键盘选择内容时，内容实时进入缓冲区，然后按中键将内容插入光标所在位置；鼠标或键盘选择内容后，按Ctrl-C（或Shift-Ctrl-C）或菜单中的“复制”，内容进入剪切板，然后按Ctrl-V（或Shift-Ctrl-V）或菜单中的“粘帖”将内容插入光标所在位置。关于这两者的详细信息，请自行搜索，此处不深究。
+Vim 的寄存器 &ldquo;* 对应系统缓冲区， 寄存器 &ldquo;+ 对应系统剪切板。
+如果你是把选择的内容（在系统缓冲区中）粘帖到 Vim ，只需在普通模式下执行如下命令：</p><pre tabindex=0><code>&#34;*p
+</code></pre><p>对应的，如果你是把复制的内容（在系统剪切板中）粘帖到 Vim，只需在普通模式下执行如下命令：</p><pre tabindex=0><code>&#34;+p
+</code></pre><h2 id=5-vim-寄存器二>怎么样？格式没有错乱了吧？
+这样虽然简便很多了，但还是需要输入三个字母，并且这三个字母都得使用右手小拇指输入，甚至其中的两个字母还需要 shift 键配合！
+还有更简单的办法。
+5. Vim 寄存器二</h2><p>在 ~/.vimrc 里加入如下内容：</p><pre tabindex=0><code>set clipboard=unnamed
+</code></pre><p>然后只需在普通模式下按 p 即可把系统缓冲区中的内容粘帖到 Vim 中，就像粘帖用 yy 命令得到的内容一样，并且格式不错乱。
+如果把上面的一行换成如下内容：</p><pre tabindex=0><code>set clipboard=unnamedplus
+</code></pre><h2 id=6-快捷键三>普通模式下按 p 粘帖的内容就是系统剪切板里的内容了。
+这已经足够简便了。在搜索此问题的过程中，我还看到了另外一些办法。
+6. 快捷键三</h2><p>在 ~/.vimrc 里加入如下内容：</p><pre tabindex=0><code>inoremap  :setl pastegi+:setl nopastegi
+</code></pre><p>这样，你就可以在插入模式下使用 Shift-Insert 快捷键在粘帖系统剪贴板中的内容了。
+把上面一行替换成如下内容同样可以达到相同的效果：</p><pre tabindex=0><code>inoremap  &#34;+p`]a
+</code></pre><p>注意，这可是在插入模式下哦！比起第 5 节提到的方法，这种方法省去了一次 按键进入普通模式和一次 i 按键重新回到插入模式。
+至此，你需要做的只是：
+a. 复制你想要的内容；<br>b. 回到 Vim 并按 Shift-Insert 快捷键；<br>c. 继续编辑其他内容。</p><h2 id=参考>参考</h2><ul><li><a href=http://www.worldhello.net/2010/12/08/2190.html>Vim 复制粘贴探秘</a></li><li><a href=http://stackoverflow.com/questions/2555559/vim-pasting-from-clipboard-and-automatically-toggling-set-paste>Vim: Pasting from clipboard and automatically toggling :set paste</a></li><li><a href=http://blah.blogsome.com/2006/04/27/vim_tut_register/>寄存器::Vim进阶索引[4]</a></li></ul></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/vim/ rel=tag>Vim</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%A4%8D%E5%88%B6/ rel=tag>复制</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%B2%98%E5%B8%96/ rel=tag>粘帖</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/ rel=tag>解决办法</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

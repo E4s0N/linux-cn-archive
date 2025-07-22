@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用于调度任务的 systemd 定时器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用于调度任务的 systemd 定时器"><meta property="og:description" content="systemd 提供定时器有一段时间了，定时器替代了 cron 功能，这一特性值得看看。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13522-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-06-25T17:57:46+00:00"><meta property="article:modified_time" content="2021-06-25T17:57:46+00:00"><meta itemprop=name content="用于调度任务的 systemd 定时器"><meta itemprop=description content="systemd 提供定时器有一段时间了，定时器替代了 cron 功能，这一特性值得看看。"><meta itemprop=datePublished content="2021-06-25T17:57:46+00:00"><meta itemprop=dateModified content="2021-06-25T17:57:46+00:00"><meta itemprop=wordCount content="404"><meta itemprop=keywords content="定时器,cron,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用于调度任务的 systemd 定时器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-06-25T17:57:46Z>June 25, 2021</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202106/25/175650j4wrdw0z884iod80.jpg alt></p><p>systemd 提供定时器有一段时间了，定时器替代了 cron 功能，这一特性值得看看。本文将向你介绍在系统启动后如何使用 systemd 中的定时器来运行任务，并在此后重复运行。这不是对 systemd 的全面讨论，只是对此特性的一个介绍。</p><h3 id=快速回顾cronanacron-与-systemd>快速回顾：cron、anacron 与 systemd</h3><p>cron 可以以几分钟到几个月或更长时间的粒度调度运行一个任务。设置起来相对简单，它只需要一个配置文件。虽然配置过程有些深奥，但一般用户也可以使用。</p><p>然而，如果你的系统在需要执行的时间没有运行，那么 cron 会失败。</p><p>anacron 克服了“系统没有运行”的问题。它确保任务将在你的系统再次启动时执行。虽然它旨在给管理员使用，但有些系统允许普通用户访问 anacron。</p><p>但是，anacron 的执行频率不能低于每天一次。</p><p>cron 和 anacron 都存在执行上下文一致性的问题。必须注意任务运行时有效的环境与测试时使用的环境完全相同。必须提供相同的 shell、环境变量和路径。这意味着测试和调试有时会很困难。</p><p>systemd 定时器提供了 cron 和 anacron 二者的优点，允许调度到分钟粒度。确保在系统再次运行时执行任务，即使在预期的执行时间内系统处于关闭状态。它对所有用户都可用。你可以在它将要运行的环境中测试和调试执行。</p><p>但是，它的配置更加复杂，至少需要两个配置文件。</p><p>如果你的 cron 和 anacron 配置可以很好地为你服务，那么可能没有理由改变。但是 systemd 至少值得研究，因为它可以简化任何当前的 cron/anacron 工作方式。</p><h3 id=配置>配置</h3><p>systemd 定时器执行功能至少需要两个文件。这两个是“ 定时器单元 timer unit ”和“ 服务单元 service unit ”。（其执行的）“动作”不仅仅是简单的命令，你还需要一个“作业”文件或脚本来执行必要的功能。</p><p>定时器单元文件定义调度表，而服务单元文件定义执行的任务。有关的更多详细信息请参考 <code>man systemd.timer</code> 中提供的 .timer 单元。服务单元的详细信息可在 <code>man systemd.service</code> 中找到。</p><p>单元文件存放在几个位置（在手册页中有列出）。然而，对于普通用户来说，最容易找到的位置可能是 <code>~/.config/systemd/user</code>。请注意，这里的 <code>user</code> 是字符串 <code>user</code>。</p><h3 id=示例>示例</h3><p>此示例是一个创建用户调度作业而不是（以 root 用户身份运行的）系统调度作业的简单示例。它将消息、日期和时间打印到文件中。</p><p>1、首先创建一个执行任务的 shell 脚本。在你的本地 <code>bin</code> 目录中创建它，例如在 <code>~/bin/schedule-test.sh</code> 中。</p><p>创建文件：</p><pre tabindex=0><code>touch ~/bin/schedule-test.sh
+</code></pre><p>然后将以下内容添加到你刚刚创建的文件中：</p><pre tabindex=0><code>#!/bin/sh
+echo &#34;This is only a test: $(date)&#34; &gt;&gt; &#34;$HOME/schedule-test-output.txt&#34;
+</code></pre><p>记住赋予你的 shell 脚本执行权限。</p><p>2、创建 .service 单元调用上面的脚本。在以下位置创建目录与文件：<code>~/.config/systemd/user/schedule-test.service</code>：</p><pre tabindex=0><code>[Unit]
+Description=A job to test the systemd scheduler
+
+[Service]
+Type=simple
+ExecStart=/home/&lt;user&gt;/bin/schedule-test.sh
+
+[Install]
+WantedBy=default.target
+</code></pre><p>请注意 <code>&lt;user></code> 应该是你的家目录地址，但是单元文件路径名中的 <code>user</code> 实际上是字符串 <code>user</code>。</p><p><code>ExecStart</code> 应该提供一个没有变量的绝对地址。例外情况是，对于用户单元文件，你可以用 <code>%h</code> 替换 <code>$HOME</code>。换句话说，你可以使用:</p><pre tabindex=0><code>ExecStart=%h/bin/schedule-test.sh
+</code></pre><p>这仅用于用户单元文件，而不适用于系统服务，因为在系统环境中运行时 <code>%h</code> 总是返回 <code>/root</code>。其他特殊符号可在 <code>man systemd.unit</code> 的 <code>SPECIFIERS</code> 中找到。因为它超出了本文的范围，所以这就是我们目前需要了解的关于特殊符号的全部内容。</p><p>3、创建一个 .timer 单元文件，该文件实际上调度你创建的 .service 单元文件。在 .service 单元文件相同位置创建它：<code>~/.config/systemd/user/schedule-test.timer</code>。请注意，文件名仅在扩展名上有所不同，例如一个是 <code>.service</code>，一个是 <code>.timer</code>。</p><pre tabindex=0><code>[Unit]
+Description=Schedule a message every 1 minute
+RefuseManualStart=no  # Allow manual starts
+RefuseManualStop=no   # Allow manual stops
+
+[Timer]
+#Execute job if it missed a run due to machine being off
+Persistent=true
+#Run 120 seconds after boot for the first time
+OnBootSec=120
+#Run every 1 minute thereafter
+OnUnitActiveSec=60
+#File describing job to execute
+Unit=schedule-test.service
+
+[Install]
+WantedBy=timers.target
+</code></pre><p>请注意，这个 .timer 单元文件使用了 <code>OnUnitActiveSec</code> 来指定调度表。<code>OnCalendar</code> 选项更加灵活。例如:</p><pre tabindex=0><code># run on the minute of every minute every hour of every day
+ OnCalendar=*-*-* *:*:00
+# run on the hour of every hour of every day
+ OnCalendar=*-*-* *:00:00
+# run every day
+ OnCalendar=*-*-* 00:00:00
+# run 11:12:13 of the first or fifth day of any month of the year
+# 2012, but only if that day is a Thursday or Friday
+ OnCalendar=Thu,Fri 2012-*-1,5 11:12:13
+</code></pre><p>有关 <code>OnCalendar</code> 的更多信息参见 <a href=https://www.freedesktop.org/software/systemd/man/systemd.time.html#Calendar%20Events>这里</a>。</p><p>4、所有的部件都已就位，但你应该进行测试，以确保一切正常。首先，启用该用户服务:</p><pre tabindex=0><code>$ systemctl --user enable schedule-test.service
+</code></pre><p>这将导致类似如下的输出:</p><pre tabindex=0><code>Created symlink /home/&lt;user&gt;/.config/systemd/user/default.target.wants/schedule-test.service → /home/&lt;user&gt;/.config/systemd/user/schedule-test.service.
+</code></pre><p>现在执行测试工作：</p><pre tabindex=0><code>$ systemctl --user start schedule-test.service
+</code></pre><p>检查你的输出文件（<code>$HOME/schedule-test-output.txt</code>），确保你的脚本运行正常。应该只有一个条目，因为我们还没有启动定时器。必要时进行调试。如果你需要更改 .service 单元文件，而不是更改它调用的 shell 脚本，请不要忘记再次启用该服务。</p><p>5、一旦作业正常运行，通过为服务启用、启动用户定时器来实时调度作业：</p><pre tabindex=0><code>$ systemctl --user enable schedule-test.timer
+$ systemctl --user start schedule-test.timer
+</code></pre><p>请注意，你已经在上面的步骤 4 中启动、启用了服务，因此只需要为它启用、启动定时器。</p><p><code>enable</code> 命令会产生如下输出：</p><pre tabindex=0><code>Created symlink /home/&lt;user&gt;/.config/systemd/user/timers.target.wants/schedule-test.timer → /home/&lt;user&gt;/.config/systemd/user/schedule-test.timer.
+</code></pre><p><code>start</code> 命令将只是返回命令行界面提示符。</p><h3 id=其他操作>其他操作</h3><p>你可以检查和监控服务。如果你从系统服务收到错误，下面的第一个命令特别有用：</p><pre tabindex=0><code>$ systemctl --user status schedule-test
+$ systemctl --user list-unit-files
+</code></pre><p>手动停止服务：</p><pre tabindex=0><code>$ systemctl --user stop schedule-test.service
+</code></pre><p>永久停止并禁用定时器和服务，重新加载守护程序配置并重置任何失败通知：</p><pre tabindex=0><code>$ systemctl --user stop schedule-test.timer
+$ systemctl --user disable schedule-test.timer
+$ systemctl --user stop schedule-test.service
+$ systemctl --user disable schedule-test.service
+$ systemctl --user daemon-reload
+$ systemctl --user reset-failed
+</code></pre><h3 id=总结>总结</h3><p>本文以 systemd 定时器为出发点，但是 systemd 的内容远不止于此。这篇文章应该为你提供一个基础。你可以从 <a href=https://fedoramagazine.org/what-is-an-init-system/>Fedora Magazine systemd 系列</a> 开始探索更多。</p><h3 id=参考>参考</h3><p>更多阅读：</p><ul><li><code>man systemd.timer</code></li><li><code>man systemd.service</code></li><li><a href=https://opensource.com/article/20/7/systemd-timers>Use systemd timers instead of cronjobs</a></li><li><a href=https://docs.fedoraproject.org/en-US/quick-docs/understanding-and-administering-systemd/>Understanding and administering systemd</a></li><li><a href=https://opensource.com/>https://opensource.com/</a> 内有 systemd 速查表</li></ul><hr><p>via: <a href=https://fedoramagazine.org/systemd-timers-for-scheduling-tasks/>https://fedoramagazine.org/systemd-timers-for-scheduling-tasks/</a></p><p>作者：<a href=https://fedoramagazine.org/author/rlengland/>Richard England</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/dcoliversun>dcoliversun</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%9A%E6%97%B6%E5%99%A8/ rel=tag>定时器</a></li><li class=tags__item><a class="tags__link btn" href=/tags/cron/ rel=tag>cron</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

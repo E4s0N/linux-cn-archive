@@ -1,0 +1,196 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>setV：一个管理 Python 虚拟环境的 Bash 函数 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="setV：一个管理 Python 虚拟环境的 Bash 函数"><meta property="og:description" content="了解一下 setV，它是一个轻量级的 Python 虚拟环境管理器，是 virtualenvwrapper 的替代产品。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11800-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-01-19T23:43:19+00:00"><meta property="article:modified_time" content="2020-01-19T23:43:19+00:00"><meta itemprop=name content="setV：一个管理 Python 虚拟环境的 Bash 函数"><meta itemprop=description content="了解一下 setV，它是一个轻量级的 Python 虚拟环境管理器，是 virtualenvwrapper 的替代产品。"><meta itemprop=datePublished content="2020-01-19T23:43:19+00:00"><meta itemprop=dateModified content="2020-01-19T23:43:19+00:00"><meta itemprop=wordCount content="808"><meta itemprop=keywords content="Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>setV：一个管理 Python 虚拟环境的 Bash 函数</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-01-19T23:43:19Z>January 19, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>了解一下 setV，它是一个轻量级的 Python 虚拟环境管理器，是 virtualenvwrapper 的替代产品。</p></blockquote><p><img src=/data/attachment/album/202001/19/234306tvvg5ffwakrzr5vv.jpg alt></p><p>这一年多来，我的 <a href=https://github.com/psachin/bash_scripts>bash_scripts</a> 项目中悄悄隐藏这 <a href=https://gitlab.com/psachin/setV>setV</a>，但现在是时候该公开了。setV 是一个 Bash 函数，我可以用它代替 <a href=https://virtualenvwrapper.readthedocs.org/>virtualenvwrapper</a>。它提供了使你能够执行以下操作的基本功能：</p><ul><li>默认使用 Python 3</li><li>创建一个新的虚拟环境</li><li>使用带有 <code>-p</code>（或 <code>--python</code>）的自定义 Python 路径来创建新的虚拟环境</li><li>删除现有的虚拟环境</li><li>列出所有现有的虚拟环境</li><li>使用制表符补全（以防你忘记虚拟环境名称）</li></ul><h3 id=安装>安装</h3><p>要安装 setV，请下载该脚本：</p><pre tabindex=0><code>curl https://gitlab.com/psachin/setV/raw/master/install.sh
+</code></pre><p>审核一下脚本，然后运行它：</p><pre tabindex=0><code>sh ./install.sh
+</code></pre><p>当安装 setV 时，安装脚本会要求你引入（<code>source</code>）一下 <code>~/.bashrc</code> 或 <code>~/.bash_profile</code> 的配置，根据你的喜好选择一个。</p><h3 id=用法>用法</h3><p>基本的命令格式是 <code>setv</code>。</p><h4 id=创建虚拟环境>创建虚拟环境</h4><pre tabindex=0><code>setv --new rango  # setv -n rango
+
+# 或使用定制的 Python 路径
+setv --new --python /opt/python/python3 rango  # setv -n -p /opt/python/python3 rango
+</code></pre><h4 id=激活已有的虚拟环境>激活已有的虚拟环境</h4><pre tabindex=0><code>setv VIRTUAL_ENVIRONMENT_NAME
+</code></pre><pre tabindex=0><code># 示例
+setv rango
+</code></pre><h4 id=列出所有的虚拟环境>列出所有的虚拟环境</h4><pre tabindex=0><code>setv --list
+# 或
+setv [TAB] [TAB]
+</code></pre><h4 id=删除虚拟环境>删除虚拟环境</h4><pre tabindex=0><code>setv --delete rango
+</code></pre><h4 id=切换到另外一个虚拟环境>切换到另外一个虚拟环境</h4><pre tabindex=0><code># 假设你现在在 &#39;rango&#39;，切换到 &#39;tango&#39;
+setv tango
+</code></pre><h4 id=制表符补完>制表符补完</h4><p>如果你不完全记得虚拟环境的名称，则 Bash 式的制表符补全也可以适用于虚拟环境名称。</p><h3 id=参与其中>参与其中</h3><p>setV 在 GNU <a href=https://gitlab.com/psachin/setV/blob/master/LICENSE>GPLv3</a>下开源，欢迎贡献。要了解更多信息，请访问它的 GitLab 存储库中的 setV 的 <a href=https://gitlab.com/psachin/setV/blob/master/ReadMe.org>README</a> 的贡献部分。</p><h3 id=setv-脚本>setV 脚本</h3><pre tabindex=0><code>#!/usr/bin/env bash
+# setV - A Lightweight Python virtual environment manager.
+# Author: Sachin (psachin) &lt;iclcoolster@gmail.com&gt;
+# Author&#39;s URL: https://psachin.gitlab.io/about
+#
+# License: GNU GPL v3, See LICENSE file
+#
+# Configure(Optional):
+# Set `SETV_VIRTUAL_DIR_PATH` value to your virtual environments
+# directory-path. By default it is set to &#39;~/virtualenvs/&#39;
+#
+# Usage:
+# Manual install: Added below line to your .bashrc or any local rc script():
+# ---
+# source /path/to/virtual.sh
+# ---
+#
+# Now you can &#39;activate&#39; the virtual environment by typing
+# $ setv &lt;YOUR VIRTUAL ENVIRONMENT NAME&gt;
+#
+# For example:
+# $ setv rango
+#
+# or type:
+# setv [TAB] [TAB]  (to list all virtual envs)
+#
+# To list all your virtual environments:
+# $ setv --list
+#
+# To create new virtual environment:
+# $ setv --new new_virtualenv_name
+#
+# To delete existing virtual environment:
+# $ setv --delete existing_virtualenv_name
+#
+# To deactivate, type:
+# $ deactivate
+
+# Path to virtual environment directory
+SETV_VIRTUAL_DIR_PATH=&#34;$HOME/virtualenvs/&#34;
+# Default python version to use. This decides whether to use `virtualenv` or `python3 -m venv`
+SETV_PYTHON_VERSION=3  # Defaults to Python3
+SETV_PY_PATH=$(which python${SETV_PYTHON_VERSION})
+
+function _setvcomplete_()
+{
+    # Bash-autocompletion.
+    # This ensures Tab-auto-completions work for virtual environment names.
+    local cmd=&#34;${1##*/}&#34; # to handle command(s).
+                         # Not necessary as such. &#39;setv&#39; is the only command
+
+    local word=${COMP_WORDS[COMP_CWORD]} # Words thats being completed
+    local xpat=&#39;${word}&#39;                 # Filter pattern. Include
+                                         # only words in variable &#39;$names&#39;
+    local names=$(ls -l &#34;${SETV_VIRTUAL_DIR_PATH}&#34; | egrep &#39;^d&#39; | awk -F &#34; &#34; &#39;{print $NF}&#39;) # Virtual environment names
+
+    COMPREPLY=($(compgen -W &#34;$names&#34; -X &#34;$xpat&#34; -- &#34;$word&#34;)) # compgen generates the results
+}
+
+function _setv_help_() {
+    # Echo help/usage message
+    echo &#34;Usage: setv [OPTIONS] [NAME]&#34;
+    echo Positional argument:
+    echo -e &#34;NAME                       Activate virtual env.&#34;
+    echo Optional arguments:
+    echo -e &#34;-l, --list                 List all Virtual Envs.&#34;
+    echo -e &#34;-n, --new NAME             Create a new Python Virtual Env.&#34;
+    echo -e &#34;-d, --delete NAME          Delete existing Python Virtual Env.&#34;
+    echo -e &#34;-p, --python PATH          Python binary path.&#34;
+}
+
+function _setv_custom_python_path()
+{
+    if [ -f &#34;${1}&#34; ];
+    then
+        if [ &#34;`expr $1 : &#39;.*python\([2,3]\)&#39;`&#34; = &#34;3&#34; ];
+        then
+            SETV_PYTHON_VERSION=3
+        else
+            SETV_PYTHON_VERSION=2
+        fi
+        SETV_PY_PATH=${1}
+        _setv_create $2
+    else
+        echo &#34;Error: Path ${1} does not exist!&#34;
+    fi
+}
+
+function _setv_create()
+{
+    # Creates new virtual environment if ran with -n|--new flag
+    if [ -z ${1} ];
+    then
+        echo &#34;You need to pass virtual environment name&#34;
+        _setv_help_
+    else
+        echo &#34;Creating new virtual environment with the name: $1&#34;
+
+        if [ ${SETV_PYTHON_VERSION} -eq 3 ];
+        then
+            ${SETV_PY_PATH} -m venv ${SETV_VIRTUAL_DIR_PATH}${1}
+        else
+            virtualenv -p ${SETV_PY_PATH} ${SETV_VIRTUAL_DIR_PATH}${1}
+        fi
+
+        echo &#34;You can now activate the Python virtual environment by typing: setv ${1}&#34;
+    fi
+}
+
+function _setv_delete()
+{
+    # Deletes virtual environment if ran with -d|--delete flag
+    # TODO: Refactor
+    if [ -z ${1} ];
+    then
+        echo &#34;You need to pass virtual environment name&#34;
+        _setv_help_
+    else
+        if [ -d ${SETV_VIRTUAL_DIR_PATH}${1} ];
+        then
+            read -p &#34;Really delete this virtual environment(Y/N)? &#34; yes_no
+            case $yes_no in
+                Y|y) rm -rvf ${SETV_VIRTUAL_DIR_PATH}${1};;
+                N|n) echo &#34;Leaving the virtual environment as it is.&#34;;;
+                *) echo &#34;You need to enter either Y/y or N/n&#34;
+            esac
+        else
+            echo &#34;Error: No virtual environment found by the name: ${1}&#34;
+        fi
+    fi
+}
+
+function _setv_list()
+{
+    # Lists all virtual environments if ran with -l|--list flag
+    echo -e &#34;List of virtual environments you have under ${SETV_VIRTUAL_DIR_PATH}:\n&#34;
+    for virt in $(ls -l &#34;${SETV_VIRTUAL_DIR_PATH}&#34; | egrep &#39;^d&#39; | awk -F &#34; &#34; &#39;{print $NF}&#39;)
+    do
+        echo ${virt}
+    done
+}
+
+function setv() {
+    # Main function
+    if [ $# -eq 0 ];
+    then
+        _setv_help_
+    elif [ $# -le 3 ];
+    then
+        case &#34;${1}&#34; in
+            -n|--new) _setv_create ${2};;
+            -d|--delete) _setv_delete ${2};;
+            -l|--list) _setv_list;;
+            *) if [ -d ${SETV_VIRTUAL_DIR_PATH}${1} ];
+               then
+                   # Activate the virtual environment
+                   source ${SETV_VIRTUAL_DIR_PATH}${1}/bin/activate
+               else
+                   # Else throw an error message
+                   echo &#34;Sorry, you don&#39;t have any virtual environment with the name: ${1}&#34;
+                   _setv_help_
+               fi
+               ;;
+        esac
+    elif [ $# -le 5 ];
+    then
+        case &#34;${2}&#34; in
+            -p|--python) _setv_custom_python_path ${3} ${4};;
+            *) _setv_help_;;
+        esac
+    fi
+}
+
+# Calls bash-complete. The compgen command accepts most of the same
+# options that complete does but it generates results rather than just
+# storing the rules for future use.
+complete  -F _setvcomplete_ setv
+</code></pre><hr><p>via: <a href=https://opensource.com/article/20/1/setv-bash-function>https://opensource.com/article/20/1/setv-bash-function</a></p><p>作者：<a href=https://opensource.com/users/psachin>Sachin Patil</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

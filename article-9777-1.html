@@ -1,0 +1,59 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 上用 DNS 实现简单的负载均衡 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 上用 DNS 实现简单的负载均衡"><meta property="og:description" content="DNS 轮询将多个服务器映射到同一个主机名，并没有为这里展示的魔法做更多的工作。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9777-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-06-24T23:06:28+00:00"><meta property="article:modified_time" content="2018-06-24T23:06:28+00:00"><meta itemprop=name content="在 Linux 上用 DNS 实现简单的负载均衡"><meta itemprop=description content="DNS 轮询将多个服务器映射到同一个主机名，并没有为这里展示的魔法做更多的工作。"><meta itemprop=datePublished content="2018-06-24T23:06:28+00:00"><meta itemprop=dateModified content="2018-06-24T23:06:28+00:00"><meta itemprop=wordCount content="286"><meta itemprop=keywords content="DNS,负载均衡,轮询,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 上用 DNS 实现简单的负载均衡</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-06-24T23:06:28Z>June 24, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>DNS 轮询将多个服务器映射到同一个主机名，并没有为这里展示的魔法做更多的工作。</p></blockquote><p><img src=/data/attachment/album/201806/24/230631yhide2jzb2tt2yzh.jpg alt></p><p>如果你的后端服务器是由多台服务器构成的，比如集群化或者镜像的 Web 或者文件服务器，通过负载均衡器提供了单一的入口点。业务繁忙的大型电商在高端负载均衡器上花费了大量的资金，用它来执行各种各样的任务：代理、缓存、状况检查、SSL 处理、可配置的优先级、流量整形等很多任务。</p><p>但是你并不需要做那么多工作的负载均衡器。你需要的是一个跨服务器分发负载的简单方法，它能够提供故障切换，并且不太在意它是否高效和完美。DNS 轮询和使用轮询的子域委派是实现这个目标的两种简单方法。</p><p>DNS 轮询是将多台服务器映射到同一个主机名上，当用户访问 <code>foo.example.com</code> 时多台服务器都可用于处理它们的请求，使用的就是这种方式。</p><p>当你有多个子域或者你的服务器在地理上比较分散时，使用轮询的子域委派就比较有用。你有一个主域名服务器，而子域有它们自己的域名服务器。你的主域名服务器将所有的到子域的请求指向到它们自己的域名服务器上。这将提升响应时间，因为 DNS 协议会自动查找最快的链路。</p><h3 id=dns-轮询>DNS 轮询</h3><p>轮询和 旅鸫鸟 robins 没有任何关系，据我相熟的图书管理员说，它最初是一个法语短语，<em>ruban rond</em>、或者 <em>round ribbon</em>。很久以前，法国政府官员以不分级的圆形、波浪线、或者直线形状来在请愿书上签字，以盖住原来的发起人。</p><p>DNS 轮询也是不分级的，简单配置一个服务器列表，然后将请求转到每个服务器上。它并不做真正的负载均衡，因为它根本就不测量负载，也没有状况检查，因此如果一个服务器宕机，请求仍然会发送到那个宕机的服务器上。它的优点就是简单。如果你有一个小的文件或者 Web 服务器集群，想通过一个简单的方法在它们之间分散负载，那么 DNS 轮询很适合你。</p><p>你所做的全部配置就是创建多条 A 或者 AAAA 记录，映射多台服务器到单个的主机名。这个 BIND 示例同时使用了 IPv4 和 IPv6 私有地址类：</p><pre tabindex=0><code>fileserv.example.com. IN A 172.16.10.10
+fileserv.example.com. IN A 172.16.10.11
+fileserv.example.com. IN A 172.16.10.12
+
+fileserv.example.com. IN AAAA fd02:faea:f561:8fa0:1::10
+fileserv.example.com. IN AAAA fd02:faea:f561:8fa0:1::11
+fileserv.example.com. IN AAAA fd02:faea:f561:8fa0:1::12
+</code></pre><p>Dnsmasq 在 <code>/etc/hosts</code> 文件中保存 A 和 AAAA 记录：</p><pre tabindex=0><code>172.16.1.10 fileserv fileserv.example.com
+172.16.1.11 fileserv fileserv.example.com
+172.16.1.12 fileserv fileserv.example.com
+fd02:faea:f561:8fa0:1::10 fileserv fileserv.example.com
+fd02:faea:f561:8fa0:1::11 fileserv fileserv.example.com
+fd02:faea:f561:8fa0:1::12 fileserv fileserv.example.com
+</code></pre><p>请注意这些示例都是很简化的，解析完全合格域名有多种方法，因此，关于如何配置 DNS 请自行学习。</p><p>使用 <code>dig</code> 命令去检查你的配置能否按预期工作。将 <code>ns.example.com</code> 替换为你的域名服务器：</p><pre tabindex=0><code>$ dig @ns.example.com fileserv A fileserv AAA
+</code></pre><p>它将同时显示出 IPv4 和 IPv6 的轮询记录。</p><h3 id=子域委派和轮询>子域委派和轮询</h3><p>子域委派结合轮询要做的配置会更多，但是这样有一些好处。当你有多个子域或者地理位置比较分散的服务器时，就应该去使用它。它的响应时间更快，并且宕机的服务器不会去响应，因此客户端不会因为等待回复而被挂住。一个短的 TTL，比如 60 秒，就能帮你做到。</p><p>这种方法需要多台域名服务器。在最简化的场景中，你需要一台主域名服务器和两个子域，每个子域都有它们自己的域名服务器。在子域服务器上配置你的轮询记录，然后在你的主域名服务器上配置委派。</p><p>在主域名服务器上的 BIND 中，你至少需要两个额外的配置，一个区声明以及在区数据文件中的 A/AAAA 记录。主域名服务器中的委派应该像如下的内容：</p><pre tabindex=0><code>ns1.sub.example.com. IN A 172.16.1.20
+ns1.sub.example.com. IN AAAA fd02:faea:f561:8fa0:1::20
+ns2.sub.example.com. IN A 172.16.1.21
+ns2.sub.example.com. IN AAA fd02:faea:f561:8fa0:1::21
+
+sub.example.com. IN NS ns1.sub.example.com.
+sub.example.com. IN NS ns2.sub.example.com.
+</code></pre><p>接下来的每台子域服务器上有它们自己的区文件。在这里它的关键点是每个服务器去返回它<strong>自己的</strong> IP 地址。在 <code>named.conf</code> 中的区声明，所有的服务上都是一样的：</p><pre tabindex=0><code>zone &#34;sub.example.com&#34; {
+    type master;
+    file &#34;db.sub.example.com&#34;;
+};
+</code></pre><p>然后数据文件也是相同的，除了那个 A/AAAA 记录使用的是各个服务器自己的 IP 地址。SOA 记录都指向到主域名服务器：</p><pre tabindex=0><code>; first subdomain name server
+$ORIGIN sub.example.com.
+$TTL 60
+sub.example.com  IN SOA ns1.example.com. admin.example.com. (
+        2018123456      ; serial
+        3H              ; refresh
+        15              ; retry
+        3600000         ; expire
+)
+
+sub.example.com. IN NS ns1.sub.example.com.
+sub.example.com. IN A  172.16.1.20
+ns1.sub.example.com.  IN AAAA  fd02:faea:f561:8fa0:1::20
+; second subdomain name server
+$ORIGIN sub.example.com.
+$TTL 60
+sub.example.com  IN SOA ns1.example.com. admin.example.com. (
+        2018234567      ; serial
+        3H              ; refresh
+        15              ; retry
+        3600000         ; expire
+)
+
+sub.example.com. IN NS ns1.sub.example.com.
+sub.example.com. IN A  172.16.1.21
+ns2.sub.example.com.  IN AAAA  fd02:faea:f561:8fa0:1::21
+</code></pre><p>接下来生成子域服务器上的轮询记录，方法和前面一样。现在你已经有了多个域名服务器来处理到你的子域的请求。再说一次，BIND 是很复杂的，做同一件事情它有多种方法，因此，给你留的家庭作业是找出适合你使用的最佳配置方法。</p><p>在 Dnsmasq 中做子域委派很容易。在你的主域名服务器上的 <code>dnsmasq.conf</code> 文件中添加如下的行，去指向到子域的域名服务器：</p><pre tabindex=0><code>server=/sub.example.com/172.16.1.20
+server=/sub.example.com/172.16.1.21
+server=/sub.example.com/fd02:faea:f561:8fa0:1::20
+server=/sub.example.com/fd02:faea:f561:8fa0:1::21
+</code></pre><p>然后在子域的域名服务器上的 <code>/etc/hosts</code> 中配置轮询。</p><p>获取配置方法的详细内容和帮助，请参考这些资源：</p><ul><li><a href=http://www.thekelleys.org.uk/dnsmasq/doc.html>Dnsmasq</a></li><li><a href=http://shop.oreilly.com/product/9780596100575.do>DNS and BIND, 5th Edition</a></li></ul><p>通过来自 Linux 基金会和 edX 的免费课程 <a href=https://training.linuxfoundation.org/linux-courses/system-administration-training/introduction-to-linux>&ldquo;Linux 入门&rdquo;</a> 学习更多 Linux 的知识。</p><hr><p>via: <a href=https://www.linux.com/learn/intro-to-linux/2018/3/simple-load-balancing-dns-linux>https://www.linux.com/learn/intro-to-linux/2018/3/simple-load-balancing-dns-linux</a></p><p>作者：<a href=https://www.linux.com/users/cschroder>CARLA SCHRODER</a> 译者：<a href=https://github.com/qhwdw>qhwdw</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/dns/ rel=tag>DNS</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/ rel=tag>负载均衡</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BD%AE%E8%AF%A2/ rel=tag>轮询</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

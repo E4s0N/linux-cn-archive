@@ -1,0 +1,59 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Python 下使用 Altair 数据制图 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Python 下使用 Altair 数据制图"><meta property="og:description" content="Altair 作为一个 Python 数据制图库，提供了优雅的接口及自有的绘图语言。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12493-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-08-06T11:07:13+00:00"><meta property="article:modified_time" content="2020-08-06T11:07:13+00:00"><meta itemprop=name content="Python 下使用 Altair 数据制图"><meta itemprop=description content="Altair 作为一个 Python 数据制图库，提供了优雅的接口及自有的绘图语言。"><meta itemprop=datePublished content="2020-08-06T11:07:13+00:00"><meta itemprop=dateModified content="2020-08-06T11:07:13+00:00"><meta itemprop=wordCount content="277"><meta itemprop=keywords content="绘图,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Python 下使用 Altair 数据制图</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-08-06T11:07:13Z>August 06, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>Altair 作为一个 Python 数据制图库，提供了优雅的接口及自有的绘图语言。</p></blockquote><p><img src=/data/attachment/album/202008/06/110441imrz9ajtpshtfq1i.jpg alt></p><p>Python 中的 <a href=/article-12327-1.html>绘图库</a> 提供了呈现数据的多种方式，可以满足你不同的偏好，如灵活性、布局、易用性，或者特殊的风格。</p><p>和其它方式相比，我发现，Altair 提供的是一种不同的解决方案，且总体而言使用起来更为简单。得益于声明式的绘图语言 <a href=https://vega.github.io/vega/>Vega</a>，Altair 拥有一套优雅的接口，可以直接定义要绘的图应该是什么样子，而不是通过写一大堆循环和条件判断去一步步构建。</p><h3 id=绘图流程>绘图流程</h3><p>我通过绘制同一个多柱状图比较了多个 Python 绘图库的差异。正式开始之前，你需要将你的 Python 环境调整到能运行下面代码的状态。具体就是：</p><ul><li>安装最新版的 Python（ <a href=https://opensource.com/article/20/4/install-python-linux>Linux</a>、<a href=https://opensource.com/article/19/5/python-3-default-mac>Mac</a> 和 <a href=https://opensource.com/article/19/8/how-install-python-windows>Windows</a> 系统下的安装方法）</li><li>确认该版本 Python 可以运行本教程所使用的库</li></ul><p>演示用数据可从网络下载，并且可以用 pandas 直接导入：</p><pre tabindex=0><code>import pandas as pd
+df = pd.read_csv(&#39;https://anvil.works/blog/img/plotting-in-python/uk-election-results.csv&#39;)
+</code></pre><p>准备开始吧。为了做个比较，先看下面这个用 <a href=https://opensource.com/article/20/5/matplotlib-python>Matplotlib</a> 做的图：</p><p><img src=/data/attachment/album/202008/06/110722oae6uu0zuu6bubv0.png alt="Matplotlib UK election results" title="Matplotlib UK election results"></p><p>使用 Matplotlib 需要 16 行代码，图柱的位置需要自己计算。</p><p>使用 Altair 绘制相似的图，代码如下：</p><pre tabindex=0><code>    import altair as alt
+
+    chart = alt.Chart(df).mark_bar().encode(
+        x=&#39;party&#39;,
+        y=&#39;seats&#39;,
+        column=&#39;year&#39;,
+        color=&#39;party&#39;,
+    )
+
+    chart.save(&#39;altair-elections.html&#39;)
+</code></pre><p>真是简洁多了！与 <a href=https://anvil.works/blog/plotting-in-seaborn>Seaborn</a> 类似，Altair 所用数据的组织形式是每个变量一列（即 <a href=https://anvil.works/blog/tidy-data>数据列</a> ）。这种方式下可以将每个变量映射到图的一个属性上 —— Altair 称之为“通道”。在上例中，我们期望每个 “党派” 在 <code>x</code> 轴上显示为一组图柱， 其 “席位” 显示在 <code>y</code> 轴，且将图柱按照 “年份” 分开为 “列”。我们还想根据 “党派” 给图柱使用不同的 “颜色”。用语言表述需求的话就是上面这个样子，而这也正是代码所要表述的！</p><p>现在把图画出来：</p><p><img src=/data/attachment/album/202008/06/110727ihauqasxq9h732as.png alt="Altair plot with default styling" title="Altair plot with default styling"></p><h3 id=调整样式>调整样式</h3><p>这和我们期待的效果有点接近了。与 Matplotlib 方案相比，主要区别在于 Altair 方案中，每个 <code>year</code> 组显示的时候，内部之间都有个小空白 —— 这不是问题，这只是 Altair 多柱状图显示的一个特性。</p><p>所以说呢，还需要对显示样式再做一些改进。</p><h4 id=非整形数据>非整形数据</h4><p>两个不是整数的年份名称（<code>Feb 1974</code> 和 <code>Oct 1974</code>）显示为 <code>NaN</code> 了。这可以通过将年份数值 <code>year</code> 转换为字符串来解决：</p><pre tabindex=0><code>    df[&#39;year&#39;] = df[&#39;year&#39;].astype(str)
+</code></pre><h4 id=指定数据排序方法>指定数据排序方法</h4><p>还需要让 Altair 知道如何对数据进行排序。Altair 允许通过传给它一个 <code>Column</code> 对象，来设定 <code>Column</code> 通道的更多细节。现在让 Altair 按照数据在数据集中出现的顺序排列：</p><pre tabindex=0><code>    chart = alt.Chart(df).mark_bar().encode(
+        # ...
+        column=alt.Column(&#39;year&#39;, sort=list(df[&#39;year&#39;]), title=None),
+        # ...
+    )
+</code></pre><h4 id=移除坐标轴标签>移除坐标轴标签</h4><p>我们通过设置 <code>title=None</code> 移除了图顶的 &ldquo;year&rdquo; 标签。下面再一处每列数据的 &ldquo;party&rdquo; 标签：</p><pre tabindex=0><code>    chart = alt.Chart(df).mark_bar().encode(
+        x=alt.X(&#39;party&#39;, title=None),
+        # ...
+    )
+</code></pre><h4 id=指定颜色图>指定颜色图</h4><p>最后，我们还想自己指定图柱的颜色。Altair 允许建立 <code>domain</code> 中数值与 <code>range</code> 中颜色的映射来实现所需功能，太贴心了：</p><pre tabindex=0><code>    cmap = {
+        &#39;Conservative&#39;: &#39;#0343df&#39;,
+        &#39;Labour&#39;: &#39;#e50000&#39;,
+        &#39;Liberal&#39;: &#39;#ffff14&#39;,
+        &#39;Others&#39;: &#39;#929591&#39;,
+    }
+
+    chart = alt.Chart(df).mark_bar().encode(
+        # ...
+        color=alt.Color(&#39;party&#39;, scale=alt.Scale(domain=list(cmap.keys()), range=list(cmap.values())))
+    )
+</code></pre><h4 id=样式调整后的最终代码>样式调整后的最终代码</h4><p>应用上述样式调整之后，代码看起来不那么悦目了，但我们仍然是用声明的方式实现的，这正是 Altair 如此有弹性的原因所在。实现过程中，仍然是使用的异于显示数据的独立变量来分离图中不同属性的，而不是像在 Matplotlib 中那样直接对显示数据做复杂的操作。唯一的不同是，我们的变量名字封装在类似 <code>alt.X()</code> 的对象中，从而实现对显示效果的控制：</p><pre tabindex=0><code>    import altair as alt
+    from votes import long as df
+
+    cmap = {
+        &#39;Conservative&#39;: &#39;#0343df&#39;,
+        &#39;Labour&#39;: &#39;#e50000&#39;,
+        &#39;Liberal&#39;: &#39;#ffff14&#39;,
+        &#39;Others&#39;: &#39;#929591&#39;,
+    }
+
+    df[&#39;year&#39;] = df[&#39;year&#39;].astype(str)
+
+    # We&#39;re still assigning, e.g. &#39;party&#39; to x, but now we&#39;ve wrapped it
+    # in alt.X in order to specify its styling
+    chart = alt.Chart(df).mark_bar().encode(
+        x=alt.X(&#39;party&#39;, title=None),
+        y=&#39;seats&#39;,
+        column=alt.Column(&#39;year&#39;, sort=list(df[&#39;year&#39;]), title=None),
+        color=alt.Color(&#39;party&#39;, scale=alt.Scale(domain=list(cmap.keys()), range=list(cmap.values())))
+    )
+
+    chart.save(&#39;altair-elections.html&#39;)
+</code></pre><p>现在与 Matplotlib 方案扯平了，代码数量达到了 16 行！</p><p>下图是使用我们的样式调整方案之后的 Altair 效果图：</p><p><img src=/data/attachment/album/202008/06/110732gjajux94xnxsuavj.png alt="The Altair plot with our custom styling" title="The Altair plot with our custom styling."></p><h3 id=结论>结论</h3><p>尽管在代码数量上，使用 Altair 绘图没有表现出优势，但它的声明式绘图语言使得对图层的操控更为精密，这是我比较欣赏的。Altair 还提供了清晰而独立的方式来调校显示样式，这使得 相关代码与绘图的代码块分离开来。Altair 确实是使用 Python 绘图时又一个很棒的工具库。</p><p>本文首次发布于 <a href=https://anvil.works/blog/plotting-in-altair>这里</a>，蒙允编辑后再次发布。</p><hr><p>via: <a href=https://opensource.com/article/20/6/altair-python>https://opensource.com/article/20/6/altair-python</a></p><p>作者：<a href=https://opensource.com/users/shaun-taylor-morgan>Shaun Taylor-Morgan</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/silentdawn-zz>silentdawn-zz</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%BB%98%E5%9B%BE/ rel=tag>绘图</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

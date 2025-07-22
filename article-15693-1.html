@@ -1,0 +1,62 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Python 在 Mattermost 中创建 ChatOps 聊天机器人 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Python 在 Mattermost 中创建 ChatOps 聊天机器人"><meta property="og:description" content="用一个简单的开源机器人在你的组织中实施 ChatOps。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15693-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-04-05T09:28:39+00:00"><meta property="article:modified_time" content="2023-04-05T09:28:39+00:00"><meta itemprop=name content="使用 Python 在 Mattermost 中创建 ChatOps 聊天机器人"><meta itemprop=description content="用一个简单的开源机器人在你的组织中实施 ChatOps。"><meta itemprop=datePublished content="2023-04-05T09:28:39+00:00"><meta itemprop=dateModified content="2023-04-05T09:28:39+00:00"><meta itemprop=wordCount content="272"><meta itemprop=keywords content="ChatOps,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Python 在 Mattermost 中创建 ChatOps 聊天机器人</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-04-05T09:28:39Z>April 05, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202304/05/092837ab3y8zft3hhv02hr.jpg alt></p><blockquote><p>用一个简单的开源机器人在你的组织中实施 ChatOps。</p></blockquote><p>ChatOps 是一种协作模型，它将人员、流程、工具和自动化连接到一个透明的工作流中。<a href=https://mattermost.com/>Mattermost</a> 是一个开源、自托管的消息平台，使组织能够安全、有效和高效地进行通信。它是 Slack、Discord 和其他专有消息平台的绝佳 <a href=https://opensource.com/alternatives/slack>开源替代品</a>。本文概述了在 Mattermost 上创建 ChatOps 机器人的步骤，包括必要的代码示例和解释。</p><h3 id=先决条件>先决条件</h3><p>在开始之前，请确保你可以访问 Mattermost 服务器，<a href=https://opensource.com/article/17/10/python-101>安装 Python</a>，并 <a href=https://opensource.com/article/20/3/pip-linux-mac-windows>使用 pip</a> 安装 Mattermost Python 驱动。</p><h3 id=在-mattermost-上创建一个机器人帐户>在 Mattermost 上创建一个机器人帐户</h3><p>要创建机器人帐户，请访问 Mattermost 系统控制台，并添加具有适当访问权限的机器人帐户。获取机器人的用户名和密码以在 Python 脚本中使用。</p><h3 id=设置-mattermost-python-驱动>设置 Mattermost Python 驱动</h3><p>使用 <code>pip</code> 安装 Mattermost Python 驱动，并将其导入 Python 脚本。创建一个新的驱动实例并登录到 Mattermost 服务器。</p><h3 id=在-python-中创建-chatops-机器人>在 Python 中创建 ChatOps 机器人</h3><p>创建一个新的 Python 脚本，定义要导入的必要库，并使用 Mattermost 驱动的 API 实现机器人的功能。编写代码来处理消息、命令和其他事件，并使用 Mattermost 驱动的 API 方法向通道和用户发送消息和通知。最后，调试和测试 ChatOps 机器人。</p><h3 id=chatops-机器人代码示例>ChatOps 机器人代码示例</h3><p>以下是响应用户消息的简单 ChatOps 机器人的示例 Python 代码：</p><pre tabindex=0><code>from mattermostdriver import Driver
+
+bot_username = &#39;bot_username&#39;
+bot_password = &#39;bot_password&#39;
+server_url = &#39;https://your.mattermost.server.url&#39;
+
+def main():
+    driver = Driver({&#39;url&#39;: server_url, &#39;login_id&#39;: bot_username, &#39;password&#39;: bot_password, &#39;scheme&#39;: &#39;https&#39;})
+    driver.login()
+    team = driver.teams.get_team_by_name(&#39;team_name&#39;)
+    channel = driver.channels.get_channel_by_name(team[&#39;id&#39;], &#39;channel_name&#39;)
+
+    @driver.on(&#39;message&#39;)
+    def handle_message(post, **kwargs):
+        if post[&#39;message&#39;] == &#39;hello&#39;:
+            driver.posts.create_post({
+                &#39;channel_id&#39;: post[&#39;channel_id&#39;],
+                &#39;message&#39;: &#39;Hi there!&#39;
+            })
+
+    driver.init_websocket()
+
+if __name__ == &#39;__main__&#39;:
+    main()
+</code></pre><h3 id=添加功能>添加功能</h3><p>在 Mattermost 上创建基本的 ChatOps 机器人后，你可以添加更多功能来扩展其功能。以下是步骤：</p><ul><li><strong>确定要添加的功能</strong>：在编写代码之前，你必须确定要添加到 ChatOps 机器人的功能。可以是从发送通知到与第三方工具集成的任何事情。</li><li><strong>编写代码</strong>：确定要添加的功能后，就可以开始编写代码了。代码将取决于添加的功能，但你可以使用 Mattermost Python 驱动与 Mattermost API 交互并实现该功能。</li><li><strong>测试代码</strong>：编写代码后，重要的是对其进行测试以确保其按预期工作。在将其部署到生产服务器之前，你可以在开发服务器或测试通道中测试代码。</li><li><strong>部署代码</strong>：当你对其进行了测试并且它按预期工作，你就可以将其部署到你的生产服务器。遵循你组织的部署流程并确保新代码不会破坏任何现有功能。</li><li><strong>记录新功能</strong>：记录你添加到 ChatOps 机器人的新功能非常重要。这将使其他团队成员更容易使用该机器人并了解其功能。</li></ul><p>一个 ChatOps Bot 功能示例是与第三方工具集成并提供某些任务的状态更新。</p><pre tabindex=0><code>from mattermostdriver import Driver
+import requests
+
+bot_username = &#39;bot_username&#39;
+bot_password = &#39;bot_password&#39;
+server_url = &#39;https://your.mattermost.server.url&#39;
+
+def main():
+    driver = Driver({&#39;url&#39;: server_url, &#39;login_id&#39;: bot_username, &#39;password&#39;: bot_password, &#39;scheme&#39;: &#39;https&#39;})
+    driver.login()
+    team = driver.teams.get_team_by_name(&#39;team_name&#39;)
+    channel = driver.channels.get_channel_by_name(team[&#39;id&#39;], &#39;channel_name&#39;)
+
+    @driver.on(&#39;message&#39;)
+    def handle_message(post, **kwargs):
+        if post[&#39;message&#39;] == &#39;status&#39;:
+            # Make a request to the third-party tool API to get the status
+            response = requests.get(&#39;https://api.thirdpartytool.com/status&#39;)
+            if response.status_code == 200:
+                status = response.json()[&#39;status&#39;]
+                driver.posts.create_post({
+                    &#39;channel_id&#39;: post[&#39;channel_id&#39;],
+                    &#39;message&#39;: f&#39;The status is {status}&#39;
+                })
+            else:
+                driver.posts.create_post({
+                    &#39;channel_id&#39;: post[&#39;channel_id&#39;],
+                    &#39;message&#39;: &#39;Failed to get status&#39;
+                })
+
+    driver.init_websocket()
+
+if __name__ == &#39;__main__&#39;:
+    main()
+</code></pre><p>在此示例中，ChatOps 机器人监听命令 <code>status</code> 并向第三方工具 API 发出请求以获取当前状态。然后它会在发出命令的 Mattermost 频道中发布状态更新。这使团队成员无需离开聊天平台即可快速获取任务状态的更新。</p><h3 id=开源-chatops>开源 ChatOps</h3><p>总之，在 Mattermost 上创建 ChatOps 机器人是一个简单的过程，可以为你组织的沟通和工作流程带来许多好处。本文提供了分步分解和代码示例，可帮助你开始创建你的机器人，甚至可以通过添加新功能对其进行自定义。现在你了解了基础知识，你可以进一步探索 ChatOps 和 Mattermost 以优化团队的协作和生产力。</p><hr><p>via: <a href=https://opensource.com/article/23/3/chatbot-mattermost-python>https://opensource.com/article/23/3/chatbot-mattermost-python</a></p><p>作者：<a href=https://opensource.com/users/drmjg>Dr. Michael J. Garbade</a> 选题：<a href=https://github.com/lkxed/>lkxed</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/chatops/ rel=tag>ChatOps</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,178 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Flutter 移动应用程序中创建一个列表 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Flutter 移动应用程序中创建一个列表"><meta property="og:description" content="了解如何创建 Flutter 应用的界面以及如何在它们之间进行数据传递。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13446-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-05-31T20:15:21+00:00"><meta property="article:modified_time" content="2021-05-31T20:15:21+00:00"><meta itemprop=name content="在 Flutter 移动应用程序中创建一个列表"><meta itemprop=description content="了解如何创建 Flutter 应用的界面以及如何在它们之间进行数据传递。"><meta itemprop=datePublished content="2021-05-31T20:15:21+00:00"><meta itemprop=dateModified content="2021-05-31T20:15:21+00:00"><meta itemprop=wordCount content="821"><meta itemprop=keywords content="Flutter,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Flutter 移动应用程序中创建一个列表</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-05-31T20:15:21Z>May 31, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>了解如何创建 Flutter 应用的界面以及如何在它们之间进行数据传递。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201442luk1u6vqz3h3k8jn.jpg alt></p><p>Flutter 是一个流行的开源工具包，它可用于构建跨平台的应用。在文章《<a href=/article-12693-1.html>用 Flutter 创建移动应用</a>》中，我已经向大家展示了如何在 Linux 中安装 <a href=https://flutter.dev/>Flutter</a> 并创建你的第一个应用。而这篇文章，我将向你展示如何在你的应用中添加一个列表，点击每一个列表项可以打开一个新的界面。这是移动应用的一种常见设计方法，你可能以前见过的，下面有一个截图，能帮助你对它有一个更直观的了解：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201524m9453rl9mtmdzx99.gif alt="测试 Flutter 应用" title="Testing the Flutter app"></p><p>Flutter 使用 <a href=https://dart.dev/>Dart</a> 语言。在下面的一些代码片段中，你会看到以斜杠开头的语句。两个斜杠（<code>//</code>）是指代码注释，用于解释某些代码片段。三个斜杠（<code>///</code>）则表示的是 Dart 的文档注释，用于解释 Dart 类和类的属性，以及其他的一些有用的信息。</p><h3 id=查看flutter应用的主要部分>查看Flutter应用的主要部分</h3><p>Flutter 应用的典型入口点是 <code>main()</code> 函数，我们通常可以在文件 <code>lib/main.dart</code> 中找到它:</p><pre tabindex=0><code>void main() {
+ runApp(MyApp());
+}
+</code></pre><p>应用启动时，<code>main()</code> 会被调用，然后执行 <code>MyApp()</code>。 <code>MyApp</code> 是一个无状态微件（<code>StatelessWidget</code>），它包含了<code>MaterialApp()</code> 微件中所有必要的应用设置（应用的主题、要打开的初始页面等）：</p><pre tabindex=0><code>class MyApp extends StatelessWidget {
+ @override
+ Widget build(BuildContext context) {
+   return MaterialApp(
+     title: &#39;Flutter Demo&#39;,
+     theme: ThemeData(
+       primarySwatch: Colors.blue,
+       visualDensity: VisualDensity.adaptivePlatformDensity,
+     ),
+     home: MyHomePage(title: &#39;Flutter Demo Home Page&#39;),
+   );
+ }
+}
+</code></pre><p>生成的 <code>MyHomePage()</code> 是应用的初始页面，是一个有状态的微件，它包含包含可以传递给微件构造函数参数的变量（从上面的代码看，我们传了一个 <code>title</code> 变量给初始页面的构造函数）：</p><pre tabindex=0><code>class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() =&gt; _MyHomePageState();
+}
+</code></pre><p>有状态微件（<code>StatefulWidget</code>）表示这个微件可以拥有自己的状态：<code>_MyHomePageState</code>。调用 <code>_MyHomePageState</code> 中的 <code>setState()</code> 方法，可以重新构建用户界面：</p><pre tabindex=0><code>class _MyHomePageState extends State&lt;MyHomePage&gt; {
+ int _counter = 0; // Number of taps on + button.
+
+ void _incrementCounter() { // Increase number of taps and update UI by calling setState().
+   setState(() {
+     _counter++;
+   });
+ }
+ ...
+}
+</code></pre><p>不管是有状态的，还是无状态的微件，它们都有一个 <code>build()</code> 方法，该方法负责微件的 UI 外观。</p><pre tabindex=0><code>@override
+Widget build(BuildContext context) {
+ return Scaffold( // Page widget.
+   appBar: AppBar( // Page app bar with title and back button if user can return to previous screen.
+     title: Text(widget.title), // Text to display page title.
+   ),
+   body: Center( // Widget to center child widget.
+     child: Column( // Display children widgets in column.
+       mainAxisAlignment: MainAxisAlignment.center,
+       children: &lt;Widget&gt;[
+         Text( // Static text.
+           &#39;You have pushed the button this many times:&#39;,
+         ),
+         Text( // Text with our taps number.
+           &#39;$_counter&#39;, // $ sign allows us to use variables inside a string.
+           style: Theme.of(context).textTheme.headline4,// Style of the text, “Theme.of(context)” takes our context and allows us to access our global app theme.
+         ),
+       ],
+     ),
+   ),
+        // Floating action button to increment _counter number.
+   floatingActionButton: FloatingActionButton(
+     onPressed: _incrementCounter,
+     tooltip: &#39;Increment&#39;,
+     child: Icon(Icons.add),
+   ),
+ );
+}
+</code></pre><h3 id=修改你的应用>修改你的应用</h3><p>一个好的做法是，把 <code>main()</code> 方法和其他页面的代码分开放到不同的文件中。要想将它们分开，你需要右击 <code>lib</code> 目录，然后选择 “New > Dart File” 来创建一个 .dart 文件：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201524vap110sxfx80p21z.png alt="创建一个新的 Dart 文件" title="Create a new Dart file"></p><p>将新建的文件命名为 <code>items_list_page</code>。</p><p>切换回到 <code>main.dart</code> 文件，将 <code>MyHomePage</code> 和 <code>_MyHomePageState</code> 中的代码，剪切并粘贴到我们新建的文件。然后将光标放到 <code>StatefulWidget</code> 上（下面红色的下划线处）, 按 <code>Alt+Enter</code> 后出现下拉列表，然后选择 <code>package:flutter/material.dart</code>：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201524zlsefqh50efa8g5a.png alt="导入 Flutter 包" title="Importing Flutter package"></p><p>经过上面的操作我们将 <code>flutter/material.dart</code> 包添加到了 <code>main.dart</code> 文件中，这样我们就可以使用 Flutter 提供的默认的 material 主题微件。</p><p>然后, 在类名 <code>MyHomePage</code> 右击，“Refactor > Rename&mldr;”将其重命名为 <code>ItemsListPage</code>：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201525tzuhx5xtxk4tp99s.png alt="重命名 StatefulWidget 类" title="Renaming StatefulWidget class"></p><p>Flutter 识别到你重命名了 <code>StatefulWidget</code> 类，它会自动将它的 <code>State</code> 类也跟着重命名:</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201525d6w2q2kiiijzni0w.png alt="State 类被自动重命名" title="State class renamed automatically"></p><p>回到 <code>main.dart</code> 文件，将文件名 <code>MyHomePage</code> 改为 <code>ItemsListPage</code>。 一旦你开始输入, 你的 Flutter 集成开发环境（可能是 IntelliJ IDEA 社区版、Android Studio 和 VS Code 或 <a href=https://opensource.com/article/20/6/open-source-alternatives-vs-code>VSCodium</a>），会给出自动代码补完的建议。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201525xbzpb6bwwf595clw.png alt="IDE 建议自动补完的代码" title="IDE suggests autocompleting code"></p><p>按回车键即可完成输入，缺失的导入语句会被自动添加到文件的顶部。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201526erzso7rg6g0sdsqk.png alt=添加缺失的导入语句 title="Adding missing import "></p><p>到此，你已经完成了初始设置。现在你需要在 <code>lib</code> 目录创建一个新的 .dart 文件，命名为 <code>item_model</code>。（注意，类命是大写驼峰命名，一般的文件名是下划线分割的命名。）然后粘贴下面的代码到新的文件中：</p><pre tabindex=0><code>/// Class that stores list item info:
+/// [id] - unique identifier, number.
+/// [icon] - icon to display in UI.
+/// [title] - text title of the item.
+/// [description] - text description of the item.
+class ItemModel {
+ // class constructor
+ ItemModel(this.id, this.icon, this.title, this.description);
+
+ // class fields
+ final int id;
+ final IconData icon;
+ final String title;
+ final String description;
+}
+</code></pre><p>回到 <code>items_list_page.dart</code> 文件，将已有的 <code>_ItemsListPageState</code> 代码替换为下面的代码:</p><pre tabindex=0><code>class _ItemsListPageState extends State&lt;ItemsListPage&gt; {
+
+// Hard-coded list of [ItemModel] to be displayed on our page.
+ final List&lt;ItemModel&gt; _items = [
+   ItemModel(0, Icons.account_balance, &#39;Balance&#39;, &#39;Some info&#39;),
+   ItemModel(1, Icons.account_balance_wallet, &#39;Balance wallet&#39;, &#39;Some info&#39;),
+   ItemModel(2, Icons.alarm, &#39;Alarm&#39;, &#39;Some info&#39;),
+   ItemModel(3, Icons.my_location, &#39;My location&#39;, &#39;Some info&#39;),
+   ItemModel(4, Icons.laptop, &#39;Laptop&#39;, &#39;Some info&#39;),
+   ItemModel(5, Icons.backup, &#39;Backup&#39;, &#39;Some info&#39;),
+   ItemModel(6, Icons.settings, &#39;Settings&#39;, &#39;Some info&#39;),
+   ItemModel(7, Icons.call, &#39;Call&#39;, &#39;Some info&#39;),
+   ItemModel(8, Icons.restore, &#39;Restore&#39;, &#39;Some info&#39;),
+   ItemModel(9, Icons.camera_alt, &#39;Camera&#39;, &#39;Some info&#39;),
+ ];
+
+ @override
+ Widget build(BuildContext context) {
+   return Scaffold(
+       appBar: AppBar(
+         title: Text(widget.title),
+       ),
+       body: ListView.builder( // Widget which creates [ItemWidget] in scrollable list.
+         itemCount: _items.length, // Number of widget to be created.
+         itemBuilder: (context, itemIndex) =&gt; // Builder function for every item with index.
+             ItemWidget(_items[itemIndex], () {
+           _onItemTap(context, itemIndex);
+         }),
+       ));
+ }
+
+ // Method which uses BuildContext to push (open) new MaterialPageRoute (representation of the screen in Flutter navigation model) with ItemDetailsPage (StateFullWidget with UI for page) in builder.
+ _onItemTap(BuildContext context, int itemIndex) {
+   Navigator.of(context).push(MaterialPageRoute(
+       builder: (context) =&gt; ItemDetailsPage(_items[itemIndex])));
+ }
+}
+
+
+// StatelessWidget with UI for our ItemModel-s in ListView.
+class ItemWidget extends StatelessWidget {
+ const ItemWidget(this.model, this.onItemTap, {Key key}) : super(key: key);
+
+ final ItemModel model;
+ final Function onItemTap;
+
+ @override
+ Widget build(BuildContext context) {
+   return InkWell( // Enables taps for child and add ripple effect when child widget is long pressed.
+     onTap: onItemTap,
+     child: ListTile( // Useful standard widget for displaying something in ListView.
+       leading: Icon(model.icon),
+       title: Text(model.title),
+     ),
+   );
+ }
+}
+</code></pre><p>为了提高代码的可读性，可以考虑将 <code>ItemWidget</code> 作为一个单独的文件放到 <code>lib</code> 目录中。</p><p>现在唯一缺少的是 <code>ItemDetailsPage</code> 类。在 <code>lib</code> 目录中我们创建一个新文件并命名为 <code>item_details_page</code>。然后将下面的代码拷贝进去：</p><pre tabindex=0><code>import &#39;package:flutter/material.dart&#39;;
+
+import &#39;item_model.dart&#39;;
+
+/// Widget for displaying detailed info of [ItemModel]
+class ItemDetailsPage extends StatefulWidget {
+ final ItemModel model;
+
+ const ItemDetailsPage(this.model, {Key key}) : super(key: key);
+
+ @override
+ _ItemDetailsPageState createState() =&gt; _ItemDetailsPageState();
+}
+
+class _ItemDetailsPageState extends State&lt;ItemDetailsPage&gt; {
+ @override
+ Widget build(BuildContext context) {
+   return Scaffold(
+     appBar: AppBar(
+       title: Text(widget.model.title),
+     ),
+     body: Center(
+       child: Column(
+         children: [
+           const SizedBox(height: 16),
+           Icon(
+             widget.model.icon,
+             size: 100,
+           ),
+           const SizedBox(height: 16),
+           Text(
+             &#39;Item description: ${widget.model.description}&#39;,
+             style: TextStyle(fontSize: 18),
+           )
+         ],
+       ),
+     ),
+   );
+ }
+}
+</code></pre><p>上面的代码几乎没什么新东西，不过要注意的是 <code>_ItemDetailsPageState</code> 里使用了 <code>widget.item.title</code> 这样的语句，它让我们可以从有状态类中引用到其对应的微件（<code>StatefulWidget</code>）。</p><h3 id=添加一些动画>添加一些动画</h3><p>现在让我们来添加一些基础的动画：</p><ol><li>找到 <code>ItemWidget</code> 代码块（或者文件）</li><li>将光标放到 <code>build()</code> 方法中的 <code>Icon()</code> 微件上</li><li>按 <code>Alt+Enter</code>，然后选择“Wrap with widget&mldr;”</li></ol><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201526rrcimnffoz2bfz05.png alt=查看微件选项 title="Wrap with widget option"></p><p>输入 <code>Hero</code>，然后从建议的下拉列表中选择 <code>Hero((Key key, @required this, tag, this.create))</code>：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201526c33izlcl6gklkyet.png alt="查找 Hero 微件" title="Finding the Hero widget"></p><p>下一步, 给 Hero 微件添加 <code>tag</code> 属性 <code>tag: model.id</code>：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201527u3ifl1y4uxu1sevv.png alt="在 Hero 微件上添加 tag 属性为 model.id" title="Adding the tag property model.id to the Hero widget"></p><p>最后我们在 <code>item_details_page.dart</code> 文件中做相同的修改：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201527t90kkp90mm6op9wx.png alt=修改item_details_page.dart文件 title="Changing item_details_page.dart file"></p><p>前面的步骤，其实我们是用 <code>Hero()</code> 微件对 <code>Icon()</code> 微件进行了封装。还记得吗？前面我们定义 <code>ItemModel</code> 类时，定义了一个 <code>id field</code>，但没有在任何地方使用到。因为 Hero 微件会为其每个子微件添加一个唯一的标签。当 Hero 检测到不同页面（<code>MaterialPageRoute</code>）中存在相同标签的 Hero 时，它会自动在这些不同的页面中应用过渡动画。</p><p>可以在安卓模拟器或物理设备上运行我们的应用来测试这个动画。当你打开或者关闭列表项的详情页时，你会看到一个漂亮的图标动画：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202105/31/201524m9453rl9mtmdzx99.gif alt="测试 Flutter 应用" title="Testing the Flutter app"></p><h3 id=收尾>收尾</h3><p>这篇教程，让你学到了:</p><ul><li>一些符合标准的，且能用于自动创建应用的组件。</li><li>如何添加多个页面以及在页面间传递数据。</li><li>如何给多个页面添加简单的动画。</li></ul><p>如果你想了解更多，查看 Flutter 的 <a href=https://flutter.dev/docs>文档</a>（有一些视频和样例项目的链接，还有一些创建 Flutter 应用的“秘方”）与 <a href=https://github.com/flutter>源码</a>，源码的开源许可证是 BSD 3。</p><hr><p>via: <a href=https://opensource.com/article/20/11/flutter-lists-mobile-app>https://opensource.com/article/20/11/flutter-lists-mobile-app</a></p><p>作者：<a href=https://opensource.com/users/kooper>Vitaly Kuprenko</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/ywxgod>ywxgod</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/flutter/ rel=tag>Flutter</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,108 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux/Unix 桌面趣事：文字模式下的 ASCII 艺术与注释绘画 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux/Unix 桌面趣事：文字模式下的 ASCII 艺术与注释绘画"><meta property="og:description" content="boxes 命令不仅是一个文本过滤器，同时是一个很少人知道的有趣工具，它可以在输入的文本或者代码周围框上各种ASCII 艺术画。"><meta property="og:type" content="article"><meta property="og:url" content="/article-7401-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-05-28T13:58:00+00:00"><meta property="article:modified_time" content="2016-05-28T13:58:00+00:00"><meta itemprop=name content="Linux/Unix 桌面趣事：文字模式下的 ASCII 艺术与注释绘画"><meta itemprop=description content="boxes 命令不仅是一个文本过滤器，同时是一个很少人知道的有趣工具，它可以在输入的文本或者代码周围框上各种ASCII 艺术画。"><meta itemprop=datePublished content="2016-05-28T13:58:00+00:00"><meta itemprop=dateModified content="2016-05-28T13:58:00+00:00"><meta itemprop=wordCount content="479"><meta itemprop=keywords content="桌面趣事,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux/Unix 桌面趣事：文字模式下的 ASCII 艺术与注释绘画</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-05-28T13:58:00Z>May 28, 2016</time></div></div></header><div class="content post__content clearfix"><p>boxes 命令不仅是一个文本过滤器，同时是一个很少人知道的有趣工具，它可以在输入的文本或者代码周围框上各种ASCII 艺术画。你可以用它快速创建邮件签名，或者在各种编程语言中留下评论块。这个命令可以在 vim 文本编辑器中使用，但是也可以在各种支持过滤器的文本编辑器中使用，同时也可以在命令行中单独使用。</p><p><img src=/data/attachment/album/201605/28/101741f6fgtktuftsh3htt.jpg alt></p><h3 id=任务-安装-boxes>任务: 安装 boxes</h3><p>使用 <a href=http://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html>apt-get 命令</a> 在 Debian / Ubuntu Linux 中安装 boxes：</p><pre tabindex=0><code>$ sudo apt-get install boxes
+</code></pre><p>输出示例：</p><pre tabindex=0><code>Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following NEW packages will be installed:
+  boxes
+0 upgraded, 1 newly installed, 0 to remove and 6 not upgraded.
+Need to get 0 B/59.8 kB of archives.
+After this operation, 205 kB of additional disk space will be used.
+Selecting previously deselected package boxes.
+(Reading database ... 224284 files and directories currently installed.)
+Unpacking boxes (from .../boxes_1.0.1a-2.3_amd64.deb) ...
+Processing triggers for man-db ...
+Setting up boxes (1.0.1a-2.3) ...
+</code></pre><p>RHEL / CentOS / Fedora Linux 用户, 使用 <a href=http://www.cyberciti.biz/faq/rhel-centos-fedora-linux-yum-command-howto/>yum 命令来安装</a> boxes，(请先<a href=http://www.cyberciti.biz/faq/fedora-sl-centos-redhat6-enable-epel-repo/>启用 EPEL 软件仓库</a>)：</p><pre tabindex=0><code># yum install boxes
+</code></pre><p>输出示例：</p><pre tabindex=0><code>Loaded plugins: rhnplugin
+Setting up Install Process
+Resolving Dependencies
+There are unfinished transactions remaining. You might consider running yum-complete-transaction first to finish them.
+--&gt; Running transaction check
+---&gt; Package boxes.x86_64 0:1.1-8.el6 will be installed
+--&gt; Finished Dependency Resolution
+Dependencies Resolved
+==========================================================================
+ Package        Arch            Version               Repository     Size
+==========================================================================
+Installing:
+ boxes          x86_64          1.1-8.el6             epel           64 k
+Transaction Summary
+==========================================================================
+Install       1 Package(s)
+Total download size: 64 k
+Installed size: 151 k
+Is this ok [y/N]: y
+Downloading Packages:
+boxes-1.1-8.el6.x86_64.rpm                         |  64 kB     00:00
+Running rpm_check_debug
+Running Transaction Test
+Transaction Test Succeeded
+Running Transaction
+  Installing : boxes-1.1-8.el6.x86_64                                 1/1
+Installed:
+  boxes.x86_64 0:1.1-8.el6
+Complete!
+</code></pre><p>FreeBSD 用户可以按如下使用：</p><pre tabindex=0><code>cd /usr/ports/misc/boxes/ &amp;&amp; make install clean
+</code></pre><p>或者，使用 pkg_add 命令来增加包：</p><pre tabindex=0><code># pkg_add -r boxes
+</code></pre><h3 id=在一些给定文本周围画出任何种类的包围框>在一些给定文本周围画出任何种类的包围框</h3><p>输入下列命令：</p><pre tabindex=0><code>echo &#34;This is a test&#34; | boxes
+</code></pre><p>或者，指定要使用的图案的名字：</p><pre tabindex=0><code>echo -e &#34;\n\tVivek Gite\n\tvivek@nixcraft.com\n\twww.cyberciti.biz&#34; | boxes -d dog
+</code></pre><p>输出示例 :</p><p><img src=/data/attachment/album/201605/28/101800bv3vvf31z1apf5q6.png alt="Unix / Linux: Boxes Command To Draw Various Designs"></p><p>*图01: Unix / Linux: Boxes 命令来画出各式各样的图案 *</p><h4 id=怎么样输出所有的图案>怎么样输出所有的图案</h4><p>语法如下：</p><pre tabindex=0><code>boxes option
+pipe | boxes options
+echo &#34;text&#34; | boxes -d foo
+boxes -l
+</code></pre><p>-d 选项用来设置要使用的图案的名字。语法如下：</p><pre tabindex=0><code>echo &#34;Text&#34; | boxes -d design
+pipe | boxes -d desig
+</code></pre><p>-l 选项列出所有图案。它显示了在配置文件中的所有的框线设计图，同时也显示关于其创作者的信息。</p><pre tabindex=0><code>boxes -l
+boxes -l | more
+boxes -l | less
+</code></pre><p>输出示例：</p><pre tabindex=0><code>43 Available Styles in &#34;/etc/boxes/boxes-config&#34;:
+-------------------------------------------------
+ada-box (Neil Bird ):
+    ---------------
+    --           --
+    --           --
+    ---------------
+ada-cmt (Neil Bird ):
+    --
+    -- regular Ada
+    -- comments
+    --
+boy (Joan G. Stark ):
+                    .-&#34;&#34;&#34;-.
+                   / .===. \
+                   \/ 6 6 \/
+                   ( \___/ )
+      _________ooo__\_____/______________
+     /                                   \
+    |   joan stark   spunk1111@juno.com   |
+    |     VISIT MY ASCII ART GALLERY:     |
+    | http://www.geocities.com/SoHo/7373/ |
+     \_______________________ooo_________/  jgs
+                    |  |  |
+                    |_ | _|
+                    |  |  |
+                    |__|__|
+                    /-&#39;Y&#39;-\
+                   (__/ \__)
+....
+...
+output truncated
+..
+</code></pre><h3 id=在使用-vivim-文本编辑器时如何通过-boxes-过滤文本>在使用 vi/vim 文本编辑器时如何通过 boxes 过滤文本?</h3><p>你可以在 vi 或 vim 中使用任何外部命令，比如在这个例子中，<a href=http://www.cyberciti.biz/faq/vim-inserting-current-date-time-under-linux-unix-osx/>插入当前日期和时间</a>，输入：</p><pre tabindex=0><code>!!date
+</code></pre><p>或者</p><pre tabindex=0><code>:r !date
+</code></pre><p>你需要在 vim 中输入以上命令来读取 date 命令的输出，这将在当前行后面加入日期和时分秒：</p><pre tabindex=0><code>Tue Jun 12 00:05:38 IST 2012
+</code></pre><p>你可以用 boxes 命令做到同样的功能。如下创建一个作为示例的 shell 脚本或者c程序：</p><pre tabindex=0><code>#!/bin/bash
+Purpose: Backup mysql database to remote server.
+Author: Vivek Gite
+Last updated on: Tue Jun, 12 2012
+</code></pre><p>现在输入如下（将光标移到第二行，也就是以“Purpose: &mldr;”开头的行）</p><pre tabindex=0><code>3!!boxes
+</code></pre><p>瞧，你就会看到如下的输出 :</p><pre tabindex=0><code>#!/bin/bash
+/****************************************************/
+/* Purpose: Backup mysql database to remote server. */
+/* Author: Vivek Gite           */
+/* Last updated on: Tue Jun, 12 2012                */
+/****************************************************/
+</code></pre><p>这个短片将会给你介绍boxes命令:</p><p>参见</p><ul><li>boxes 帮助手册</li></ul><hr><p>via: <a href=http://www.cyberciti.biz/tips/unix-linux-draw-any-kind-of-boxes-around-text-editor.html>http://www.cyberciti.biz/tips/unix-linux-draw-any-kind-of-boxes-around-text-editor.html</a></p><p>作者：Vivek Gite 译者：<a href=https://github.com/zky001>zky001</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%A1%8C%E9%9D%A2%E8%B6%A3%E4%BA%8B/ rel=tag>桌面趣事</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

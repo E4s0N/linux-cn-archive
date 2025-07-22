@@ -1,0 +1,213 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 Python 构建一个极小的区块链 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 Python 构建一个极小的区块链"><meta property="og:description" content="在这篇文章中，我将用不到 50 行的 Python 2.x 代码实现一个简单的区块链，我把它叫做 SnakeCoin。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9453-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-03-17T02:17:00+00:00"><meta property="article:modified_time" content="2018-03-17T02:17:00+00:00"><meta itemprop=name content="用 Python 构建一个极小的区块链"><meta itemprop=description content="在这篇文章中，我将用不到 50 行的 Python 2.x 代码实现一个简单的区块链，我把它叫做 SnakeCoin。"><meta itemprop=datePublished content="2018-03-17T02:17:00+00:00"><meta itemprop=dateModified content="2018-03-17T02:17:00+00:00"><meta itemprop=wordCount content="933"><meta itemprop=keywords content="Python,区块链,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 Python 构建一个极小的区块链</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-03-17T02:17:00Z>March 17, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201803/17/021735y0htspy6tjdwssqh.jpg alt></p><p>虽然有些人认为区块链是一个早晚会出现问题的解决方案，但是毫无疑问，这个创新技术是一个计算机技术上的奇迹。那么，究竟什么是区块链呢？</p><h3 id=区块链>区块链</h3><blockquote><p>以 比特币 （ Bitcoin ） 或其它加密货币按时间顺序公开地记录交易的数字账本。</p></blockquote><p>更通俗的说，它是一个公开的数据库，新的数据存储在被称之为 区块 （ block ） 的容器中，并被添加到一个不可变的 链 （ chain ） 中（因此被称为 区块链 （ blockchain ） ），之前添加的数据也在该链中。对于比特币或其它加密货币来说，这些数据就是一组组交易，不过，也可以是其它任何类型的数据。</p><p>区块链技术带来了全新的、完全数字化的货币，如比特币和 莱特币 （ Litecoin ） ，它们并不由任何中心机构管理。这给那些认为当今的银行系统是骗局并将最终走向失败的人带来了自由。区块链也革命性地改变了分布式计算的技术形式，如 以太坊 （ Ethereum ） 就引入了一种有趣的概念： 智能合约 （ smart contract ） 。</p><p>在这篇文章中，我将用不到 50 行的 Python 2.x 代码实现一个简单的区块链，我把它叫做 SnakeCoin。</p><h3 id=不到-50-行代码的区块链>不到 50 行代码的区块链</h3><p>我们首先将从定义我们的区块是什么开始。在区块链中，每个区块随同时间戳及可选的索引一同存储。在 SnakeCoin 中，我们会存储这两者。为了确保整个区块链的完整性，每个区块都会有一个自识别的哈希值。如在比特币中，每个区块的哈希是该块的索引、时间戳、数据和前一个区块的哈希值等数据的加密哈希值。这里提及的“数据”可以是任何你想要的数据。</p><pre tabindex=0><code>import hashlib as hasher
+
+class Block:
+  def __init__(self, index, timestamp, data, previous_hash):
+    self.index = index
+    self.timestamp = timestamp
+    self.data = data
+    self.previous_hash = previous_hash
+    self.hash = self.hash_block()
+  
+  def hash_block(self):
+    sha = hasher.sha256()
+    sha.update(str(self.index) + 
+               str(self.timestamp) + 
+               str(self.data) + 
+               str(self.previous_hash))
+    return sha.hexdigest()
+</code></pre><p>真棒，现在我们有了区块的结构了，不过我们需要创建的是一个区块链。我们需要把区块添加到一个实际的链中。如我们之前提到过的，每个区块都需要前一个区块的信息。但问题是，该区块链中的第一个区块在哪里？好吧，这个第一个区块，也称之为创世区块，是一个特别的区块。在很多情况下，它是手工添加的，或通过独特的逻辑添加的。</p><p>我们将创建一个函数来简单地返回一个创世区块解决这个问题。这个区块的索引为 0 ，其包含一些任意的数据值，其“前一哈希值”参数也是任意值。</p><pre tabindex=0><code>import datetime as date
+
+def create_genesis_block():
+  # Manually construct a block with
+  # index zero and arbitrary previous hash
+  return Block(0, date.datetime.now(), &#34;Genesis Block&#34;, &#34;0&#34;)
+</code></pre><p>现在我们可以创建创世区块了，我们需要一个函数来生成该区块链中的后继区块。该函数将获取链中的前一个区块作为参数，为要生成的区块创建数据，并用相应的数据返回新的区块。新的区块的哈希值来自于之前的区块，这样每个新的区块都提升了该区块链的完整性。如果我们不这样做，外部参与者就很容易“改变过去”，把我们的链替换为他们的新链了。这个哈希链起到了加密的证明作用，并有助于确保一旦一个区块被添加到链中，就不能被替换或移除。</p><pre tabindex=0><code>def next_block(last_block):
+  this_index = last_block.index + 1
+  this_timestamp = date.datetime.now()
+  this_data = &#34;Hey! I&#39;m block &#34; + str(this_index)
+  this_hash = last_block.hash
+  return Block(this_index, this_timestamp, this_data, this_hash)
+</code></pre><p>这就是主要的部分。</p><p>现在我们能创建自己的区块链了！在这里，这个区块链是一个简单的 Python 列表。其第一个的元素是我们的创世区块，我们会添加后继区块。因为 SnakeCoin 是一个极小的区块链，我们仅仅添加了 20 个区块。我们通过循环来完成它。</p><pre tabindex=0><code># Create the blockchain and add the genesis block
+blockchain = [create_genesis_block()]
+previous_block = blockchain[0]
+
+# How many blocks should we add to the chain
+# after the genesis block
+num_of_blocks_to_add = 20
+
+# Add blocks to the chain
+for i in range(0, num_of_blocks_to_add):
+  block_to_add = next_block(previous_block)
+  blockchain.append(block_to_add)
+  previous_block = block_to_add
+  # Tell everyone about it!
+  print &#34;Block #{} has been added to the blockchain!&#34;.format(block_to_add.index)
+  print &#34;Hash: {}\n&#34;.format(block_to_add.hash) 
+</code></pre><p>让我们看看我们的成果：</p><p><img src=/data/attachment/album/201803/17/021736e1eef2zmjwor1j2l.png alt></p><p><em>别担心，它将一直添加到 20 个区块</em></p><p>很好，我们的区块链可以工作了。如果你想要在主控台查看更多的信息，你可以编辑其<a href=https://gist.github.com/aunyks/8f2c2fd51cc17f342737917e1c2582e2>完整的源代码</a>并输出每个区块的时间戳或数据。</p><p>这就是 SnakeCoin 所具有的功能。要使 SnakeCoin 达到现今的产品级的区块链的高度，我们需要添加更多的功能，如服务器层，以在多台机器上跟踪链的改变，并通过<a href=https://en.bitcoin.it/wiki/Proof_of_work>工作量证明算法（POW）</a>来限制给定时间周期内可以添加的区块数量。</p><p>如果你想了解更多技术细节，你可以在<a href=https://bitcoin.org/bitcoin.pdf>这里</a>查看最初的<a href=https://bitcoin.org/bitcoin.pdf>比特币白皮书</a>。</p><h3 id=让这个极小区块链稍微变大些>让这个极小区块链稍微变大些</h3><p>这个极小的区块链及其简单，自然也相对容易完成。但是因其简单也带来了一些缺陷。首先，SnakeCoin 仅能运行在单一的一台机器上，所以它相距分布式甚远，更别提去中心化了。其次，区块添加到区块链中的速度同在主机上创建一个 Python 对象并添加到列表中一样快。在我们的这个简单的区块链中，这不是问题，但是如果我们想让 SnakeCoin 成为一个实际的加密货币，我们就需要控制在给定时间内能创建的区块（和币）的数量。</p><p>从现在开始，SnakeCoin 中的“数据”将是交易数据，每个区块的“数据”字段都将是一些交易信息的列表。接着我们来定义“交易”。每个“交易”是一个 JSON 对象，其记录了币的发送者、接收者和转移的 SnakeCoin 数量。注：交易信息是 JSON 格式，原因我很快就会说明。</p><pre tabindex=0><code>{
+  &#34;from&#34;: &#34;71238uqirbfh894-random-public-key-a-alkjdflakjfewn204ij&#34;,
+  &#34;to&#34;: &#34;93j4ivnqiopvh43-random-public-key-b-qjrgvnoeirbnferinfo&#34;,
+  &#34;amount&#34;: 3
+}
+</code></pre><p>现在我们知道了交易信息看起来的样子了，我们需要一个办法来将其加到我们的区块链网络中的一台计算机（称之为节点）中。要做这个事情，我们会创建一个简单的 HTTP 服务器，以便每个用户都可以让我们的节点知道发生了新的交易。节点可以接受 POST 请求，请求数据为如上的交易信息。这就是为什么交易信息是 JSON 格式的：我们需要它们可以放在请求信息中传递给服务器。</p><pre tabindex=0><code>$ pip install flask # 首先安装 Web 服务器框架
+</code></pre><pre tabindex=0><code>from flask import Flask
+from flask import request
+node = Flask(__name__)
+
+# Store the transactions that
+# this node has in a list
+this_nodes_transactions = []
+
+@node.route(&#39;/txion&#39;, methods=[&#39;POST&#39;])
+def transaction():
+  if request.method == &#39;POST&#39;:
+    # On each new POST request,
+    # we extract the transaction data
+    new_txion = request.get_json()
+    # Then we add the transaction to our list
+    this_nodes_transactions.append(new_txion)
+    # Because the transaction was successfully
+    # submitted, we log it to our console
+    print &#34;New transaction&#34;
+    print &#34;FROM: {}&#34;.format(new_txion[&#39;from&#39;])
+    print &#34;TO: {}&#34;.format(new_txion[&#39;to&#39;])
+    print &#34;AMOUNT: {}\n&#34;.format(new_txion[&#39;amount&#39;])
+    # Then we let the client know it worked out
+    return &#34;Transaction submission successful\n&#34;
+
+node.run()
+</code></pre><p>真棒！现在我们有了一种保存用户彼此发送 SnakeCoin 的记录的方式。这就是为什么人们将区块链称之为公共的、分布式账本：所有的交易信息存储给所有人看，并被存储在该网络的每个节点上。</p><p>但是，有个问题：人们从哪里得到 SnakeCoin 呢？现在还没有办法得到，还没有一个称之为 SnakeCoin 这样的东西，因为我们还没有创建和分发任何一个币。要创建新的币，人们需要“挖”一个新的 SnakeCoin 区块。当他们成功地挖到了新区块，就会创建出一个新的 SnakeCoin ，并奖励给挖出该区块的人（矿工）。一旦挖矿的矿工将 SnakeCoin 发送给别人，这个币就流通起来了。</p><p>我们不想让挖新的 SnakeCoin 区块太容易，因为这将导致 SnakeCoin 太多了，其价值就变低了；同样，我们也不想让它变得太难，因为如果没有足够的币供每个人使用，它们对于我们来说就太昂贵了。为了控制挖新的 SnakeCoin 区块的难度，我们会实现一个 工作量证明 （ Proof-of-Work ） （PoW）算法。工作量证明基本上就是一个生成某个项目比较难，但是容易验证（其正确性）的算法。这个项目被称之为“证明”，听起来就像是它证明了计算机执行了特定的工作量。</p><p>在 SnakeCoin 中，我们创建了一个简单的 PoW 算法。要创建一个新区块，矿工的计算机需要递增一个数字，当该数字能被 9 （“SnakeCoin” 这个单词的字母数）整除时，这就是最后这个区块的证明数字，就会挖出一个新的 SnakeCoin 区块，而该矿工就会得到一个新的 SnakeCoin。</p><pre tabindex=0><code># ...blockchain
+# ...Block class definition
+
+miner_address = &#34;q3nf394hjg-random-miner-address-34nf3i4nflkn3oi&#34;
+
+def proof_of_work(last_proof):
+  # Create a variable that we will use to find
+  # our next proof of work
+  incrementor = last_proof + 1
+  # Keep incrementing the incrementor until
+  # it&#39;s equal to a number divisible by 9
+  # and the proof of work of the previous
+  # block in the chain
+  while not (incrementor % 9 == 0 and incrementor % last_proof == 0):
+    incrementor += 1
+  # Once that number is found,
+  # we can return it as a proof
+  # of our work
+  return incrementor
+
+@node.route(&#39;/mine&#39;, methods = [&#39;GET&#39;])
+def mine():
+  # Get the last proof of work
+  last_block = blockchain[len(blockchain) - 1]
+  last_proof = last_block.data[&#39;proof-of-work&#39;]
+  # Find the proof of work for
+  # the current block being mined
+  # Note: The program will hang here until a new
+  #       proof of work is found
+  proof = proof_of_work(last_proof)
+  # Once we find a valid proof of work,
+  # we know we can mine a block so 
+  # we reward the miner by adding a transaction
+  this_nodes_transactions.append(
+    { &#34;from&#34;: &#34;network&#34;, &#34;to&#34;: miner_address, &#34;amount&#34;: 1 }
+  )
+  # Now we can gather the data needed
+  # to create the new block
+  new_block_data = {
+    &#34;proof-of-work&#34;: proof,
+    &#34;transactions&#34;: list(this_nodes_transactions)
+  }
+  new_block_index = last_block.index + 1
+  new_block_timestamp = this_timestamp = date.datetime.now()
+  last_block_hash = last_block.hash
+  # Empty transaction list
+  this_nodes_transactions[:] = []
+  # Now create the
+  # new block!
+  mined_block = Block(
+    new_block_index,
+    new_block_timestamp,
+    new_block_data,
+    last_block_hash
+  )
+  blockchain.append(mined_block)
+  # Let the client know we mined a block
+  return json.dumps({
+      &#34;index&#34;: new_block_index,
+      &#34;timestamp&#34;: str(new_block_timestamp),
+      &#34;data&#34;: new_block_data,
+      &#34;hash&#34;: last_block_hash
+  }) + &#34;\n&#34;
+</code></pre><p>现在，我们能控制特定的时间段内挖到的区块数量，并且我们给了网络中的人新的币，让他们彼此发送。但是如我们说的，我们只是在一台计算机上做的。如果区块链是去中心化的，我们怎样才能确保每个节点都有相同的链呢？要做到这一点，我们会使每个节点都广播其（保存的）链的版本，并允许它们接受其它节点的链。然后，每个节点会校验其它节点的链，以便网络中每个节点都能够达成最终的链的共识。这称之为 共识算法 （ consensus algorithm ） 。</p><p>我们的共识算法很简单：如果一个节点的链与其它的节点的不同（例如有冲突），那么最长的链保留，更短的链会被删除。如果我们网络上的链没有了冲突，那么就可以继续了。</p><pre tabindex=0><code>@node.route(&#39;/blocks&#39;, methods=[&#39;GET&#39;])
+def get_blocks():
+  chain_to_send = blockchain
+  # Convert our blocks into dictionaries
+  # so we can send them as json objects later
+  for block in chain_to_send:
+    block_index = str(block.index)
+    block_timestamp = str(block.timestamp)
+    block_data = str(block.data)
+    block_hash = block.hash
+    block = {
+      &#34;index&#34;: block_index,
+      &#34;timestamp&#34;: block_timestamp,
+      &#34;data&#34;: block_data,
+      &#34;hash&#34;: block_hash
+    }
+  # Send our chain to whomever requested it
+  chain_to_send = json.dumps(chain_to_send)
+  return chain_to_send
+
+def find_new_chains():
+  # Get the blockchains of every
+  # other node
+  other_chains = []
+  for node_url in peer_nodes:
+    # Get their chains using a GET request
+    block = requests.get(node_url + &#34;/blocks&#34;).content
+    # Convert the JSON object to a Python dictionary
+    block = json.loads(block)
+    # Add it to our list
+    other_chains.append(block)
+  return other_chains
+
+def consensus():
+  # Get the blocks from other nodes
+  other_chains = find_new_chains()
+  # If our chain isn&#39;t longest,
+  # then we store the longest chain
+  longest_chain = blockchain
+  for chain in other_chains:
+    if len(longest_chain) &lt; len(chain):
+      longest_chain = chain
+  # If the longest chain wasn&#39;t ours,
+  # then we set our chain to the longest
+  blockchain = longest_chain
+</code></pre><p>我们差不多就要完成了。在运行了<a href=https://gist.github.com/aunyks/47d157f8bc7d1829a729c2a6a919c173>完整的 SnakeCoin 服务器代码</a>之后，在你的终端可以运行如下代码。（假设你已经安装了 cCUL）。</p><h4 id=1创建交易>1、创建交易</h4><pre tabindex=0><code>curl &#34;localhost:5000/txion&#34; \  
+     -H &#34;Content-Type: application/json&#34; \  
+     -d &#39;{&#34;from&#34;: &#34;akjflw&#34;, &#34;to&#34;:&#34;fjlakdj&#34;, &#34;amount&#34;: 3}&#39;
+</code></pre><h4 id=2挖一个新区块>2、挖一个新区块</h4><pre tabindex=0><code>curl localhost:5000/mine
+</code></pre><h4 id=3-查看结果从客户端窗口我们可以看到>3、 查看结果。从客户端窗口，我们可以看到。</h4><p><img src=/data/attachment/album/201803/17/021736bn5xydc4dba6xlyq.png alt></p><p>对代码做下美化处理，我们看到挖矿后我们得到的新区块的信息：</p><pre tabindex=0><code>{  
+  &#34;index&#34;: 2,  
+  &#34;data&#34;: {  
+    &#34;transactions&#34;: [  
+      {  
+        &#34;to&#34;: &#34;fjlakdj&#34;,  
+        &#34;amount&#34;: 3,  
+        &#34;from&#34;: &#34;akjflw&#34;  
+      },  
+      {  
+        &#34;to&#34;: &#34;q3nf394hjg-random-miner-address-34nf3i4nflkn3oi&#34;,  
+        &#34;amount&#34;: 1,  
+        &#34;from&#34;: &#34;network&#34;  
+      }  
+    ],  
+    &#34;proof-of-work&#34;: 36  
+  },  
+  &#34;hash&#34;: &#34;151edd3ef6af2e7eb8272245cb8ea91b4ecfc3e60af22d8518ef0bba8b4a6b18&#34;,  
+  &#34;timestamp&#34;: &#34;2017-07-23 11:23:10.140996&#34;  
+}
+</code></pre><p>大功告成！现在 SnakeCoin 可以运行在多个机器上，从而创建了一个网络，而且真实的 SnakeCoin 也能被挖到了。</p><p>你可以根据你的喜好去修改 SnakeCoin 服务器代码，并问各种问题了。</p><p>在下一篇（LCTT 译注：截止至本文翻译，作者还没有写出下一篇），我们将讨论创建一个 SnakeCoin 钱包，这样用户就可以发送、接收和存储他们的 SnakeCoin 了。</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/ rel=tag>区块链</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,38 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Pygal 在 Python 中设置数据图的样式 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Pygal 在 Python 中设置数据图的样式"><meta property="og:description" content="介绍一种更时尚的 Python 绘图库。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12364-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-06-30T12:07:53+00:00"><meta property="article:modified_time" content="2020-06-30T12:07:53+00:00"><meta itemprop=name content="使用 Pygal 在 Python 中设置数据图的样式"><meta itemprop=description content="介绍一种更时尚的 Python 绘图库。"><meta itemprop=datePublished content="2020-06-30T12:07:53+00:00"><meta itemprop=dateModified content="2020-06-30T12:07:53+00:00"><meta itemprop=wordCount content="164"><meta itemprop=keywords content="Python,绘图,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Pygal 在 Python 中设置数据图的样式</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-06-30T12:07:53Z>June 30, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>介绍一种更时尚的 Python 绘图库。</p></blockquote><p><img src=/data/attachment/album/202006/30/120650hlf8lm0em3l1m8zd.jpg alt></p><p><a href=https://opensource.com/article/20/4/plot-data-python>Python</a> 有很多可以将数据可视化的库。其中一个互动性较强的库是 Pygal，我认为这个库适合喜欢漂亮事物的人。它可以生成用户可以与之交互的漂亮的 SVG（可缩放矢量图形）文件。SVG 是交互式图形的标准格式，仅使用几行 Python 就可以带来丰富的用户体验。</p><h3 id=使用-pygal-进行时尚的-python-绘图>使用 Pygal 进行时尚的 Python 绘图</h3><p>在本文中，我们要重新创建多柱状图，用来表示 1966 年至 2020 年英国大选的结果：</p><p><img src=/data/attachment/album/202006/30/120757d0mm10o15vc3mx05.png alt="Pygal plot" title="Pygal plot"></p><p>在继续之前，请注意你可能需要调整 Python 环境以使此代码运行，包括：</p><ul><li>运行最新版本的 Python（<a href=https://opensource.com/article/20/4/install-python-linux>Linux</a>、<a href=https://opensource.com/article/19/5/python-3-default-mac>Mac</a> 和 <a href=https://opensource.com/article/19/8/how-install-python-windows>Windows</a> 的说明）</li><li>确认你运行的是与这些库兼容的 Python 版本</li></ul><p>数据可在线获得，并可使用 pandas 导入：</p><pre tabindex=0><code>import pandas as pd
+df = pd.read_csv(&#39;https://anvil.works/blog/img/plotting-in-python/uk-election-results.csv&#39;)
+</code></pre><p>现在我们可以继续进行了。。数据如下所示：</p><pre tabindex=0><code>        year  conservative  labour  liberal  others
+0       1966           253     364       12       1
+1       1970           330     287        6       7
+2   Feb 1974           297     301       14      18
+..       ...           ...     ...      ...     ...
+12      2015           330     232        8      80
+13      2017           317     262       12      59
+14      2019           365     202       11      72
+</code></pre><p>在 Pygal 中进行绘制会以一种易于阅读的方式显示。首先，我们以一种简化柱状图定义的方式定义样式对象。然后我们将自定义样式以及其他元数据传递给 <code>Bar</code> 对象：</p><pre tabindex=0><code>import pygal
+from pygal.style import Style
+
+custom_style = Style(
+    colors=(&#39;#0343df&#39;, &#39;#e50000&#39;, &#39;#ffff14&#39;, &#39;#929591&#39;),
+    font_family=&#39;Roboto,Helvetica,Arial,sans-serif&#39;,
+    background=&#39;transparent&#39;,
+    label_font_size=14,
+)
+
+c = pygal.Bar(
+    title=&#34;UK Election Results&#34;,
+    style=custom_style,
+    y_title=&#39;Seats&#39;,
+    width=1200,
+    x_label_rotation=270,
+)
+</code></pre><p>然后，我们将数据添加到 <code>Bar</code> 对象中：</p><pre tabindex=0><code>c.add(&#39;Conservative&#39;, df[&#39;conservative&#39;])
+c.add(&#39;Labour&#39;, df[&#39;labour&#39;])
+c.add(&#39;Liberal&#39;, df[&#39;liberal&#39;])
+c.add(&#39;Others&#39;, df[&#39;others&#39;])
+
+c.x_labels = df[&#39;year&#39;]
+</code></pre><p>最后，我们将图另存为 SVG 文件：</p><pre tabindex=0><code>c.render_to_file(&#39;pygal.svg&#39;)
+</code></pre><p>结果是一个交互式 SVG 图，你可以在此 gif 中看到：</p><p><img src=/data/attachment/album/202006/30/120851h5a1f2jafj1ajfh6.gif alt="The Python pygal library can generate rich SVG files as seen here" title="The Python pygal library can generate rich SVG files as seen here"></p><p>精美简单，并且效果漂亮。</p><h3 id=总结>总结</h3><p>Python 中的某些绘图工具需要非常详细地构建每个对象，而 Pygal 从一开始就为你提供这些。如果你手边有数据并且想做一个干净、漂亮、简单的交互式图表，请尝试一下 Pygal。</p><hr><p>via: <a href=https://opensource.com/article/20/6/pygal-python>https://opensource.com/article/20/6/pygal-python</a></p><p>作者：<a href=https://opensource.com/users/shaun-taylor-morgan>Shaun Taylor-Morgan</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%BB%98%E5%9B%BE/ rel=tag>绘图</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

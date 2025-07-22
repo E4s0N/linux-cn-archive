@@ -1,0 +1,316 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Ansible 起步指南 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Ansible 起步指南"><meta property="og:description" content="这是一篇关于 Ansible 的速成课程，你可以用作小项目的模板，或者帮你深入了解这个神奇的工具。阅读了本指南之后，你将对自动化服务器配置、部署等有足够的了解。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8112-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-01-12T08:48:00+00:00"><meta property="article:modified_time" content="2017-01-12T08:48:00+00:00"><meta itemprop=name content="Ansible 起步指南"><meta itemprop=description content="这是一篇关于 Ansible 的速成课程，你可以用作小项目的模板，或者帮你深入了解这个神奇的工具。阅读了本指南之后，你将对自动化服务器配置、部署等有足够的了解。"><meta itemprop=datePublished content="2017-01-12T08:48:00+00:00"><meta itemprop=dateModified content="2017-01-12T08:48:00+00:00"><meta itemprop=wordCount content="1212"><meta itemprop=keywords content="ansible,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Ansible 起步指南</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-01-12T08:48:00Z>January 12, 2017</time></div></div></header><div class="content post__content clearfix"><p>这是一篇关于 Ansible 的速成课程，你可以用作小项目的模板，或者帮你深入了解这个神奇的工具。阅读了本指南之后，你将对自动化服务器配置、部署等有足够的了解。</p><p><img src=/data/attachment/album/201701/12/010309ihntexy6ei5pezy9.jpg alt></p><h3 id=ansible-是什么为什么你该了解>Ansible 是什么，为什么你该了解？</h3><p>Ansible 简单的说是一个 配置管理系统 （ configuration management system ） 。你只需要可以使用 ssh 访问你的服务器或设备就行。它也不同于其他工具，因为它使用推送的方式，而不是像 puppet 或 chef 那样使用拉取的方式。你可以将代码部署到任意数量的服务器上，配置网络设备或在基础架构中自动执行任何操作。</p><h3 id=前置要求>前置要求</h3><p>假设你使用 Mac 或 Linux 作为你的工作站，Ubuntu Trusty 作为你的服务器，并有一些安装软件包的经验。此外，你的计算机上将需要以下软件。所以，如果你还没有它们，请先安装：</p><ul><li><a href=https://www.virtualbox.org/>Virtualbox</a></li><li><a href=https://www.vagrantup.com/downloads.html>Vagrant</a></li><li>Mac 用户：<a href=http://brew.sh/>Homebrew</a></li></ul><h3 id=情景>情景</h3><p>我们将模拟 2 个连接到 MySQL 数据库的 Web 应用程序服务器。Web 应用程序使用 Rails 5 和 Puma。</p><h3 id=准备>准备</h3><h4 id=vagrantfile>Vagrantfile</h4><p>为这个项目创建一个文件夹，并将下面的内容保存到名为 <code>Vagrantfile</code> 的文件。</p><pre tabindex=0><code>VMs = [
+    [ &#34;web1&#34;, &#34;10.1.1.11&#34;],
+    [ &#34;web2&#34;, &#34;10.1.1.12&#34;],
+    [ &#34;dbserver&#34;, &#34;10.1.1.21&#34;],
+  ]
+
+Vagrant.configure(2) do |config|
+  VMs.each { |vm|
+    config.vm.define vm[0] do |box|
+      box.vm.box = &#34;ubuntu/trusty64&#34;
+      box.vm.network &#34;private_network&#34;, ip: vm[1]
+      box.vm.hostname = vm[0]
+      box.vm.provider &#34;virtualbox&#34; do |vb|
+         vb.memory = &#34;512&#34;
+      end
+    end
+  }
+end
+</code></pre><h4 id=配置你的虚拟网络>配置你的虚拟网络</h4><p>我们希望我们的虚拟机能互相交互，但不要让流量流出到真实的网络，所以我们将在 Virtualbox 中创建一个仅主机（HOST-Only）的网络适配器。</p><ol><li>打开 Virtualbox</li><li>转到 Preferences</li><li>转到 Network</li><li>单击 Host-Only</li><li>单击添加网络</li><li>单击 Adapter</li><li>将 IPv4 设置为 <code>10.1.1.1</code>，IPv4 网络掩码：<code>255.255.255.0</code></li><li>单击 “OK”</li></ol><h4 id=测试虚拟机及虚拟网络>测试虚拟机及虚拟网络</h4><p>在终端中，在存放 <code>Vagrantfile</code> 的项目目录中，输入下面的命令：</p><pre tabindex=0><code>vagrant up
+</code></pre><p>它会创建你的虚拟机，因此会花费一会时间。输入下面的命令并验证输出内容以检查是否已经工作：</p><pre tabindex=0><code>$ vagrant status
+Current machine states:
+
+web1                      running (virtualbox)
+web2                      running (virtualbox)
+master                    running (virtualbox)
+
+This environment represents multiple VMs. The VMs are all listed
+above with their current state. For more information about a specific
+VM, run `vagrant status NAME`.
+</code></pre><p>现在使用 <code>vagrant</code> 的用户名和密码 ，按 <code>Vagrantfile</code> 中的 IP 登录其中一台虚拟机，这将验证虚拟机并将它们的密钥添加到你的已知主机（<code>known_hosts</code>）文件中。</p><pre tabindex=0><code>ssh vagrant@10.1.1.11 # password is `vagrant`
+ssh vagrant@10.1.1.12
+ssh vagrant@10.1.1.21
+</code></pre><p>恭喜你！现在你已经有可以实验的服务器了。下面的剩下的部分！</p><h3 id=安装-ansible>安装 Ansible</h3><p>对于 Mac 用户:</p><pre tabindex=0><code>$ brew install ansible
+</code></pre><p>对于 Ubuntu 用户:</p><pre tabindex=0><code>$ sudo apt install ansible
+</code></pre><p>确保你使用了ansible 最近的版本 2.1 或者更高的版本：</p><pre tabindex=0><code>$ ansible --version
+ansible 2.1.1.0
+</code></pre><h3 id=清单>清单</h3><p>Ansible 使用清单文件来了解要使用的服务器，以及如何将它们分组以并行执行任务。让我们为这个项目创建我们的清单文件 <code>inventory</code>，并将它放在与 <code>Vagrantfile</code> 相同的文件夹中：</p><pre tabindex=0><code>[all:children]
+webs
+db
+
+[all:vars]
+ansible_user=vagrant
+ansible_ssh_pass=vagrant
+
+[webs]
+web1 ansible_host=10.1.1.11
+web2 ansible_host=10.1.1.12
+
+[db]
+dbserver ansible_host=10.1.1.21
+</code></pre><ul><li><code>[all：children]</code> 定义一个组的组（<code>all</code>）</li><li><code>[all：vars]</code> 定义属于组 <code>all</code> 的变量</li><li><code>[webs]</code> 定义一个组，就像 <code>[db]</code> 一样</li><li>文件的其余部分只是主机的声明，带有它们的名称和 IP</li><li>空行表示声明结束</li></ul><p>现在我们有了一个清单，我们可以从命令行开始使用 ansible，指定一个主机或一个组来执行命令。以下是检查与服务器的连接的命令示例：</p><pre tabindex=0><code>$ ansible -i inventory all -m ping
+</code></pre><ul><li><code>-i</code> 指定清单文件</li><li><code>all</code> 指定要操作的服务器或服务器组</li><li><code>-m' 指定一个 ansible 模块，在这种情况下为</code>ping`</li></ul><p>下面是命令输出：</p><pre tabindex=0><code>dbserver | SUCCESS =&gt; {
+    &#34;changed&#34;: false,
+    &#34;ping&#34;: &#34;pong&#34;
+}
+web1 | SUCCESS =&gt; {
+    &#34;changed&#34;: false,
+    &#34;ping&#34;: &#34;pong&#34;
+}
+web2 | SUCCESS =&gt; {
+    &#34;changed&#34;: false,
+    &#34;ping&#34;: &#34;pong&#34;
+}
+</code></pre><p>服务器以不同的顺序响应，这只取决于谁先响应，但是这个没有关系，因为 ansible 独立保持每台服务器的状态。</p><p>你也可以使用另外一个选项来运行任何命令：</p><ul><li><code>-a &lt;command></code></li></ul><pre tabindex=0><code>$ ansible -i inventory all -a uptime
+web1 | SUCCESS | rc=0 &gt;&gt;
+ 21:43:27 up 25 min,  1 user,  load average: 0.00, 0.01, 0.05
+
+dbserver | SUCCESS | rc=0 &gt;&gt;
+ 21:43:27 up 24 min,  1 user,  load average: 0.00, 0.01, 0.05
+
+web2 | SUCCESS | rc=0 &gt;&gt;
+ 21:43:27 up 25 min,  1 user,  load average: 0.00, 0.01, 0.05
+</code></pre><p>这是只有一台服务器的另外一个例子：</p><pre tabindex=0><code>$ ansible -i inventory dbserver -a &#34;df -h /&#34;
+dbserver | SUCCESS | rc=0 &gt;&gt;
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        40G  1.4G   37G   4% /
+</code></pre><h3 id=剧本>剧本</h3><p>剧本（playbook）只是个 YAML 文件，它将清单文件中的服务器组与命令关联。在 ansible 中的对于关键字是 <code>tasks</code>，它可以是一个预期的状态、shell 命令或许多其它的选项。有关 ansible 可做的所有事情列表，可以查看<a href=http://docs.ansible.com/ansible/list_of_all_modules.html>所有模块的列表</a>。</p><p>下面是一个运行 shell 命令的剧本示例，将其保存为 <code>playbook1.yml</code>：</p><pre tabindex=0><code>---
+- hosts: all
+  tasks:
+    - shell: uptime
+</code></pre><ul><li><code>---</code> 是 YAML 文件的开始</li><li><code>- hosts</code>：指定要使用的组</li><li><code>tasks</code>：标记任务列表的开始</li><li><code>- shell</code>：指定第一个任务使用 <a href=http://docs.ansible.com/ansible/shell_module.html>shell</a> 模块</li><li><strong>记住：YAML 需要缩进结构，确保你始终遵循剧本中的正确结构</strong></li></ul><p>用下面的命令运行它：</p><pre tabindex=0><code>$ ansible-playbook -i inventory playbook1.yml
+
+PLAY [all] *********************************************************************
+
+TASK [setup] *******************************************************************
+ok: [web1]
+ok: [web2]
+ok: [dbmaster]
+
+TASK [command] *****************************************************************
+changed: [web1]
+changed: [web2]
+changed: [dbmaster]
+
+PLAY RECAP *********************************************************************
+dbmaster                   : ok=2    changed=1    unreachable=0    failed=0
+web1                       : ok=2    changed=1    unreachable=0    failed=0
+web2                       : ok=2    changed=1    unreachable=0    failed=0
+</code></pre><p>正如你所见，ansible 运行了 2 个任务，而不是只有剧本中的一个。<code>TASK [setup]</code> 是一个隐式任务，它会首先运行以捕获服务器的信息，如主机名、IP、发行版和更多详细信息，然后可以使用这些信息运行条件任务。</p><p>还有最后的 <code>PLAY RECAP</code>，其中 ansible 显示了运行了多少个任务以及每个对应的状态。在我们的例子中，因为我们运行了一个 shell 命令，ansible 不知道结果的状态，它被认为是 <code>changed</code>。</p><h4 id=安装软件>安装软件</h4><p>我们将使用 <a href=http://docs.ansible.com/ansible/apt_module.html>apt</a> 在我们的服务器上安装软件，因为我们需要 root 权限，所以我们必须使用 <code>become</code> 语句，将这个内容保存在 <code>playbook2.yml</code> 中并运行它（<code>ansible-playbook playbook2.yml</code>）：</p><pre tabindex=0><code>---
+- hosts: webs
+  become_user: root
+  become: true
+  tasks:
+    - apt: name=git state=present
+</code></pre><p>有一些语句可以应用于 ansible 中所有模块；一个是 <code>name</code> 语句，可以让我们输出关于正在执行的任务的更具描述性的文本。要使用它，保持任务内容一样，但是添加 <code>name ：描述性文本</code> 作为第一行，所以我们以前的文本将改成：</p><pre tabindex=0><code>---
+- hosts: webs
+  become_user: root
+  become: true
+  tasks:
+    - name: This task will make sure git is present on the system
+      apt: name=git state=present
+</code></pre><h4 id=使用-with_items>使用 <code>with_items</code></h4><p>当你要处理一个列表时，比如要安装的项目和软件包、要创建的文件，可以用 ansible 提供的 <code>with_items</code>。下面是我们如何在 <code>playbook3.yml</code> 中使用它，同时添加一些我们已经知道的其他语句：</p><pre tabindex=0><code>---
+- hosts: all
+  become_user: root
+  become: true
+  tasks:
+    - name: Installing dependencies
+      apt: name={{item}} state=present
+      with_items:
+        - git
+        - mysql-client
+        - libmysqlclient-dev
+        - build-essential
+        - python-software-properties
+</code></pre><h4 id=使用-template-和-vars>使用 <code>template</code> 和 <code>vars</code></h4><p><code>vars</code> 是一个定义变量语句，可以在 <code>task</code> 语句或 <code>template</code> 文件中使用。 <a href=http://jinja.pocoo.org/docs/dev/>Jinja2</a> 是 Ansible 中使用的模板引擎，但是关于它你不需要学习很多。在你的剧本中定义变量，如下所示：</p><pre tabindex=0><code>---
+- hosts: all
+  vars:
+    - secret_key: VqnzCLdCV9a3jK
+    - path_to_vault: /opt/very/deep/path
+  tasks:
+    - name: Setting a configuration file using template
+      template: src=myconfig.j2 dest={{path_to_vault}}/app.conf
+</code></pre><p>正如你看到的，我可以使用 <code>{{path_to_vault}}</code> 作为剧本的一部分，但也因为我使用了 <code>template</code>语句，我可以使用 <code>myconfig.j2</code> 中的任何变量，该文件必须存在一个名为 <code>templates</code> 的子文件夹中。你项目树应该如下所示：</p><pre tabindex=0><code>├── Vagrantfile
+├── inventory
+├── playbook1.yml
+├── playbook2.yml
+└── templates
+    └── myconfig.j2
+</code></pre><p>当 ansible 找到一个 <code>template</code> 语句后它会在 <code>templates</code> 文件夹内查找，并将把被 <code>{{</code> 和 <code>}}</code> 括起来的变量展开来。</p><p>示例模板：</p><pre tabindex=0><code>this is just an example vault_dir: {{path_to_vault}} secret_password: {{secret_key}}
+</code></pre><p>即使你不扩展变量你也可以使用 <code>template</code>。考虑到将来会添加所以我先做了。比如创建一个 <code>hosts.j2</code> 模板并加入主机名和 IP。</p><pre tabindex=0><code>10.1.1.11 web1
+10.1.1.12 web2
+10.1.1.21 dbserver
+</code></pre><p>这里要用像这样的语句：</p><pre tabindex=0><code>  -  name: Installing the hosts file in all servers
+     template: src=hosts.j2 dest=/etc/hosts mode=644
+</code></pre><h4 id=shell-命令>shell 命令</h4><p>你应该尽量使用模块，因为 Ansible 可以跟踪任务的状态，并避免不必要的重复，但有时 shell 命令是不可避免的。 对于这些情况，Ansible 提供两个选项：</p><ul><li><a href=http://docs.ansible.com/ansible/command_module.html>command</a>：直接运行一个命令，没有环境变量或重定向（<code>|</code>，<code>&lt;</code>，<code>></code> 等）</li><li><a href=http://docs.ansible.com/ansible/shell_module.html>shell</a>：运行 <code>/bin/sh</code> 并展开变量和支持重定向</li></ul><h4 id=其他有用的模块>其他有用的模块</h4><ul><li><a href=http://docs.ansible.com/ansible/apt_repository_module.html>apt_repository</a> - 在 Debian 系的发行版中添加/删除包仓库</li><li><a href=https://docs.ansible.com/ansible/yum_repository_module.html>yum_repository</a> - 在 RedHat 系的发行版中添加/删除包仓库</li><li><a href=http://docs.ansible.com/ansible/service_module.html>service</a> - 启动/停止/重新启动/启用/禁用服务</li><li><a href=http://docs.ansible.com/ansible/git_module.html>git</a> - 从 git 服务器部署代码</li><li><a href=http://docs.ansible.com/ansible/unarchive_module.html>unarchive</a> - 从 Web 或本地源解开软件包</li></ul><h4 id=只在一台服务器中运行任务>只在一台服务器中运行任务</h4><p>Rails 使用 <a href=http://edgeguides.rubyonrails.org/active_record_migrations.html>migrations</a> 来逐步更改数据库，但由于你有多个应用程序服务器，因此这些迁移任务不能被分配为组任务，而我们只需要一个服务器来运行迁移。在这种情况下，当使用 <code>run_once</code> 时，<code>run_once</code> 将分派任务到一个服务器，并直到这个任务完成继续下一个任务。你只需要在你的任务中设置 <code>run_once：true</code>。</p><pre tabindex=0><code>    - name: &#39;Run db:migrate&#39;
+      shell: cd {{appdir}};rails db:migrate
+      run_once: true
+</code></pre><h4 id=会失败的任务>会失败的任务</h4><p>通过指定 <code>ignore_errors：true</code>，你可以运行可能会失败的任务，但不会影响剧本中剩余的任务完成。这是非常有用的，例如，当删除最初并不存在的日志文件时。</p><pre tabindex=0><code>    - name: &#39;Delete logs&#39;
+      shell: rm -f /var/log/nginx/errors.log
+      ignore_errors: true
+</code></pre><h3 id=放到一起>放到一起</h3><p>现在用我们先前学到的，这里是每个文件的最终版：</p><p><code>Vagrantfile</code>：</p><pre tabindex=0><code>VMs = [
+    [ &#34;web1&#34;, &#34;10.1.1.11&#34;],
+    [ &#34;web2&#34;, &#34;10.1.1.12&#34;],
+    [ &#34;dbserver&#34;, &#34;10.1.1.21&#34;],
+  ]
+
+Vagrant.configure(2) do |config|
+  VMs.each { |vm|
+    config.vm.define vm[0] do |box|
+      box.vm.box = &#34;ubuntu/trusty64&#34;
+      box.vm.network &#34;private_network&#34;, ip: vm[1]
+      box.vm.hostname = vm[0]
+      box.vm.provider &#34;virtualbox&#34; do |vb|
+         vb.memory = &#34;512&#34;
+      end
+    end
+  }
+end
+</code></pre><p><code>inventory</code>：</p><pre tabindex=0><code>[all:children]
+webs
+db
+
+[all:vars]
+ansible_user=vagrant
+ansible_ssh_pass=vagrant
+
+[webs]
+web1 ansible_host=10.1.1.11
+web2 ansible_host=10.1.1.12
+
+[db]
+dbserver ansible_host=10.1.1.21
+</code></pre><p><code>templates/hosts.j2</code>:</p><pre tabindex=0><code>10.1.1.11 web1
+10.1.1.12 web2
+10.1.1.21 dbserver
+</code></pre><p><code>templates/my.cnf.j2</code>：</p><pre tabindex=0><code>[client]
+port        = 3306
+socket      = /var/run/mysqld/mysqld.sock
+
+[mysqld_safe]
+socket      = /var/run/mysqld/mysqld.sock
+nice        = 0
+
+[mysqld]
+server-id   = 1
+user        = mysql
+pid-file    = /var/run/mysqld/mysqld.pid
+socket      = /var/run/mysqld/mysqld.sock
+port        = 3306
+basedir     = /usr
+datadir     = /var/lib/mysql
+tmpdir      = /tmp
+lc-messages-dir = /usr/share/mysql
+skip-external-locking
+bind-address        = 0.0.0.0
+key_buffer      = 16M
+max_allowed_packet  = 16M
+thread_stack        = 192K
+thread_cache_size       = 8
+myisam-recover         = BACKUP
+query_cache_limit   = 1M
+query_cache_size        = 16M
+log_error = /var/log/mysql/error.log
+expire_logs_days    = 10
+max_binlog_size         = 100M
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet  = 16M
+
+[mysql]
+
+[isamchk]
+key_buffer      = 16M
+
+!includedir /etc/mysql/conf.d/
+</code></pre><p><code>final-playbook.yml</code>：</p><pre tabindex=0><code>- hosts: all
+  become_user: root
+  become: true
+  tasks:
+    - name: &#39;Install common software on all servers&#39;
+      apt: name={{item}} state=present
+      with_items:
+        - git
+        - mysql-client
+        - libmysqlclient-dev
+        - build-essential
+        - python-software-properties
+    - name: &#39;Install hosts file&#39;
+      template: src=hosts.j2 dest=/etc/hosts mode=644
+
+- hosts: db
+  become_user: root
+  become: true
+  tasks:
+    - name: &#39;Software for DB server&#39;
+      apt: name={{item}} state=present
+      with_items:
+        - mysql-server
+        - percona-xtrabackup
+        - mytop
+        - mysql-utilities
+    - name: &#39;MySQL config file&#39;
+      template: src=my.cnf.j2 dest=/etc/mysql/my.cnf
+    - name: &#39;Restart MySQL&#39;
+      service: name=mysql state=restarted
+    - name: &#39;Grant access to web app servers&#39;
+      shell: echo &#39;GRANT ALL PRIVILEGES ON *.* TO &#34;root&#34;@&#34;%&#34; WITH GRANT OPTION;FLUSH PRIVILEGES;&#39;|mysql -u root mysql
+
+- hosts: webs
+  vars:
+    - appdir: /opt/dummyapp
+  become_user: root
+  become: true
+  tasks:
+    - name: &#39;Add ruby-ng repo&#39;
+      apt_repository: repo=&#39;ppa:brightbox/ruby-ng&#39;
+    - name: &#39;Install rails software&#39;
+      apt: name={{item}} state=present
+      with_items:
+        - ruby-dev
+        - ruby-all-dev
+        - ruby2.2
+        - ruby2.2-dev
+        - ruby-switch
+        - libcurl4-openssl-dev
+        - libssl-dev
+        - zlib1g-dev
+        - nodejs
+    - name: &#39;Set ruby to 2.2&#39;
+      shell: ruby-switch --set ruby2.2
+    - name: &#39;Install gems&#39;
+      shell: gem install bundler rails
+    - name: &#39;Kill puma if running&#39;
+      shell: file /run/puma.pid &gt;/dev/null &amp;&amp; kill `cat /run/puma.pid` 2&gt;/dev/null
+      ignore_errors: True
+    - name: &#39;Clone app repo&#39;
+      git:
+           repo=https://github.com/c0d5x/rails_dummyapp.git
+           dest={{appdir}}
+           version=staging
+           force=yes
+    - name: &#39;Run bundler&#39;
+      shell: cd {{appdir}};bundler
+    - name: &#39;Run db:setup&#39;
+      shell: cd {{appdir}};rails db:setup
+      run_once: true
+    - name: &#39;Run db:migrate&#39;
+      shell: cd {{appdir}};rails db:migrate
+      run_once: true
+    - name: &#39;Run rails server&#39;
+      shell: cd {{appdir}};rails server -b 0.0.0.0 -p 80 --pid /run/puma.pid -d
+</code></pre><h3 id=放在你的环境中>放在你的环境中</h3><p>将这些文件放在相同的目录，运行下面的命令打开你的开发环境：</p><pre tabindex=0><code>vagrant up
+ansible-playbook -i inventory final-playbook.yml
+</code></pre><h3 id=部署新的代码>部署新的代码</h3><p>确保修改了代码并推送到了仓库中。接下来，确保你 git 语句中使用了正确的分支：</p><pre tabindex=0><code>    - name: &#39;Clone app repo&#39;
+      git:
+           repo=https://github.com/c0d5x/rails_dummyapp.git
+           dest={{appdir}}
+           version=staging
+           force=yes
+</code></pre><p>作为一个例子，你可以修改 <code>version</code> 字段为 <code>master</code>，再次运行剧本：</p><pre tabindex=0><code>ansible-playbook -i inventory final-playbook.yml
+</code></pre><p>检查所有的 web 服务器上的页面是否已更改：<code>http://10.1.1.11</code> 或 <code>http://10.1.1.12</code>。将其更改为 <code>version = staging</code> 并重新运行剧本并再次检查页面。</p><p>你还可以创建只包含与部署相关的任务的替代剧本，以便其运行更快。</p><h3 id=接下来是什么->接下来是什么 ？！</h3><p>这只是可以做的很小一部分。我们没有接触 角色 （ role ） 、 过滤器 （ filter ） 、调试等许多其他很棒的功能，但我希望它给了你一个良好的开始！所以，请继续学习并使用它。如果你有任何问题，你可以在 <a href=https://twitter.com/c0d5x>twitter</a> 或评论栏联系我，让我知道你还想知道哪些关于 ansible 的东西！</p><hr><p>via: <a href="https://gorillalogic.com/blog/getting-started-with-ansible/?utm_source=webopsweekly&amp;utm_medium=email">https://gorillalogic.com/blog/getting-started-with-ansible/?utm_source=webopsweekly&amp;utm_medium=email</a></p><p>作者：<a href=https://gorillalogic.com/author/josehidalgo/>JOSE HIDALGO</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 组织编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ansible/ rel=tag>ansible</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,51 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux 下用来查询安装包信息的RPM选项 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux 下用来查询安装包信息的RPM选项"><meta property="og:description" content="RPM是RedHat的包管理器，用来安装、卸载、升级和查询基于RedHat Linux的安装包。RHEL和基于它的系统使用rpm命令来完成这些功能。以下是一些例子来演示rpm的查询功能，和展示了用不同的方法来查询rpm数据库和还原配置 &mldr;"><meta property="og:type" content="article"><meta property="og:url" content="/article-2276-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2013-11-21T11:12:00+00:00"><meta property="article:modified_time" content="2013-11-21T11:12:00+00:00"><meta itemprop=name content="Linux 下用来查询安装包信息的RPM选项"><meta itemprop=description content="RPM是RedHat的包管理器，用来安装、卸载、升级和查询基于RedHat Linux的安装包。RHEL和基于它的系统使用rpm命令来完成这些功能。以下是一些例子来演示rpm的查询功能，和展示了用不同的方法来查询rpm数据库和还原配置 &mldr;"><meta itemprop=datePublished content="2013-11-21T11:12:00+00:00"><meta itemprop=dateModified content="2013-11-21T11:12:00+00:00"><meta itemprop=wordCount content="135"><meta itemprop=keywords content="Linux,安装包,RPM,命令,技巧,教程,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux 下用来查询安装包信息的RPM选项</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2013-11-21T11:12:00Z>November 21, 2013</time></div></div></header><div class="content post__content clearfix"><p>RPM是RedHat的包管理器，用来安装、卸载、升级和查询基于RedHat Linux的安装包。RHEL和基于它的系统使用rpm命令来完成这些功能。以下是一些例子来演示rpm的查询功能，和展示了用不同的方法来查询rpm数据库和还原配置文件。</p><p>我在示例命令中使用SSH包来做说明。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201311/20/152948s2tauakezl9c23v9.png alt></p><h2 id=查询rpm数据库和包>查询RPM数据库和包</h2><h3 id=1-在整个rpm数据库中查询使用下面的命令>1、 在整个RPM数据库中查询，使用下面的命令</h3><pre tabindex=0><code># rpm -qa
+plymouth-0.8.3-27.el6.x86_64
+pciutils-libs-3.1.10-2.el6.i686 
+netcf-libs-0.1.9-3.el6.x86_64
+..
+...
+..
+Output Truncated
+</code></pre><h3 id=2-你可以通过grep命令来确定上面的例子中有哪些ssh包已经安装>2、 你可以通过grep命令来确定上面的例子中有哪些SSH包已经安装</h3><pre tabindex=0><code># rpm -qa |grep ssh
+libssh2-1.4.2-1.el6.x86_64
+openssh-askpass-5.3p1-84.1.el6.x86_64
+libssh2-1.4.2-1.el6.i686
+openssh-server-5.3p1-84.1.el6.x86_64
+openssh-clients-5.3p1-84.1.el6.x86_64
+openssh-5.3p1-84.1.el6.x86_64
+</code></pre><p>输出显示了一些关于SSH的包，但是你仍需确定哪个包真正安装了SSH。为了更近一步，请看下面的示例。</p><h3 id=3-检查已安装的ssh包-a-通过sshd守护进程-b-通过它的配置文件>3、 检查已安装的SSH包 a) 通过sshd守护进程 b) 通过它的配置文件</h3><pre tabindex=0><code># rpm -qf /etc/init.d/sshd
+openssh-server-5.3p1-84.1.el6.x86_64
+# rpm -qf /etc/ssh/sshd_config
+openssh-server-5.3p1-84.1.el6.x86_64
+</code></pre><p>如你所见，ssh是通过openssh-server-5.3p1-84.1.el6.x86_64包安装的，你可以在守护进程或者配置文件中使用rpm -qf命令（查询ssh包所包含的任一文件来查询）。两者都会输出从那个软件包安装的。</p><h3 id=4-现在你有了包名你可能想要了解更多并想要知道包中包含了哪些不同的文件这种情况下使用rpm--ql命令>4、 现在你有了包名，你可能想要了解更多，并想要知道包中包含了哪些不同的文件。这种情况下，使用rpm -ql命令</h3><pre tabindex=0><code># rpm -ql openssh-server-5.3p1-84.1.el6.x86_64
+/etc/pam.d/ssh-keycat
+/etc/pam.d/sshd
+/etc/rc.d/init.d/sshd
+/etc/ssh/sshd_config
+/etc/sysconfig/sshd
+/usr/libexec/openssh/sftp-server
+/usr/libexec/openssh/ssh-keycat
+/usr/sbin/.sshd.hmac
+/usr/sbin/sshd
+/usr/share/doc/openssh-server-5.3p1
+/usr/share/doc/openssh-server-5.3p1/HOWTO.ssh-keycat
+/usr/share/man/man5/moduli.5.gz
+/usr/share/man/man5/sshd_config.5.gz
+/usr/share/man/man8/sftp-server.8.gz
+/usr/share/man/man8/sshd.8.gz
+/var/empty/sshd
+</code></pre><p>上面的输出显示了所有该包在系统中安装的文件。现在让我们更进一步，我们只想要看到该包提供的配置文件和文档。</p><h3 id=5-只列出其中的配置文件使用rpm--qc命令>5、 只列出其中的配置文件，使用rpm -qc命令</h3><pre tabindex=0><code># rpm -qc openssh-server-5.3p1-84.1.el6.x86_64
+/etc/pam.d/ssh-keycat
+/etc/pam.d/sshd
+/etc/ssh/sshd_config
+/etc/sysconfig/sshd
+</code></pre><h3 id=6-只列出其中的帮助文档使用rpm--qd命令>6、 只列出其中的帮助文档，使用rpm -qd命令</h3><pre tabindex=0><code># rpm -qd openssh-server-5.3p1-84.1.el6.x86_64
+/usr/share/doc/openssh-server-5.3p1/HOWTO.ssh-keycat
+/usr/share/man/man5/moduli.5.gz
+/usr/share/man/man5/sshd_config.5.gz
+/usr/share/man/man8/sftp-server.8.gz
+/usr/share/man/man8/sshd.8.gz
+</code></pre><p>考虑一种情况，你想要配置一个服务，但是你不知道哪里找到配置文件。举例来说，如上面的例子：使用<strong>rpm -qf rpm -qf /etc/init.d/sshd</strong>来找出 <strong>/etc/ssh/sshd_config</strong>这个文件源于哪个包。这应该会给你显示<strong>openssh-server-5.3p1-84.1.el6.x86_64</strong>包。使用<strong>rpm -ql openssh-server-5.3p1-84.1.el6.x86_64</strong>来显示包中所含的所有文件。如你所见，许多文件名显示了出来，但是输出并不很有用。</p><p>现在使用<strong>rpm -qc openssh-server-5.3p1-84.1.el6.x86_64</strong> 来只显示这个包的配置文件。这只会显示4个文件并给出了<a href=http://www.linoxide.com/how-tos/disable-ssh-direct-login/>/etc/ssh/sshd_config file</a>的绝对路径，可以用来开始配置服务。</p><h3 id=7-从prm包还原配置文件而不重新安装包>7、 从PRM包还原配置文件，而不重新安装包。</h3><p>如果由于一些原因文件损坏或者从系统中删除了，你可以以<strong>rpm -qf</strong>开头来找出文件存在于哪个包。接下来使用<strong>rpm2cpio | cpio -idmv</strong>来从包中解压出文件。用ssh的例子。</p><p>假设**/etc/ssh/sshd_config**文件已经删除并且你不希望重装ssh，按以下步骤来还原文件。</p><ul><li>使用rpm -qf /etc/init.d/sshd 这个命令会显示文件来自于openssh-server-5.3p1-84.1.el6.x86_64包。</li><li>从它的源中下载Openssh的rpm包。</li><li>复制openssh-server-5.3p1-84.1.el6.x86_64包到/tmp目录或者其他任何你选择的目录。</li><li>使用rpm2cpio |cpio -idmv解压包。</li></ul><p>上面步骤中你使用的命令会在/tmp下面创建一个子目录。你现在可以复制到它的原始目录。</p><hr><p>via: <a href=http://linoxide.com/linux-command/rpm-command-query/>http://linoxide.com/linux-command/rpm-command-query/</a></p><p>译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/linux/ rel=tag>Linux</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%89%E8%A3%85%E5%8C%85/ rel=tag>安装包</a></li><li class=tags__item><a class="tags__link btn" href=/tags/rpm/ rel=tag>RPM</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4/ rel=tag>命令</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8A%80%E5%B7%A7/ rel=tag>技巧</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%99%E7%A8%8B/ rel=tag>教程</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

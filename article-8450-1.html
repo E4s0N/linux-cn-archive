@@ -1,0 +1,77 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 badIPs.com 保护你的服务器，并通过 Fail2ban 报告恶意 IP - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 badIPs.com 保护你的服务器，并通过 Fail2ban 报告恶意 IP"><meta property="og:description" content="这个指南包括两个部分，第一部分介绍列表的使用，第二部分介绍数据提交。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8450-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-04-26T12:31:00+00:00"><meta property="article:modified_time" content="2017-04-26T12:31:00+00:00"><meta itemprop=name content="使用 badIPs.com 保护你的服务器，并通过 Fail2ban 报告恶意 IP"><meta itemprop=description content="这个指南包括两个部分，第一部分介绍列表的使用，第二部分介绍数据提交。"><meta itemprop=datePublished content="2017-04-26T12:31:00+00:00"><meta itemprop=dateModified content="2017-04-26T12:31:00+00:00"><meta itemprop=wordCount content="422"><meta itemprop=keywords content="badips,Fail2ban,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 badIPs.com 保护你的服务器，并通过 Fail2ban 报告恶意 IP</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-04-26T12:31:00Z>April 26, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201704/26/123044cdfzvlbjbh2v6vx6.jpg alt></p><p>这篇指南向你介绍使用 badips 滥用追踪器 （ abuse tracker ） 和 Fail2ban 保护你的服务器或计算机的步骤。我已经在 Debian 8 Jessie 和 Debian 7 Wheezy 系统上进行了测试。</p><p><strong>什么是 badIPs？</strong></p><p>BadIps 是通过 <a href=http://www.fail2ban.org/>fail2ban</a> 报告为不良 IP 的列表。</p><p>这个指南包括两个部分，第一部分介绍列表的使用，第二部分介绍数据提交。</p><h3 id=使用-badips-列表>使用 badIPs 列表</h3><h4 id=定义安全等级和类别>定义安全等级和类别</h4><p>你可以通过使用 REST API 获取 IP 地址列表。</p><ul><li>当你使用 GET 请求获取 URL：<a href=https://www.badips.com/get/categories>https://www.badips.com/get/categories</a> 后，你就可以看到服务中现有的所有不同类别。</li><li>第二步，决定适合你的等级。 参考 badips 应该有所帮助（我个人使用 <code>scope = 3</code>）：</li><li>如果你想要编译一个统计信息模块或者将数据用于实验目的，那么你应该用等级 0 开始。</li><li>如果你想用防火墙保护你的服务器或者网站，使用等级 2。可能也要和你的结果相结合，尽管它们可能没有超过 0 或 1 的情况。</li><li>如果你想保护一个网络商店、或高流量、赚钱的电子商务服务器，我推荐你使用值 3 或 4。当然还是要和你的结果相结合。</li><li>如果你是偏执狂，那就使用 5。</li></ul><p>现在你已经有了两个变量，通过把它们两者连接起来获取你的链接。</p><pre tabindex=0><code>http://www.badips.com/get/list/{{SERVICE}}/{{LEVEL}}
+</code></pre><p>注意：像我一样，你可以获取所有服务。在这种情况下把服务的名称改为 <code>any</code>。</p><p>最终的 URL 就是：</p><pre tabindex=0><code>https://www.badips.com/get/list/any/3
+</code></pre><h3 id=创建脚本>创建脚本</h3><p>所有都完成了之后，我们就会创建一个简单的脚本。</p><p>1、 把你的列表放到一个临时文件。</p><p>2、 在 iptables 中创建一个 链 （ chain ） （只需要创建一次）。（LCTT 译注：iptables 可能包括多个 表 （ tables ） ，表可能包括多个 链 （ chains ） ，链可能包括多个 规则 （ rules ） ）</p><p>3、 把所有链接到该链的数据（旧条目）刷掉。</p><p>4、 把每个 IP 链接到这个新的链。</p><p>5、 完成后，阻塞所有链接到该链的 INPUT / OUTPUT /FORWARD 请求。</p><p>6、 删除我们的临时文件。</p><p>为此，我们创建脚本：</p><pre tabindex=0><code>cd /home/&lt;user&gt;/
+vi myBlacklist.sh
+</code></pre><p>把以下内容输入到文件。</p><pre tabindex=0><code>#!/bin/sh
+### based on this version http://www.timokorthals.de/?p=334
+### adapted by Stéphane T.
+
+_ipt=/sbin/iptables    ### iptables 路径（应该是这个）
+_input=badips.db       ### 数据库的名称（会用这个名称下载）
+_pub_if=eth0           ### 连接到互联网的设备（执行 $ifconfig 获取）
+_droplist=droplist     ### iptables 中链的名称（如果你已经有这么一个名称的链，你就换另外一个）
+_level=3               ### Blog（LCTT 译注：Bad log）等级：不怎么坏（0）、确认坏（3）、相当坏（5）（从 www.badips.com 获取详情）
+_service=any           ### 记录日志的服务（从 www.badips.com 获取详情）
+
+### 获取不良 IPs
+wget -qO- http://www.badips.com/get/list/${_service}/$_level &gt; $_input || { echo &#34;$0: Unable to download ip list.&#34;; exit 1; }
+
+### 设置我们的黑名单 ###
+### 首先清除该链
+$_ipt --flush $_droplist
+
+### 创建新的链
+### 首次运行时取消下面一行的注释
+# $_ipt -N $_droplist
+
+### 过滤掉注释和空行
+### 保存每个 ip 到 $ip
+for ip in `cat $_input`
+do
+    ### 添加到 $_droplist
+    $_ipt -A $_droplist -i ${_pub_if} -s $ip -j LOG --log-prefix &#34;Drop Bad IP List &#34;
+    $_ipt -A $_droplist -i ${_pub_if} -s $ip -j DROP
+done
+
+### 最后，插入或者追加到我们的黑名单列表
+$_ipt -I INPUT -j $_droplist
+$_ipt -I OUTPUT -j $_droplist
+$_ipt -I FORWARD -j $_droplist
+
+### 删除你的临时文件
+rm $_input
+exit 0
+</code></pre><p>完成这些后，你应该创建一个定时任务定期更新我们的黑名单。</p><p>为此，我使用 crontab 在每天晚上 11:30（在我的延迟备份之前） 运行脚本。</p><pre tabindex=0><code>crontab -e
+</code></pre><pre tabindex=0><code>23 30 * * * /home/&lt;user&gt;/myBlacklist.sh #Block BAD IPS
+</code></pre><p>别忘了更改脚本的权限：</p><pre tabindex=0><code>chmod + x myBlacklist.sh
+</code></pre><p>现在终于完成了，你的服务器/计算机应该更安全了。</p><p>你也可以像下面这样手动运行脚本：</p><pre tabindex=0><code>cd /home/&lt;user&gt;/
+./myBlacklist.sh
+</code></pre><p>它可能要花费一些时间，因此期间别中断脚本。事实上，耗时取决于该脚本的最后一行。</p><h3 id=使用-fail2ban-向-badips-报告-ip-地址>使用 Fail2ban 向 badIPs 报告 IP 地址</h3><p>在本篇指南的第二部分，我会向你展示如何通过使用 Fail2ban 向 badips.com 网站报告不良 IP 地址。</p><h4 id=fail2ban--0812>Fail2ban >= 0.8.12</h4><p>通过 Fail2ban 完成报告。取决于你 Fail2ban 的版本，你要使用本章的第一或第二节。</p><p>如果你 fail2ban 的版本是 0.8.12 或更新版本。</p><pre tabindex=0><code>fail2ban-server --version
+</code></pre><p>在每个你要报告的类别中，添加一个 action。</p><pre tabindex=0><code>[ssh]
+enabled = true
+action = iptables-multiport
+         badips[category=ssh]
+port = ssh
+filter = sshd
+logpath = /var/log/auth.log
+maxretry= 6
+</code></pre><p>正如你看到的，类别是 SSH，从 <a href=https://www.badips.com/get/categories>https://www.badips.com/get/categories</a> 查找正确类别。</p><h4 id=fail2ban--0812-1>Fail2ban &lt; 0.8.12</h4><p>如果版本是 0.8.12 之前，你需要新建一个 action。你可以从 <a href=https://www.badips.com/asset/fail2ban/badips.conf>https://www.badips.com/asset/fail2ban/badips.conf</a> 下载。</p><pre tabindex=0><code>wget https://www.badips.com/asset/fail2ban/badips.conf -O /etc/fail2ban/action.d/badips.conf
+</code></pre><p>在上面的 badips.conf 中，你可以像前面那样激活每个类别，也可以全局启用它：</p><pre tabindex=0><code>cd /etc/fail2ban/
+vi jail.conf
+</code></pre><pre tabindex=0><code>[DEFAULT]
+...
+
+banaction = iptables-multiport
+            badips
+</code></pre><p>现在重启 fail2ban - 从现在开始它就应该开始报告了。</p><pre tabindex=0><code>service fail2ban restart
+</code></pre><h3 id=你的-ip-报告统计信息>你的 IP 报告统计信息</h3><p>最后一步 - 没那么有用。你可以创建一个密钥。 但如果你想看你的数据，这一步就很有帮助。</p><p>复制/粘贴下面的命令，你的控制台中就会出现一个 JSON 响应。</p><pre tabindex=0><code>wget https://www.badips.com/get/key -qO -
+</code></pre><pre tabindex=0><code>
+{
+  &#34;err&#34;:&#34;&#34;,
+  &#34;suc&#34;:&#34;new key 5f72253b673eb49fc64dd34439531b5cca05327f has been set.&#34;,
+  &#34;key&#34;:&#34;5f72253b673eb49fc64dd34439531b5cca05327f&#34;
+}
+</code></pre><p>到 <a href=https://www.badips.com/>badips</a> 网站，输入你的 “key” 并点击 “statistics”。</p><p>现在你就可以看到不同类别的统计信息。</p><p>（题图：<a href=https://pixabay.com/zh/%E9%BB%91%E5%AE%A2-%E6%94%BB%E5%87%BB-%E6%8E%A9%E7%A0%81-%E4%BA%92%E8%81%94%E7%BD%91-%E5%8C%BF%E5%90%8D-%E4%BA%8C%E8%BF%9B%E5%88%B6-%E4%B8%80-%E7%BD%91%E7%BB%9C-%E7%8A%AF%E7%BD%AA-1872304/>Pixabay , CC0</a>）</p><hr><p>via: <a href=https://www.howtoforge.com/tutorial/protect-your-server-computer-with-badips-and-fail2ban/>https://www.howtoforge.com/tutorial/protect-your-server-computer-with-badips-and-fail2ban/</a></p><p>作者：<a href=https://www.howtoforge.com/tutorial/protect-your-server-computer-with-badips-and-fail2ban/>Stephane T</a> 译者：<a href=https://github.com/ictlyh>ictlyh</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/badips/ rel=tag>badips</a></li><li class=tags__item><a class="tags__link btn" href=/tags/fail2ban/ rel=tag>Fail2ban</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用PPA在Elementary OS 'Luna'上安装Oracle Java 7 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用PPA在Elementary OS 'Luna'上安装Oracle Java 7"><meta property="og:description" content="问题: 我该如何在 Elemetary OS Luna 上安装Oracle Java 7？
+回答: 在 Elementary OS Luna 安装 Java 7 的步骤如下: 由于Elementary OS是基于Ubuntu，所以我们允许使用具有多种Java包的WEPUD8 PPA。
+打开终端。
+&mldr;
+"><meta property="og:type" content="article"><meta property="og:url" content="/article-2377-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2013-12-15T23:33:00+00:00"><meta property="article:modified_time" content="2013-12-15T23:33:00+00:00"><meta itemprop=name content="使用PPA在Elementary OS 'Luna'上安装Oracle Java 7"><meta itemprop=description content="问题: 我该如何在 Elemetary OS Luna 上安装Oracle Java 7？
+回答: 在 Elementary OS Luna 安装 Java 7 的步骤如下: 由于Elementary OS是基于Ubuntu，所以我们允许使用具有多种Java包的WEPUD8 PPA。
+打开终端。
+&mldr;
+"><meta itemprop=datePublished content="2013-12-15T23:33:00+00:00"><meta itemprop=dateModified content="2013-12-15T23:33:00+00:00"><meta itemprop=wordCount content="286"><meta itemprop=keywords content="PPA,Elementary,Luna,Java,安装,教程,技巧,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用PPA在Elementary OS 'Luna'上安装Oracle Java 7</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2013-12-15T23:33:00Z>December 15, 2013</time></div></div></header><div class="content post__content clearfix"><p><strong>问题</strong>: 我该如何在 Elemetary OS Luna 上安装Oracle Java 7？</p><p><strong>回答</strong>: 在 Elementary OS Luna 安装 Java 7 的步骤如下: 由于Elementary OS是基于Ubuntu，所以我们允许使用具有多种Java包的<strong>WEPUD8 PPA</strong>。</p><ol><li>打开终端。</li><li>运行以下指令添加Java的PPA到你的软件仓:</li></ol><pre tabindex=0><code>$ sudo add-apt-repository ppa:webupd8team/java
+
+You are about to add the following PPA to your system:
+Oracle Java (JDK) Installer (automatically downloads and installs Oracle JDK6 / JDK7 / JDK8). There are no actual Java files in this PPA. More info: http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html
+Debian installation instructions: http://www.webupd8.org/2012/06/how-to-install-oracle-java-7-in-debian.html
+More info: https://launchpad.net/~webupd8team/+archive/java
+Press [ENTER] to continue or ctrl-c to cancel adding it
+</code></pre><ol start=3><li>按回车继续</li></ol><pre tabindex=0><code>gpg: keyring `/tmp/tmpB5WwDG/secring.gpg&#39; created
+gpg: keyring `/tmp/tmpB5WwDG/pubring.gpg&#39; created
+gpg: requesting key EEA14886 from hkp server keyserver.ubuntu.com
+gpg: /tmp/tmpB5WwDG/trustdb.gpg: trustdb created
+gpg: key EEA14886: public key &#34;Launchpad VLC&#34; imported
+gpg: Total number processed: 1
+gpg: imported: 1 (RSA: 1)
+OK
+</code></pre><ol start=4><li>现在更新你的系统</li></ol><pre tabindex=0><code>$ sudo apt-get update
+</code></pre><ol start=5><li>运行以下命令安装Java 7:</li></ol><pre tabindex=0><code>$ sudo apt-get install oracle-java7-installer
+
+[sudo] password for enock:
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+gir1.2-gstreamer-0.10 libilmbase6 libmagickcore4 libmagickwand4 libcdt4
+libmagickcore4-extra liblqr-1-0 imagemagick-common libpathplan4 libopenexr6
+rsync netpbm libgvc5 libnetpbm10 libgraph4
+Use &#39;apt-get autoremove&#39; to remove them.
+The following extra packages will be installed:
+gsfonts-x11 java-common
+Suggested packages:
+default-jre equivs binfmt-support visualvm ttf-baekmuk ttf-unfonts
+ttf-unfonts-core ttf-kochi-gothic ttf-sazanami-gothic ttf-kochi-mincho
+ttf-sazanami-mincho ttf-arphic-uming
+The following NEW packages will be installed:
+gsfonts-x11 java-common oracle-java7-installer
+0 upgraded, 3 newly installed, 0 to remove and 196 not upgraded.
+Need to get 88.5 kB of archives.
+After this operation, 473 kB of additional disk space will be used.
+Do you want to continue [Y/n]?
+</code></pre><ol start=6><li>输入代表Yes的<strong>Y</strong>以及回车键继续安装。</li><li>在安装过程中，你需要同意条款才能继续。选择<strong>OK</strong>。</li></ol><p><img src=https://img.linux.net.cn/data/attachment/album/201312/15/233141q4ee3hu5q046a75z.png alt>
+8. 然后选择<strong>Yes</strong>继续。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201312/15/233143t49bixqxakktkp7j.png alt>
+9. 现在请等待安装包的下载与自动安装:</p><p><img src=https://img.linux.net.cn/data/attachment/album/201312/15/233157vdvh4i2gipziv5q0.png alt>
+10. 安装完成。你可以在终端上查看Java版本:</p><pre tabindex=0><code>$ java -version
+java version &#34;1.7.0_45&#34;
+Java(TM) SE Runtime Environment (build 1.7.0_45-b18)
+Java HotSpot(TM) 64-Bit Server VM (build 24.45-b08, mixed mode)
+</code></pre><hr><p>via: <a href=http://www.unixmen.com/install-oracle-java-7-elementary-os-luna-via-ppa/>http://www.unixmen.com/install-oracle-java-7-elementary-os-luna-via-ppa/</a></p><p>译者：<a href=https://github.com/whatever1992>whatever1992</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ppa/ rel=tag>PPA</a></li><li class=tags__item><a class="tags__link btn" href=/tags/elementary/ rel=tag>Elementary</a></li><li class=tags__item><a class="tags__link btn" href=/tags/luna/ rel=tag>Luna</a></li><li class=tags__item><a class="tags__link btn" href=/tags/java/ rel=tag>Java</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%89%E8%A3%85/ rel=tag>安装</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%99%E7%A8%8B/ rel=tag>教程</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8A%80%E5%B7%A7/ rel=tag>技巧</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

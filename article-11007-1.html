@@ -1,0 +1,71 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 Bash 脚本监控 Linux 上的内存使用情况 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 Bash 脚本监控 Linux 上的内存使用情况"><meta property="og:description" content="如果你只有很少的系统并且想要监视它们，那么编写一个小的 shell 脚本可以使你的任务变得非常简单。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11007-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-06-23T08:55:32+00:00"><meta property="article:modified_time" content="2019-06-23T08:55:32+00:00"><meta itemprop=name content="用 Bash 脚本监控 Linux 上的内存使用情况"><meta itemprop=description content="如果你只有很少的系统并且想要监视它们，那么编写一个小的 shell 脚本可以使你的任务变得非常简单。"><meta itemprop=datePublished content="2019-06-23T08:55:32+00:00"><meta itemprop=dateModified content="2019-06-23T08:55:32+00:00"><meta itemprop=wordCount content="721"><meta itemprop=keywords content="内存,脚本,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 Bash 脚本监控 Linux 上的内存使用情况</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-06-23T08:55:32Z>June 23, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201906/23/085446setqkshf5zk0tn2x.jpg alt></p><p>目前市场上有许多开源监控工具可用于监控 Linux 系统的性能。当系统达到指定的阈值限制时，它可以发送电子邮件警报。它可以监视 CPU 利用率、内存利用率、交换利用率、磁盘空间利用率等所有内容。</p><p>如果你只有很少的系统并且想要监视它们，那么编写一个小的 shell 脚本可以使你的任务变得非常简单。</p><p>在本教程中，我们添加了两个 shell 脚本来监视 Linux 系统上的内存利用率。当系统达到给定阈值时，它将给特定电子邮件地址发邮件。</p><h3 id=方法-1用-linux-bash-脚本监视内存利用率并发送电子邮件>方法-1：用 Linux Bash 脚本监视内存利用率并发送电子邮件</h3><p>如果只想在系统达到给定阈值时通过邮件获取当前内存利用率百分比，请使用以下脚本。</p><p>这是个非常简单直接的单行脚本。在大多数情况下，我更喜欢使用这种方法。</p><p>当你的系统达到内存利用率的 80％ 时，它将触发一封电子邮件。</p><pre tabindex=0><code>*/5 * * * * /usr/bin/free | awk &#39;/Mem/{printf(&#34;RAM Usage: %.2f%\n&#34;), $3/$2*100}&#39; |  awk &#39;{print $3}&#39; | awk &#39;{ if($1 &gt; 80) print $0;}&#39; | mail -s &#34;High Memory Alert&#34; 2daygeek@gmail.com
+</code></pre><p>**注意：**你需要更改电子邮件地址而不是使用我们的电子邮件地址。此外，你可以根据你的要求更改内存利用率阈值。</p><p>**输出：**你将收到类似下面的电子邮件提醒。</p><pre tabindex=0><code>High Memory Alert: 80.40%
+</code></pre><p>我们过去添加了许多有用的 shell 脚本。如果要查看这些内容，请导航至以下链接。</p><p>* <a href=https://www.2daygeek.com/category/shell-script/>如何使用 shell 脚本自动执行日常活动？</a></p><h3 id=方法-2用-linux-bash-脚本监视内存利用率并发送电子邮件>方法-2：用 Linux Bash 脚本监视内存利用率并发送电子邮件</h3><p>如果要在邮件警报中获取有关内存利用率的更多信息。使用以下脚本，其中包括基于 <code>top</code> 命令和 <code>ps</code> 命令的最高内存利用率和进程详细信息。</p><p>这将立即让你了解系统的运行情况。</p><p>当你的系统达到内存利用率的 “80％” 时，它将触发一封电子邮件。</p><p>**注意：**你需要更改电子邮件地址而不是使用我们的电子邮件地址。此外，你可以根据你的要求更改内存利用率阈值。</p><pre tabindex=0><code># vi /opt/scripts/memory-alert.sh
+
+#!/bin/sh
+ramusage=$(free | awk &#39;/Mem/{printf(&#34;RAM Usage: %.2f\n&#34;), $3/$2*100}&#39;| awk &#39;{print $3}&#39;)
+
+if [ &#34;$ramusage&#34; &gt; 20 ]; then
+
+  SUBJECT=&#34;ATTENTION: Memory Utilization is High on $(hostname) at $(date)&#34;
+  MESSAGE=&#34;/tmp/Mail.out&#34;
+  TO=&#34;2daygeek@gmail.com&#34;
+  echo &#34;Memory Current Usage is: $ramusage%&#34; &gt;&gt; $MESSAGE
+  echo &#34;&#34; &gt;&gt; $MESSAGE
+  echo &#34;------------------------------------------------------------------&#34; &gt;&gt; $MESSAGE
+  echo &#34;Top Memory Consuming Process Using top command&#34; &gt;&gt; $MESSAGE
+  echo &#34;------------------------------------------------------------------&#34; &gt;&gt; $MESSAGE
+  echo &#34;$(top -b -o +%MEM | head -n 20)&#34; &gt;&gt; $MESSAGE
+  echo &#34;&#34; &gt;&gt; $MESSAGE
+  echo &#34;------------------------------------------------------------------&#34; &gt;&gt; $MESSAGE
+  echo &#34;Top Memory Consuming Process Using ps command&#34; &gt;&gt; $MESSAGE
+  echo &#34;------------------------------------------------------------------&#34; &gt;&gt; $MESSAGE
+  echo &#34;$(ps -eo pid,ppid,%mem,%Memory,cmd --sort=-%mem | head)&#34; &gt;&gt; $MESSAGE
+  mail -s &#34;$SUBJECT&#34; &#34;$TO&#34; &lt; $MESSAGE
+  rm /tmp/Mail.out
+fi
+</code></pre><p>最后添加一个 <a href=https://www.2daygeek.com/crontab-cronjob-to-schedule-jobs-in-linux/>cron 任务</a> 来自动执行此操作。它将每 5 分钟运行一次。</p><pre tabindex=0><code># crontab -e
+*/5 * * * * /bin/bash /opt/scripts/memory-alert.sh
+</code></pre><p>**注意：**由于脚本计划每 5 分钟运行一次，因此你将在最多 5 分钟后收到电子邮件提醒（但不是 5 分钟，取决于具体时间）。</p><p>比如说，如果你的系统达到 8.25 的给定限制，那么你将在 5 分钟内收到电子邮件警报。希望现在说清楚了。</p><p>**输出：**你将收到类似下面的电子邮件提醒。</p><pre tabindex=0><code>Memory Current Usage is: 80.71%
+
++------------------------------------------------------------------+
+Top Memory Consuming Process Using top command
++------------------------------------------------------------------+
+top - 12:00:58 up 5 days,  9:03,  1 user,  load average: 1.82, 2.60, 2.83
+Tasks: 314 total,   1 running, 313 sleeping,   0 stopped,   0 zombie
+%Cpu0  :  8.3 us, 12.5 sy,  0.0 ni, 75.0 id,  0.0 wa,  0.0 hi,  4.2 si,  0.0 st
+%Cpu1  : 13.6 us,  4.5 sy,  0.0 ni, 81.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu2  : 21.7 us, 21.7 sy,  0.0 ni, 56.5 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu3  : 13.6 us,  9.1 sy,  0.0 ni, 77.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu4  : 17.4 us,  8.7 sy,  0.0 ni, 73.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu5  : 20.8 us,  4.2 sy,  0.0 ni, 70.8 id,  0.0 wa,  0.0 hi,  4.2 si,  0.0 st
+%Cpu6  :  9.1 us,  0.0 sy,  0.0 ni, 90.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu7  : 17.4 us,  4.3 sy,  0.0 ni, 78.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem : 16248588 total,  5015964 free,  6453404 used,  4779220 buff/cache
+KiB Swap: 17873388 total, 16928620 free,   944768 used.  6423008 avail Mem 
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+17163 daygeek   20     2033204 487736 282888 S  10.0   3.0   8:26.07 /usr/lib/firefox/firefox -contentproc -childID 15 -isForBrowser -prefsLen 9408 -prefMapSize 184979 -parentBuildID 20190521202118 -greomni /u+
+ 1121 daygeek   20     4191388 419180 100552 S   5.0   2.6 126:02.84 /usr/bin/gnome-shell
+ 1902 daygeek   20     1701644 327216  82536 S  20.0   2.0 153:27.92 /opt/google/chrome/chrome
+ 2969 daygeek   20     1051116 324656  92388 S  15.0   2.0 149:38.09 /opt/google/chrome/chrome --type=renderer --field-trial-handle=10346122902703263820,11905758137655502112,131072 --service-pipe-token=1339861+
+ 1068 daygeek   20     1104856 309552 278072 S   5.0   1.9 143:47.42 /usr/lib/Xorg vt2 -displayfd 3 -auth /run/user/1000/gdm/Xauthority -nolisten tcp -background none -noreset -keeptty -verbose 3
+27246 daygeek   20      907344 265600 108276 S  30.0   1.6  10:42.80 /opt/google/chrome/chrome --type=renderer --field-trial-handle=10346122902703263820,11905758137655502112,131072 --service-pipe-token=8587368+
+
++------------------------------------------------------------------+
+Top Memory Consuming Process Using ps command
++------------------------------------------------------------------+
+  PID  PPID %MEM %CPU CMD
+ 8223     1  6.4  6.8 /usr/lib/firefox/firefox --new-window
+13948  1121  6.3  1.2 /usr/bin/../lib/notepadqq/notepadqq-bin
+ 8671  8223  4.4  7.5 /usr/lib/firefox/firefox -contentproc -childID 5 -isForBrowser -prefsLen 6999 -prefMapSize 184979 -parentBuildID 20190521202118 -greomni /usr/lib/firefox/omni.ja -appomni /usr/lib/firefox/browser/omni.ja -appdir /usr/lib/firefox/browser 8223 true tab
+17163  8223  3.0  0.6 /usr/lib/firefox/firefox -contentproc -childID 15 -isForBrowser -prefsLen 9408 -prefMapSize 184979 -parentBuildID 20190521202118 -greomni /usr/lib/firefox/omni.ja -appomni /usr/lib/firefox/browser/omni.ja -appdir /usr/lib/firefox/browser 8223 true tab
+ 1121  1078  2.5  1.6 /usr/bin/gnome-shell
+17937  8223  2.5  0.8 /usr/lib/firefox/firefox -contentproc -childID 16 -isForBrowser -prefsLen 9410 -prefMapSize 184979 -parentBuildID 20190521202118 -greomni /usr/lib/firefox/omni.ja -appomni /usr/lib/firefox/browser/omni.ja -appdir /usr/lib/firefox/browser 8223 true tab
+ 8499  8223  2.2  0.6 /usr/lib/firefox/firefox -contentproc -childID 4 -isForBrowser -prefsLen 6635 -prefMapSize 184979 -parentBuildID 20190521202118 -greomni /usr/lib/firefox/omni.ja -appomni /usr/lib/firefox/browser/omni.ja -appdir /usr/lib/firefox/browser 8223 true tab
+ 8306  8223  2.2  0.8 /usr/lib/firefox/firefox -contentproc -childID 1 -isForBrowser -prefsLen 1 -prefMapSize 184979 -parentBuildID 20190521202118 -greomni /usr/lib/firefox/omni.ja -appomni /usr/lib/firefox/browser/omni.ja -appdir /usr/lib/firefox/browser 8223 true tab
+ 9198  8223  2.1  0.6 /usr/lib/firefox/firefox -contentproc -childID 7 -isForBrowser -prefsLen 8604 -prefMapSize 184979 -parentBuildID 20190521202118 -greomni /usr/lib/firefox/omni.ja -appomni /usr/lib/firefox/browser/omni.ja -appdir /usr/lib/firefox/browser 8223 true tab
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/linux-bash-script-to-monitor-memory-utilization-usage-and-send-email/>https://www.2daygeek.com/linux-bash-script-to-monitor-memory-utilization-usage-and-send-email/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%86%85%E5%AD%98/ rel=tag>内存</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%84%9A%E6%9C%AC/ rel=tag>脚本</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

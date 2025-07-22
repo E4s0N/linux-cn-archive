@@ -1,0 +1,61 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在Linux中模拟击键和鼠标移动 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在Linux中模拟击键和鼠标移动"><meta property="og:description" content="你是否曾经拥有一个梦 你的计算机` 可以自动为你干活？ 或许，并非因为 你刚看了终结者。 然而，除此之外 脚本和任务自动化 是每个高级用户追寻的梦 如果今天 有许多的解决方案 可以满足这个目标 那么 有时候 就难以从那众多之中采撷那 简洁、聪明而又高效的一个 我 不能假装 是我自己发现了它 而与此同时 却偏爱着那个 整洁的软体xdotool 其方法是如此直观 正如它作为X11自动化工具的表露 转换思想 xdotool可以通过读取文本文件 模拟击键的旋律 以及鼠标的曼舞   让Xdotool在Linux定居 对于Ubuntu，Debian或者Linux Mint，你能够只做： $"><meta property="og:type" content="article"><meta property="og:url" content="/article-3724-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-08-30T21:45:00+00:00"><meta property="article:modified_time" content="2014-08-30T21:45:00+00:00"><meta itemprop=name content="在Linux中模拟击键和鼠标移动"><meta itemprop=description content="你是否曾经拥有一个梦 你的计算机` 可以自动为你干活？ 或许，并非因为 你刚看了终结者。 然而，除此之外 脚本和任务自动化 是每个高级用户追寻的梦 如果今天 有许多的解决方案 可以满足这个目标 那么 有时候 就难以从那众多之中采撷那 简洁、聪明而又高效的一个 我 不能假装 是我自己发现了它 而与此同时 却偏爱着那个 整洁的软体xdotool 其方法是如此直观 正如它作为X11自动化工具的表露 转换思想 xdotool可以通过读取文本文件 模拟击键的旋律 以及鼠标的曼舞   让Xdotool在Linux定居 对于Ubuntu，Debian或者Linux Mint，你能够只做： $"><meta itemprop=datePublished content="2014-08-30T21:45:00+00:00"><meta itemprop=dateModified content="2014-08-30T21:45:00+00:00"><meta itemprop=wordCount content="174"><meta itemprop=keywords content="按键记录,鼠标,键盘,xdotool,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在Linux中模拟击键和鼠标移动</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-08-30T21:45:00Z>August 30, 2014</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201408/30/214541ljzdp2xt39rz7z0r.jpg alt></p><pre tabindex=0><code>`  
+你是否曾经拥有一个梦
+    ——你的计算机
+         可以自动为你干活？
+或许，并非因为
+    你刚看了终结者。
+然而，除此之外
+    脚本和任务自动化
+        是每个高级用户追寻的梦
+如果今天
+    有许多的解决方案
+        可以满足这个目标
+那么
+    有时候
+       就难以从那众多之中采撷那
+       简洁、聪明而又高效的一个
+我
+    不能假装
+       是我自己发现了它
+而与此同时
+    却偏爱着那个
+       整洁的软体——xdotool
+其方法是如此直观
+    正如它作为X11自动化工具的表露
+转换思想
+    xdotool可以通过读取文本文件
+       模拟击键的旋律
+           以及鼠标的曼舞  
+`
+</code></pre><h3 id=让xdotool在linux定居>让Xdotool在Linux定居</h3><p>对于Ubuntu，Debian或者Linux Mint，你能够只做：</p><pre tabindex=0><code>$ sudo apt-get install xdotool 
+</code></pre><p>对于Fedora，请使用yum命令：</p><pre tabindex=0><code>$ sudo yum install xdotool 
+</code></pre><p>对于CentOS用户，可以在<a href=http://xmodulo.com/2013/03/how-to-set-up-epel-repository-on-centos.html>EPEL repo</a>中找到该包。在启用EPEL仓库后，只要使用上面的yum命令就可以达成你的愿望。</p><p>对于Arch用户，可在Community仓库中找到该包：</p><pre tabindex=0><code>$ sudo pacman -S xdotool 
+</code></pre><p>如果你还是找不到你的发行版的对应xdotool，你可以从它的<a href=http://www.semicomplete.com/projects/xdotool/>官方站点</a>下载。</p><h3 id=xdotool基本功>Xdotool基本功</h3><p>虽然xdotool是那样的直观，但它仍然是个脚本程序。因此，为了要正确地使用它，你还是得了解它的语法。不过敬请放心，相对于程序的功能而言，语法还是比较简单易学的。</p><p>首先，模拟击键是很容易的。你可以从终端敲入下面的命令：</p><pre tabindex=0><code>$ xdotool key [name of the key] 
+</code></pre><p>如果你想要连接两个键，可以在它们之间使用“+”操作符。它看起来像这样：</p><pre tabindex=0><code>$ xdotool key alt+Tab 
+</code></pre><p>这两个组合键可以为你切换窗口。</p><p>要想让xdotool帮你输入，可以使用以下命令：</p><pre tabindex=0><code>$ xdotool type &#39;&#39; 
+</code></pre><p>这些对于基本的击键而言已经足够了。但是，xdotool的众多长处之一，就是它可以获取特定窗口的焦点。它可以获取右边的窗口，然后在里面输入，所有你记录下的按键都不会人间蒸发，而是老老实实的如你所愿的出现在那里。要获得该功能，一个简单的命令可以搞定：</p><pre tabindex=0><code>$ xdotool search --name [name of the window] key [keys to press]
+</code></pre><p>该命令将在打开的窗口中搜索对应名称的窗口，并聚焦于该窗口，然后模拟击键。</p><p>来点更高级的，但很有用哦，xdotool可以模拟鼠标移动和点击，看这命令：</p><pre tabindex=0><code>$ xdotool mousemove x y 
+</code></pre><p>你可以将光标定位到屏幕坐标（x，y）（像素）。你也可以使用“click”参数来组合：</p><pre tabindex=0><code>$ xdotool mousemove x y click 1 
+</code></pre><p>这会让鼠标移动到（x，y），然后点击鼠标左键。“1”代表鼠标左键，“2”则是滚轮，“3”则是右键。</p><p>最后，一旦你这些命令根植于你脑海，你也许想要实际转储于文件来编辑并试着玩玩。鉴于此，就会有超过一个语句以上的内容了。你需要的就是写一个bash脚本了：</p><pre tabindex=0><code>#!/bin/bash
+
+xdotool [command 1]
+xdotool [command 2]
+etc
+</code></pre><p>或者你可以使用：</p><pre tabindex=0><code>$ xdotool [filename] 
+</code></pre><p>这里你将命令写入到一个独立的文件中，然后通过将文件名作为xdotool命令的参数。</p><h3 id=意外收获>意外收获</h3><p>作为本文的一个意外收获，这里是xdotool的一个具体实例。你可能听说过，也可能没听说过Bing —— 微软的搜索引擎。在后面的实例中，你会看到你可能从没听过Bing奖励：一个程序，可以让你用Bing积分兑取亚马逊的礼物卡和其它的一些礼物卡（LCTT 译注：我是从来没听说过~）。要赚取这些积分，你可以每天在Bing上搜索累计达30次，每次搜索你都会获得0.5个积分。换句话说，你必须把Bing设为默认搜索引擎，并每天使用它。</p><p>或者，你可以使用xdotool脚本，在这个脚本中，会自动聚焦到Firefox（你可以用你喜欢的浏览器来取代它），并使用fortune命令生成一些随机单词来实施搜索。大约30秒之内，你的日常搜索任务就完成了。</p><pre tabindex=0><code>#!/bin/bash
+
+for i in {1..30}
+do
+  WID=`xdotool search --title &#34;Mozilla Firefox&#34; | head -1`
+  xdotool windowfocus $WID
+  xdotool key ctrl+l
+  xdotool key Tab
+  SENTENCE=&#34;$(fortune | cut -d&#39; &#39; -f1-3 | head -1)&#34;
+  xdotool type $SENTENCE
+  xdotool key &#34;Return&#34;
+  sleep 4
+done
+</code></pre><p>下面来个小结吧：我真的很喜欢xdotool，即便它的完整功能超越了本文涵盖的范围。这对于脚本和任务自动化而言，确实是种平易的方式。负面的问题是，它可能不是最有效率的一个。但我要再说一遍，它忠于职守了，而且学习起来也不是那么麻烦。</p><p>你对xdotool怎么看呢？你是否更喜欢另外一个自动化工具，而不是它呢？为什么呢？请在评论中告诉我们吧。</p><hr><p>via: <a href=http://xmodulo.com/2014/07/simulate-key-press-mouse-movement-linux.html>http://xmodulo.com/2014/07/simulate-key-press-mouse-movement-linux.html</a></p><p>译者：<a href=https://github.com/GOLinux>GOLinux</a> 校对： <a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8C%89%E9%94%AE%E8%AE%B0%E5%BD%95/ rel=tag>按键记录</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E9%BC%A0%E6%A0%87/ rel=tag>鼠标</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E9%94%AE%E7%9B%98/ rel=tag>键盘</a></li><li class=tags__item><a class="tags__link btn" href=/tags/xdotool/ rel=tag>xdotool</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

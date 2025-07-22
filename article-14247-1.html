@@ -1,0 +1,91 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 HAProxy 实现网络流量的负载平衡 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 HAProxy 实现网络流量的负载平衡"><meta property="og:description" content="安装、配置和运行 HAProxy，在几个网络或应用服务器之间分配网络流量。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14247-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-02-06T11:40:10+00:00"><meta property="article:modified_time" content="2022-02-06T11:40:10+00:00"><meta itemprop=name content="用 HAProxy 实现网络流量的负载平衡"><meta itemprop=description content="安装、配置和运行 HAProxy，在几个网络或应用服务器之间分配网络流量。"><meta itemprop=datePublished content="2022-02-06T11:40:10+00:00"><meta itemprop=dateModified content="2022-02-06T11:40:10+00:00"><meta itemprop=wordCount content="524"><meta itemprop=keywords content="HAProxy,负载均衡,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 HAProxy 实现网络流量的负载平衡</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-02-06T11:40:10Z>February 06, 2022</time></div></div></header><div class="content post__content clearfix"><blockquote><p>安装、配置和运行 HAProxy，在几个网络或应用服务器之间分配网络流量。</p></blockquote><p><img src=/data/attachment/album/202202/06/114005n44h5xx934549133.jpg alt title="eight stones balancing"></p><p>不是只有在一个大型公司工作才需要使用负载平衡器。你可能是一个业余爱好者，用几台树莓派电脑自我托管一个网站。也许你是一个小企业的服务器管理员；也许你确实在一家大公司工作。无论你的情况如何，你都可以使用 <a href=https://www.haproxy.org/>HAProxy</a> 负载平衡器来管理你的流量。</p><p>HAProxy 被称为“世界上最快和使用最广泛的软件负载平衡器”。它包含了许多可以使你的应用程序更加安全可靠的功能，包括内置的速率限制、异常检测、连接排队、健康检查以及详细的日志和指标。学习本教程中所涉及的基本技能和概念，将有助于你使用 HAProxy 建立一个更强大的、远为强大的基础设施。</p><h3 id=为什么需要一个负载平衡器>为什么需要一个负载平衡器？</h3><p>负载平衡器是一种在几个网络或应用服务器之间轻松分配连接的方法。事实上，HAProxy 可以平衡任何类型的传输控制协议（<a href=https://en.wikipedia.org/wiki/Transmission_Control_Protocol>TCP</a>）流量，包括 RDP、FTP、WebSockets 或数据库连接。分散负载的能力意味着你不需要因为你的网站流量比谷歌大就购买一个拥有几十万 G 内存的大型网络服务器。</p><p>负载平衡器还为你提供了灵活性。也许你现有的网络服务器不够强大，无法满足一年中繁忙时期的峰值需求，你想增加一个，但只是暂时的。也许你想增加一些冗余，以防一个服务器出现故障。有了 HAProxy，你可以在需要时向后端池添加更多的服务器，在不需要时删除它们。</p><p>你还可以根据情况将请求路由到不同的服务器。例如，你可能想用几个缓存服务器（如 <a href=https://varnish-cache.org/>Varnish</a>）来处理你的静态内容，但把任何需要动态内容的东西，如 API 端点，路由到一个更强大的机器。</p><p>在这篇文章中，我将通过设置一个非常基本的 HAProxy 环境，使用 HTTPS 来监听安全端口 443，并利用几个后端 Web 服务器。它甚至会将所有进入预定义 URL（如 <code>/api/</code>）的流量发送到不同的服务器或服务器池。</p><h3 id=安装-haproxy>安装 HAProxy</h3><p>要开始安装，请启动一个新的 CentOS 8 服务器或实例，并使系统达到最新状态：</p><pre tabindex=0><code>$ sudo yum update -y
+</code></pre><p>这通常会持续一段时间。在等待的时候给自己拿杯咖啡。</p><p>这个安装有两部分：第一部分是安装 yum 版本的 HAProxy，第二部分是编译和安装你的二进制文件，用最新的版本覆盖以前的 HAProxy。用 yum 安装，在生成 systemd 启动脚本等方面做了很多繁重的工作，所以运行 <code>yum install</code>，然后从源代码编译，用最新的版本覆盖 HAProxy 二进制：</p><pre tabindex=0><code>$ sudo yum install -y haproxy
+</code></pre><p>启用 HAProxy 服务：</p><pre tabindex=0><code>$ sudo systemctl enable haproxy
+</code></pre><p>要升级到最新版本（<a href=https://www.haproxy.com/blog/announcing-haproxy-2-2/>版本 2.2</a>，截至本文写作为止），请编译源代码。许多人认为从源代码编译和安装一个程序需要很高的技术能力，但这是一个相当简单的过程。首先，使用 <code>yum</code> 安装一些提供编译代码工具的软件包：</p><pre tabindex=0><code>$ sudo yum install dnf-plugins-core
+$ sudo yum config-manager --set-enabled PowerTools
+$ sudo yum install -y git ca-certificates gcc glibc-devel \
+    lua-devel pcre-devel openssl-devel systemd-devel \
+    make curl zlib-devel 
+</code></pre><p>使用 <code>git</code> 获得最新的源代码，并改变到 <code>haproxy</code> 目录：</p><pre tabindex=0><code>$ git clone http://git.haproxy.org/git/ haproxy
+$ cd haproxy
+</code></pre><p>运行以下三个命令来构建和安装具有集成了 Prometheus 支持的 HAProxy：</p><pre tabindex=0><code>$ make TARGET=linux-glibc USE_LUA=1 USE_OPENSSL=1 USE_PCRE=1 \
+    PCREDIR= USE_ZLIB=1 USE_SYSTEMD=1 \
+    EXTRA_OBJS=&#34;contrib/prometheus-exporter/service-prometheus.o&#34;
+
+$ sudo make PREFIX=/usr install # 安装到 /usr/sbin/haproxy
+</code></pre><p>通过查询版本来测试它：</p><pre tabindex=0><code>$ haproxy -v
+</code></pre><p>你应该看到以下输出：</p><pre tabindex=0><code>HA-Proxy version 2.2.4-b16390-23 2020/10/09 - https://haproxy.org/
+</code></pre><h3 id=创建后端服务器>创建后端服务器</h3><p>HAProxy 并不直接提供任何流量，这是后端服务器的工作，它们通常是网络或应用服务器。在这个练习中，我使用一个叫做 <a href=https://nmap.org/ncat>Ncat</a> 的工具，它是网络领域的“瑞士军刀”，用来创建一些极其简单的服务器。安装它：</p><pre tabindex=0><code>$ sudo yum install nc -y
+</code></pre><p>如果你的系统启用了 <a href=https://www.redhat.com/en/topics/linux/what-is-selinux>SELinux</a>，你需要启用端口 8404，这是用于访问 HAProxy 统计页面的端口（下面有解释），以及你的后端服务器的端口：</p><pre tabindex=0><code>$ sudo dnf install policycoreutils-python-utils
+$ sudo semanage port -a -t http_port_t  -p tcp 8404
+$ sudo semanage port -a -t http_port_t  -p tcp 10080
+$ sudo semanage port -a -t http_port_t  -p tcp 10081
+$ sudo semanage port -a -t http_port_t  -p tcp 10082
+</code></pre><p>创建两个 Ncat 网络服务器和一个 API 服务器：</p><pre tabindex=0><code>$ while true ;
+do
+nc -l -p 10080 -c &#39;echo -e &#34;HTTP/1.1 200 OK\n\n This is Server ONE&#34;&#39; ;
+done &amp;
+
+$ while true ;
+do
+nc -l -p 10081 -c &#39;echo -e &#34;HTTP/1.1 200 OK\n\n This is Server TWO&#34;&#39; ;
+done &amp;
+
+$ while true ;
+do
+nc -l -p 10082 -c &#39;echo -e &#34;HTTP/1.1 200 OK\nContent-Type: application/json\n\n { \&#34;Message\&#34; :\&#34;Hello, World!\&#34; }&#34;&#39; ;
+done &amp;
+</code></pre><p>这些简单的服务器打印出一条信息（如“This is Server ONE”），并运行到服务器停止为止。在现实环境中，你会使用实际的网络和应用程序服务器。</p><h3 id=修改-haproxy-的配置文件>修改 HAProxy 的配置文件</h3><p>HAProxy 的配置文件是 <code>/etc/haproxy/haproxy.cfg</code>。你在这里进行修改以定义你的负载平衡器。这个 <a href=https://gist.github.com/haproxytechblog/38ef4b7d42f16cfe5c30f28ee3304dce>基本配置</a> 将让你从一个工作的服务器开始：</p><pre tabindex=0><code>global
+    log         127.0.0.1 local2
+    user        haproxy
+    group       haproxy
+
+defaults 
+    mode                    http
+    log                     global
+    option                  httplog
+
+frontend main
+    bind *:80
+        
+    default_backend web
+    use_backend api if { path_beg -i /api/ }
+    
+    #-------------------------
+    # SSL termination - HAProxy handles the encryption.
+    #    To use it, put your PEM file in /etc/haproxy/certs  
+    #    then edit and uncomment the bind line (75)
+    #-------------------------
+    # bind *:443 ssl crt /etc/haproxy/certs/haproxy.pem ssl-min-ver TLSv1.2
+    # redirect scheme https if !{ ssl_fc }
+
+#-----------------------------
+# Enable stats at http://test.local:8404/stats
+#-----------------------------
+
+frontend stats
+    bind *:8404
+    stats enable
+    stats uri /stats
+#-----------------------------
+# round robin balancing between the various backends
+#-----------------------------
+
+backend web
+    server web1 127.0.0.1:10080 check
+    server web2 127.0.0.1:10081 check
+
+#-----------------------------
+
+# API backend for serving up API content
+#-----------------------------
+backend api
+    server api1 127.0.0.1:10082 check
+</code></pre><h3 id=重启并重新加载-haproxy>重启并重新加载 HAProxy</h3><p>HAProxy 可能还没有运行，所以发出命令 <code>sudo systemctl restart haproxy</code> 来启动（或重新启动）它。“重启” 的方法在非生产情况下是很好的，但是一旦你开始运行，你要养成使用 <code>sudo systemctl reload haproxy</code> 的习惯，以避免服务中断，即使你的配置中出现了错误。</p><p>例如，当你对 <code>/etc/haproxy/haproxy.cfg</code> 进行修改后，你需要用 <code>sudo systemctl reload haproxy</code> 来重新加载守护进程，使修改生效。如果有错误，它会让你知道，但继续用以前的配置运行。用 <code>sudo systemctl status haproxy</code> 检查 HAProxy 的状态。</p><p>如果它没有报告任何错误，你就有一个正在运行的服务器。在服务器上用 <code>curl</code> 测试，在命令行输入 <code>curl http://localhost/</code>。如果你看到 “This is Server ONE”，那就说明一切都成功了！运行 <code>curl</code> 几次，看着它在你的后端池中循环，然后看看当你输入 <code>curl http://localhost/api/</code> 时会发生什么。在 URL 的末尾添加 <code>/api/</code> 将把所有的流量发送到你池子里的第三个服务器。至此，你就有了一个正常运作的负载平衡器</p><h3 id=检查你的统计资料>检查你的统计资料</h3><p>你可能已经注意到，配置中定义了一个叫做 <code>stats</code> 的前端，它的监听端口是 8404：</p><pre tabindex=0><code>frontend stats
+    bind *:8404
+    stats uri /stats
+    stats enable
+</code></pre><p>在你的浏览器中，加载 <code>http://localhost:8404/stats</code>。阅读 HAProxy 的博客 <a href=https://www.haproxy.com/blog/exploring-the-haproxy-stats-page/>学习 HAProxy 的统计页面</a>，了解你在这里可以做什么。</p><h3 id=一个强大的负载平衡器>一个强大的负载平衡器</h3><p>虽然我只介绍了 HAProxy 的几个功能，但你现在有了一个服务器，它可以监听 80 和 443 端口，将 HTTP 流量重定向到 HTTPS，在几个后端服务器之间平衡流量，甚至将匹配特定 URL 模式的流量发送到不同的后端服务器。你还解锁了非常强大的 HAProxy 统计页面，让你对你的系统有一个很好的概览。</p><p>这个练习可能看起来很简单，不要搞错了，你刚刚建立和配置了一个非常强大的负载均衡器，能够处理大量的流量。</p><p>为了你方便，我把本文中的所有命令放在了 <a href=https://gist.github.com/haproxytechblog/d656422754f1b5eb1f7bbeb1452d261e>GitHub Gist</a> 中。</p><hr><p>via: <a href=https://opensource.com/article/20/11/load-balancing-haproxy>https://opensource.com/article/20/11/load-balancing-haproxy</a></p><p>作者：<a href=https://opensource.com/users/jimoconnell>Jim O&rsquo;Connell</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/haproxy/ rel=tag>HAProxy</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/ rel=tag>负载均衡</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

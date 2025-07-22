@@ -1,0 +1,52 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Python 为你的油箱加油 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Python 为你的油箱加油"><meta property="og:description" content="我来介绍一下我是如何使用 Python 来节省成本的。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10128-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-10-18T00:37:00+00:00"><meta property="article:modified_time" content="2018-10-18T00:37:00+00:00"><meta itemprop=name content="使用 Python 为你的油箱加油"><meta itemprop=description content="我来介绍一下我是如何使用 Python 来节省成本的。"><meta itemprop=datePublished content="2018-10-18T00:37:00+00:00"><meta itemprop=dateModified content="2018-10-18T00:37:00+00:00"><meta itemprop=wordCount content="244"><meta itemprop=keywords content="Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Python 为你的油箱加油</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-10-18T00:37:00Z>October 18, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>我来介绍一下我是如何使用 Python 来节省成本的。</p></blockquote><p><img src=/data/attachment/album/201810/18/003647fykfkj2p2kc57ezx.jpg alt></p><p>我最近在开一辆烧 93 号汽油的车子。根据汽车制造商的说法，它只需要加 91 号汽油就可以了。然而，在美国只能买到 87 号、89 号、93 号汽油。而我家附近的汽油的物价水平是每增加一号，每加仑就要多付 30 美分，因此如果加 93 号汽油，每加仑就要多花 60 美分。为什么不能节省一些钱呢？</p><p>一开始很简单，只需要先加满 93 号汽油，然后在油量表显示油箱半满的时候，用 89 号汽油加满，就得到一整箱 91 号汽油了。但接下来就麻烦了，剩下半箱 91 号汽油加上半箱 93 号汽油，只会变成一箱 92 号汽油，再接下来呢？如果继续算下去，只会越来越混乱。这个时候 Python 就派上用场了。</p><p>我的方案是，可以根据汽油的实时状态，不断向油箱中加入 93 号汽油或者 89 号汽油，而最终目标是使油箱内汽油的号数不低于 91。我需要做的是只是通过一些算法来判断新旧汽油混合之后的号数。使用多项式方程或许也可以解决这个问题，但如果使用 Python，好像只需要进行循环就可以了。</p><pre tabindex=0><code>#!/usr/bin/env python
+# octane.py
+
+o = 93.0
+newgas = 93.0   # 这个变量记录上一次加入的汽油号数
+i = 1
+while i &lt; 21:                   # 20 次迭代 (加油次数)
+    if newgas == 89.0:          # 如果上一次加的是 89 号汽油，改加 93 号汽油
+        newgas = 93.0
+        o = newgas/2 + o/2      # 当油箱半满的时候就加油
+    else:                       # 如果上一次加的是 93 号汽油，则改加 89 号汽油
+        newgas = 89.0
+        o = newgas/2 + o/2      # 当油箱半满的时候就加油
+    print str(i) + &#39;: &#39;+ str(o)
+    i += 1
+</code></pre><p>在代码中，我首先将变量 <code>o</code>（油箱中的当前混合汽油号数）和变量 <code>newgas</code>（上一次加入的汽油号数）的初始值都设为 93，然后循环 20 次，也就是分别加入 89 号汽油和 93 号汽油一共 20 次，以保持混合汽油号数稳定。</p><pre tabindex=0><code>1: 91.0
+2: 92.0
+3: 90.5
+4: 91.75
+5: 90.375
+6: 91.6875
+7: 90.34375
+8: 91.671875
+9: 90.3359375
+10: 91.66796875
+11: 90.333984375
+12: 91.6669921875
+13: 90.3334960938
+14: 91.6667480469
+15: 90.3333740234
+16: 91.6666870117
+17: 90.3333435059
+18: 91.6666717529
+19: 90.3333358765
+20: 91.6666679382
+</code></pre><p>从以上数据来看，只需要 10 到 15 次循环，汽油号数就比较稳定了，也相当接近 91 号汽油的目标。这种交替混合直到稳定的现象看起来很有趣，每次交替加入同等量的不同号数汽油，都会趋于稳定。实际上，即使加入的 89 号汽油和 93 号汽油的量不同，也会趋于稳定。</p><p>因此，我尝试了不同的比例，我认为加入的 93 号汽油需要比 89 号汽油更多一点。在尽量少补充新汽油的情况下，我最终计算到的结果是 89 号汽油要在油箱大约 7/12 满的时候加进去，而 93 号汽油则要在油箱 ¼ 满的时候才加进去。</p><p>我的循环将会更改成这样：</p><pre tabindex=0><code>    if newgas == 89.0:            
+                                 
+        newgas = 93.0
+        o = 3*newgas/4 + o/4      
+    else:                        
+        newgas = 89.0
+        o = 5*newgas/12 + 7*o/12
+</code></pre><p>以下是从第十次加油开始的混合汽油号数：</p><pre tabindex=0><code>10: 92.5122272978
+11: 91.0487992571
+12: 92.5121998143
+13: 91.048783225
+14: 92.5121958062
+15: 91.048780887
+</code></pre><p>如你所见，这个调整会令混合汽油号数始终略高于 91。当然，我的油量表并没有 1/12 的刻度，但是 7/12 略小于 5/8，我可以近似地计算。</p><p>一个更简单地方案是每次都首先加满 93 号汽油，然后在油箱半满时加入 89 号汽油直到耗尽，这可能会是我的常规方案。就我个人而言，这种方法并不太好，有时甚至会产生一些麻烦。但对于长途旅行来说，这种方案会相对简便一些。有时我也会因为油价突然下跌而购买一些汽油，所以，这个方案是我可以考虑的一系列选项之一。</p><p>当然最重要的是：开车不写码，写码不开车！</p><hr><p>via: <a href=https://opensource.com/article/18/10/python-gas-pump>https://opensource.com/article/18/10/python-gas-pump</a></p><p>作者：<a href=https://opensource.com/users/greg-p>Greg Pittman</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/HankChow>HankChow</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

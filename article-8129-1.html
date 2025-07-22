@@ -1,0 +1,224 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Axel 命令行下载器/加速器加速下载 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Axel 命令行下载器/加速器加速下载"><meta property="og:description" content="Axel 是一个轻量级下载程序，它和其他加速器一样，对同一个文件建立多个连接，每个连接下载单独的文件片段以更快地完成下载。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8129-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-01-19T17:40:56+00:00"><meta property="article:modified_time" content="2017-01-19T17:40:56+00:00"><meta itemprop=name content="使用 Axel 命令行下载器/加速器加速下载"><meta itemprop=description content="Axel 是一个轻量级下载程序，它和其他加速器一样，对同一个文件建立多个连接，每个连接下载单独的文件片段以更快地完成下载。"><meta itemprop=datePublished content="2017-01-19T17:40:56+00:00"><meta itemprop=dateModified content="2017-01-19T17:40:56+00:00"><meta itemprop=wordCount content="1300"><meta itemprop=keywords content="axel,下载,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Axel 命令行下载器/加速器加速下载</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-01-19T17:40:56Z>January 19, 2017</time></div></div></header><div class="content post__content clearfix"><p><a href=https://axel.alioth.debian.org/>Axel</a> 是一个轻量级下载程序，它和其他加速器一样，对同一个文件建立多个连接，每个连接下载单独的文件片段以更快地完成下载。</p><p><img src=/data/attachment/album/201701/19/174049gtfsegp4u6uzztqz.jpg alt></p><p>Axel 支持 HTTP、HTTPS、FTP 和 FTPS 协议。它也可以使用多个镜像站点下载单个文件，所以，Axel 可以加速下载高达 40％（大约，我个人认为）。它非常轻量级，因为它没有依赖并且使用非常少的 CPU 和内存。</p><p>Axel 一步到位地将所有数据直接下载到目标文件（LCTT 译注：而不是像其它的下载软件那样下载成多个文件块，然后拼接）。</p><p><strong>注意</strong>：不支持在单条命令中下载两个文件。</p><p>你还可以尝试其他命令行下载管理器/加速器。</p><ul><li><a href=http://www.2daygeek.com/aria2-command-line-download-utility-tool/>aria2 - 超快速下载程序</a></li><li><a href=http://www.2daygeek.com/wget-command-line-download-utility-tool/>wget - 标准命令行下载程序</a></li><li><a href=http://www.2daygeek.com/aria2-command-line-download-utility-tool/>curl - 命令行下载程序</a></li><li><a href=/article-8124-1.html>Linux 下的最好的 4 个命令行下载管理器/加速器</a></li></ul><p>大多数发行版（Debian、Ubuntu、Mint、Fedora、suse、openSUSE、Arch Linux、Manjaro、Mageia 等）都有 axel 包，所以我们可以从发行版官方仓库轻松安装。对于 CentOS/RHEL，我们需要启用 <a href=/article-2324-1.html>EPEL Repository</a>。</p><pre tabindex=0><code>[在 Debian/Ubuntu/LinuxMint 上安装 Axel]
+$ sudo apt-get install axel
+
+[在 RHEL/CentOS 上安装 Axel]
+$ sudo yum install axel
+
+[在 Fedora 上安装 Axel]
+$ sudo dnf install axel
+
+[在 openSUSE 上安装 Axel]
+$ sudo zypper install axel
+
+[在 Mageia 上安装 Axel]
+$ sudo urpmi axel
+
+[在基于 Arch Linux 的发行版安装 Axel]
+$ sudo pacman -S axel
+</code></pre><h3 id=1-下载单个文件>1) 下载单个文件</h3><p>以下命令将从给定的 URL 下载文件并存储在当前目录中，下载文件时，我们可以看到文件的信息（建立的连接数、下载速度、下载进度、完成下载所花费的时间以及连接完成的时间）。</p><pre tabindex=0><code># axel https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+Initializing download: https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+File size: 22678208 bytes
+Opening output file owncloud-9.0.0.tar.bz2
+Starting download
+
+[  0%]  .......... .......... .......... .......... ..........  [ 146.7KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 267.0KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 373.9KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 406.9KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 487.5KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 572.6KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 650.7KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 649.3KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 718.1KB/s]
+[  2%]  .......... .......... .......... .......... ..........  [ 769.3KB/s]
+[  2%]  .......... .......... .......... .......... ..........  [ 838.7KB/s]
+[  2%]  .......... .......... .......... .......... ..........  [ 866.0KB/s]
+Connection 0 finished
+.
+.
+[ 99%]  .......... .......... .......... .......... ..........  [5721.0KB/s]
+Connection 2 finished
+[ 99%]  .......... .......... .......... .......... ..........  [5733.4KB/s]
+Connection 1 finished
+[ 99%]  .......... .......... .......... .......... ..........  [5745.4KB/s]
+[100%]  .......... .......... .......... .......... ......
+
+Downloaded 21.6 megabytes in 3 seconds. (5755.94 KB/s)
+</code></pre><h3 id=2-用不同的名称保存文件>2) 用不同的名称保存文件</h3><p>要使用其他名称来保存文件，启动下载时可以添加 <code>-o</code>（小写字母）选项和文件名。这里我们使用文件名 <code>owncloud.tar.bz2</code> 来保存文件。</p><pre tabindex=0><code># axel -o cloud.tar.bz2 https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+Initializing download: https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+File size: 22678208 bytes
+Opening output file cloud.tar.bz2
+Starting download
+
+[  0%]  .......... .......... .......... .......... ..........  [ 143.0KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 264.1KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 309.8KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 406.3KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 495.4KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 586.3KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 673.1KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 647.1KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 721.1KB/s]
+[  2%]  .......... .......... .......... .......... ..........  [ 781.3KB/s]
+Connection 2 finished
+.
+.
+Connection 0 finished
+[ 98%]  .......... .......... .......... .......... ..........  [6221.9KB/s]
+[ 98%]  .......... .......... .....
+Connection 1 finished
+        ,,,,,,,,,, ,,,,,,,,,, ,,,,,..... .......... ..........  [6145.6KB/s]
+[ 99%]  .......... .......... .......... .......... ..........  [6159.2KB/s]
+[ 99%]  .......... .......... .......... .......... ..........  [6172.0KB/s]
+[ 99%]  .......... .......... .......... .......... ..........  [5977.9KB/s]
+[ 99%]  .......... .......... .......... .......... ..........  [5989.6KB/s]
+[100%]  .......... .......... .......... .......... ......
+
+Downloaded 21.6 megabytes in 3 seconds. (6001.05 KB/s)
+</code></pre><h3 id=3-限制下载速度>3) 限制下载速度</h3><p>默认情况下 axel 以字节/秒为单位设置下载文件的最大速度。当我们的网络连接速度较慢时，可以使用此选项。只需添加 <code>-s</code> 选项，后面跟字节值。这里我们要限速 <code>512 KB/s</code> 下载一个文件。</p><pre tabindex=0><code># axel -s 512000 https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+Initializing download: https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+File size: 22678208 bytes
+Opening output file owncloud-9.0.0.tar.bz2
+Starting download
+
+[  0%]  .......... .......... .......... .......... ..........  [ 141.5KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 266.1KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 308.0KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 405.9KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 496.7KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 526.4KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 507.0KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 505.6KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 504.8KB/s]
+[  2%]  .......... .......... .......... .......... ..........  [ 503.9KB/s]
+[  2%]  .......... .......... .......... .......... ..........  [ 503.4KB/s]
+.
+.
+[ 99%]  .......... .......... .......... .......... ..........  [ 497.0KB/s]
+[ 99%]  .......... .......... .......... .......... ..........  [ 496.9KB/s]
+[100%]  .......... ..
+Connection 0 finished
+        ,,,,,,,,,, ,,.....
+Connection 1 finished
+Connection 3 finished
+        ,,,,,,,,,, ,,,,,,,... .......... .......... ......
+
+Downloaded 21.6 megabytes in 44 seconds. (494.54 KB/s)
+</code></pre><h3 id=4-限制连接数>4) 限制连接数</h3><p>axel 默认建立 4 个连接以从不同的镜像获取文件。此外，我们可以通过使用 <code>-n</code> 选项添加更多的连接，后跟连接数 <code>10</code> 来提高下载速度。保险起见，我们添加了十个连接，但不幸的是，它花了更多时间来下载文件。</p><pre tabindex=0><code># axel -n 10 https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+Initializing download: https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+File size: 22678208 bytes
+Opening output file owncloud-9.0.0.tar.bz2
+Starting download
+
+[  0%]  .......... .......... .......... .......... ..........  [ 140.8KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 265.7KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 305.4KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 402.1KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 496.3KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 522.1KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 567.5KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 640.5KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 710.8KB/s]
+[  2%]  .......... .......... .......... .......... ..........  [ 780.5KB/s]
+.
+.
+[ 98%]  .......... .......... .......... .......... ..........  [7544.9KB/s]
+[ 98%]  .......... .......... .......... .......... ..........  [7557.9KB/s]
+[ 98%]  .......... .......... .......... .......... ..........  [7570.4KB/s]
+[ 98%]  .......... .......... .......... .......... ..........  [7495.3KB/s]
+[ 99%]  .......... .......... .......... .......... ......
+Connection 2 finished
+        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,....  [7311.6KB/s]
+[ 99%]  .......... .......... .......... .......... ..........  [7318.9KB/s]
+[ 99%]  .......... .......... .......... .......... ..........
+Connection 9 finished
+        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,  [7331.0KB/s]
+[ 99%]  .......... .......... .......... ..........
+Connection 3 finished
+        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ..........  [4300.7KB/s]
+[100%]  .......... .......... .......... .......... ......
+
+Downloaded 21.6 megabytes in 5 seconds. (4109.41 KB/s)
+</code></pre><h3 id=5-恢复未完成的下载>5) 恢复未完成的下载</h3><p>axel 默认具有恢复未完成的下载的行为。Axel 在下载文件时定期更新状态文件（扩展名为 <code>.st</code>）。由于某些原因，下载中途停止了？不用担心，只要使用相同的 axel 命令，它将会检查 <code>file</code> 和 <code>file.st</code>，如果找到，它会从停止处恢复下载。</p><pre tabindex=0><code># axel https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+Initializing download: https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+File size: 22678208 bytes
+Opening output file owncloud-9.0.0.tar.bz2
+Starting download
+
+[  0%]  .......... .......... .......... .......... ..........  [ 140.8KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 265.7KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 305.4KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 402.1KB/s]
+[  0%]  .......... .......... .......... .......... ..........  [ 496.3KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 522.1KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 567.5KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 640.5KB/s]
+[  1%]  .......... .......... .......... .......... ..........  [ 710.8KB/s]
+[  2%]  .......... .......... .......... .......... ..........  [ 780.5KB/s]
+.
+.
+[ 84%]  .......... .......... .......... .......... ..........  [7100.7KB/s]
+[ 84%]  .......... .......... .......... .......... ..........  [7104.3KB/s]
+[ 84%]  .......... .......... .......... .^C
+
+Downloaded 18.3 megabytes in 2 seconds. (7009.79 KB/s)
+</code></pre><p>上面的输出清晰地显示了在下载断开时有两个文件 <code>owncloud-9.0.0.tar.bz2</code> 和 <code>owncloud-9.0.0.tar.bz2.st</code>。当重新开始下载时，它会从停止处开始下载。</p><pre tabindex=0><code># ls -lh
+total 19M
+-rw------- 1 root root 22M Dec 27 08:33 owncloud-9.0.0.tar.bz2
+-rw------- 1 root root  44 Dec 27 08:33 owncloud-9.0.0.tar.bz2.st
+
+# axel https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+Initializing download: https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+File size: 22678208 bytes
+Opening output file owncloud-9.0.0.tar.bz2
+State file found: 19180828 bytes downloaded, 3497380 to go.
+Starting download
+
+        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,......... ..........  [  66.5KB/s]
+[ 84%]  .......... .......... .......... .......... ..........  [ 186.0KB/s]
+[ 85%]  .......... .......... .......... .......... ..........  [ 241.7KB/s]
+[ 85%]  .......... .......... .......... .......... ..........  [ 335.6KB/s]
+[ 85%]  .......... .......... .......... .......... ..........  [ 351.5KB/s]
+[ 85%]  .......... .......... .......... .......... ..........  [ 427.1KB/s]
+[ 85%]  .......... .......... .......... .......... ..........  [ 427.4KB/s]
+[ 86%]  .......... .......... .......... .......... ..........  [ 491.5KB/s]
+.
+.
+[ 98%]  ...
+Connection 0 finished
+        ,,,....... .......... .......... .......... ..........  [2106.6KB/s]
+[ 99%]  .......... .......... .......... .......... ..........  [2140.5KB/s]
+[ 99%]  .......... .......... .......... .......... ..........  [2172.4KB/s]
+[ 99%]  .......... .......... .......... .......... ..........  [2203.2KB/s]
+[ 99%]  .......... .......... .......... .......... ..........  [2236.2KB/s]
+[100%]  .......... .......... .......... .......... ......
+
+Downloaded 3415.4 kilobytes in 1 second. (2264.93 KB/s)
+</code></pre><h3 id=6-不显示文件下载进度>6) 不显示文件下载进度</h3><p>如果你不想要看到文件的下载进度，只要在 axel 命令中加入 <code>-q</code> 选项。</p><pre tabindex=0><code># axel -q https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+</code></pre><h3 id=7-替换进度条>7) 替换进度条</h3><p>如果你不喜欢默认的进度条，你可以使用 <code>-a</code> 选项来替换进度条。</p><pre tabindex=0><code># axel -a https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+Initializing download: https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+File size: 22678208 bytes
+Opening output file owncloud-9.0.0.tar.bz2
+Starting download
+
+[ 66%] [......0      ...1        ..........2  ...........3] [   5.8MB/s] [00:01]^C
+
+Downloaded 14.3 megabytes in 2 seconds. (5916.11 KB/s)
+</code></pre><p>我们中断了上面的下载，以便在下载文件时能清楚地显示替代进度条状态。一旦文件成功下载后，你可以看到相同的输出，如下所示。</p><pre tabindex=0><code># axel -a https://download.owncloud.org/community/owncloud-9.0.0.tar.bz2
+File size: 22678208 bytes
+Opening output file owncloud-9.0.0.tar.bz2
+Starting download
+
+Connection 2 finished                                                          ]
+Connection 1 finished                                                          ]
+Connection 3 finished                                                          ]
+Connection 0 finished                                                          ]
+
+Downloaded 21.6 megabytes in 4 seconds. (5062.32 KB/s)
+</code></pre><h3 id=8-了解关于-axel-的更多信息>8) 了解关于 axel 的更多信息</h3><p>如果你想要了解更多关于 axel 的选项，只需要进入它的手册。</p><pre tabindex=0><code># man axel
+或者
+# axel --help
+</code></pre><p>享受吧……</p><hr><p>via: <a href=http://www.2daygeek.com/axel-command-line-downloader-accelerator-for-linux/>http://www.2daygeek.com/axel-command-line-downloader-accelerator-for-linux/</a></p><p>作者：<a href=http://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/jasminepeng>jasminepeng</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/axel/ rel=tag>axel</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E4%B8%8B%E8%BD%BD/ rel=tag>下载</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

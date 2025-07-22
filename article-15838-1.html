@@ -1,0 +1,51 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>编程语言比较：C 和 Go - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="编程语言比较：C 和 Go"><meta property="og:description" content="使用一个简单的计数程序比较古老的 C 语言和现代的 Go 语言。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15838-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-05-23T18:20:10+00:00"><meta property="article:modified_time" content="2023-05-23T18:20:10+00:00"><meta itemprop=name content="编程语言比较：C 和 Go"><meta itemprop=description content="使用一个简单的计数程序比较古老的 C 语言和现代的 Go 语言。"><meta itemprop=datePublished content="2023-05-23T18:20:10+00:00"><meta itemprop=dateModified content="2023-05-23T18:20:10+00:00"><meta itemprop=wordCount content="407"><meta itemprop=keywords content="Go 语言,C 语言,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>编程语言比较：C 和 Go</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-05-23T18:20:10Z>May 23, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202305/23/181943xqq3sbwomkkcia3t.jpg alt></p><blockquote><p>使用一个简单的计数程序比较古老的 C 语言和现代的 Go 语言。</p></blockquote><p>Go 是一种现代编程语言，它很大程度上源自于 C 编程语言。因此，对于写 C 程序的程序员来说，Go 应该会感觉很熟悉。<a href=https://opensource.com/article/17/6/getting-started-go>Go 让编写新程序变得容易</a>，同时让 C 程序员感觉熟悉，但避免了 C 编程语言的许多常见陷阱。</p><p>本文比较了一个简单的 C 和 Go 程序，该程序将数字从一相加到十。由于这个程序只使用了小的数值，所以结果不会变得太大，因此只使用了普通的整数变量。像这样的循环在编程中非常常见，所以这个简单的程序很容易比较 C 和 Go。</p><h3 id=如何在-c-中执行循环>如何在 C 中执行循环</h3><p>C 语言中最基本的循环是 <code>for</code> 循环，它允许你对一组值进行迭代。<code>for</code> 循环的基本语法是：</p><pre tabindex=0><code>for (起始条件 ; 结束条件 ; 每次迭代后执行的操作) { 循环内要执行的内容 ; }
+</code></pre><p>你可以编写一个 <code>for</code> 循环，以打印从 1 到 10 的数字，将起始条件设置为 <code>count = 1</code>，将结束条件设置为 <code>count &lt;= 10</code>。这样就以 <code>count</code> 变量等于 1 时开始循环。结束条件意味着只要 <code>count</code> 变量小于或等于 10 ，循环就会继续。</p><p>每次迭代之后，你使用 <code>count = count + 1</code> 将 <code>count</code> 变量的值增加 1。在循环内部，你可以使用 <code>printf</code> 打印 <code>count</code> 变量的值：</p><pre tabindex=0><code>for (count = 1; count &lt;= 10; count = count + 1) {
+  printf(&#34;%d\n&#34;, count);
+}
+</code></pre><p>C 程序中常见的惯例是 <code>++</code>，它表示 “将某个值加一”。如果你写 <code>count++</code>，那就相当于 <code>count = count + 1</code>。大多数 C 程序员会使用 <code>count++</code> 来编写 <code>for</code> 循环中每次迭代后要执行的操作，像这样：</p><pre tabindex=0><code>for (count = 1; count &lt;= 10; count++) {
+  printf(&#34;%d\n&#34;, count);
+}
+</code></pre><p>这是一个示例程序，将从 1 到 10 的数字相加，然后打印结果。使用 <code>for</code> 循环对数字进行迭代，但不要打印数字，而是将数字添加到 <code>sum</code> 变量中：</p><pre tabindex=0><code>#include &lt;stdio.h&gt;
+
+int main() {
+  int sum;
+  int count;
+  puts(&#34;adding 1 to 10 ..&#34;);
+  sum = 0;
+
+  for (count = 1; count &lt;= 10; count++) {
+    sum = sum + count;
+  }
+</code></pre><p>这个程序使用了两个不同的 C 函数来向用户打印结果。<code>puts</code> 函数打印引号中的字符串。如果你需要打印纯文本，使用 <code>puts</code> 是个不错的选择。</p><p><code>printf</code> <a href="https://www.redhat.com/sysadmin/command-basics-printf?intcmp=7013a000002qLH8AAM">函数</a> 使用特殊字符在格式字符串中打印格式化的输出。<code>printf</code> 函数可以打印许多不同种类的值。关键字 <code>%d</code> 打印十进制（整数）值。</p><p>如果你编译并运行这个程序，你会看到这个输出：</p><pre tabindex=0><code>adding 1 to 10 ..
+The sum is 55
+</code></pre><h3 id=如何在-go-中执行循环>如何在 Go 中执行循环</h3><p>Go 提供了与 C 中非常相似的 <code>for</code> 循环。C 程序中的 <code>for</code> 循环可以直接转换为 Go 的 <code>for</code> 循环，并具有相似的表示形式：</p><pre tabindex=0><code>for count = 1; count &lt;= 10; count++ {
+  fmt.Printf(&#34;%d\n&#34;, count)
+}
+</code></pre><p>使用这个循环，你可以直接转换为 Go 的示例程序：</p><pre tabindex=0><code>package main
+import &#34;fmt&#34;
+
+func main() {
+  var sum, count int
+  fmt.Println(&#34;adding 1 to 10 ..&#34;)
+
+  for count = 1; count &lt;= 10; count++ {
+    sum = sum + count
+  }
+  fmt.Printf(&#34;The sum is %d\n&#34;, sum)
+}
+</code></pre><p>虽然上述方式在 Go 中是正确的，但它并不是最常用的 Go 写法。采用惯例是“使用与本地语言为人所知的表达方式”。任何语言的目标都是高效的沟通，编程语言也不例外。在不同的编程语言之间进行转换时，重要的是意识到尽管物似而意不同，一种编程语言中的典型写法在另一种编程语言中可能不完全相同。</p><p>为使用更符合惯例的 Go，你可以进行几个小修改：</p><ul><li>通过使用 <code>+=</code> 操作符来将 <code>sum = sum + count</code> 更简洁地表达为 <code>sum += count</code>。</li><li>通过使用 <a href=https://go.dev/ref/spec#Short_variable_declarations>分配并推断类型运算符</a> 来表达 <code>count := 1</code> 而不是 <code>var count int</code> 跟着 <code>count = 1</code>。<code>:=</code> 语法同时定义并初始化 <code>count</code> 变量。</li><li>将 <code>count</code> 的声明移到 <code>for</code> 循环的头中。这减少了一些认知负担，也通过减少程序员在任何时候都必须心里记着的变量数目来提高可读性。这个更改还通过在最接近其使用的地方和最小的范围中声明变量来增加安全性，从而减少了在代码不断演进的过程中对变量进行意外操作的可能性。</li></ul><p>上述改动的组合将产生以下代码：</p><pre tabindex=0><code>package main
+import &#34;fmt&#34;
+
+func main() {
+  fmt.Println(&#34;adding 1 to 10 ..&#34;)
+  var sum int
+  for count := 1; count &lt;= 10; count++ {
+    sum += count
+  }
+
+  fmt.Printf(&#34;The sum is %d\n&#34;, sum)
+}
+</code></pre><p>你可以使用这个 Go.dev 的 <a href=https://go.dev/play/p/pt5mfRDR0rh>链接</a> 在 Go 试验场中尝试这个示例程序。</p><h3 id=c-和-go-相似但不同>C 和 Go 相似但不同</h3><p>通过在两种编程语言中编写相同的程序，你可以看到 C 和 Go 这两种语言虽然相似但仍然不同。将从 C 转换到 Go 时需要注意以下几点：</p><ul><li>在 C 中，每个程序指令都必须以分号结尾。这告诉编译器一个语句在哪里结束，下一个在哪里开始。在 Go 中，分号是有效的，但几乎总是可以推断出来。</li><li>虽然大多数现代 C 编译器会为你将变量初始化为零值，但 C 语言规范指出，变量得到的是内存中的任意值。Go 值总是初始化为其零值。这有助于使 Go 成为一种更具内存安全的语言。这种差异在使用指针时变得更加有趣。</li><li>注意 Go 程序包对导入标识符的使用方式。例如，<code>fmt</code> 是一个实现格式化输入和输出的函数，类似于 C 中的 <code>stdio.h</code> 中的 <code>printf</code> 和 <code>scanf</code>。<code>fmt</code> 程序包在 <a href=https://pkg.go.dev/fmt>pkg.go.dev/fmt</a> 中有文档描述。</li><li>在 Go 中，<code>main</code> 函数总是以退出代码 0 返回。如果你希望返回其他值，你必须调用 <code>os.Exit(n)</code>，其中 <code>n</code> 通常为 1 以表示错误。这可以从任何地方调用，不仅仅是 <code>main</code> 函数，来终止程序。你可以在 C 中使用在 <code>stdlib.h</code> 中定义的 <code>exit(n)</code> 函数来实现相同的效果。</li></ul><p><em>（题图：MJ/8f731484-2dc3-4bac-b895-cbc92a63b48b）</em></p><hr><p>via: <a href=https://opensource.com/article/23/4/c-vs-go-programming-languages>https://opensource.com/article/23/4/c-vs-go-programming-languages</a></p><p>作者：<a href=https://opensource.com/users/jim-hall>Jim Hall</a> 选题：<a href=https://github.com/lkxed/>lkxed</a> 译者：ChatGPT 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/go-%E8%AF%AD%E8%A8%80/ rel=tag>Go 语言</a></li><li class=tags__item><a class="tags__link btn" href=/tags/c-%E8%AF%AD%E8%A8%80/ rel=tag>C 语言</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

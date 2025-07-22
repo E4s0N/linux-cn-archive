@@ -1,0 +1,68 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>14 个 grep 命令的例子 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="14 个 grep 命令的例子"><meta property="og:description" content="概述： 所有的类linux系统都会提供一个名为grep(global regular expression print，全局正则表达式输出)的搜索工具。grep命令在对一个或多个文件的内容进行基于模式的搜索的情况下是非常有用的。模式可以是单个字符、多个字符、单个单词、或者是一个句子。 当命令匹配到执行命令时指定的模式时，grep会将包含模式的一行输出，但是并不对原文件内容进行修改。  在本文中，我们将会讨论到14个grep命令的例子。 例1 在文件中查找模式（单词） 在/etc/passwd文件中查找单词linuxtechi root@Linux-world:~# grep linuxtechi /etc/passwd linuxt"><meta property="og:type" content="article"><meta property="og:url" content="/article-5453-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-05-17T08:10:00+00:00"><meta property="article:modified_time" content="2015-05-17T08:10:00+00:00"><meta itemprop=name content="14 个 grep 命令的例子"><meta itemprop=description content="概述： 所有的类linux系统都会提供一个名为grep(global regular expression print，全局正则表达式输出)的搜索工具。grep命令在对一个或多个文件的内容进行基于模式的搜索的情况下是非常有用的。模式可以是单个字符、多个字符、单个单词、或者是一个句子。 当命令匹配到执行命令时指定的模式时，grep会将包含模式的一行输出，但是并不对原文件内容进行修改。  在本文中，我们将会讨论到14个grep命令的例子。 例1 在文件中查找模式（单词） 在/etc/passwd文件中查找单词linuxtechi root@Linux-world:~# grep linuxtechi /etc/passwd linuxt"><meta itemprop=datePublished content="2015-05-17T08:10:00+00:00"><meta itemprop=dateModified content="2015-05-17T08:10:00+00:00"><meta itemprop=wordCount content="220"><meta itemprop=keywords content="grep,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>14 个 grep 命令的例子</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-05-17T08:10:00Z>May 17, 2015</time></div></div></header><div class="content post__content clearfix"><h3 id=概述>概述：</h3><p>所有的类linux系统都会提供一个名为**grep(global regular expression print，全局正则表达式输出)**的搜索工具。grep命令在对一个或多个文件的内容进行基于模式的搜索的情况下是非常有用的。模式可以是单个字符、多个字符、单个单词、或者是一个句子。</p><p>当命令匹配到执行命令时指定的模式时，grep会将包含模式的一行输出，但是并不对原文件内容进行修改。</p><p><img src=/data/attachment/album/201505/16/231734coi0os7nr0frpas6.png alt></p><p>在本文中，我们将会讨论到14个grep命令的例子。</p><h3 id=例1-在文件中查找模式单词>例1 在文件中查找模式（单词）</h3><p>在/etc/passwd文件中查找单词“linuxtechi”</p><pre tabindex=0><code>root@Linux-world:~# grep linuxtechi /etc/passwd
+linuxtechi:x:1000:1000:linuxtechi,,,:/home/linuxtechi:/bin/bash
+root@Linux-world:~#
+</code></pre><h3 id=例2-在多个文件中查找模式>例2 在多个文件中查找模式。</h3><pre tabindex=0><code>root@Linux-world:~# grep linuxtechi /etc/passwd /etc/shadow /etc/gshadow
+/etc/passwd:linuxtechi:x:1000:1000:linuxtechi,,,:/home/linuxtechi:/bin/bash
+/etc/shadow:linuxtechi:$6$DdgXjxlM$4flz4JRvefvKp0DG6re:16550:0:99999:7:::/etc/gshadow:adm:*::syslog,linuxtechi
+/etc/gshadow:cdrom:*::linuxtechi
+/etc/gshadow:sudo:*::linuxtechi
+/etc/gshadow:dip:*::linuxtechi
+/etc/gshadow:plugdev:*::linuxtechi
+/etc/gshadow:lpadmin:!::linuxtechi
+/etc/gshadow:linuxtechi:!::
+/etc/gshadow:sambashare:!::linuxtechi
+root@Linux-world:~#
+</code></pre><h3 id=例3-使用-l参数列出包含指定模式的文件的文件名>例3 使用-l参数列出包含指定模式的文件的文件名。</h3><pre tabindex=0><code>root@Linux-world:~# grep -l linuxtechi /etc/passwd /etc/shadow /etc/fstab /etc/mtab
+/etc/passwd
+/etc/shadow
+root@Linux-world:~#
+</code></pre><h3 id=例4-使用-n参数在文件中查找指定模式并显示匹配行的行号>例4 使用-n参数，在文件中查找指定模式并显示匹配行的行号</h3><pre tabindex=0><code>root@Linux-world:~# grep -n linuxtechi /etc/passwd
+39:linuxtechi:x:1000:1000:linuxtechi,,,:/home/linuxtechi:/bin/bash
+root@Linux-world:~#
+</code></pre><pre tabindex=0><code>root@Linux-world:~# grep -n root /etc/passwd /etc/shadow
+</code></pre><p><img src=/data/attachment/album/201505/16/231736j4b1apg41e84f4wg.jpg alt></p><h3 id=例5-使用-v参数输出不包含指定模式的行>例5 使用-v参数输出不包含指定模式的行</h3><p>输出/etc/passwd文件中所有不含单词“linuxtechi”的行</p><pre tabindex=0><code>root@Linux-world:~# grep -v linuxtechi /etc/passwd
+</code></pre><p><img src=/data/attachment/album/201505/16/231737ar52q4cg8q4lm914.jpg alt></p><h3 id=例6-使用--符号输出所有以某指定模式开头的行>例6 使用 ^ 符号输出所有以某指定模式开头的行</h3><p>Bash脚本将 ^ 符号视作特殊字符，用于指定一行或者一个单词的开始。例如输出/etc/passes文件中所有以“root”开头的行</p><pre tabindex=0><code>root@Linux-world:~# grep ^root /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+root@Linux-world:~#
+</code></pre><h3 id=例7-使用--符号输出所有以指定模式结尾的行>例7 使用 $ 符号输出所有以指定模式结尾的行。</h3><p>输出/etc/passwd文件中所有以“bash”结尾的行。</p><pre tabindex=0><code>root@Linux-world:~# grep bash$ /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+linuxtechi:x:1000:1000:linuxtechi,,,:/home/linuxtechi:/bin/bash
+root@Linux-world:~#
+</code></pre><p>Bash脚本将美元($)符号视作特殊字符，用于指定一行或者一个单词的结尾。</p><h3 id=例8-使用--r-参数递归地查找特定模式>例8 使用 -r 参数递归地查找特定模式</h3><pre tabindex=0><code>root@Linux-world:~# grep -r linuxtechi /etc/
+/etc/subuid:linuxtechi:100000:65536
+/etc/group:adm:x:4:syslog,linuxtechi
+/etc/group:cdrom:x:24:linuxtechi
+/etc/group:sudo:x:27:linuxtechi
+/etc/group:dip:x:30:linuxtechi
+/etc/group:plugdev:x:46:linuxtechi
+/etc/group:lpadmin:x:115:linuxtechi
+/etc/group:linuxtechi:x:1000:
+/etc/group:sambashare:x:131:linuxtechi
+/etc/passwd-:linuxtechi:x:1000:1000:linuxtechi,,,:/home/linuxtechi:/bin/bash
+/etc/passwd:linuxtechi:x:1000:1000:linuxtechi,,,:/home/linuxtechi:/bin/bash
+............................................................................
+</code></pre><p>上面的命令将会递归的在/etc目录中查找“linuxtechi”单词</p><h3 id=例9-使用-grep-查找文件中所有的空行>例9 使用 grep 查找文件中所有的空行</h3><pre tabindex=0><code>root@Linux-world:~# grep ^$ /etc/shadow
+root@Linux-world:~#
+</code></pre><p>由于/etc/shadow文件中没有空行，所以没有任何输出</p><h3 id=例10-使用--i-参数查找模式>例10 使用 -i 参数查找模式</h3><p>grep命令的-i参数在查找时忽略字符的大小写。</p><p>我们来看一个例子，在paswd文件中查找“LinuxTechi”单词。</p><pre tabindex=0><code>nextstep4it@localhost:~$ grep -i LinuxTechi /etc/passwd
+linuxtechi:x:1001:1001::/home/linuxtechi:/bin/bash
+nextstep4it@localhost:~$
+</code></pre><h3 id=例11-使用--e-参数查找多个模式>例11 使用 -e 参数查找多个模式</h3><p>例如，我想在一条grep命令中查找‘linuxtechi’和‘root’单词，使用-e参数，我们可以查找多个模式。</p><pre tabindex=0><code>root@Linux-world:~# grep -e &#34;linuxtechi&#34; -e &#34;root&#34; /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+linuxtechi:x:1000:1000:linuxtechi,,,:/home/linuxtechi:/bin/bash
+root@Linux-world:~#
+</code></pre><h3 id=例12-使用--f-用文件指定待查找的模式>例12 使用 -f 用文件指定待查找的模式</h3><p>首先，在当前目录中创建一个搜索模式文件“grep_pattern”，我想文件中输入的如下内容。</p><pre tabindex=0><code>root@Linux-world:~# cat grep_pattern
+^linuxtechi
+root
+false$
+root@Linux-world:~#
+</code></pre><p>现在，试试使用grep_pattern文件进行搜索</p><pre tabindex=0><code>root@Linux-world:~# grep -f grep_pattern /etc/passwd
+</code></pre><p><img src=/data/attachment/album/201505/16/231738r8awtkvpewkearr8.jpg alt></p><h3 id=例13-使用--c-参数计算模式匹配到的数量>例13 使用 -c 参数计算模式匹配到的数量</h3><p>继续上面例子，我们在grep命令中使用-c命令计算匹配指定模式的数量</p><pre tabindex=0><code>root@Linux-world:~# grep -c -f grep_pattern /etc/passwd
+22
+root@Linux-world:~#
+</code></pre><h3 id=例14-输出匹配指定模式行的前或者后面n行>例14 输出匹配指定模式行的前或者后面N行</h3><p>a)使用-B参数输出匹配行的前4行</p><pre tabindex=0><code>root@Linux-world:~# grep -B 4 &#34;games&#34; /etc/passwd
+</code></pre><p><img src=/data/attachment/album/201505/16/231738a6955ls928ii68iu.jpg alt></p><p>b)使用-A参数输出匹配行的后4行</p><pre tabindex=0><code>root@Linux-world:~# grep -A 4 &#34;games&#34; /etc/passwd
+</code></pre><p><img src=/data/attachment/album/201505/16/231739e8d68vwzp8df0xs9.jpg alt></p><p>c)使用-C参数输出匹配行的前后各4行</p><pre tabindex=0><code>root@Linux-world:~# grep -C 4 &#34;games&#34; /etc/passwd
+</code></pre><p><img src=/data/attachment/album/201505/16/231739zz9ixw1xb26iiix1.jpg alt></p><hr><p>via: <a href=http://www.linuxtechi.com/linux-grep-command-with-14-different-examples/>http://www.linuxtechi.com/linux-grep-command-with-14-different-examples/</a></p><p>作者：<a href=http://www.linuxtechi.com/author/pradeep/>Pradeep Kumar</a> 译者：<a href=https://github.com/cvsher>cvsher</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/grep/ rel=tag>grep</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

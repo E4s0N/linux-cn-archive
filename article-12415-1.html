@@ -1,0 +1,52 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Linux 实用程序 gPhoto2 备份手机存储 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Linux 实用程序 gPhoto2 备份手机存储"><meta property="og:description" content="尽情地拍照吧，gphoto2 能够方便、快速地将照片从你的设备传输到 Linux 计算机上。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12415-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-07-14T17:07:41+00:00"><meta property="article:modified_time" content="2020-07-14T17:07:41+00:00"><meta itemprop=name content="使用 Linux 实用程序 gPhoto2 备份手机存储"><meta itemprop=description content="尽情地拍照吧，gphoto2 能够方便、快速地将照片从你的设备传输到 Linux 计算机上。"><meta itemprop=datePublished content="2020-07-14T17:07:41+00:00"><meta itemprop=dateModified content="2020-07-14T17:07:41+00:00"><meta itemprop=wordCount content="365"><meta itemprop=keywords content="手机,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Linux 实用程序 gPhoto2 备份手机存储</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-07-14T17:07:41Z>July 14, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>尽情地拍照吧，gphoto2 能够方便、快速地将照片从你的设备传输到 Linux 计算机上。</p></blockquote><p><img src=/data/attachment/album/202007/14/170729pzljppapojy44ro4.jpg alt></p><p>移动设备的最大缺点之一就是其将数据从设备传输到计算机很困难。移动设备在这一缺点上有着悠久的历史。早期的移动设备，如 Pilot 和掌上电脑 PDA 设备，需要使用特殊的同步软件来传输数据（你必须小心翼翼地做这件事，因为你的设备可能会因为电池耗尽而导致数据永久丢失）；旧版 iPod 只提供特定平台的界面。现代移动设备默认将你的数据发送到在线帐户，以便你可以在计算机上再次下载。</p><p>好消息——如果你正在运行 Linux，你可以使用 <code>gphoto2</code> 命令与移动设备进行连接。<code>gphoto2</code> 最初是作为一种与数码相机通信的方式而开发的，那时的数码相机只有传统的相机功能，现在的 <code>gphoto2</code> 可以和许多不同种类的移动设备通讯。别让这个名字骗了你，它可以处理所有类型的文件，而不仅仅是照片。更棒的是，它可以编写脚本、很灵活、并且比大多数 GUI 界面功能强大得多。</p><p>如果你曾经为在计算机和移动设备之间同步数据而苦恼，请了解一下 <code>gphoto2</code>。</p><h3 id=安装-gphoto2>安装 gPhoto2</h3><p>很可能你的 Linux 系统已经安装了 libgphoto2，因为它是与移动设备连接的一个关键库，但你可能还需要安装命令 <code>gphoto2</code>，该命令可能在你的存储库中。</p><p>在 Fedora 或 RHEL 上：</p><pre tabindex=0><code>$ sudo dnf install gphoto2
+</code></pre><p>在 Debian 或 Ubuntu 上：</p><pre tabindex=0><code>$ sudo apt install gphoto2
+</code></pre><h3 id=验证兼容性>验证兼容性</h3><p>若要确认你的移动设备是否受支持，请使用 <code>--list-cameras</code>，通过管道传输到 <code>less</code>：</p><pre tabindex=0><code>$ gPhoto2 --list-cameras | less
+</code></pre><p>或者你可以通过管道把它传送到 <code>grep</code> 来搜索一个词。例如，如果你有三星 Galaxy，则使用 <code>grep</code>，并通过选项 <code>-i</code> 关闭区分大小写：</p><pre tabindex=0><code>$ gphoto2 --list-cameras | grep -i galaxy
+  &#34;Samsung Galaxy models (MTP)&#34;
+  &#34;Samsung Galaxy models (MTP+ADB)&#34;
+  &#34;Samsung Galaxy models Kies mode&#34;
+</code></pre><p>这证实了三星 Galaxy 设备支持通过 MTP 连接和通过 ADB 连接 MTP。</p><p>如果你没有在列表中找到自己的移动设备，你仍然可以尝试使用 <code>gphoto2</code>，可能你的设备在列表中使用了不同的称呼。</p><h3 id=查找移动设备>查找移动设备</h3><p>要使用 gPhoto2，首先必须将移动设备插入计算机，设置为 MTP 模式，并且授予计算机与它交互的权限。这通常需要在你的移动设备上操作，往往是在屏幕上按下一个按钮，以允许其文件系统被刚刚连接的计算机访问。</p><p><img src=/data/attachment/album/202007/14/170754bykbnl4mkk6zemw1.jpg alt="Screenshot of allow access message" title="Screenshot of allow access message"></p><p>如果你不授权电脑访问移动设备，那么 gPhoto2 可以检测到你的移动设备，但它不能与之交互。</p><p>要确保计算机检测到你连接的移动设备，请使用 <code>--auto-detect</code> 选项：</p><pre tabindex=0><code>$ gphoto2 --auto-detect
+Model                       Port
+---------------------------------------
+Samsung Galaxy models (MTP) usb:002,010
+</code></pre><p>如果你的移动设备没有被检测到，请先检查数据线，然后检查你的设备是否配置为通过 MTP、ADB 或其它 gPhoto2 支持的协议连接，如 <code>--list-cameras</code> 所示。</p><h3 id=查询你的设备支持的特性>查询你的设备支持的特性</h3><p>对于现代设备，通常有过多的潜在功能，但并非所有移动设备都支持这些功能。你可以用 <code>--abilities</code> 选项来确定自己的移动设备支持哪些功能。我觉得结果看起来直观。</p><pre tabindex=0><code>$ gphoto2 --abilities
+Abilities for camera            : Samsung Galaxy models (MTP)
+Serial port support             : no
+USB support                     : yes
+Capture choices                 : Capture not supported by driver
+Configuration support           : no
+Delete selected files on camera : yes
+Delete all files on camera      : no
+File preview (thumbnail) support: no
+File upload support             : yes
+</code></pre><p>如果只连接一个设备，那么不需要指定查询的设备。但是，如果连接了多个 gPhoto2 可以与之交互的设备，则可以通过端口、相机型号或 usbid 指定设备。</p><h3 id=与你的移动设备交互>与你的移动设备交互</h3><p>如果你的设备支持拍摄功能，则可以从计算机调用你的摄像头来获取媒体。例如，要拍摄照片：</p><pre tabindex=0><code>$ gphoto2 --capture-image
+</code></pre><p>要拍摄照片并立即将其传输到连接的计算机：</p><pre tabindex=0><code>$ gphoto2 --capture-image-and-download
+</code></pre><p>你也可以录制视频和声音。如果连接了多个拍摄设备，可以按端口、相机型号或 usbid 指定要使用的设备：</p><pre tabindex=0><code>$ gphoto2 --camera &#34;Samsung Galaxy models (MTP)&#34; \
+--capture-image-and-download
+</code></pre><h3 id=文件和文件夹>文件和文件夹</h3><p>要想更加智能地管理移动设备上的文件，你需要了解 gPhoto2 连接的文件系统的结构。</p><p>你可以使用 <code>--get-folders</code> 选项查看可用文件夹：</p><pre tabindex=0><code>$ gphoto2 --list-folders
+There are 2 folders in folder &#39;/&#39;.                                            
+ - store_00010001
+ - store_00020002
+There are 0 folders in folder &#39;/store_00010001&#39;.
+There are 0 folders in folder &#39;/store_00020002&#39;.
+</code></pre><p>每个文件夹代表设备上的一个存储单元。在本例中，<code>store_00010001</code> 是内部存储器，<code>store_00020002</code> 是 SD 卡，这可能与你的设备的结构不同。</p><h3 id=获取文件>获取文件</h3><p>现在你知道了设备的文件夹布局，就可以从设备获取照片了。你可以使用许多不同的选项，具体取决于你想从设备中获取什么。</p><p>如果你知道绝对路径，则可以获取指定的文件：</p><pre tabindex=0><code>$ gphoto2 --get-file IMG_0001.jpg --folder /store_00010001/myphotos
+</code></pre><p>你可以同时获得所有的文件：</p><pre tabindex=0><code>$ gphoto2 --get-all-files --folder /store_00010001/myfiles
+</code></pre><p>你可以只获取音频文件：</p><pre tabindex=0><code>gphoto2 --get-all-audio-data --folder /store_00010001/mysounds
+</code></pre><p>gPhoto2 还有其他的选择，其中大多数取决于你连接的设备和使用协议是否支持。</p><h3 id=上传文件>上传文件</h3><p>现在你知道了潜在的目标文件夹，就可以将文件从计算机上传到你的设备。例如，假设有一个名为 <code>example.epub</code> 的文件在当前目录中，你可以使用 <code>--upload-file</code> 选项和 <code>--folder</code> 选项将文件发送到设备并指定要上传到的目录：</p><pre tabindex=0><code>$ gphoto2 --upload file example.epub \
+--folder store_00010001
+</code></pre><p>如果你希望将多个文件上传到同一个位置，你可以在设备上创建一个目录：</p><pre tabindex=0><code>$ gphoto2 --mkdir books \
+--folder store_00010001
+$ gphoto2 --upload-file *.epub \
+--folder store_00010001/books
+</code></pre><h3 id=列出文件>列出文件</h3><p>若要查看设备上的文件，请使用 <code>--list-files</code> 选项：</p><pre tabindex=0><code>$ gphoto2 --list-files --folder /store_00010001
+There is 1 file in folder &#39;/store_00010001&#39;
+#1     example.epub 17713 KB application/x-unknown
+$ gphoto2 --list-files --folder /store_00010001/books
+There is 1 file in folder &#39;/store_00010001&#39;
+#1    example0.epub 17713 KB application/x-unknown
+#2    example1.epub 12264 KB application/x-unknown
+[...]
+</code></pre><h3 id=探索你的使用方式>探索你的使用方式</h3><p>gPhoto2 的大部分功能取决于你的设备，因此不同用户的体验可能不尽相同。在 <code>gphoto2 --help</code> 中列出了许多操作供你探索。使用gPhoto2，再也不用费劲把文件从你的设备传输到电脑上了！</p><p>这些开源图片库能够帮助你组织文件，并让的图片看起来很棒。</p><hr><p>via: <a href=https://opensource.com/article/20/7/gphoto2-linux>https://opensource.com/article/20/7/gphoto2-linux</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/summer2233>summer2233</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%89%8B%E6%9C%BA/ rel=tag>手机</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,86 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Go 数组和切片的介绍 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Go 数组和切片的介绍"><meta property="og:description" content="了解使用数组和切片在 Go 中存储数据的优缺点，以及为什么其中一个更好。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14665-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-06-02T10:57:00+00:00"><meta property="article:modified_time" content="2022-06-02T10:57:00+00:00"><meta itemprop=name content="Go 数组和切片的介绍"><meta itemprop=description content="了解使用数组和切片在 Go 中存储数据的优缺点，以及为什么其中一个更好。"><meta itemprop=datePublished content="2022-06-02T10:57:00+00:00"><meta itemprop=dateModified content="2022-06-02T10:57:00+00:00"><meta itemprop=wordCount content="414"><meta itemprop=keywords content="Go,数组,切片,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Go 数组和切片的介绍</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-06-02T10:57:00Z>June 02, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202206/02/105657zahhco3612vv1bbo.jpg alt></p><blockquote><p>了解使用数组和切片在 Go 中存储数据的优缺点，以及为什么其中一个更好。</p></blockquote><p>在本系列的第四篇文章中，我将解释 <a href=https://golang.org/>Go</a> 数组和切片，包括如何使用它们，以及为什么你通常要选择其中一个而不是另一个。</p><h3 id=数组>数组</h3><p>数组是编程语言中最流行的数据结构之一，主要原因有两个：一是简单易懂，二是可以存储许多不同类型的数据。</p><p>你可以声明一个名为 <code>anArray</code> 的 Go 数组，该数组存储四个整数，如下所示：</p><pre tabindex=0><code>anArray := [4]int{-1, 2, 0, -4}
+</code></pre><p>数组的大小应该在它的类型之前声明，而类型应该在声明元素之前定义。<code>len()</code> 函数可以帮助你得到任何数组的长度。上面数组的大小是 4。</p><p>如果你熟悉其他编程语言，你可能会尝试使用 <code>for</code> 循环来遍历数组。Go 当然也支持 <code>for</code> 循环，不过，正如你将在下面看到的，Go 的 <code>range</code> 关键字可以让你更优雅地遍历数组或切片。</p><p>最后，你也可以定义一个二维数组，如下：</p><pre tabindex=0><code>twoD := [3][3]int{
+  {1, 2, 3},
+  {6, 7, 8},
+  {10, 11, 12}}
+</code></pre><p><code>arrays.go</code> 源文件中包含了 Go 数组的示例代码。其中最重要的部分是：</p><pre tabindex=0><code>for i := 0; i &lt; len(twoD); i++ {
+  k := twoD[i]
+  for j := 0; j &lt; len(k); j++ {
+    fmt.Print(k[j], &#34; &#34;)
+  }
+  fmt.Println()
+}
+
+for _, a := range twoD {
+  for _, j := range a {
+    fmt.Print(j, &#34; &#34;)
+  }
+  fmt.Println()
+}
+</code></pre><p>通过上述代码，我们知道了如何使用 <code>for</code> 循环和 <code>range</code> 关键字迭代数组的元素。<code>arrays.go</code> 的其余代码则展示了如何将数组作为参数传递给函数。</p><p>以下是 <code>arrays.go</code> 的输出：</p><pre tabindex=0><code>$ go run arrays.go
+Before change(): [-1 2 0 -4]
+After change(): [-1 2 0 -4]
+1 2 3
+6 7 8
+10 11 12
+1 2 3
+6 7 8
+10 11 12
+</code></pre><p>这个输出告诉我们：对函数内的数组所做的更改，会在函数退出后丢失。</p><h3 id=数组的缺点>数组的缺点</h3><p>Go 数组有很多缺点，你应该重新考虑是否要在 Go 项目中使用它们。</p><p>首先，数组定义之后，大小就无法改变，这意味着 Go 数组不是动态的。简而言之，如果你需要将一个元素添加到一个没有剩余空间的数组中，你将需要创建一个更大的数组，并将旧数组的所有元素复制到新数组中。</p><p>其次，当你将数组作为参数传递给函数时，实际上是传递了数组的副本，这意味着你对函数内部的数组所做的任何更改，都将在函数退出后丢失。</p><p>最后，将大数组传递给函数可能会很慢，主要是因为 Go 必须创建数组的副本。</p><p>以上这些问题的解决方案，就是使用 Go 切片。</p><h3 id=切片>切片</h3><p>Go 切片与 Go 数组类似，但是它没有后者的缺点。</p><p>首先，你可以使用 <code>append()</code> 函数将元素添加到现有切片中。此外，Go 切片在内部使用数组实现，这意味着 Go 中每个切片都有一个底层数组。</p><p>切片具有 <code>capacity</code> 属性和 <code>length</code> 属性，它们并不总是相同的。切片的长度与元素个数相同的数组的长度相同，可以使用 <code>len()</code> 函数得到。切片的容量是当前为切片分配的空间，可以使用 <code>cap()</code> 函数得到。</p><p>由于切片的大小是动态的，如果切片空间不足（也就是说，当你尝试再向切片中添加一个元素时，底层数组的长度恰好与容量相等），Go 会自动将它的当前容量加倍，使其空间能够容纳更多元素，然后将请求的元素添加到底层数组中。</p><p>此外，切片是通过引用传递给函数的，这意味着实际传递给函数的是切片变量的内存地址，这样一来，你对函数内部的切片所做的任何修改，都不会在函数退出后丢失。因此，将大切片传递给函数，要比将具有相同数量元素的数组传递给同一函数快得多。这是因为 Go 不必拷贝切片 —— 它只需传递切片变量的内存地址。</p><p><code>slice.go</code> 源文件中有 Go 切片的代码示例，其中包含以下代码：</p><pre tabindex=0><code>package main
+
+import (
+  &#34;fmt&#34;
+)
+
+func negative(x []int) {
+  for i, k := range x {
+    x[i] = -k
+  }
+}
+
+func printSlice(x []int) {
+  for _, number := range x {
+    fmt.Printf(&#34;%d &#34;, number)
+  }
+  fmt.Println()
+}
+
+func main() {
+  s := []int{0, 14, 5, 0, 7, 19}
+  printSlice(s)
+  negative(s)
+  printSlice(s)
+
+  fmt.Printf(&#34;Before. Cap: %d, length: %d\n&#34;, cap(s), len(s))
+  s = append(s, -100)
+  fmt.Printf(&#34;After. Cap: %d, length: %d\n&#34;, cap(s), len(s))
+  printSlice(s)
+
+  anotherSlice := make([]int, 4)
+  fmt.Printf(&#34;A new slice with 4 elements: &#34;)
+  printSlice(anotherSlice)
+}
+</code></pre><p>切片和数组在定义方式上的最大区别就在于：你不需要指定切片的大小。实际上，切片的大小取决于你要放入其中的元素数量。此外，<code>append()</code> 函数允许你将元素添加到现有切片 —— 请注意，即使切片的容量允许你将元素添加到该切片，它的长度也不会被修改，除非你调用 <code>append()</code>。上述代码中的 <code>printSlice()</code> 函数是一个辅助函数，用于打印切片中的所有元素，而 <code>negative()</code> 函数将切片中的每个元素都变为各自的相反数。</p><p>运行 <code>slice.go</code> 将得到以下输出：</p><pre tabindex=0><code>$ go run slice.go
+0 14 5 0 7 19
+0 -14 -5 0 -7 -19
+Before. Cap: 6, length: 6
+After. Cap: 12, length: 7
+0 -14 -5 0 -7 -19 -100
+A new slice with 4 elements: 0 0 0 0
+</code></pre><p>请注意，当你创建一个新切片，并为给定数量的元素分配内存空间时，Go 会自动地将所有元素都初始化为其类型的零值，在本例中为 0（<code>int</code> 类型的零值）。</p><h3 id=使用切片来引用数组>使用切片来引用数组</h3><p>Go 允许你使用 <code>[:]</code> 语法，使用切片来引用现有的数组。在这种情况下，你对切片所做的任何更改都将传播到数组中 —— 详见 <code>refArray.go</code>。请记住，使用 <code>[:]</code> 不会创建数组的副本，它只是对数组的引用。</p><p><code>refArray.go</code> 中最有趣的部分是：</p><pre tabindex=0><code>func main() {
+  anArray := [5]int{-1, 2, -3, 4, -5}
+  refAnArray := anArray[:]
+
+  fmt.Println(&#34;Array:&#34;, anArray)
+  printSlice(refAnArray)
+  negative(refAnArray)
+  fmt.Println(&#34;Array:&#34;, anArray)
+}
+</code></pre><p>运行 <code>refArray.go</code>，输出如下：</p><pre tabindex=0><code>$ go run refArray.go
+Array: [-1 2 -3 4 -5]
+-1 2 -3 4 -5
+Array: [1 -2 3 -4 5]
+</code></pre><p>我们可以发现：对 <code>anArray</code> 数组的切片引用进行了操作后，它本身也被改变了。</p><h3 id=总结>总结</h3><p>尽管 Go 提供了数组和切片两种类型，你很可能还是会使用切片，因为它们比 Go 数组更加通用、强大。只有少数情况需要使用数组而不是切片，特别是当你完全确定元素的数量固定不变时。</p><p>你可以在 <a href=https://github.com/mactsouk/opensource.com>GitHub</a> 上找到 <code>arrays.go</code>、<code>slice.go</code> 和 <code>refArray.go</code> 的源代码。</p><p>如果你有任何问题或反馈，请在下方发表评论或在 <a href=https://twitter.com/mactsouk>Twitter</a> 上与我联系。</p><hr><p>via: <a href=https://opensource.com/article/18/7/introduction-go-arrays-and-slices>https://opensource.com/article/18/7/introduction-go-arrays-and-slices</a></p><p>作者：<a href=https://opensource.com/users/mtsouk>Mihalis Tsoukalos</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/lkxed>lkxed</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/go/ rel=tag>Go</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%B0%E7%BB%84/ rel=tag>数组</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%88%87%E7%89%87/ rel=tag>切片</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

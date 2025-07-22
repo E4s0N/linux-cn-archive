@@ -1,0 +1,43 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>pipx：在虚拟环境中运行 Python 应用 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="pipx：在虚拟环境中运行 Python 应用"><meta property="og:description" content="通过使用 pipx 隔离运行 Python 应用来避免版本冲突并提高安全性。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13631-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-07-29T20:52:00+00:00"><meta property="article:modified_time" content="2021-07-29T20:52:00+00:00"><meta itemprop=name content="pipx：在虚拟环境中运行 Python 应用"><meta itemprop=description content="通过使用 pipx 隔离运行 Python 应用来避免版本冲突并提高安全性。"><meta itemprop=datePublished content="2021-07-29T20:52:00+00:00"><meta itemprop=dateModified content="2021-07-29T20:52:00+00:00"><meta itemprop=wordCount content="266"><meta itemprop=keywords content="Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>pipx：在虚拟环境中运行 Python 应用</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-07-29T20:52:00Z>July 29, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>通过使用 pipx 隔离运行 Python 应用来避免版本冲突并提高安全性。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202107/29/205146cpwgxnnpgu44gxz0.jpg alt title="Digital creative of a browser on the internet"></p><p>如果你使用 Python，你可能会安装很多 Python 应用。有些是你只想尝试的工具。还有一些是你每天都在使用的久经考验的应用，所以你把它们安装在你使用的每一台计算机上。这两种情况下，在虚拟环境中运行你的 Python 应用是非常有用的，这可以使它们以及它们的依赖关系相互分离，以避免版本冲突，并使它们与你系统的其它部分隔离，以提高安全性。</p><p>这就是 <a href=https://pypi.org/project/pipx/>pipx</a> 出场的地方。</p><p>大多数 Python 应用可以使用 <a href=https://pypi.org/project/pip/>pip</a> 进行安装，它只安装 Python 包。然而，<code>pipx</code> 为你的 Python 应用创建并管理一个虚拟环境，并帮助你运行它们。</p><h3 id=安装-pipx>安装 pipx</h3><p><code>pipx</code> 主要是一个 RPM 包，你可以在任何 Fedora、RHEL 或 CentOS 机器上安装它：</p><pre tabindex=0><code>$ sudo dnf install pipx
+</code></pre><h3 id=使用-pipx>使用 pipx</h3><p>我将通过 Cowsay 以及 <a href=https://opensource.com/article/20/8/python-concentration>Concentration</a> 工具演示如何使用 <code>pipx</code>。</p><h4 id=安装软件包>安装软件包</h4><p>安装完 <code>pipx</code> 后，你可以用以下方法安装 Python 包：</p><pre tabindex=0><code>$ pipx install &lt;python_package&gt;
+</code></pre><p>要安装 Cowsay 包：</p><pre tabindex=0><code>$ pipx install cowsay                         ✔ │ 20:13:41 
+ installed package cowsay 4.0, Python 3.9.5
+ These apps are now globally available
+    - cowsay
+done! ✨ ? ✨
+</code></pre><p>现在你可以在系统的任何地方运行 Cowsay，通过终端与你对话！</p><pre tabindex=0><code>$ cowsay &#34;I &lt;3 OSDC&#34;                         
+  _________
+| I &lt;3 OSDC |
+  =========
+        \
+        \
+                ^__^
+                (oo)\_______
+                (__)\           )\/\
+                ||----w |
+                ||      ||
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202107/29/205239brl9k5ooz59tld7l.png alt=Cowsay title=Cowsay></p><h4 id=以特殊权限进行安装>以特殊权限进行安装</h4><p>不是所有的应用都像 Cowsay 一样简单。例如，Concentration 会与你系统中的许多其他组件交互，所以它需要特殊的权限。用以下方式安装它：</p><pre tabindex=0><code>$ pipx install concentration                                      ✔ │ 10s │ │ 20:26:12 
+ installed package concentration 1.1.5, Python 3.9.5
+ These apps are now globally available
+    - concentration
+done! ✨ ? ✨
+</code></pre><p>Concentration 通过阻止 <code>distractors</code> 文件中列出的特定网站来帮助你集中注意力。要做到这点，它需要以 <code>sudo</code> 或 root 权限运行。你可以用 <a href=https://github.com/Duncaen/OpenDoas>OpenDoas</a> 来做到这点，这是 <code>doas</code> 命令的一个版本，可以用特定的用户权限运行任何命令。要使用 <code>doas</code> 以 <code>sudo</code> 权限来运行 Concentration：</p><pre tabindex=0><code>$ doas concentration improve                                 ✔ │ │ 20:26:54 
+doas (sumantrom) password: 
+Concentration is now improved :D!
+</code></pre><p>如你所见，这个独立的应用能够改变系统中的一些东西。</p><h4 id=列出已安装的应用>列出已安装的应用</h4><p><code>pipx list</code> 命令显示所有用 <code>pipx</code> 安装的应用和它们的可执行路径：</p><pre tabindex=0><code>$ pipx list                                                                       
+venvs are in /home/sumantrom/.local/pipx/venvs
+apps are exposed on your $PATH at /home/sumantrom/.local/bin
+ package concentration 1.1.5, Python 3.9.5
+    - concentration
+ package cowsay 4.0, Python 3.9.5
+    - cowsay
+</code></pre><h4 id=卸载应用>卸载应用</h4><p>当你使用完毕后，知道如何卸载它们是很重要的。<code>pipx</code> 有一个非常简单的卸载命令：</p><pre tabindex=0><code>$ pipx uninstall &lt;package name&gt;
+</code></pre><p>或者你可以删除每个软件包：</p><pre tabindex=0><code>$ pipx uninstall-all
+
+pipx uninstall-all                           2 ✘ │ 20:13:35 
+uninstalled cowsay! ✨ ? ✨
+uninstalled concentration! ✨ ? ✨
+</code></pre><h3 id=尝试-pipx>尝试 pipx</h3><p><code>pipx</code> 是一个流行的 Python 应用的包管理器。它可以访问 <a href=https://pypi.org/>PyPi</a> 上的所有东西，但它也可以从包含有效 Python 包的本地目录、Python wheel 或网络位置安装应用。</p><p>如果你安装了大量的 Python 应用，可以试试 <code>pipx</code>。</p><hr><p>via: <a href=https://opensource.com/article/21/7/python-pipx>https://opensource.com/article/21/7/python-pipx</a></p><p>作者：<a href=https://opensource.com/users/sumantro>Sumantro Mukherjee</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

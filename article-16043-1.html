@@ -1,0 +1,66 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Kubernetes 集群中设置动态 NFS 配置 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Kubernetes 集群中设置动态 NFS 配置"><meta property="og:description" content="在这篇文章中，我们将向你展示如何在 Kubernetes（k8s）集群中设置动态 NFS 配置。"><meta property="og:type" content="article"><meta property="og:url" content="/article-16043-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-07-28T22:29:00+00:00"><meta property="article:modified_time" content="2023-07-28T22:29:00+00:00"><meta itemprop=name content="如何在 Kubernetes 集群中设置动态 NFS 配置"><meta itemprop=description content="在这篇文章中，我们将向你展示如何在 Kubernetes（k8s）集群中设置动态 NFS 配置。"><meta itemprop=datePublished content="2023-07-28T22:29:00+00:00"><meta itemprop=dateModified content="2023-07-28T22:29:00+00:00"><meta itemprop=wordCount content="356"><meta itemprop=keywords content="NFS,k8s,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Kubernetes 集群中设置动态 NFS 配置</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-07-28T22:29:00Z>July 28, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202307/28/222834togtruhoeuh3gtr1.jpg alt></p><blockquote><p>在这篇文章中，我们将向你展示如何在 Kubernetes（k8s）集群中设置动态 NFS 配置。</p></blockquote><p>Kubernetes 中的动态 NFS 存储配置允许你按需自动为 Kubernetes 应用配置和管理 NFS（网络文件系统）卷。它允许创建持久卷（PV）和持久卷声明（PVC），而无需手动干预或预配置存储。</p><p>NFS 配置程序负责动态创建 PV 并将其绑定到 PVC。它与 NFS 服务器交互，为每个 PVC 创建目录或卷。</p><h3 id=先决条件>先决条件</h3><ul><li>预装 Kubernetes 集群</li><li>具有 Kubernetes 集群管理员权限的普通用户</li><li>互联网连接</li></ul><p>事不宜迟，让我们深入探讨步骤：</p><h3 id=步骤-1准备-nfs-服务器>步骤 1、准备 NFS 服务器</h3><p>就我而言，我将在 Kubernetes 主节点（Ubuntu 22.04）上安装 NFS 服务器。登录主节点并运行以下命令：</p><pre tabindex=0><code>$ sudo apt update
+$ sudo apt install nfs-kernel-server -y
+</code></pre><p>创建以下文件夹并使用 NFS 共享它：</p><pre tabindex=0><code>$ sudo mkdir /opt/dynamic-storage
+$ sudo chown -R nobody:nogroup /opt/dynamic-storage
+$ sudo chmod 777 /opt/dynamic-storage
+</code></pre><p>在 <code>/etc/exports</code> 文件中添加以下条目：</p><pre tabindex=0><code>$ sudo vi /etc/exports
+/opt/dynamic-storage 192.168.1.0/24(rw,sync,no_subtree_check)
+</code></pre><p>保存并关闭文件。</p><p>注意：不要忘记更改导出文件中适合你的部署的网络。</p><p>要使上述更改生效，请运行：</p><pre tabindex=0><code>$ sudo exportfs -a
+$ sudo systemctl restart nfs-kernel-server
+$ sudo systemctl status nfs-kernel-server
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202307/28/223041bzx61xy1g16ktzsi.jpg alt=NFS-Service-Status-Kubernetes-Master-Ubuntu></p><p>在工作节点上，使用以下 <code>apt</code> 命令安装 <code>nfs-common</code> 包。</p><pre tabindex=0><code>$ sudo apt install nfs-common -y
+</code></pre><h3 id=步骤-2安装和配置-nfs-客户端配置程序>步骤 2、安装和配置 NFS 客户端配置程序</h3><p>NFS 子目录外部配置程序在 Kubernetes 集群中部署 NFS 客户端配置程序。配置程序负责动态创建和管理由 NFS 存储支持的持久卷（PV）和持久卷声明（PVC）。</p><p>因此，要安装 NFS 子目录外部配置程序，首先使用以下命令集安装 <code>helm</code>：</p><pre tabindex=0><code>$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+$ chmod 700 get_helm.sh
+$ ./get_helm.sh
+</code></pre><p>运行以下命令来启用 <code>helm</code> 仓库：</p><pre tabindex=0><code>$ helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+</code></pre><p>使用以下 <code>helm</code> 命令部署配置程序：</p><pre tabindex=0><code>$ helm install -n nfs-provisioning --create-namespace nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=192.168.1.139 --set nfs.path=/opt/dynamic-storage
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202307/28/223102j8wpwx1p7xmxzvpr.jpg alt=helm-install-nfs-provisioning-kubernetes-cluster></p><p>上面的 <code>helm</code> 命令将自动创建 <code>nfs-provisioning</code> 命名空间，并安装 NFS 配置程序的容器荚/部署、名称为 <code>nfs-client</code> 的存储类，并将创建所需的 rbac。</p><pre tabindex=0><code>$ kubectl get all -n nfs-provisioning
+$ kubectl get sc -n nfs-provisioning
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202307/28/223115t81slq74u9q8ddss.jpg alt=kubectl-get-all-nfs-provisioning-kubernetes-cluster></p><p>完美，上面的输出确认了配置程序容器荚和存储类已成功创建。</p><h3 id=步骤-3创建持久卷声明pvc>步骤 3、创建持久卷声明（PVC）</h3><p>让我们创建 PVC 来为你的容器荚或部署请求存储。PVC 将从存储类 <code>nfs-client</code> 请求特定数量的存储：</p><pre tabindex=0><code>$ vi demo-pvc.yml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: demo-claim
+  namespace: nfs-provisioning
+spec:
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Mi
+</code></pre><p>保存并关闭文件。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202307/28/223127zwz9zy98yy80ity1.jpg alt=PVC-Yaml-Dynamic-NFS-Kubernetes></p><p>运行以下 <code>kubectl</code> 命令以使用上面创建的 YML 文件创建 PVC：</p><pre tabindex=0><code>$ kubectl create -f demo-pvc.yml
+</code></pre><p>验证 PVC 和 PV 是否创建：</p><pre tabindex=0><code>$ kubectl get pv,pvc -n nfs-provisioning
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202307/28/223143i0jiziu2dnk2pi9z.jpg alt=Verify-pv-pvc-dynamic-nfs-kubernetes-cluster></p><p>太好了，上面的输出表明 PV 和 PVC 创建成功。</p><h3 id=步骤-4测试并验证动态-nfs-配置>步骤 4、测试并验证动态 NFS 配置</h3><p>为了测试和验证动态 NFS 配置，请使用以下 YML 文件启动测试容器荚：</p><pre tabindex=0><code>$ vi test-pod.yml
+kind: Pod
+apiVersion: v1
+metadata:
+  name: test-pod
+  namespace: nfs-provisioning
+spec:
+  containers:
+  - name: test-pod
+    image: busybox:latest
+    command:
+      - &#34;/bin/sh&#34;
+    args:
+      - &#34;-c&#34;
+      - &#34;touch /mnt/SUCCESS &amp;&amp; sleep 600&#34;
+    volumeMounts:
+      - name: nfs-pvc
+        mountPath: &#34;/mnt&#34;
+  restartPolicy: &#34;Never&#34;
+  volumes:
+    - name: nfs-pvc
+      persistentVolumeClaim:
+        claimName: demo-claim
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202307/28/223216ib8gmhkqzhmmagfq.jpg alt=Pod-Yml-Dynamic-NFS-kubernetes></p><p>使用以下 <code>kubectl</code> 命令部署容器荚：</p><pre tabindex=0><code>$ kubectl create -f test-pod.yml
+</code></pre><p>验证 <code>test-pod</code> 的状态：</p><pre tabindex=0><code>$ kubectl get pods -n nfs-provisioning
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202307/28/223241kwy855mbwz5jm5wb.jpg alt=Verify-Test-Pod-Using-NFS-Volume-Kubernetes></p><p>登录到容器荚并验证 NFS 卷是否已安装。</p><pre tabindex=0><code>$ kubectl exec -it test-pod -n nfs-provisioning /bin/sh
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202307/28/223252dsbotdzi1zoofcys.jpg alt=Access-Dynamic-NFS-Inside-Pod-Kubernetes></p><p>太棒了，上面容器荚的输出确认了动态 NFS 卷已安装且可访问。</p><p>最后删除容器荚和 PVC，查看 PV 是否自动删除。</p><pre tabindex=0><code>$ kubectl delete -f test-pod.yml
+$ kubectl delete -f demo-pvc.yml
+$ kubectl get pv,pvc -n  nfs-provisioning
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202307/28/223303b51o55ou5oxo1xwl.jpg alt=Delete-Pod-PVC-Dynamic-NFS></p><p>这就是这篇文章的全部内容，希望对你有所帮助。请随时在下面的评论部分发表你的疑问和反馈。</p><p><em>（题图：MJ/75dae36f-ff68-4c63-81e8-281e2c239356）</em></p><hr><p>via: <a href=https://www.linuxtechi.com/dynamic-nfs-provisioning-kubernetes/>https://www.linuxtechi.com/dynamic-nfs-provisioning-kubernetes/</a></p><p>作者：<a href=https://www.linuxtechi.com/author/pradeep/>Pradeep Kumar</a> 选题：<a href=https://github.com/lkxed/>lkxed</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/nfs/ rel=tag>NFS</a></li><li class=tags__item><a class="tags__link btn" href=/tags/k8s/ rel=tag>k8s</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,77 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何修复 WordPress 中的 HTTP 错误 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何修复 WordPress 中的 HTTP 错误"><meta property="og:description" content="下面列出了 WordPress 用户遇到的最常见的 HTTP 错误，我们的建议侧重于如何发现错误原因以及解决方法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9404-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-03-04T23:18:45+00:00"><meta property="article:modified_time" content="2018-03-04T23:18:45+00:00"><meta itemprop=name content="如何修复 WordPress 中的 HTTP 错误"><meta itemprop=description content="下面列出了 WordPress 用户遇到的最常见的 HTTP 错误，我们的建议侧重于如何发现错误原因以及解决方法。"><meta itemprop=datePublished content="2018-03-04T23:18:45+00:00"><meta itemprop=dateModified content="2018-03-04T23:18:45+00:00"><meta itemprop=wordCount content="323"><meta itemprop=keywords content="WordPress,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何修复 WordPress 中的 HTTP 错误</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-03-04T23:18:45Z>March 04, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201803/04/231839m452773kvkq2qcg5.jpg alt></p><p>我们会向你介绍，如何在 Linux VPS 上修复 WordPress 中的 HTTP 错误。 下面列出了 WordPress 用户遇到的最常见的 HTTP 错误，我们的建议侧重于如何发现错误原因以及解决方法。</p><h3 id=1-修复在上传图像时出现的-http-错误>1、 修复在上传图像时出现的 HTTP 错误</h3><p>如果你在基于 WordPress 的网页中上传图像时出现错误，这也许是因为服务器上 PHP 的配置，例如存储空间不足或者其他配置问题造成的。</p><p>用如下命令查找 php 配置文件：</p><pre tabindex=0><code>php -i | grep php.ini
+Configuration File (php.ini) Path =&gt; /etc
+Loaded Configuration File =&gt; /etc/php.ini
+</code></pre><p>根据输出结果，php 配置文件位于 <code>/etc</code> 文件夹下。编辑 <code>/etc/php.ini</code> 文件，找出下列行，并按照下面的例子修改其中相对应的值：</p><pre tabindex=0><code>vi /etc/php.ini
+</code></pre><pre tabindex=0><code>upload_max_filesize = 64M
+post_max_size = 32M
+max_execution_time = 300
+max_input_time 300
+memory_limit = 128M
+</code></pre><p>当然，如果你不习惯使用 vi 文本编辑器，你可以选用自己喜欢的。</p><p>不要忘记重启你的网页服务器来让改动生效。</p><p>如果你安装的网页服务器是 Apache，你也可以使用 <code>.htaccess</code> 文件。首先，找到 <code>.htaccess</code> 文件。它位于 WordPress 安装路径的根文件夹下。如果没有找到 <code>.htaccess</code> 文件，需要自己手动创建一个，然后加入如下内容：</p><pre tabindex=0><code>vi /www/html/path_to_wordpress/.htaccess
+</code></pre><pre tabindex=0><code>php_value upload_max_filesize 64M
+php_value post_max_size 32M
+php_value max_execution_time 180
+php_value max_input_time 180
+
+# BEGIN WordPress
+&lt;IfModule mod_rewrite.c&gt;
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.php$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.php [L]
+&lt;/IfModule&gt;
+# END WordPress
+</code></pre><p>如果你使用的网页服务器是 nginx，在 nginx 的 <code>server</code> 配置块中配置你的 WordPress 实例。详细配置和下面的例子相似：</p><pre tabindex=0><code>server {
+
+  listen 80;
+  client_max_body_size 128m;
+  client_body_timeout 300;
+
+  server_name your-domain.com www.your-domain.com;
+
+  root /var/www/html/wordpress;
+  index index.php;
+
+  location = /favicon.ico {
+  log_not_found off;
+  access_log off;
+  }
+
+  location = /robots.txt {
+    allow all;
+    log_not_found off;
+    access_log off;
+  }
+
+  location / {
+    try_files $uri $uri/ /index.php?$args;
+  }
+
+  location ~ \.php$ {
+    include fastcgi_params;
+    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+  }
+
+  location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+    expires max;
+    log_not_found off;
+  }
+}
+</code></pre><p>根据自己的 PHP 配置，你需要将 <code>fastcgi_pass 127.0.0.1:9000;</code> 用类似于 <code>fastcgi_pass unix:/var/run/php7-fpm.sock;</code> 替换掉（依照实际连接方式）</p><p>重启 nginx 服务来使改动生效。</p><h3 id=2-修复因为不恰当的文件权限而产生的-http-错误>2、 修复因为不恰当的文件权限而产生的 HTTP 错误</h3><p>如果你在 WordPress 中出现一个意外错误，也许是因为不恰当的文件权限导致的，所以需要给 WordPress 文件和文件夹设置一个正确的权限：</p><pre tabindex=0><code>chown www-data:www-data -R /var/www/html/path_to_wordpress/
+</code></pre><p>将 <code>www-data</code> 替换成实际的网页服务器用户，将 <code>/var/www/html/path_to_wordpress</code> 换成 WordPress 的实际安装路径。</p><h3 id=3-修复因为内存不足而产生的-http-错误>3、 修复因为内存不足而产生的 HTTP 错误</h3><p>你可以通过在 <code>wp-config.php</code> 中添加如下内容来设置 PHP 的最大内存限制：</p><pre tabindex=0><code>define(&#39;WP_MEMORY_LIMIT&#39;, &#39;128MB&#39;);
+</code></pre><h3 id=4-修复因为-phpini-文件错误配置而产生的-http-错误>4、 修复因为 php.ini 文件错误配置而产生的 HTTP 错误</h3><p>编辑 PHP 配置主文件，然后找到 <code>cgi.fix_pathinfo</code> 这一行。 这一行内容默认情况下是被注释掉的，默认值为 <code>1</code>。取消这一行的注释（删掉这一行最前面的分号），然后将 <code>1</code> 改为 <code>0</code> 。同时需要修改 <code>date.timezone</code> 这一 PHP 设置，再次编辑 PHP 配置文件并将这一选项改成 <code>date.timezone = Asia/Shanghai</code> （或者将等号后内容改为你所在的时区）。</p><pre tabindex=0><code>vi /etc/php.ini
+</code></pre><pre tabindex=0><code>cgi.fix_pathinfo=0
+date.timezone = Asia/Shanghai
+</code></pre><h3 id=5-修复因为-apache-mod_security-模块而产生的-http-错误>5、 修复因为 Apache mod_security 模块而产生的 HTTP 错误</h3><p>如果你在使用 Apache mod_security 模块，这可能也会引起问题。试着禁用这一模块，确认是否因为在 <code>.htaccess</code> 文件中加入如下内容而引起了问题：</p><pre tabindex=0><code>&lt;IfModule mod_security.c&gt;
+  SecFilterEngine Off
+  SecFilterScanPOST Off
+&lt;/IfModule&gt;
+</code></pre><h3 id=6-修复因为有问题的插件主题而产生的-http-错误>6、 修复因为有问题的插件/主题而产生的 HTTP 错误</h3><p>一些插件或主题也会导致 HTTP 错误以及其他问题。你可以首先禁用有问题的插件/主题，或暂时禁用所有 WordPress 插件。如果你有 phpMyAdmin，使用它来禁用所有插件：在其中找到 <code>wp_options</code> 数据表，在 <code>option_name</code> 这一列中找到 <code>active_plugins</code> 这一记录，然后将 <code>option_value</code> 改为 ：<code>a:0:{}</code>。</p><p>或者用以下命令通过SSH重命名插件所在文件夹：</p><pre tabindex=0><code>mv /www/html/path_to_wordpress/wp-content/plugins /www/html/path_to_wordpress/wp-content/plugins.old
+</code></pre><p>通常情况下，HTTP 错误会被记录在网页服务器的日志文件中，所以寻找错误时一个很好的切入点就是查看服务器日志。</p><hr><p>via: <a href=https://www.rosehosting.com/blog/http-error-wordpress/>https://www.rosehosting.com/blog/http-error-wordpress/</a></p><p>作者：<a href=https://www.rosehosting.com>rosehosting</a> 译者：<a href=https://github.com/wenwensnow>wenwensnow</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/wordpress/ rel=tag>WordPress</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

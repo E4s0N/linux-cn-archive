@@ -1,0 +1,53 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>不像 MySQL 的 MySQL：MySQL 文档存储介绍 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="不像 MySQL 的 MySQL：MySQL 文档存储介绍"><meta property="og:description" content="MySQL 文档存储 可以跳过底层数据结构创建、数据规范化和其它使用传统数据库时需要做的工作，直接存储数据。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9775-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-06-24T09:19:00+00:00"><meta property="article:modified_time" content="2018-06-24T09:19:00+00:00"><meta itemprop=name content="不像 MySQL 的 MySQL：MySQL 文档存储介绍"><meta itemprop=description content="MySQL 文档存储 可以跳过底层数据结构创建、数据规范化和其它使用传统数据库时需要做的工作，直接存储数据。"><meta itemprop=datePublished content="2018-06-24T09:19:00+00:00"><meta itemprop=dateModified content="2018-06-24T09:19:00+00:00"><meta itemprop=wordCount content="306"><meta itemprop=keywords content="MySQL,JSON,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>不像 MySQL 的 MySQL：MySQL 文档存储介绍</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-06-24T09:19:00Z>June 24, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>MySQL 文档存储 可以跳过底层数据结构创建、数据规范化和其它使用传统数据库时需要做的工作，直接存储数据。</p></blockquote><p><img src=/data/attachment/album/201806/24/091941py6eywfye6fyeeex.jpg alt></p><p>MySQL 可以提供 NoSQL JSON 文档存储 Document Store 了，这样开发者保存数据前无需 规范化 normalize 数据、创建数据库，也无需在开发之前就制定好数据样式。从 MySQL 5.7 版本和 MySQL 8.0 版本开始，开发者可以在表的一列中存储 JSON 文档。由于引入 X DevAPI，你可以从你的代码中移除令人不爽的结构化查询字符串，改为使用支持现代编程设计的 API 调用。</p><p>系统学习过结构化查询语言（SQL）、 关系理论 relational theory 、 集合 set 和其它关系数据库底层理论的开发者并不多，但他们需要一个安全可靠的数据存储。如果数据库管理人员不足，事情很快就会变得一团糟，</p><p><a href=https://www.mysql.com/products/enterprise/document_store.html>MySQL 文档存储</a> 允许开发者跳过底层数据结构创建、数据规范化和其它使用传统数据库时需要做的工作，直接存储数据。只需创建一个 JSON 文档集合 document collection ，接着就可以使用了。</p><h3 id=json-数据类型>JSON 数据类型</h3><p>所有这一切都基于多年前 MySQL 5.7 引入的 JSON 数据类型。它允许在表的一行中提供大约 1GB 大小的列。数据必须是有效的 JSON，否则服务器会报错；但开发者可以自由使用这些空间。</p><h3 id=x-devapi>X DevAPI</h3><p>旧的 MySQL 协议已经历经差不多四分之一个世纪，已经显现出疲态，因此新的协议被开发出来，协议名为 <a href=https://dev.mysql.com/doc/x-devapi-userguide/en/>X DevAPI</a>。协议引入高级会话概念，允许代码从单台服务器扩展到多台，使用符合 通用主机编程语言样式 common host-language programming patterns 的非阻塞异步 I/O。需要关注的是如何遵循现代实践和编码风格，同时使用 CRUD （Create、 Read、 Update、 Delete）样式。换句话说，你不再需要在你精美、纯洁的代码中嵌入丑陋的 SQL 语句字符串。</p><p>一个新的 shell 支持这种新协议，即所谓的 <a href=https://dev.mysql.com/downloads/shell/>MySQL Shell</a>。该 shell 可用于设置 高可用集群 high-availability cluster 、检查服务器 升级就绪状态 upgrade readiness 以及与 MySQL 服务器交互。支持的交互方式有以下三种：JavaScript，Python 和 SQL。</p><h3 id=代码示例>代码示例</h3><p>下面的代码示例基于 JavaScript 方式使用 MySQL Shell，可以从 <code>JS></code> 提示符看出。</p><p>下面，我们将使用用户 <code>dstokes</code> 、密码 <code>password</code> 登录本地系统上的 <code>demo</code> 库。<code>db</code> 是一个指针，指向 <code>demo</code> 库。</p><pre tabindex=0><code>$ mysqlsh dstokes:password@localhost/demo
+JS&gt; db.createCollection(&#34;example&#34;)
+JS&gt; db.example.add(
+      {
+        Name: &#34;Dave&#34;,
+        State:  &#34;Texas&#34;,
+        foo : &#34;bar&#34;
+      }
+     )
+JS&gt;
+</code></pre><p>在上面的示例中，我们登录服务器，连接到 <code>demo</code> 库，创建了一个名为 <code>example</code> 的集合，最后插入一条记录；整个过程无需创建表，也无需使用 SQL。只要你能想象的到，你可以使用甚至滥用这些数据。这不是一种代码对象与关系语句之间的映射器，因为并没有将代码映射为 SQL；新协议直接与服务器层打交道。</p><h3 id=nodejs-支持>Node.js 支持</h3><p>新 shell 看起来挺不错，你可以用其完成很多工作；但你可能更希望使用你选用的编程语言。下面的例子使用 <code>world_x</code> 示例数据库，搜索 <code>_id</code> 字段匹配 <code>CAN.</code> 的记录。我们指定数据库中的特定集合，使用特定参数调用 <code>find</code> 命令。同样地，操作也不涉及 SQL。</p><pre tabindex=0><code>var mysqlx = require(&#39;@mysql/xdevapi&#39;);
+mysqlx.getSession({             //Auth to server
+        host: &#39;localhost&#39;,
+        port: &#39;33060&#39;,
+        dbUser: &#39;root&#39;,
+        dbPassword: &#39;password&#39;
+}).then(function (session) {    // use world_x.country.info
+     var schema = session.getSchema(&#39;world_x&#39;);
+     var collection = schema.getCollection(&#39;countryinfo&#39;);
+
+collection                      // Get row for &#39;CAN&#39;
+  .find(&#34;$._id == &#39;CAN&#39;&#34;)
+  .limit(1)
+  .execute(doc =&gt; console.log(doc))
+  .then(() =&gt; console.log(&#34;\n\nAll done&#34;));
+
+  session.close();
+})
+</code></pre><p>下面例子使用 PHP，搜索 <code>_id</code> 字段匹配 <code>USA</code> 的记录：</p><pre tabindex=0><code>&lt;?PHP
+// Connection parameters
+  $user = &#39;root&#39;;
+  $passwd = &#39;S3cret#&#39;;
+  $host = &#39;localhost&#39;;
+  $port = &#39;33060&#39;;
+  $connection_uri = &#39;mysqlx://&#39;.$user.&#39;:&#39;.$passwd.&#39;@&#39;.$host.&#39;:&#39;.$port;
+  echo $connection_uri . &#34;\n&#34;;
+
+// Connect as a Node Session
+  $nodeSession = mysql_xdevapi\getNodeSession($connection_uri);
+// &#34;USE world_x&#34; schema
+  $schema = $nodeSession-&gt;getSchema(&#34;world_x&#34;);
+// Specify collection to use
+  $collection = $schema-&gt;getCollection(&#34;countryinfo&#34;);
+// SELECT * FROM world_x WHERE _id = &#34;USA&#34;
+  $result = $collection-&gt;find(&#39;_id = &#34;USA&#34;&#39;)-&gt;execute();
+// Fetch/Display data
+  $data = $result-&gt;fetchAll();
+  var_dump($data);
+?&gt;
+</code></pre><p>可以看出，在上面两个使用不同编程语言的例子中，<code>find</code> 操作符的用法基本一致。这种一致性对跨语言编程的开发者有很大帮助，对试图降低新语言学习成本的开发者也不无裨益。</p><p>支持的语言还包括 C、Java、Python 和 JavaScript 等，未来还会有更多支持的语言。</p><h3 id=从两种方式受益>从两种方式受益</h3><p>我会告诉你使用 NoSQL 方式录入的数据也可以用 SQL 方式使用？换句话说，我会告诉你新引入的 NoSQL 方式可以访问旧式关系型表中的数据？现在使用 MySQL 服务器有多种方式，作为 SQL 服务器，作为 NoSQL 服务器或者同时作为两者。</p><hr><p>via: <a href=https://opensource.com/article/18/6/mysql-document-store>https://opensource.com/article/18/6/mysql-document-store</a></p><p>作者：<a href=https://opensource.com/users/davidmstokes>Dave Stokes</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/pinewall>pinewall</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/mysql/ rel=tag>MySQL</a></li><li class=tags__item><a class="tags__link btn" href=/tags/json/ rel=tag>JSON</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

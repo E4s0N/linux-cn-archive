@@ -1,0 +1,96 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Kubernetes 上部署一个深度学习模型 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Kubernetes 上部署一个深度学习模型"><meta property="og:description" content="了解如何使用 Kubermatic Kubernetes 平台来部署、扩展与管理图像识别预测的深度学习模型。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13744-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-09-01T23:34:28+00:00"><meta property="article:modified_time" content="2021-09-01T23:34:28+00:00"><meta itemprop=name content="在 Kubernetes 上部署一个深度学习模型"><meta itemprop=description content="了解如何使用 Kubermatic Kubernetes 平台来部署、扩展与管理图像识别预测的深度学习模型。"><meta itemprop=datePublished content="2021-09-01T23:34:28+00:00"><meta itemprop=dateModified content="2021-09-01T23:34:28+00:00"><meta itemprop=wordCount content="414"><meta itemprop=keywords content="Kubernetes,深度学习,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Kubernetes 上部署一个深度学习模型</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-09-01T23:34:28Z>September 01, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>了解如何使用 Kubermatic Kubernetes 平台来部署、扩展与管理图像识别预测的深度学习模型。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233417ryy87hyza7jmgy33.jpg alt title="Brain on a computer screen"></p><p>随着企业增加了对人工智能（AI）、机器学习（ML）与深度学习（DL）的使用，出现了一个关键问题：如何将机器学习的开发进行规模化与产业化？这些讨论经常聚焦于机器学习模型本身；然而，模型仅仅只是完整解决方案的其中一环。为了达到生产环境的应用和规模，模型的开发过程必须还包括一个可以说明开发前后关键活动以及可公用部署的可重复过程。</p><p>本文演示了如何使用 <a href=https://www.loodse.com/products/kubermatic/>Kubermatic Kubernetes 平台</a> 对图像识别预测的深度学习模型进行部署、扩展与管理。</p><p>Kubermatic Kubernetes 平台是一个生产级的开源 Kubernetes 集群管理工具，提供灵活性和自动化，与机器学习/深度学习工作流程整合，具有完整的集群生命周期管理。</p><h3 id=开始>开始</h3><p>这个例子部署了一个用于图像识别的深度学习模型。它使用了 <a href=https://www.cs.toronto.edu/~kriz/cifar.html>CIFAR-10</a> 数据集，包含了 60,000 张分属 10 个类别的 32x32 彩色图，同时使用了 <a href=https://mxnet.apache.org/>Apache MXNet</a> 的 <a href=https://gluon.mxnet.io/>Gluon</a> 与 NVIDIA GPU 进行加速计算。如果你希望使用 CIFAR-10 数据集的预训练模型，可以查阅其 <a href=https://gluon-cv.mxnet.io/build/examples_classification/demo_cifar10.html>入门指南</a>。</p><p>使用训练集中的样本对模型训练 200 次，只要训练误差保持缓慢减少，就可以保证模型不会过拟合。下方图展示了训练的过程：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233430j0jnjf92hfnr2iss.png alt="深度学习模型训练 loss 图" title="Deep learning model training plot"></p><p>训练结束后，必须保存模型训练所得到的参数，以便稍后可以加载它们：</p><pre tabindex=0><code>file_name = &#34;net.params&#34;
+net.save_parameters(file_name)
+</code></pre><p>一旦你的模型训练好了，就可以用 Flask 服务器来封装它。下方的程序演示了如何接收请求中的一张图片作为参数，并在响应中返回模型的预测结果：</p><pre tabindex=0><code>from gluoncv.model_zoo import get_model
+import matplotlib.pyplot as plt
+from mxnet import gluon, nd, image
+from mxnet.gluon.data.vision import transforms
+from gluoncv import utils
+from PIL import Image
+import io
+import flask
+app = flask.Flask(__name__)
+
+@app.route(&#34;/predict&#34;,methods=[&#34;POST&#34;])
+def predict():
+    if flask.request.method == &#34;POST&#34;:
+        if flask.request.files.get(&#34;img&#34;):
+           img = Image.open(io.BytesIO(flask.request.files[&#34;img&#34;].read()))
+            transform_fn = transforms.Compose([
+            transforms.Resize(32),
+            transforms.CenterCrop(32),
+            transforms.ToTensor(),
+            transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010])])
+            img = transform_fn(nd.array(img))
+            net = get_model(&#39;cifar_resnet20_v1&#39;, classes=10)
+            net.load_parameters(&#39;net.params&#39;)
+            pred = net(img.expand_dims(axis=0))
+            class_names = [&#39;airplane&#39;, &#39;automobile&#39;, &#39;bird&#39;, &#39;cat&#39;, &#39;deer&#39;,
+                       &#39;dog&#39;, &#39;frog&#39;, &#39;horse&#39;, &#39;ship&#39;, &#39;truck&#39;]
+            ind = nd.argmax(pred, axis=1).astype(&#39;int&#39;)
+            prediction = &#39;The input picture is classified as [%s], with probability %.3f.&#39;%
+                         (class_names[ind.asscalar()], nd.softmax(pred)[0][ind].asscalar())
+    return prediction
+
+if __name__ == &#39;__main__&#39;:
+   app.run(host=&#39;0.0.0.0&#39;)
+</code></pre><h3 id=容器化模型>容器化模型</h3><p>在将模型部署到 Kubernetes 前，你需要先安装 Docker 并使用你的模型创建一个镜像。</p><ol><li>下载、安装并启动 Docker：</li></ol><pre tabindex=0><code>sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+sudo yum-config-manager --add-repo &lt;https://download.docker.com/linux/centos/docker-ce.repo&gt;
+sudo yum install docker-ce
+sudo systemctl start docker
+</code></pre><ol start=2><li>创建一个你用来管理代码与依赖的文件夹：</li></ol><pre tabindex=0><code>mkdir kubermatic-dl
+cd kubermatic-dl
+</code></pre><ol start=3><li>创建 <code>requirements.txt</code> 文件管理代码运行时需要的所有依赖：</li></ol><pre tabindex=0><code>flask
+gluoncv
+matplotlib
+mxnet
+requests
+Pillow
+</code></pre><ol start=4><li>创建 <code>Dockerfile</code>，Docker 将根据这个文件创建镜像:</li></ol><pre tabindex=0><code>FROM python:3.6
+WORKDIR /app
+COPY requirements.txt /app
+RUN pip install -r ./requirements.txt
+COPY app.py /app
+CMD [&#34;python&#34;, &#34;app.py&#34;]
+</code></pre><p>这个 <code>Dockerfile</code> 主要可以分为三个部分。首先，Docker 会下载 Python 的基础镜像。然后，Docker 会使用 Python 的包管理工具 <code>pip</code> 安装 <code>requirements.txt</code> 记录的包。最后，Docker 会通过执行 <code>python app.py</code> 来运行你的脚本。
+5. 构建 Docker 容器:</p><pre tabindex=0><code>sudo docker build -t kubermatic-dl:latest .
+</code></pre><p>这条命令使用 <code>kubermatic-dl</code> 镜像为你当前工作目录的代码创建了一个容器。
+6. 使用</p><pre tabindex=0><code>sudo docker run -d -p 5000:5000 kubermatic-dl
+</code></pre><p>命令检查你的容器可以在你的主机上正常运行。
+7. 使用</p><pre tabindex=0><code>sudo docker ps -a
+</code></pre><p>命令查看你本地容器的运行状态:</p><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233430nszyaz0pklym7jay.png alt=查看容器的运行状态 title="Checking the container's status"></p><h3 id=将你的模型上传到-docker-hub>将你的模型上传到 Docker Hub</h3><p>在向 Kubernetes 上部署模型前，你的镜像首先需要是公开可用的。你可以通过将你的模型上传到 <a href=https://hub.docker.com/>Docker Hub</a> 来将它公开。（如果你没有 Docker Hub 的账号，你需要先创建一个）</p><ol><li>在终端中登录 Docker Hub 账号：</li></ol><pre tabindex=0><code>sudo docker login
+</code></pre><ol start=2><li>给你的镜像打上标签，这样你的模型上传到 Docker Hub 后也能拥有版本信息：</li></ol><pre tabindex=0><code>sudo docker tag &lt;your-image-id&gt; &lt;your-docker-hub-name&gt;/&lt;your-app-name&gt;
+
+sudo docker push &lt;your-docker-hub-name&gt;/&lt;your-app-name&gt;
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233430h5uahx4vevfhxxjf.png alt="给镜像打上 tag" title="Tagging the image">
+3. 使用</p><pre tabindex=0><code>sudo docker images
+</code></pre><p>命令检查你的镜像的 ID。</p><h3 id=部署你的模型到-kubernetes-集群>部署你的模型到 Kubernetes 集群</h3><ol><li>首先在 Kubermatic Kubernetes 平台创建一个项目, 然后根据 <a href=https://docs.kubermatic.com/kubermatic/v2.13/installation/install_kubermatic/_installer/>快速开始</a> 创建一个 Kubernetes 集群。</li></ol><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233431qsg5vryf74zppyp7.png alt="创建一个 Kubernetes 集群" title="Create a Kubernetes cluster">
+2. 下载用于访问你的集群的 <code>kubeconfig</code>，将它放置在下载目录中，并记得设置合适的环境变量，使得你的环境能找到它：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233431wyjdooviaf75135f.png alt="Kubernetes 集群示例" title="Kubernetes cluster example">
+3. 使用 <code>kubectl</code> 命令检查集群信息，例如，需要检查 <code>kube-system</code> 是否在你的集群正常启动了就可以使用命令 <code>kubectl cluster-info</code></p><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233431u78i7ir88x485at4.png alt=查看集群信息 title="Checking the cluster info">
+4. 为了在集群中运行容器，你需要创建一个部署用的配置文件（<code>deployment.yaml</code>），再运行 <code>apply</code> 命令将其应用于集群中：</p><pre tabindex=0><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubermatic-dl-deployment
+spec:
+  selector:
+    matchLabels:
+      app: kubermatic-dl
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: kubermatic-dl
+    spec:
+     containers:
+     - name: kubermatic-dl
+       image: kubermatic00/kubermatic-dl:latest
+       imagePullPolicy: Always
+       ports:
+       - containerPort: 8080
+</code></pre><pre tabindex=0><code>kubectl apply -f deployment.yaml`
+</code></pre><ol start=5><li>为了将你的部署开放到公网环境，你需要一个能够给你的容器创建外部可达 IP 地址的服务：</li></ol><pre tabindex=0><code>kubectl expose deployment kubermatic-dl-deployment  --type=LoadBalancer --port 80 --target-port 5000`
+</code></pre><ol start=6><li>就快大功告成了！首先检查你布署的服务的状态，然后通过 IP 请求的你图像识别 API：</li></ol><pre tabindex=0><code>kubectl get service
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233431e2v0f0n0v8ffwmnv.png alt="获取请求图像识别 API 的 IP 地址" title="Get the IP address to call your image recognition API">
+7. 最后根据你的外部 IP 使用以下两张图片对你的图像识别服务进行测试：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233432r9655dyqhq666gzf.jpg alt=马 title=Horse></p><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233432x63iiam0fy2li665.jpg alt=狗 title=Dog></p><p><img src=https://img.linux.net.cn/data/attachment/album/202109/01/233432eiiihhililliri3i.png alt="测试 API" title="Testing the API"></p><h3 id=总结>总结</h3><p>在这篇教程中，你可以创建一个深度学习模型，并且使用 Flask 提供 <a href=https://www.redhat.com/en/topics/api/what-is-a-rest-api>REST API</a> 服务。它介绍了如何将应用放在 Docker 容器中，如何将这个镜像上传到 Docker Hub 中，以及如何使用 Kubernetes 部署你的服务。只需几个简单的命令，你就可以使用 Kubermatic Kubernetes 平台部署该应用程序，并且开放服务给别人使用。</p><hr><p>via: <a href=https://opensource.com/article/20/9/deep-learning-model-kubernetes>https://opensource.com/article/20/9/deep-learning-model-kubernetes</a></p><p>作者：<a href=https://opensource.com/users/chaimaa>Chaimaa Zyani</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/chunibyo-wly>chunibyo-wly</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/kubernetes/ rel=tag>Kubernetes</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/ rel=tag>深度学习</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

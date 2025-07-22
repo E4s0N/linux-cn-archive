@@ -1,0 +1,55 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Sosreport：收集系统日志和诊断信息的工具 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Sosreport：收集系统日志和诊断信息的工具"><meta property="og:description" content="它是一个从类 Unix 操作系统中收集系统配置详细信息和诊断信息的工具。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9817-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-07-08T09:37:25+00:00"><meta property="article:modified_time" content="2018-07-08T09:37:25+00:00"><meta itemprop=name content="Sosreport：收集系统日志和诊断信息的工具"><meta itemprop=description content="它是一个从类 Unix 操作系统中收集系统配置详细信息和诊断信息的工具。"><meta itemprop=datePublished content="2018-07-08T09:37:25+00:00"><meta itemprop=dateModified content="2018-07-08T09:37:25+00:00"><meta itemprop=wordCount content="290"><meta itemprop=keywords content="Sosreport,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Sosreport：收集系统日志和诊断信息的工具</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-07-08T09:37:25Z>July 08, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201807/08/093729btevwc3iyv23euvc.png alt></p><p>如果你是 RHEL 管理员，你可能肯定听说过 <strong>Sosreport</strong> ：一个可扩展、可移植的支持数据收集工具。它是一个从类 Unix 操作系统中收集系统配置详细信息和诊断信息的工具。当用户提出支持服务单时，他/她必须运行此工具并将由 Sosreport 工具生成的结果报告发送给 Red Hat 支持人员。然后，执行人员将根据报告进行初步分析，并尝试找出系统中的问题。不仅在 RHEL 系统上，你可以在任何类 Unix 操作系统上使用它来收集系统日志和其他调试信息。</p><h3 id=安装-sosreport>安装 Sosreport</h3><p>Sosreport 在 Red Hat 官方系统仓库中，因此你可以使用 Yum 或 DNF 包管理器安装它，如下所示。</p><pre tabindex=0><code>$ sudo yum install sos
+</code></pre><p>要么，</p><pre tabindex=0><code>$ sudo dnf install sos
+</code></pre><p>在 Debian、Ubuntu 和 Linux Mint 上运行：</p><pre tabindex=0><code>$ sudo apt install sosreport
+</code></pre><h3 id=用法>用法</h3><p>安装后，运行以下命令以收集系统配置详细信息和其他诊断信息。</p><pre tabindex=0><code>$ sudo sosreport
+</code></pre><p>系统将要求你输入系统的一些详细信息，例如系统名称、案例 ID 等。相应地输入详细信息，然后按回车键生成报告。如果你不想更改任何内容并使用默认值，只需按回车键即可。</p><p>我的 CentOS 7 服务器的示例输出：</p><pre tabindex=0><code>sosreport (version 3.5)
+
+This command will collect diagnostic and configuration information from
+this CentOS Linux system and installed applications.
+
+An archive containing the collected information will be generated in
+/var/tmp/sos.DiJXi7 and may be provided to a CentOS support
+representative.
+
+Any information provided to CentOS will be treated in accordance with
+the published support policies at:
+
+https://wiki.centos.org/
+
+The generated archive may contain data considered sensitive and its
+content should be reviewed by the originating organization before being
+passed to any third party.
+
+No changes will be made to system configuration.
+
+Press ENTER to continue, or CTRL-C to quit.
+
+Please enter your first initial and last name [server.ostechnix.local]:
+Please enter the case id that you are generating this report for []:
+
+Setting up archive ...
+Setting up plugins ...
+Running plugins. Please wait ...
+
+Running 73/73: yum...
+Creating compressed archive...
+
+Your sosreport has been generated and saved in:
+/var/tmp/sosreport-server.ostechnix.local-20180628171844.tar.xz
+
+The checksum is: 8f08f99a1702184ec13a497eff5ce334
+
+Please send this file to your support representative.
+</code></pre><p>如果你不希望系统提示你输入此类详细信息，请如下使用批处理模式。</p><pre tabindex=0><code>$ sudo sosreport --batch
+</code></pre><p>正如你在上面的输出中所看到的，生成了一个归档报告并保存在 <code>/var/tmp/sos.DiJXi7</code> 中。在 RHEL 6/CentOS 6 中，报告将在 <code>/tmp</code> 中生成。你现在可以将此报告发送给你的支持人员，以便他可以进行初步分析并找出问题所在。</p><p>你可能会担心或想知道报告中的内容。如果是这样，你可以通过运行以下命令来查看它：</p><pre tabindex=0><code>$ sudo tar -tf /var/tmp/sosreport-server.ostechnix.local-20180628171844.tar.xz
+</code></pre><p>要么，</p><pre tabindex=0><code>$ sudo vim /var/tmp/sosreport-server.ostechnix.local-20180628171844.tar.xz
+</code></pre><p>请注意，上述命令不会解压存档，而只显示存档中的文件和文件夹列表。如果要查看存档中文件的实际内容，请首先使用以下命令解压存档：</p><pre tabindex=0><code>$ sudo tar -xf /var/tmp/sosreport-server.ostechnix.local-20180628171844.tar.xz
+</code></pre><p>存档的所有内容都将解压当前工作目录中 <code>ssosreport-server.ostechnix.local-20180628171844/</code> 目录中。进入目录并使用 <code>cat</code> 命令或任何其他文本浏览器查看文件内容：</p><pre tabindex=0><code>$ cd sosreport-server.ostechnix.local-20180628171844/
+
+$ cat uptime
+17:19:02 up 1:03, 2 users, load average: 0.50, 0.17, 0.10
+</code></pre><p>有关 Sosreport 的更多详细信息，请参阅手册页。</p><pre tabindex=0><code>$ man sosreport
+</code></pre><p>就是这些了。希望这些有用。还有更多好东西。敬请关注！</p><p>干杯！</p><hr><p>via: <a href=https://www.ostechnix.com/sosreport-a-tool-to-collect-system-logs-and-diagnostic-information/>https://www.ostechnix.com/sosreport-a-tool-to-collect-system-logs-and-diagnostic-information/</a></p><p>作者：<a href=https://www.ostechnix.com/author/sk/>SK</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/sosreport/ rel=tag>Sosreport</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

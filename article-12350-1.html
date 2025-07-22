@@ -1,0 +1,45 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Go 中如何转储一个方法的 GOSSAFUNC 图 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Go 中如何转储一个方法的 GOSSAFUNC 图"><meta property="og:description" content="这篇文章介绍了如何为函数和方法打印 SSA 输出。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12350-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-06-26T08:39:00+00:00"><meta property="article:modified_time" content="2020-06-26T08:39:00+00:00"><meta itemprop=name content="在 Go 中如何转储一个方法的 GOSSAFUNC 图"><meta itemprop=description content="这篇文章介绍了如何为函数和方法打印 SSA 输出。"><meta itemprop=datePublished content="2020-06-26T08:39:00+00:00"><meta itemprop=dateModified content="2020-06-26T08:39:00+00:00"><meta itemprop=wordCount content="169"><meta itemprop=keywords content="Go,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Go 中如何转储一个方法的 GOSSAFUNC 图</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-06-26T08:39:00Z>June 26, 2020</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202006/26/083943vymvmc67p7s3oman.jpg alt></p><p>Go 编译器的 SSA 后端包含一种工具，可以生成编译阶段的 HTML 调试输出。这篇文章介绍了如何为函数<em>和</em>方法打印 SSA 输出。</p><p>让我们从一个包含函数、值方法和指针方法的示例程序开始：</p><pre tabindex=0><code>package main
+
+import (
+    &#34;fmt&#34;
+)
+
+type Numbers struct {
+    vals []int
+}
+
+func (n *Numbers) Add(v int) {
+    n.vals = append(n.vals, v)
+}
+
+func (n Numbers) Average() float64 {
+    sum := 0.0
+    for _, num := range n.vals {
+        sum += float64(num)
+    }
+    return sum / float64(len(n.vals))
+}
+
+
+func main() {
+    var numbers Numbers
+    numbers.Add(200)
+    numbers.Add(43)
+    numbers.Add(-6)
+    fmt.Println(numbers.Average())
+}
+</code></pre><p>通过 <code>GOSSAFUNC</code> 环境变量控制 SSA 调试输出。此变量含有要转储的函数的名称。这<em>不是</em>函数的完全限定名。对于上面的 <code>func main</code>，函数名称为 <code>main</code> <em>而不是</em> <code>main.main</code>。</p><pre tabindex=0><code>% env GOSSAFUNC=main go build
+runtime
+dumped SSA to ../../go/src/runtime/ssa.html
+t
+dumped SSA to ./ssa.html
+</code></pre><p>在这个例子中，<code>GOSSAFUNC=main</code> 同时匹配了 <code>main.main</code> 和一个名为 <code>runtime.main</code> 的函数。 [1] 这有点不走运，但是实际上可能没什么大不了的，因为如果你要对代码进行性能调整，它就不会出现在 <code>func main</code> 中的巨大的意大利面块中。</p><p>你的代码更有可能在<em>方法</em>中，你可能已经看到这篇文章，并寻找能够转储方法的 SSA 输出。</p><p>要为指针方法 <code>func (n *Numbers) Add</code> 打印 SSA 调试，等效函数名为 <code>(*Numbers).Add</code>： [2]</p><pre tabindex=0><code>% env &#34;GOSSAFUNC=(*Numbers).Add&#34; go build
+t
+dumped SSA to ./ssa.html
+</code></pre><p>要为值方法 <code>func (n Numbers) Average</code> 打印 SSA 调试，等效函数名为 <code>(*Numbers).Average</code>，<em>即使这是一个值方法</em>：</p><pre tabindex=0><code>% env &#34;GOSSAFUNC=(*Numbers).Average&#34; go build
+t
+dumped SSA to ./ssa.html
+</code></pre><hr><ol><li>如果你没有从源码构建 Go，那么 <code>runtime</code> 软件包的路径可能是只读的，并且可能会收到错误消息。请不要使用 <code>sudo</code> 来解决此问题。 <a href=#fnref1>↩︎</a></li><li>请注意 shell 引用 <a href=#fnref2>↩︎</a></li></ol><hr><p>via: <a href=https://dave.cheney.net/2020/06/19/how-to-dump-the-gossafunc-graph-for-a-method>https://dave.cheney.net/2020/06/19/how-to-dump-the-gossafunc-graph-for-a-method</a></p><p>作者：<a href=https://dave.cheney.net/author/davecheney>Dave Cheney</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/go/ rel=tag>Go</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

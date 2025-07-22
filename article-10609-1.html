@@ -1,0 +1,155 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 shell 构建多进程的 CommandlineFu 爬虫 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 shell 构建多进程的 CommandlineFu 爬虫"><meta property="og:description" content="CommandlineFu 是一个记录脚本片段的网站，每个片段都有对应的功能说明和对应的标签。我想要做的就是尝试用 shell 写一个多进程的爬虫把这些代码片段记录在一个 org 文件中。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10609-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-03-11T22:45:00+00:00"><meta property="article:modified_time" content="2019-03-11T22:45:00+00:00"><meta itemprop=name content="使用 shell 构建多进程的 CommandlineFu 爬虫"><meta itemprop=description content="CommandlineFu 是一个记录脚本片段的网站，每个片段都有对应的功能说明和对应的标签。我想要做的就是尝试用 shell 写一个多进程的爬虫把这些代码片段记录在一个 org 文件中。"><meta itemprop=datePublished content="2019-03-11T22:45:00+00:00"><meta itemprop=dateModified content="2019-03-11T22:45:00+00:00"><meta itemprop=wordCount content="539"><meta itemprop=keywords content="爬虫,CommandlineFu,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 shell 构建多进程的 CommandlineFu 爬虫</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-03-11T22:45:00Z>March 11, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201903/11/224237ba1adl8jd18mlady.jpg alt></p><p><a href=https://www.commandlinefu.com/>CommandlineFu</a> 是一个记录脚本片段的网站，每个片段都有对应的功能说明和对应的标签。我想要做的就是尝试用 shell 写一个多进程的爬虫把这些代码片段记录在一个 org 文件中。</p><h3 id=参数定义>参数定义</h3><p>这个脚本需要能够通过 <code>-n</code> 参数指定并发的爬虫数（默认为 CPU 核的数量），还要能通过 <code>-f</code> 指定保存的 org 文件路径（默认输出到 stdout）。</p><pre tabindex=0><code>#!/usr/bin/env bash
+
+proc_num=$(nproc)
+store_file=/dev/stdout
+while getopts :n:f: OPT; do
+    case $OPT in
+        n|+n)
+            proc_num=&#34;$OPTARG&#34;
+            ;;
+        f|+f)
+            store_file=&#34;$OPTARG&#34;
+            ;;
+        *)
+            echo &#34;usage: ${0##*/} [+-n proc_num] [+-f org_file} [--]&#34;
+            exit 2
+    esac
+done
+shift $(( OPTIND - 1 ))
+OPTIND=1
+</code></pre><h3 id=解析命令浏览页面>解析命令浏览页面</h3><p>我们需要一个进程从 CommandlineFu 的浏览列表中抽取各个脚本片段的 URL，这个进程将抽取出来的 URL 存放到一个队列中，再由各个爬虫进程从进程中读取 URL 并从中抽取出对应的代码片段、描述说明和标签信息写入 org 文件中。</p><p>这里就会遇到三个问题:</p><ol><li>进程之间通讯的队列如何实现</li><li>如何从页面中抽取出 URL、代码片段、描述说明、标签等信息</li><li>多进程对同一文件进行读写时的乱序问题</li></ol><h4 id=实现进程之间的通讯队列>实现进程之间的通讯队列</h4><p>这个问题比较好解决，我们可以通过一个命名管道来实现：</p><pre tabindex=0><code>queue=$(mktemp --dry-run)
+mkfifo ${queue}
+exec 99&lt;&gt;${queue}
+trap &#34;rm ${queue} 2&gt;/dev/null&#34; EXIT
+</code></pre><h4 id=从页面中抽取想要的信息>从页面中抽取想要的信息</h4><p>从页面中提取元素内容主要有两种方法：</p><ol><li>对于简单的 HTML 页面，我们可以通过 <code>sed</code>、<code>grep</code>、<code>awk</code> 等工具通过正则表达式匹配的方式来从 HTML 中抽取信息。</li><li>通过 <a href=https://www.w3.org/Tools/HTML-XML-utils/>html-xml-utils</a> 工具集中的 <a href=https://www.w3.org/Tools/HTML-XML-utils/man1/hxselect.html>hxselect</a> 来根据 CSS 选择器提取相关元素。</li></ol><p>这里我们使用 html-xml-utils 工具来提取：</p><pre tabindex=0><code>function extract_views_from_browse_page()
+{
+    if [[ $# -eq 0 ]];then
+        local html=$(cat -)
+    else
+        local html=&#34;$*&#34;
+    fi
+    echo ${html} |hxclean |hxselect -c -s &#34;\n&#34; &#34;li.list-group-item &gt; div:nth-child(1) &gt; div:nth-child(1) &gt; a:nth-child(1)::attr(href)&#34;|sed &#39;s@^@https://www.commandlinefu.com/@&#39;
+}
+
+function extract_nextpage_from_browse_page()
+{
+    if [[ $# -eq 0 ]];then
+        local html=$(cat -)
+    else
+        local html=&#34;$*&#34;
+    fi
+    echo ${html} |hxclean |hxselect -s &#34;\n&#34; &#34;li.list-group-item:nth-child(26) &gt; a&#34;|grep &#39;&gt;&#39;|hxselect -c &#34;::attr(href)&#34;|sed &#39;s@^@https://www.commandlinefu.com/@&#39;
+}
+</code></pre><p>这里需要注意的是：<code>hxselect</code> 对 HTML 解析时要求遵循严格的 XML 规范，因此在用 <code>hxselect</code> 解析之前需要先经过 <code>hxclean</code> 矫正。另外，为了防止 HTML 过大，超过参数列表长度，这里允许通过管道的形式将 HTML 内容传入。</p><h4 id=循环读取下一页的浏览页面不断抽取代码片段-url-写入队列>循环读取下一页的浏览页面，不断抽取代码片段 URL 写入队列</h4><p>这里要解决的是上面提到的第三个问题: 多进程对管道进行读写时如何保障不出现乱序? 为此，我们需要在写入文件时对文件加锁，然后在写完文件后对文件解锁，在 shell 中我们可以使用 flock 来对文件进行枷锁。 关于 <code>flock</code> 的使用方法和注意事项，请参见另一篇博文 <a href=https://github.com/lujun9972/lujun9972.github.com/blob/source/linux%E5%92%8C%E5%AE%83%E7%9A%84%E5%B0%8F%E4%BC%99%E4%BC%B4/linux%20shell%20flock%E6%96%87%E4%BB%B6%E9%94%81%E7%9A%84%E7%94%A8%E6%B3%95%E5%8F%8A%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9.org>Linux shell flock 文件锁的用法及注意事项</a>。</p><p>由于需要在 <code>flock</code> 子进程中使用函数 <code>extract_views_from_browse_page</code>，因此需要先导出该函数：</p><pre tabindex=0><code>export -f extract_views_from_browse_page
+</code></pre><p>由于网络问题，使用 <code>curl</code> 获取内容可能失败，需要重复获取：</p><pre tabindex=0><code>function fetch()
+{
+    local url=&#34;$1&#34;
+    while ! curl -L ${url} 2&gt;/dev/null;do
+        :
+    done
+}
+</code></pre><p><code>collector</code> 用来从种子 URL 中抓取待爬的 URL，写入管道文件中，写操作期间管道文件同时作为锁文件：</p><pre tabindex=0><code>function collector()
+{
+    url=&#34;$*&#34;
+    while [[ -n ${url} ]];do
+        echo &#34;从$url中抽取&#34;
+        html=$(fetch &#34;${url}&#34;)
+        echo &#34;${html}&#34;|flock ${queue} -c &#34;extract_views_from_browse_page &gt;${queue}&#34;
+        url=$(echo &#34;${html}&#34;|extract_nextpage_from_browse_page)
+    done
+    # 让后面解析代码片段的爬虫进程能够正常退出，而不至于被阻塞.
+    for ((i=0;i&lt;${proc_num};i++))
+    do
+        echo &gt;${queue}
+    done
+}
+</code></pre><p>这里要注意的是， 在找不到下一页 URL 后，我们用一个 for 循环往队列里写入了 <code>=proc_num=</code> 个空行，这一步的目的是让后面解析代码片段的爬虫进程能够正常退出，而不至于被阻塞。</p><h3 id=解析脚本片段页面>解析脚本片段页面</h3><p>我们需要从脚本片段的页面中抽取标题、代码片段、描述说明以及标签信息，同时将这些内容按 org 模式的格式写入存储文件中。</p><pre tabindex=0><code>  function view_page_handler()
+  {
+      local url=&#34;$1&#34;
+      local html=&#34;$(fetch &#34;${url}&#34;)&#34;
+      # headline
+      local headline=&#34;$(echo ${html} |hxclean |hxselect -c -s &#34;\n&#34; &#34;.col-md-8 &gt; h1:nth-child(1)&#34;)&#34;
+      # command
+      local command=&#34;$(echo ${html} |hxclean |hxselect -c -s &#34;\n&#34; &#34;.col-md-8 &gt; div:nth-child(2) &gt; span:nth-child(2)&#34;|pandoc -f html -t org)&#34;
+      # description
+      local description=&#34;$(echo ${html} |hxclean |hxselect -c -s &#34;\n&#34; &#34;.col-md-8 &gt; div.description&#34;|pandoc -f html -t org)&#34;
+      # tags
+      local tags=&#34;$(echo ${html} |hxclean |hxselect -c -s &#34;:&#34; &#34;.functions &gt; a&#34;)&#34;
+      if [[ -n &#34;${tags}&#34; ]];then
+          tags=&#34;:${tags}&#34;
+      fi
+      # build org content
+      cat &lt;&lt;EOF |flock -x ${store_file} tee -a ${store_file}
+* ${headline}      ${tags}
+
+:PROPERTIES:
+:URL:       ${url}
+:END:
+
+${description}
+#+begin_src shell
+${command}
+#+end_src
+
+EOF
+  }
+</code></pre><p>这里抽取信息的方法跟上面的类似，不过代码片段和描述说明中可能有一些 HTML 代码，因此通过 <code>pandoc</code> 将之转换为 org 格式的内容。</p><p>注意最后输出 org 模式的格式并写入存储文件中的代码不要写成下面这样：</p><pre tabindex=0><code>    flock -x ${store_file} cat &lt;&lt;EOF &gt;${store_file}
+    * ${headline}\t\t ${tags}
+    ${description}
+    #+begin_src shell
+    ${command}
+    #+end_src
+EOF
+</code></pre><p>它的意思是使用 <code>flock</code> 对 <code>cat</code> 命令进行加锁，再把 <code>flock</code> 整个命令的结果通过重定向输出到存储文件中，而重定向输出的这个过程是没有加锁的。</p><p><code>spider</code> 从管道文件中读取待抓取的 URL，然后实施真正的抓取动作。</p><pre tabindex=0><code>function spider()
+{
+    while :
+    do
+        if ! url=$(flock ${queue} -c &#39;read -t 1 -u 99 url &amp;&amp; echo $url&#39;)
+        then
+            sleep 1
+            continue
+        fi
+
+        if [[ -z &#34;$url&#34; ]];then
+            break
+        fi
+        view_page_handler ${url}
+    done
+}
+</code></pre><p>这里要注意的是，为了防止发生死锁，从管道中读取 URL 时设置了超时，当出现超时就意味着生产进程赶不上消费进程的消费速度,因此消费进程休眠一秒后再次检查队列中的 URL。</p><h3 id=组合起来>组合起来</h3><pre tabindex=0><code>collector &#34;https://www.commandlinefu.com/commands/browse&#34; &amp;
+
+for ((i=0;i&lt;${proc_num};i++))
+do
+    spider &amp;
+done
+wait
+</code></pre><h3 id=抓取其他网站>抓取其他网站</h3><p>通过重新定义 <code>extract_views_from_browse_page</code>、 <code>extract_nextpage_from-browse_page</code>、 <code>view_page_handler</code> 这几个函数， 以及提供一个新的种子 URL，我们可以很容易将其改造成抓取其他网站的多进程爬虫。</p><p>例如通过下面这段代码，就可以用来爬取 <a href=https://xkcd.com/>xkcd</a> 上的漫画：</p><pre tabindex=0><code>function extract_views_from_browse_page()
+{
+    if [[ $# -eq 0 ]];then
+        local html=$(cat -)
+    else
+        local html=&#34;$*&#34;
+    fi
+    max=$(echo &#34;${html}&#34;|hxclean |hxselect -c -s &#34;\n&#34; &#34;#middleContainer&#34;|grep &#34;Permanent link to this comic&#34; |awk -F &#34;/&#34; &#39;{print $4}&#39;)
+    seq 1 ${max}|sed &#39;s@^@https://xkcd.com/@&#39;
+}
+
+function extract_nextpage_from_browse_page()
+{
+    echo &#34;&#34;
+}
+
+function view_page_handler()
+{
+    local url=&#34;$1&#34;
+    local html=&#34;$(fetch &#34;${url}/&#34;)&#34;
+    local image=&#34;https:$(echo ${html} |hxclean |hxselect -c -s &#34;\n&#34; &#34;#comic &gt; img:nth-child(1)::attr(src)&#34;)&#34;
+    echo ${image}
+    wget ${image}
+}
+
+collector &#34;https://xkcd.com/&#34; &amp;
+</code></pre></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%88%AC%E8%99%AB/ rel=tag>爬虫</a></li><li class=tags__item><a class="tags__link btn" href=/tags/commandlinefu/ rel=tag>CommandlineFu</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

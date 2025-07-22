@@ -1,0 +1,115 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>利用 Shell 脚本让网站更具可读性 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="利用 Shell 脚本让网站更具可读性"><meta property="og:description" content="测算网站的文本和背景之间的对比度，以确保站点易于阅读。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13052-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-01-25T23:14:00+00:00"><meta property="article:modified_time" content="2021-01-25T23:14:00+00:00"><meta itemprop=name content="利用 Shell 脚本让网站更具可读性"><meta itemprop=description content="测算网站的文本和背景之间的对比度，以确保站点易于阅读。"><meta itemprop=datePublished content="2021-01-25T23:14:00+00:00"><meta itemprop=dateModified content="2021-01-25T23:14:00+00:00"><meta itemprop=wordCount content="748"><meta itemprop=keywords content="对比度,可读性,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>利用 Shell 脚本让网站更具可读性</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-01-25T23:14:00Z>January 25, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>测算网站的文本和背景之间的对比度，以确保站点易于阅读。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202101/25/231152ce5ufhjtufxj1eeu.jpg alt></p><p>如果希望人们发现你的网站实用，那么他们需要能够阅读它。为文本选择的颜色可能会影响网站的可读性。不幸的是，网页设计中的一种流行趋势是在打印输出文本时使用低对比度的颜色，就像在白色背景上的灰色文本。对于 Web 设计师来说，这也许看起来很酷，但对于许多阅读它的人来说确实很困难。</p><p>W3C 提供了《 Web 内容可访问性指南 Web Content Accessibility Guidelines 》，其中包括帮助 Web 设计人员选择易于区分文本和背景色的指导。z这就是所谓的“ 对比度 contrast ratio ”。 W3C 定义的对比度需要进行一些计算：给定两种颜色，首先计算每种颜色的相对亮度，然后计算对比度。对比度在 1 到 21 的范围内（通常写为 1:1 到 21:1）。对比度越高，文本在背景下的突出程度就越高。例如，白色背景上的黑色文本非常醒目，对比度为 21:1。对比度为 1:1 的白色背景上的白色文本不可读。</p><p><a href=https://www.w3.org/TR/2008/REC-WCAG20-20081211/#visual-audio-contrast>W3C 说，正文</a> 的对比度至少应为 4.5:1，标题至少应为 3:1。但这似乎是最低限度的要求。W3C 还建议正文至少 7:1，标题至少 4.5:1。</p><p>计算对比度可能比较麻烦，因此最好将其自动化。我已经用这个方便的 Bash 脚本做到了这一点。通常，脚本执行以下操作：</p><ol><li>获取文本颜色和背景颜色</li><li>计算相对亮度</li><li>计算对比度</li></ol><h3 id=获取颜色>获取颜色</h3><p>你可能知道显示器上的每种颜色都可以用红色、绿色和蓝色（R、G 和 B）来表示。要计算颜色的相对亮度，脚本需要知道颜色的红、绿和蓝的各个分量。理想情况下，脚本会将这些信息读取为单独的 R、G 和 B 值。 Web 设计人员可能知道他们喜欢的颜色的特定 RGB 代码，但是大多数人不知道不同颜色的 RGB 值。作为一种替代的方法是，大多数人通过 “red” 或 “gold” 或 “maroon” 之类的名称来引用颜色。</p><p>幸运的是，GNOME 的 <a href=https://wiki.gnome.org/Projects/Zenity>Zenity</a> 工具有一个颜色选择器应用程序，可让你使用不同的方法选择颜色，然后用可预测的格式 <code>rgb(R,G,B)</code> 返回 RGB 值。使用 Zenity 可以轻松获得颜色值：</p><pre tabindex=0><code>color=$( zenity --title &#39;Set text color&#39; --color-selection --color=&#39;black&#39; )
+</code></pre><p>如果用户（意外地）单击 “Cancel（取消）” 按钮，脚本将假定一种颜色：</p><pre tabindex=0><code>if [ $? -ne 0 ] ; then
+        echo &#39;** color canceled .. assume black&#39;
+        color=&#39;rgb(0,0,0)&#39;
+fi
+</code></pre><p>脚本对背景颜色值也执行了类似的操作，将其设置为 <code>$background</code>。</p><h3 id=计算相对亮度>计算相对亮度</h3><p>一旦你在 <code>$color</code> 中设置了前景色，并在 <code>$background</code> 中设置了背景色，下一步就是计算每种颜色的相对亮度。 <a href=https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef>W3C 提供了一个算法</a> 用以计算颜色的相对亮度。</p><blockquote><p>对于 sRGB 色彩空间，一种颜色的相对亮度定义为：</p><p>L = 0.2126 * R + 0.7152 * G + 0.0722 * B</p><p>R、G 和 B 定义为：</p><p>if R sRGB​ &lt;= 0.03928 then R = R sRGB​/12.92</p><p>else R = ((R sRGB​+0.055)/1.055) 2.4</p><p>if G sRGB​ &lt;= 0.03928 then G = G sRGB​/12.92</p><p>else G = ((G sRGB​+0.055)/1.055) 2.4</p><p>if B sRGB​ &lt;= 0.03928 then B = B sRGB​/12.92</p><p>else B = ((B sRGB​+0.055)/1.055) 2.4</p><p>R sRGB​、G sRGB​ 和 B sRGB​ 定义为：</p><p>R sRGB​ = R 8bit​/255</p><p>G sRGB​ = G 8bit​/255</p><p>B sRGB​ = B 8bit​/255</p></blockquote><p>由于 Zenity 以 <code>rgb(R,G,B)</code> 的格式返回颜色值，因此脚本可以轻松拉取分隔开的 R、B 和 G 的值以计算相对亮度。AWK 可以使用逗号作为字段分隔符（<code>-F,</code>），并使用 <code>substr()</code> 字符串函数从 <code>rgb(R,G,B)</code> 中提取所要的颜色值：</p><pre tabindex=0><code>R=$( echo $color | awk -F, &#39;{print substr($1,5)}&#39; )
+G=$( echo $color | awk -F, &#39;{print $2}&#39; )
+B=$( echo $color | awk -F, &#39;{n=length($3); print substr($3,1,n-1)}&#39; )
+</code></pre><p><em>有关使用 AWK 提取和显示数据的更多信息，<a href=https://opensource.com/article/18/7/cheat-sheet-awk>查看 AWK 备忘表</a></em></p><p>最好使用 BC 计算器来计算最终的相对亮度。BC 支持计算中所需的简单 <code>if-then-else</code>，这使得这一过程变得简单。但是由于 BC 无法使用非整数指数直接计算乘幂，因此需要使用自然对数替代它做一些额外的数学运算：</p><pre tabindex=0><code>echo &#34;scale=4
+rsrgb=$R/255
+gsrgb=$G/255
+bsrgb=$B/255
+if ( rsrgb &lt;= 0.03928 ) r = rsrgb/12.92 else r = e( 2.4 * l((rsrgb+0.055)/1.055) )
+if ( gsrgb &lt;= 0.03928 ) g = gsrgb/12.92 else g = e( 2.4 * l((gsrgb+0.055)/1.055) )
+if ( bsrgb &lt;= 0.03928 ) b = bsrgb/12.92 else b = e( 2.4 * l((bsrgb+0.055)/1.055) )
+0.2126 * r + 0.7152 * g + 0.0722 * b&#34; | bc -l
+</code></pre><p>这会将一些指令传递给 BC，包括作为相对亮度公式一部分的 <code>if-then-else</code> 语句。接下来 BC 打印出最终值。</p><h3 id=计算对比度>计算对比度</h3><p>利用文本颜色和背景颜色的相对亮度，脚本就可以计算对比度了。 <a href=https://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef>W3C 确定对比度</a> 是使用以下公式：</p><blockquote><p>(L1 + 0.05) / (L2 + 0.05)，这里的 L1 是颜色较浅的相对亮度， L2 是颜色较深的相对亮度。</p></blockquote><p>给定两个相对亮度值 <code>$r1</code> 和 <code>$r2</code>，使用 BC 计算器很容易计算对比度：</p><pre tabindex=0><code>echo &#34;scale=2
+if ( $r1 &gt; $r2 ) { l1=$r1; l2=$r2 } else { l1=$r2; l2=$r1 }
+(l1 + 0.05) / (l2 + 0.05)&#34; | bc
+</code></pre><p>使用 <code>if-then-else</code> 语句确定哪个值（<code>$r1</code> 或 <code>$r2</code>）是较浅还是较深的颜色。BC 执行结果计算并打印结果，脚本可以将其存储在变量中。</p><h3 id=最终脚本>最终脚本</h3><p>通过以上内容，我们可以将所有内容整合到一个最终脚本。 我使用 Zenity 在文本框中显示最终结果：</p><pre tabindex=0><code>#!/bin/sh
+# script to calculate contrast ratio of colors
+
+# read color and background color:
+# zenity returns values like &#39;rgb(255,140,0)&#39; and &#39;rgb(255,255,255)&#39;
+
+color=$( zenity --title &#39;Set text color&#39; --color-selection --color=&#39;black&#39; )
+if [ $? -ne 0 ] ; then
+        echo &#39;** color canceled .. assume black&#39;
+        color=&#39;rgb(0,0,0)&#39;
+fi
+
+background=$( zenity --title &#39;Set background color&#39; --color-selection --color=&#39;white&#39; )
+if [ $? -ne 0 ] ; then
+        echo &#39;** background canceled .. assume white&#39;
+        background=&#39;rgb(255,255,255)&#39;
+fi
+
+# compute relative luminance:
+
+function luminance()
+{
+        R=$( echo $1 | awk -F, &#39;{print substr($1,5)}&#39; )
+        G=$( echo $1 | awk -F, &#39;{print $2}&#39; )
+        B=$( echo $1 | awk -F, &#39;{n=length($3); print substr($3,1,n-1)}&#39; )
+
+        echo &#34;scale=4
+rsrgb=$R/255
+gsrgb=$G/255
+bsrgb=$B/255
+if ( rsrgb &lt;= 0.03928 ) r = rsrgb/12.92 else r = e( 2.4 * l((rsrgb+0.055)/1.055) )
+if ( gsrgb &lt;= 0.03928 ) g = gsrgb/12.92 else g = e( 2.4 * l((gsrgb+0.055)/1.055) )
+if ( bsrgb &lt;= 0.03928 ) b = bsrgb/12.92 else b = e( 2.4 * l((bsrgb+0.055)/1.055) )
+0.2126 * r + 0.7152 * g + 0.0722 * b&#34; | bc -l
+}
+
+lum1=$( luminance $color )
+lum2=$( luminance $background )
+
+# compute contrast
+
+function contrast()
+{
+        echo &#34;scale=2
+if ( $1 &gt; $2 ) { l1=$1; l2=$2 } else { l1=$2; l2=$1 }
+(l1 + 0.05) / (l2 + 0.05)&#34; | bc
+}
+
+rel=$( contrast $lum1 $lum2 )
+
+# print results
+
+( cat&lt;&lt;EOF
+Color is $color on $background
+
+Contrast ratio is $rel
+Contrast ratios can range from 1 to 21 (commonly written 1:1 to 21:1).
+
+EOF
+
+if [ ${rel%.*} -ge 4 ] ; then
+        echo &#34;Ok for body text&#34;
+else
+        echo &#34;Not good for body text&#34;
+fi
+if [ ${rel%.*} -ge 3 ] ; then
+        echo &#34;Ok for title text&#34;
+else
+        echo &#34;Not good for title text&#34;
+fi
+
+cat&lt;&lt;EOF
+
+W3C 说明：
+
+1.4.3 对比度（最小值）：文本和文本图像的视觉呈现方式的对比度至少为 4.5：1，但以下情况除外：（AA 级）
+
+    大文本：大文本和大文本图像的对比度至少为 3:1；
+
+    附带说明：作为非活动用户界面组件一部分，纯装饰的，任何人都不可见或图片的一部分包含特定的其他可视内容的文本或文本图像没有对比度要求。
+
+    小示意图：徽标或商标名称中的文本没有最低对比度要求。
+
+1.4.6 对比度（增强）：文本和文本图像的视觉表示具有至少 7:1 的对比度，但以下情况除外：（AAA 级）
+
+    大文本：大文本和大文本图像的对比度至少为 4.5:1；
+
+    附带说明：作为非活动用户界面组件一部分，纯装饰的，任何人都不可见或图片的一部分包含特定的其他可视内容的文本或文本图像没有对比度要求。
+ 
+    小示意图：徽标或商标名称中的文本没有最低对比度要求。
+EOF
+) | zenity --text-info --title=&#39;Relative Luminance&#39; --width=800 --height=600
+</code></pre><p>最后，我希望提供有关 W3C 建议的参考信息，以提醒自己。</p><p>Zenity 颜色选择器完成了所有解释颜色的艰苦工作，用户可以通过单击色轮或输入值来选择颜色。 Zenity 接受网站上使用的标准十六进制颜色值，例如 <code>＃000000</code> 或 <code>＃000</code>或 <code>rgb(0,0,0)</code>（所有这些均为黑色）。这是白色背景上的黑色文本的示例计算：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202101/25/231407fmxdojdfa20xvsjb.png alt></p><p><img src=https://img.linux.net.cn/data/attachment/album/202101/25/231407za4n74g1a2nngc7g.png alt></p><p><img src=https://img.linux.net.cn/data/attachment/album/202101/25/231408s44nsrx1ars41f8s.png alt></p><p>Zenity 还识别标准的颜色名称，如“cadetblue”、“orange”或“gold”。在Zenity 中输入颜色名称，然后点击 <code>Tab</code> 键，Zenity 会将颜色名称转换为十六进制颜色值，如以下示例中对金色背景上的黑色文本的计算：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202101/25/231409w344zuzqxzxd44fe.png alt></p><p><img src=https://img.linux.net.cn/data/attachment/album/202101/25/231409ad6o446qtqd7op4c.png alt></p><p><img src=https://img.linux.net.cn/data/attachment/album/202101/25/231409hs09sfa8yybjo93g.png alt></p><p><img src=https://img.linux.net.cn/data/attachment/album/202101/25/231410vz1kcfrszeese95b.png alt></p><p><img src=https://img.linux.net.cn/data/attachment/album/202101/25/231410ntkjjp6e6u26jx7o.png alt></p><hr><p>via: <a href=https://opensource.com/article/19/2/make-websites-more-readable-shell-script>https://opensource.com/article/19/2/make-websites-more-readable-shell-script</a></p><p>作者：<a href=https://opensource.com/users/jim-hall>Jim Hall</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/stevenzdg988>stevenzdg988</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AF%B9%E6%AF%94%E5%BA%A6/ rel=tag>对比度</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8F%AF%E8%AF%BB%E6%80%A7/ rel=tag>可读性</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

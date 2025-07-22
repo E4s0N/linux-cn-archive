@@ -1,0 +1,52 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Linux 上安装 Elasticsearch 和 Kibana - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Linux 上安装 Elasticsearch 和 Kibana"><meta property="og:description" content="获取我们关于安装两者的简化说明。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11221-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-08-13T14:33:41+00:00"><meta property="article:modified_time" content="2019-08-13T14:33:41+00:00"><meta itemprop=name content="如何在 Linux 上安装 Elasticsearch 和 Kibana"><meta itemprop=description content="获取我们关于安装两者的简化说明。"><meta itemprop=datePublished content="2019-08-13T14:33:41+00:00"><meta itemprop=dateModified content="2019-08-13T14:33:41+00:00"><meta itemprop=wordCount content="345"><meta itemprop=keywords content="Elasticsearch,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Linux 上安装 Elasticsearch 和 Kibana</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-08-13T14:33:41Z>August 13, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>获取我们关于安装两者的简化说明。</p></blockquote><p><img src=/data/attachment/album/201908/13/143356yqmb7czhqwacbwxc.png alt="5 pengiuns floating on iceburg" title="5 pengiuns floating on iceburg"></p><p>如果你渴望学习基于开源 Lucene 库的著名开源搜索引擎 Elasticsearch，那么没有比在本地安装它更好的方法了。这个过程在 <a href=https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html>Elasticsearch 网站</a>中有详细介绍，但如果你是初学者，官方说明就比必要的信息多得多。本文采用一种简化的方法。</p><h3 id=添加-elasticsearch-仓库>添加 Elasticsearch 仓库</h3><p>首先，将 Elasticsearch 仓库添加到你的系统，以便你可以根据需要安装它并接收更新。如何做取决于你的发行版。在基于 RPM 的系统上，例如 <a href=https://getfedora.org>Fedora</a>、<a href=https://www.centos.org>CentOS</a>、<a href=https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux>Red Hat Enterprise Linux（RHEL）</a> 或 <a href=https://www.opensuse.org>openSUSE</a>，（本文任何地方引用 Fedora 或 RHEL 的也适用于 CentOS 和 openSUSE）在 <code>/etc/yum.repos.d/</code> 中创建一个名为 <code>elasticsearch.repo</code> 的仓库描述文件：</p><pre tabindex=0><code>$ cat &lt;&lt; EOF | sudo tee /etc/yum.repos.d/elasticsearch.repo
+[elasticsearch-7.x]
+name=Elasticsearch repository for 7.x packages
+baseurl=https://artifacts.elastic.co/packages/oss-7.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+EOF
+</code></pre><p>在 Ubuntu 或 Debian 上，不要使用 <code>add-apt-repository</code> 工具。由于它自身默认的和 Elasticsearch 仓库提供的不匹配而导致错误。相反，设置这个：</p><pre tabindex=0><code>$ echo &#34;deb https://artifacts.elastic.co/packages/oss-7.x/apt stable main&#34; | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list
+</code></pre><p>在你从该仓库安装之前，导入 GPG 公钥，然后更新：</p><pre tabindex=0><code>$ sudo apt-key adv --keyserver \
+hkp://keyserver.ubuntu.com:80 \
+--recv D27D666CD88E42B4
+$ sudo apt update
+</code></pre><p>此存储库仅包含 Elasticsearch 的开源功能，在 <a href=http://www.apache.org/licenses/>Apache 许可证</a>下发布，没有提供订阅版本的额外功能。如果你需要仅限订阅的功能（这些功能是<strong>并不</strong>开源），那么 <code>baseurl</code> 必须设置为：</p><pre tabindex=0><code>baseurl=https://artifacts.elastic.co/packages/7.x/yum
+</code></pre><h3 id=安装-elasticsearch>安装 Elasticsearch</h3><p>你需要安装的软件包的名称取决于你使用的是开源版本还是订阅版本。本文使用开源版本，包名最后有 <code>-oss</code> 后缀。如果包名后没有 <code>-oss</code>，那么表示你请求的是仅限订阅版本。</p><p>如果你创建了订阅版本的仓库却尝试安装开源版本，那么就会收到“非指定”的错误。如果你创建了一个开源版本仓库却没有将 <code>-oss</code> 添加到包名后，那么你也会收到错误。</p><p>使用包管理器安装 Elasticsearch。例如，在 Fedora、CentOS 或 RHEL 上运行以下命令：</p><pre tabindex=0><code>$ sudo dnf install elasticsearch-oss
+</code></pre><p>在 Ubuntu 或 Debian 上，运行：</p><pre tabindex=0><code>$ sudo apt install elasticsearch-oss
+</code></pre><p>如果你在安装 Elasticsearch 时遇到错误，那么你可能安装的是错误的软件包。如果你想如本文这样使用开源包，那么请确保使用正确的 apt 仓库或在 Yum 配置正确的 <code>baseurl</code>。</p><h3 id=启动并启用-elasticsearch>启动并启用 Elasticsearch</h3><p>安装 Elasticsearch 后，你必须启动并启用它：</p><pre tabindex=0><code>$ sudo systemctl daemon-reload
+$ sudo systemctl enable --now elasticsearch.service
+</code></pre><p>要确认 Elasticsearch 在其默认端口 9200 上运行，请在 Web 浏览器中打开 <code>localhost:9200</code>。你可以使用 GUI 浏览器，也可以在终端中执行此操作：</p><pre tabindex=0><code>$ curl localhost:9200
+{
+
+  &#34;name&#34; : &#34;fedora30&#34;,
+  &#34;cluster_name&#34; : &#34;elasticsearch&#34;,
+  &#34;cluster_uuid&#34; : &#34;OqSbb16NQB2M0ysynnX1hA&#34;,
+  &#34;version&#34; : {
+    &#34;number&#34; : &#34;7.2.0&#34;,
+    &#34;build_flavor&#34; : &#34;oss&#34;,
+    &#34;build_type&#34; : &#34;rpm&#34;,
+    &#34;build_hash&#34; : &#34;508c38a&#34;,
+    &#34;build_date&#34; : &#34;2019-06-20T15:54:18.811730Z&#34;,
+    &#34;build_snapshot&#34; : false,
+    &#34;lucene_version&#34; : &#34;8.0.0&#34;,
+    &#34;minimum_wire_compatibility_version&#34; : &#34;6.8.0&#34;,
+    &#34;minimum_index_compatibility_version&#34; : &#34;6.0.0-beta1&#34;
+  },
+  &#34;tagline&#34; : &#34;You Know, for Search&#34;
+}
+</code></pre><h3 id=安装-kibana>安装 Kibana</h3><p>Kibana 是 Elasticsearch 数据可视化的图形界面。它包含在 Elasticsearch 仓库，因此你可以使用包管理器进行安装。与 Elasticsearch 本身一样，如果你使用的是 Elasticsearch 的开源版本，那么必须将 <code>-oss</code> 放到包名最后，订阅版本则不用（两者安装需要匹配）：</p><pre tabindex=0><code>$ sudo dnf install kibana-oss
+</code></pre><p>在 Ubuntu 或 Debian 上：</p><pre tabindex=0><code>$ sudo apt install kibana-oss
+</code></pre><p>Kibana 在端口 5601 上运行，因此打开图形化 Web 浏览器并进入 <code>localhost:5601</code> 来开始使用 Kibana，如下所示：</p><p><img src=/data/attachment/album/201908/13/143400ho5wob9bbkhkbw2c.jpg alt="Kibana running in Firefox." title="Kibana running in Firefox."></p><h3 id=故障排除>故障排除</h3><p>如果在安装 Elasticsearch 时出现错误，请尝试手动安装 Java 环境。在 Fedora、CentOS 和 RHEL 上：</p><pre tabindex=0><code>$ sudo dnf install java-openjdk-devel java-openjdk
+</code></pre><p>在 Ubuntu 上：</p><pre tabindex=0><code>$ sudo apt install default-jdk
+</code></pre><p>如果所有其他方法都失败，请尝试直接从 Elasticsearch 服务器安装 Elasticsearch RPM：</p><pre tabindex=0><code>$ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.2.0-x86_64.rpm{,.sha512}
+$ shasum -a 512 -c elasticsearch-oss-7.2.0-x86_64.rpm.sha512 &amp;&amp; sudo rpm --install elasticsearch-oss-7.2.0-x86_64.rpm
+</code></pre><p>在 Ubuntu 或 Debian 上，请使用 DEB 包。</p><p>如果你无法使用 Web 浏览器访问 Elasticsearch 或 Kibana，那么可能是你的防火墙阻止了这些端口。你可以通过调整防火墙设置来允许这些端口上的流量。例如，如果你运行的是 <code>firewalld</code>（Fedora 和 RHEL 上的默认防火墙，并且可以在 Debian 和 Ubuntu 上安装），那么你可以使用 <code>firewall-cmd</code>：</p><pre tabindex=0><code>$ sudo firewall-cmd --add-port=9200/tcp --permanent
+$ sudo firewall-cmd --add-port=5601/tcp --permanent
+$ sudo firewall-cmd --reload
+</code></pre><p>设置完成了，你可以关注我们接下来的 Elasticsearch 和 Kibana 安装文章。</p><hr><p>via: <a href=https://opensource.com/article/19/7/install-elasticsearch-and-kibana-linux>https://opensource.com/article/19/7/install-elasticsearch-and-kibana-linux</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/elasticsearch/ rel=tag>Elasticsearch</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

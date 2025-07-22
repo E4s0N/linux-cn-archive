@@ -1,0 +1,72 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux 下使用Trickle限制下载/上传带宽 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux 下使用Trickle限制下载/上传带宽"><meta property="og:description" content="你有没有遇到过一个程序占用了你所有的网络带宽的情况？如果你遇到过，那么你就需要限制带宽的应用。不管你是一个系统管理员还是一名普通Linux用户，您都应该学习如何控制应用的上传和下载速度来确保你的网络带宽不  &mldr;"><meta property="og:type" content="article"><meta property="og:url" content="/article-2375-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2013-12-14T20:45:00+00:00"><meta property="article:modified_time" content="2013-12-14T20:45:00+00:00"><meta itemprop=name content="Linux 下使用Trickle限制下载/上传带宽"><meta itemprop=description content="你有没有遇到过一个程序占用了你所有的网络带宽的情况？如果你遇到过，那么你就需要限制带宽的应用。不管你是一个系统管理员还是一名普通Linux用户，您都应该学习如何控制应用的上传和下载速度来确保你的网络带宽不  &mldr;"><meta itemprop=datePublished content="2013-12-14T20:45:00+00:00"><meta itemprop=dateModified content="2013-12-14T20:45:00+00:00"><meta itemprop=wordCount content="377"><meta itemprop=keywords content="Linux,Trickle,下载,上传,带宽,技巧,教程,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux 下使用Trickle限制下载/上传带宽</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2013-12-14T20:45:00Z>December 14, 2013</time></div></div></header><div class="content post__content clearfix"><p>你有没有遇到过一个程序占用了你所有的网络带宽的情况？如果你遇到过，那么你就需要限制带宽的应用。不管你是一个系统管理员还是一名普通Linux用户，您都应该学习如何控制应用的上传和下载速度来确保你的网络带宽不会被一个程序耗光。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201312/14/203954wk23q966o6y293iq.png alt></p><h3 id=trickle-是什么>Trickle 是什么?</h3><p><strong>Trickle</strong>是一款带宽控制供给，用来限制如<strong>Firefox, FTP , SSH</strong>以及其他使用网络带宽的程序的带宽。你希望你的<strong>Youtube</strong>音乐体验影响到你的ftp下载么？如果不想，请继续阅读这篇文章，学习如何在你的机器上安装和使用trickle。</p><h3 id=怎样在linux上安装trickle>怎样在Linux上安装Trickle</h3><p>trickle工具有一些依赖包，安装和使用trickle之前必须安装“<strong>libevent 库</strong>”，不过这个库在大多数现在的Linux机器上已经默认安装。</p><h4 id=在-debianubuntulinux-mint-上>在 Debian/Ubuntu/Linux Mint 上</h4><p>在<strong>Debian/Ubuntu/Mint</strong> 机器上运行 <strong>apt-get install trickle</strong>进行安装。请确保源列表已经更新，接着安装你想要的应用。</p><pre tabindex=0><code>$ sudo apt-get update
+$ sudo apt-get install trickle
+</code></pre><h4 id=在-rhelcentosfedora-上>在 RHEL/CentOS/Fedora 上</h4><p>首先你需要更新系统,然后使用下面的命令安装trickle。</p><pre tabindex=0><code># yum update
+# yum install trickle
+</code></pre><h3 id=trickle如何工作>Trickle如何工作?</h3><p>Trickle通过控制socket数据读写量来控制和限制应用的<strong>上传/下载</strong>速度。它使用另一个版本的<strong>BSD</strong>套接字API，但是区别是trickle还管理socket调用。</p><p>要注意的是trickle使用动态链接和加载，所以它只对于使用"Glibc库"的程序有用。由于trickle可以设置数据在socket上的传输延迟，所以它可以用来限制一个应用的网络带宽。</p><h3 id=trickle不能做什么>Trickle不能做什么？</h3><p>Trickle不能用于限制使用<strong>UDP</strong>协议的应用的带宽，它只可用于<strong>TCP</strong>连接，但是你要知道它也并不是对所有的<strong>TCP</strong>连接有效。如果你一直仔细地看这篇文章，你可以猜到原因是什么。你还记得trickle只对使用<strong>Glibc库</strong>应用有效吧？</p><p>还要说一下,trickle无法工作在使用静态链接的可执行程序上。</p><h3 id=确定trickle是否可运行在某个特定应用上>确定Trickle是否可运行在某个特定应用上</h3><p>既然trickle无法限制每个应用的<strong>上传/下载</strong>速度，就应该有个方法找出trickle可以工作的应用。</p><p><strong>ldd</strong>工具可以帮我们找出某个特定的程序是否使用了<strong>libc.so</strong>库。如果程序使用了这个库，就可以使用trickle来限制它的网络带宽使用。</p><p><strong>ldd</strong>命令用于打印每个程序需要的共享库。如果你是一个好奇的<strong>Linux Geek</strong>，那么你可以使用man命令来找出关于ldd工具的更多信息。</p><pre tabindex=0><code># man ldd
+</code></pre><p><strong>Filezilla</strong>是一款使用ftp协议传输文件的程序，trickle可以用来限制它的下载或者上传速度么？在你考虑的时候，我使用以下的命令来找出trickle是否可用于filezilla。</p><pre tabindex=0><code># ldd filezilla | grep libc.so
+</code></pre><p>就我而言，它输出了如下:</p><pre tabindex=0><code>oltjano@oltjano-X55CR:/usr/bin$ ldd filezilla | grep libc.so
+    libc.so.6 =&gt; /lib/i386-linux-gnu/libc.so.6 (0xb6bc4000)
+</code></pre><p>既然filezilla使用了“<strong>libc.so</strong>”库，那么trickle可以用来限制它的网络带宽。这个方法可以用在任何你感兴趣的程序上。</p><h3 id=学习如何使用trickle>学习如何使用Trickle</h3><p>使用下面的命令输出trickle工具的<strong>版本</strong>。</p><pre tabindex=0><code>root@oltjano-X55CR:~# trickle -V
+trickle: version 1.07
+</code></pre><p>Linux有很多命令行工具使测试(实验)变得有趣和美丽。下面的命令使用<a href=http://www.tecmint.com/10-wget-command-examples-in-linux/>wget 工具</a>来下载最新的Pear OS镜像.</p><pre tabindex=0><code>root@oltjano-X55CR:~# wget http://sourceforge.net/projects/pearoslinux/files/Pear%20OS%208/pearos8-i386.iso/download
+
+--2013-11-20 11:56:32--  http://sourceforge.net/projects/pearoslinux/files/Pear%20OS%208/pearos8-i386.iso/download
+Resolving sourceforge.net (sourceforge.net)... 216.34.181.60
+Connecting to sourceforge.net (sourceforge.net)|216.34.181.60|:80... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: http://downloads.sourceforge.net/project/pearoslinux/Pear%20OS%208/pearos8-i386.iso?r=&amp;ts=1384928843&amp;use_mirror=kaz [following]
+--2013-11-20 11:56:33--  http://downloads.sourceforge.net/project/pearoslinux/Pear%20OS%208/pearos8-i386.iso?r=&amp;ts=1384928843&amp;use_mirror=kaz
+Resolving downloads.sourceforge.net (downloads.sourceforge.net)... 216.34.181.59
+Connecting to downloads.sourceforge.net (downloads.sourceforge.net)|216.34.181.59|:80... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: http://kaz.dl.sourceforge.net/project/pearoslinux/Pear%20OS%208/pearos8-i386.iso [following]
+--2013-11-20 11:56:33--  http://kaz.dl.sourceforge.net/project/pearoslinux/Pear%20OS%208/pearos8-i386.iso
+Resolving kaz.dl.sourceforge.net (kaz.dl.sourceforge.net)... 88.204.157.163
+Connecting to kaz.dl.sourceforge.net (kaz.dl.sourceforge.net)|88.204.157.163|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1093664768 (1.0G) [application/octet-stream]
+Saving to: ‘download’
+
+0% [                                                                                                    ] 30,78,278    381KB/s  eta 1h 50m
+</code></pre><p>从输出可以看到，下载速度大约是<strong>381 KB/s</strong>。我想限制下载速度到<strong>13 K/s</strong>，这样我就可以用我的带宽做其他的事情了。下面的命令用来限制wget速度到<strong>13 K/s</strong>。</p><pre tabindex=0><code>ravisaive@ravisaive-OptiPlex-380:~$ trickle -d 13 wget http://sourceforge.net/projects/pearoslinux/files/Pear%20OS%208/pearos8-i386.iso/download
+
+--2013-11-20 12:01:19--  http://sourceforge.net/projects/pearoslinux/files/Pear%20OS%208/pearos8-i386.iso/download
+Resolving sourceforge.net (sourceforge.net)... 216.34.181.60
+Connecting to sourceforge.net (sourceforge.net)|216.34.181.60|:80... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: http://downloads.sourceforge.net/project/pearoslinux/Pear%20OS%208/pearos8-i386.iso?r=&amp;ts=1384929129&amp;use_mirror=kaz [following]
+--2013-11-20 12:01:19--  http://downloads.sourceforge.net/project/pearoslinux/Pear%20OS%208/pearos8-i386.iso?r=&amp;ts=1384929129&amp;use_mirror=kaz
+Resolving downloads.sourceforge.net (downloads.sourceforge.net)... 216.34.181.59
+Connecting to downloads.sourceforge.net (downloads.sourceforge.net)|216.34.181.59|:80... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: http://kaz.dl.sourceforge.net/project/pearoslinux/Pear%20OS%208/pearos8-i386.iso [following]
+--2013-11-20 12:01:20--  http://kaz.dl.sourceforge.net/project/pearoslinux/Pear%20OS%208/pearos8-i386.iso
+Resolving kaz.dl.sourceforge.net (kaz.dl.sourceforge.net)... 88.204.157.163
+Connecting to kaz.dl.sourceforge.net (kaz.dl.sourceforge.net)|88.204.157.163|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1093664768 (1.0G) [application/octet-stream]
+Saving to: ‘download.1’
+
+0% [                                                                                                   ] 2,01,550    13.1KB/s  eta 21h 5m
+</code></pre><p>从输出可以看到，下载速度被限制到了<strong>13K/s</strong>。下载将会持续<strong>21小时5分钟</strong>。上面的“<strong>-d</strong>”选项表示下载，还可以结合使用 “<strong>-d</strong>”选项和上传选项(<strong>-u</strong>)，如下例所示。</p><pre tabindex=0><code># trickle -u 100 -d 50 ftp
+</code></pre><p>上面的命令限制<strong>ftp 客户端</strong>的上传速度为<strong>100K/s</strong>，下载速度为<strong>50K/s</strong>。还可以使用下面的命令,限制在一个shell里运行的所有命令的带宽。</p><pre tabindex=0><code>trickle -d 130 -u 13 bash
+</code></pre><p>每个命令行工具都对用户提供了帮助，使用"trickle -h"命令来找出更多trickle工具的用法。</p><pre tabindex=0><code>root@oltjano-X55CR:/usr/bin# trickle -h
+
+Usage: trickle [-hvVs] [-d ] [-u ] [-w ] [-t ]
+               [-l ] [-n ] command ...
+    -h Help (this)
+    -v Increase verbosity level
+    -V Print trickle version
+    -s Run trickle in standalone mode independent of trickled
+    -d     Set maximum cumulative download rate to  KB/s
+    -u     Set maximum cumulative upload rate to  KB/s
+    -w   Set window length to  KB 
+    -t  Set default smoothing time to  s
+    -l   Set default smoothing length to  KB
+    -n     Use trickled socket name 
+    -L       Set latency to  milliseconds
+    -P     Preload the specified .so instead of the default one
+</code></pre><h3 id=总结>总结</h3><p>本篇文章介绍如何在Linux机器上安装trickle工具，并用它如何做一些简单的事情。无论你为大公司工作还是自己使用，trickle都是高级Linux用户的必备工具。</p><hr><p>via: <a href=http://www.tecmint.com/manage-and-limit-downloadupload-bandwidth-with-trickle-in-linux/>http://www.tecmint.com/manage-and-limit-downloadupload-bandwidth-with-trickle-in-linux/</a></p><p>译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/jasminepeng>jasminepeng</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/linux/ rel=tag>Linux</a></li><li class=tags__item><a class="tags__link btn" href=/tags/trickle/ rel=tag>Trickle</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E4%B8%8B%E8%BD%BD/ rel=tag>下载</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E4%B8%8A%E4%BC%A0/ rel=tag>上传</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%B8%A6%E5%AE%BD/ rel=tag>带宽</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8A%80%E5%B7%A7/ rel=tag>技巧</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%99%E7%A8%8B/ rel=tag>教程</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

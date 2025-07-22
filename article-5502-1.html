@@ -1,0 +1,165 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>4个可以发送完整电子邮件的命令行工具 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="4个可以发送完整电子邮件的命令行工具"><meta property="og:description" content="今天的文章里我们会讲到一些使用Linux命令行工具来发送带附件的电子邮件的方法。它有很多用处，比如在应用程序所在服务器上，使用电子邮件发送一个文件过来，或者你可以在脚本中使用这些命令来做一些自动化操作。在本文的例子中，我们会使用foo.tar.gz文件作为附件。 有不同的命令行工具可以发送邮件，这里我分享几个多数用户会使用的工具，如mailx、mutt和swaks。 我们即将呈现的这些工具都是非常有名的，并且存在于多数Linux发行版默认的软件仓库中，你可以使用如下命令安装： 在 Debian / Ubuntu 系统 apt-get install mutt apt-get in"><meta property="og:type" content="article"><meta property="og:url" content="/article-5502-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-05-25T11:04:00+00:00"><meta property="article:modified_time" content="2015-05-25T11:04:00+00:00"><meta itemprop=name content="4个可以发送完整电子邮件的命令行工具"><meta itemprop=description content="今天的文章里我们会讲到一些使用Linux命令行工具来发送带附件的电子邮件的方法。它有很多用处，比如在应用程序所在服务器上，使用电子邮件发送一个文件过来，或者你可以在脚本中使用这些命令来做一些自动化操作。在本文的例子中，我们会使用foo.tar.gz文件作为附件。 有不同的命令行工具可以发送邮件，这里我分享几个多数用户会使用的工具，如mailx、mutt和swaks。 我们即将呈现的这些工具都是非常有名的，并且存在于多数Linux发行版默认的软件仓库中，你可以使用如下命令安装： 在 Debian / Ubuntu 系统 apt-get install mutt apt-get in"><meta itemprop=datePublished content="2015-05-25T11:04:00+00:00"><meta itemprop=dateModified content="2015-05-25T11:04:00+00:00"><meta itemprop=wordCount content="628"><meta itemprop=keywords content="email,mailx,swaks,mutt,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>4个可以发送完整电子邮件的命令行工具</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-05-25T11:04:00Z>May 25, 2015</time></div></div></header><div class="content post__content clearfix"><p>今天的文章里我们会讲到一些使用Linux命令行工具来发送带附件的电子邮件的方法。它有很多用处，比如在应用程序所在服务器上，使用电子邮件发送一个文件过来，或者你可以在脚本中使用这些命令来做一些自动化操作。在本文的例子中，我们会使用foo.tar.gz文件作为附件。</p><p><img src=/data/attachment/album/201505/25/110629p173bcxip1cffcxo.png alt></p><p>有不同的命令行工具可以发送邮件，这里我分享几个多数用户会使用的工具，如<code>mailx</code>、<code>mutt</code>和<code>swaks</code>。</p><p>我们即将呈现的这些工具都是非常有名的，并且存在于多数Linux发行版默认的软件仓库中，你可以使用如下命令安装：</p><p>在 <strong>Debian / Ubuntu</strong> 系统</p><pre tabindex=0><code>apt-get install mutt
+apt-get install swaks
+apt-get install mailx
+apt-get install sharutils
+</code></pre><p>在基于Red Hat的系统，如 <strong>CentOS</strong> 或者 <strong>Fedora</strong></p><pre tabindex=0><code>yum install mutt
+yum install swaks
+yum install mailx
+yum install sharutils
+</code></pre><h3 id=1-使用-mail--mailx>1) 使用 mail / mailx</h3><p><code>mailx</code>工具在多数Linux发行版中是默认的邮件程序，现在已经支持发送附件了。如果它不在你的系统中，你可以使用上边的命令安装。有一点需要注意，老版本的mailx可能不支持发送附件，运行如下命令查看是否支持。</p><pre tabindex=0><code>$ man mail
+</code></pre><p>第一行看起来是这样的：</p><pre tabindex=0><code>mailx [-BDdEFintv~] [-s subject] [-a attachment ] [-c cc-addr] [-b bcc-addr] [-r from-addr] [-h hops] [-A account] [-S variable[=value]] to-addr . . .
+</code></pre><p>如果你看到它支持<code>-a</code>的选项（-a 文件名，将文件作为附件添加到邮件）和<code>-s</code>选项（-s 主题，指定邮件的主题），那就是支持的。可以使用如下的几个例子发送邮件。</p><p><strong>a) 简单的邮件</strong></p><p>运行<code>mail</code>命令，然后<code>mailx</code>会等待你输入邮件内容。你可以按回车来换行。当输入完成后，按Ctrl + D，<code>mailx</code>会显示EOT表示结束。</p><p>然后<code>mailx</code>会自动将邮件发送给收件人。</p><pre tabindex=0><code>$ mail user@example.com
+
+HI,
+Good Morning
+How are you
+EOT
+</code></pre><p><strong>b) 发送有主题的邮件</strong></p><pre tabindex=0><code>$ echo &#34;Email text&#34; | mail -s &#34;Test Subject&#34; user@example.com
+</code></pre><p><code>-s</code>的用处是指定邮件的主题。</p><p><strong>c) 从文件中读取邮件内容并发送</strong></p><pre tabindex=0><code>$ mail -s &#34;message send from file&#34; user@example.com &lt; /path/to/file
+</code></pre><p><strong>d) 将从管道获取到的<code>echo</code>命令输出作为邮件内容发送</strong></p><pre tabindex=0><code>$ echo &#34;This is message body&#34; | mail -s &#34;This is Subject&#34; user@example.com
+</code></pre><p><strong>e) 发送带附件的邮件</strong></p><pre tabindex=0><code>$ echo “Body with attachment &#34;| mail -a foo.tar.gz -s &#34;attached file&#34; user@example.com
+</code></pre><p><code>-a</code>选项用于指定附件。</p><h3 id=2-mutt>2) mutt</h3><p>Mutt是类Unix系统上的一个文本界面邮件客户端。它有20多年的历史，在Linux历史中也是一个很重要的部分，它是最早支持进程打分和多线程处理的客户端程序之一。按照如下的例子来发送邮件。</p><p><strong>a) 带有主题，从文件中读取邮件的正文，并发送</strong></p><pre tabindex=0><code>$ mutt -s &#34;Testing from mutt&#34; user@example.com &lt; /tmp/message.txt
+</code></pre><p><strong>b) 通过管道获取<code>echo</code>命令输出作为邮件内容发送</strong></p><pre tabindex=0><code>$ echo &#34;This is the body&#34; | mutt -s &#34;Testing mutt&#34; user@example.com
+</code></pre><p><strong>c) 发送带附件的邮件</strong></p><pre tabindex=0><code>$ echo &#34;This is the body&#34; | mutt -s &#34;Testing mutt&#34; user@example.com -a /tmp/foo.tar.gz
+</code></pre><p><strong>d) 发送带有多个附件的邮件</strong></p><pre tabindex=0><code>$ echo &#34;This is the body&#34; | mutt -s &#34;Testing&#34; user@example.com -a foo.tar.gz –a bar.tar.gz
+</code></pre><h3 id=3-swaks>3) swaks</h3><p>Swaks（Swiss Army Knife，瑞士军刀）是SMTP服务上的瑞士军刀，它是一个功能强大、灵活、可编程、面向事务的SMTP测试工具，由John Jetmore开发和维护。你可以使用如下语法发送带附件的邮件：</p><pre tabindex=0><code>$ swaks -t &#34;foo@bar.com&#34; --header &#34;Subject: Subject&#34; --body &#34;Email Text&#34; --attach foo.tar.gz
+</code></pre><p>关于Swaks一个重要的地方是，它会为你显示整个邮件发送过程，所以如果你想调试邮件发送过程，它是一个非常有用的工具。</p><p>它会给你提供了邮件发送过程的所有细节，包括邮件接收服务器的功能支持、两个服务器之间的每一步交互。</p><p>（LCTT 译注：原文此处少了 sharutils 的相关介绍，而多了 uuencode 的介绍。）</p><h3 id=4-uuencode>4) uuencode</h3><p>邮件传输系统最初是被设计来传送7位编码（类似ASCII）的内容的。这就意味这它是用来发送文本内容，而不能发会使用8位的二进制内容（如程序文件或者图片）。<code>uuencode</code>（“UNIX to UNIX encoding”，UNIX之间使用的编码方式）程序用来解决这个限制。使用<code>uuencode</code>，发送端将二进制格式的转换成文本格式来传输，接收端再转换回去。</p><p>我们可以简单地使用<code>uuencode</code>和<code>mailx</code>或者<code>mutt</code>配合，来发送二进制内容，类似这样：</p><pre tabindex=0><code>$ uuencode example.jpeg example.jpeg | mail user@example.com
+</code></pre><h3 id=shell脚本解释如何发送邮件>Shell脚本：解释如何发送邮件</h3><pre tabindex=0><code>#!/bin/bash
+
+FROM=&#34;&#34;
+SUBJECT=&#34;&#34;
+ATTACHMENTS=&#34;&#34;
+TO=&#34;&#34;
+BODY=&#34;&#34;
+
+# 检查文件名对应的文件是否存在
+function check_files()
+{
+output_files=&#34;&#34;
+for file in $1
+do
+if [ -s $file ]
+then
+output_files=&#34;${output_files}${file} &#34;
+fi
+done
+echo $output_files
+}
+
+echo &#34;*********************&#34;
+echo &#34;E-mail sending script.&#34;
+echo &#34;*********************&#34;
+echo
+
+# 读取用户输入的邮件地址
+while [ 1 ]
+do
+if [ ! $FROM ]
+then
+echo -n -e &#34;Enter the e-mail address you wish to send mail from:\n[Enter] &#34;
+else
+echo -n -e &#34;The address you provided is not valid:\n[Enter] &#34;
+fi
+
+read FROM
+echo $FROM | grep -E &#39;^.+@.+$&#39; &gt; /dev/null
+if [ $? -eq 0 ]
+then
+break
+fi
+done
+
+echo
+
+# 读取用户输入的收件人地址
+while [ 1 ]
+do
+if [ ! $TO ]
+then
+echo -n -e &#34;Enter the e-mail address you wish to send mail to:\n[Enter] &#34;
+else
+echo -n -e &#34;The address you provided is not valid:\n[Enter] &#34;
+fi
+
+read TO
+echo $TO | grep -E &#39;^.+@.+$&#39; &gt; /dev/null
+if [ $? -eq 0 ]
+then
+break
+fi
+done
+
+echo
+
+# 读取用户输入的邮件主题
+echo -n -e &#34;Enter e-mail subject:\n[Enter] &#34;
+read SUBJECT
+
+echo
+
+if [ &#34;$SUBJECT&#34; == &#34;&#34; ]
+then
+echo &#34;Proceeding without the subject...&#34;
+fi
+
+# 读取作为附件的文件名
+echo -e &#34;Provide the list of attachments. Separate names by space.
+If there are spaces in file name, quote file name with \&#34;.&#34;
+read att
+
+echo
+
+# 确保文件名指向真实文件
+attachments=$(check_files &#34;$att&#34;)
+echo &#34;Attachments: $attachments&#34;
+
+for attachment in $attachments
+do
+ATTACHMENTS=&#34;$ATTACHMENTS-a $attachment &#34;
+done
+
+echo
+
+# 读取完整的邮件正文
+echo &#34;Enter message. To mark the end of message type ;; in new line.&#34;
+read line
+
+while [ &#34;$line&#34; != &#34;;;&#34; ]
+do
+BODY=&#34;$BODY$line\n&#34;
+read line
+done
+
+SENDMAILCMD=&#34;mutt -e \&#34;set from=$FROM\&#34; -s \&#34;$SUBJECT\&#34; \
+$ATTACHMENTS -- \&#34;$TO\&#34; &lt;&lt;&lt; \&#34;$BODY\&#34;&#34;
+echo $SENDMAILCMD
+
+mutt -e &#34;set from=$FROM&#34; -s &#34;$SUBJECT&#34; $ATTACHMENTS -- $TO &lt;&lt;&lt; $BODY
+</code></pre><p>** 脚本输出 **</p><pre tabindex=0><code>$ bash send_mail.sh
+*********************
+E-mail sending script.
+*********************
+
+Enter the e-mail address you wish to send mail from:
+[Enter] test@gmail.com
+
+Enter the e-mail address you wish to send mail to:
+[Enter] test@gmail.com
+
+Enter e-mail subject:
+[Enter] Message subject
+
+Provide the list of attachments. Separate names by space.
+If there are spaces in file name, quote file name with &#34;.
+send_mail.sh
+
+Attachments: send_mail.sh
+
+Enter message. To mark the end of message type ;; in new line.
+This is a message
+text
+;;
+</code></pre><h3 id=总结>总结</h3><p>有很多方法可以使用命令行/Shell脚本来发送邮件，这里我们只分享了其中4个类Unix系统可用的工具。希望你喜欢我们的文章，并且提供您的宝贵意见，让我们知道您想了解哪些新工具。</p><hr><p>via: <a href=http://linoxide.com/linux-shell-script/send-email-subject-body-attachment-linux/>http://linoxide.com/linux-shell-script/send-email-subject-body-attachment-linux/</a></p><p>作者：<a href=http://linoxide.com/author/bobbin/>Bobbin Zachariah</a> 译者：<a href=https://github.com/goreliu>goreliu</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/email/ rel=tag>email</a></li><li class=tags__item><a class="tags__link btn" href=/tags/mailx/ rel=tag>mailx</a></li><li class=tags__item><a class="tags__link btn" href=/tags/swaks/ rel=tag>swaks</a></li><li class=tags__item><a class="tags__link btn" href=/tags/mutt/ rel=tag>mutt</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

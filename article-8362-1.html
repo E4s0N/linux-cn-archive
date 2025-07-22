@@ -1,0 +1,51 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>wkhtmltopdf：一个 Linux 中将网页转成 PDF 的智能工具 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="wkhtmltopdf：一个 Linux 中将网页转成 PDF 的智能工具"><meta property="og:description" content="wkhtmltopdf 是用 C++ 编写的，并在 GNU/GPL （通用公共许可证）下发布。它使用 WebKit 渲染引擎将 HTML 页面转换为 PDF 文档且不会丢失页面的质量。这是一个用于实时创建和存储网页快照的非常有用且可信赖的解决方案。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8362-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-04-01T08:02:00+00:00"><meta property="article:modified_time" content="2017-04-01T08:02:00+00:00"><meta itemprop=name content="wkhtmltopdf：一个 Linux 中将网页转成 PDF 的智能工具"><meta itemprop=description content="wkhtmltopdf 是用 C++ 编写的，并在 GNU/GPL （通用公共许可证）下发布。它使用 WebKit 渲染引擎将 HTML 页面转换为 PDF 文档且不会丢失页面的质量。这是一个用于实时创建和存储网页快照的非常有用且可信赖的解决方案。"><meta itemprop=datePublished content="2017-04-01T08:02:00+00:00"><meta itemprop=dateModified content="2017-04-01T08:02:00+00:00"><meta itemprop=wordCount content="377"><meta itemprop=keywords content="PDF,wkhtmltopdf,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>wkhtmltopdf：一个 Linux 中将网页转成 PDF 的智能工具</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-04-01T08:02:00Z>April 01, 2017</time></div></div></header><div class="content post__content clearfix"><p>wkhtmltopdf 是一个开源、简单而有效的命令行 shell 程序，它可以将任何 HTML （网页）转换为 PDF 文档或图像（jpg、png 等）。</p><p>wkhtmltopdf 是用 C++ 编写的，并在 GNU/GPL （通用公共许可证）下发布。它使用 WebKit 渲染引擎将 HTML 页面转换为 PDF 文档且不会丢失页面的质量。这是一个用于实时创建和存储网页快照的非常有用且可信赖的解决方案。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201703/31/220804a3fssc34bsscbfl2.png alt></p><h3 id=wkhtmltopdf-的功能>wkhtmltopdf 的功能</h3><ol><li>开源并且跨平台。</li><li>使用 WebKit 引擎将任意 HTML 网页转换为 PDF 文件。</li><li>添加页眉和页脚的选项</li><li>目录生成 （TOC） 选项。</li><li>提供批量模式转换。</li><li>通过绑定 libwkhtmltox 来支持 PHP 或 Python。</li></ol><p>在本文中，我们将介绍如何在 Linux 系统下使用 tar 包来安装 wkhtmltopdf。</p><h3 id=安装-evince-pdf-浏览器>安装 Evince (PDF 浏览器)</h3><p>让我们在 Linux 系统中安装 evince (一个 PDF 阅读器)来浏览 PDF 文件。</p><pre tabindex=0><code>$ sudo yum install evince             [RHEL/CentOS and Fedora]
+$ sudo dnf install evince             [On Fedora 22+ versions]
+$ sudo apt-get install evince         [On Debian/Ubuntu systems]
+</code></pre><h3 id=下载-wkhtmltopdf-源码文件>下载 wkhtmltopdf 源码文件</h3><p>使用 <a href=/tag-wget.html>wget 命令</a>根据你的 Linux 架构来下载 wkhtmltopdf 源码文件，或者你也可以在 <a href=http://wkhtmltopdf.org/downloads.html>wkhtmltopdf 下载页</a>下载最新的版本（目前最新的稳定版是 0.12.4）</p><p>在 64 位 Linux 系统中：</p><pre tabindex=0><code>$ wget http://download.gna.org/wkhtmltopdf/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+</code></pre><p>在 32 位 Linux 系统中：</p><pre tabindex=0><code>$ wget http://download.gna.org/wkhtmltopdf/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-i386.tar.xz
+</code></pre><h3 id=在-linux-中安装-wkhtmltopdf>在 Linux 中安装 wkhtmltopdf</h3><p>使用 <a href=/tag-tar.html>tar 命令</a>解压文件到当前目录中。</p><pre tabindex=0><code>------ On 64-bit Linux OS ------
+$ sudo tar -xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz 
+------ On 32-bit Linux OS ------
+$ sudo tar -xvzf wkhtmltox-0.12.4_linux-generic-i386.tar.xz 
+</code></pre><p>为了能从任意路径执行程序，将 wkhtmltopdf 安装到 <code>/usr/bin</code> 目录下。</p><pre tabindex=0><code>$ sudo cp wkhtmltox/bin/wkhtmltopdf /usr/bin/
+</code></pre><h3 id=如何使用-wkhtmltopdf>如何使用 wkhtmltopdf？</h3><p>我们会看到如何将远程的 HTML 页面转换成 PDF 文件、验证信息、使用 evince 在 GNOME 桌面中浏览创建的文件。</p><h4 id=将-html-网页转成-pdf-文件>将 HTML 网页转成 PDF 文件</h4><p>要将任意 HTML 页面转换成 PDF，运行下面的命令。它会在当前目录下将页面转换成 <a href=http://www.tecmint.com/sudoers-configurations-for-setting-sudo-in-linux/>10-Sudo-Configurations.pdf</a>。</p><pre tabindex=0><code># wkhtmltopdf http://www.tecmint.com/sudoers-configurations-for-setting-sudo-in-linux/ 10-Sudo-Configurations.pdf
+</code></pre><p>示例输出：</p><pre tabindex=0><code>Loading pages (1/6)
+Counting pages (2/6)
+Resolving links (4/6)
+Loading headers and footers (5/6)
+Printing pages (6/6)
+Done
+</code></pre><h4 id=浏览生成的-pdf-文件>浏览生成的 PDF 文件</h4><p>为了验证创建的文件，使用下面的命令。</p><pre tabindex=0><code>$ file 10-Sudo-Configurations.pdf
+</code></pre><p>示例输出：</p><pre tabindex=0><code>10-Sudo-Configurations.pdf: PDF document, version 1.4
+</code></pre><h4 id=浏览生成的-pdf-文件细节>浏览生成的 PDF 文件细节</h4><p>要浏览生成的文件信息，运行下面的命令。</p><pre tabindex=0><code>$ pdfinfo 10-Sudo-Configurations.pdf
+</code></pre><p>示例输出：</p><pre tabindex=0><code>Title:          10 Useful Sudoers Configurations for Setting &#39;sudo&#39; in Linux
+Creator:        wkhtmltopdf 0.12.4
+Producer:       Qt 4.8.7
+CreationDate:   Sat Jan 28 13:02:58 2017
+Tagged:         no
+UserProperties: no
+Suspects:       no
+Form:           none
+JavaScript:     no
+Pages:          13
+Encrypted:      no
+Page size:      595 x 842 pts (A4)
+Page rot:       0
+File size:      697827 bytes
+Optimized:      no
+PDF version:    1.4
+</code></pre><h4 id=浏览创建的文件>浏览创建的文件</h4><p>在桌面中使用 evince 查看最新生成的 PDF 文件。</p><pre tabindex=0><code>$ evince 10-Sudo-Configurations.pdf
+</code></pre><p>示例截图：</p><p>在我的 Linux Mint 17 中看起来很棒。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201703/31/220810fybro6v2o72bda99.png alt="View Website Page in PDF"></p><p><em>在 PDF 中浏览网页</em></p><h3 id=给-pdf-创建页面的-ruby-目录-rp---rp-rt--table-of-content-rt-rp---rprubytoc>给 PDF 创建页面的 目录 （ Table Of Content ） （TOC）</h3><p>要创建一个 PDF 文件的目录，使用 toc 选项。</p><pre tabindex=0><code>$ wkhtmltopdf toc http://www.tecmint.com/sudoers-configurations-for-setting-sudo-in-linux/ 10-Sudo-Configurations.pdf
+</code></pre><p>示例输出：</p><pre tabindex=0><code>Loading pages (1/6)
+Counting pages (2/6)
+Loading TOC (3/6)
+Resolving links (4/6)
+Loading headers and footers (5/6)
+Printing pages (6/6)
+Done
+</code></pre><p>要查看已创建文件的 TOC，再次使用 evince。</p><pre tabindex=0><code>$ evince 10-Sudo-Configurations.pdf
+</code></pre><p>示例截图：</p><p>看一下下面的图。它上看去比上面的更好。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201703/31/220811d9e4d2296d416ze3.png alt="Create Website Page to Table of Contents in PDF"></p><p><em>在 PDF 中创建网页的目录</em></p><h4 id=wkhtmltopdf-选项及使用>wkhtmltopdf 选项及使用</h4><p>更多关于 wkhtmltopdf 的使用及选项，使用下面的帮助命令。它会显示出所有可用的选项。</p><pre tabindex=0><code>$ wkhtmltopdf --help
+</code></pre><hr><p>作者简介：</p><p>我是 Ravi Saive，TecMint 的创建者。一个爱在网上分享的技巧和提示的电脑极客和 Linux 专家。我的大多数服务器运行在名为 Linux 的开源平台上。请在 Twitter、 Facebook 和 Google+ 等上关注我。</p><hr><p>via: <a href=http://www.tecmint.com/wkhtmltopdf-convert-website-html-page-to-pdf-linux/>http://www.tecmint.com/wkhtmltopdf-convert-website-html-page-to-pdf-linux/</a></p><p>作者：<a href=http://www.tecmint.com/author/admin/>Ravi Saive</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/pdf/ rel=tag>PDF</a></li><li class=tags__item><a class="tags__link btn" href=/tags/wkhtmltopdf/ rel=tag>wkhtmltopdf</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

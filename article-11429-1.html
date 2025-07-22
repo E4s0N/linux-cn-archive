@@ -1,0 +1,113 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 上记录和重放终端会话活动 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 上记录和重放终端会话活动"><meta property="og:description" content="在某些情况下，我们要检查上一个会话的命令输出，并希望将其与当前会话进行比较。因此在这种情况下，script 命令就变得很方便。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11429-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-10-06T12:27:00+00:00"><meta property="article:modified_time" content="2019-10-06T12:27:00+00:00"><meta itemprop=name content="在 Linux 上记录和重放终端会话活动"><meta itemprop=description content="在某些情况下，我们要检查上一个会话的命令输出，并希望将其与当前会话进行比较。因此在这种情况下，script 命令就变得很方便。"><meta itemprop=datePublished content="2019-10-06T12:27:00+00:00"><meta itemprop=dateModified content="2019-10-06T12:27:00+00:00"><meta itemprop=wordCount content="692"><meta itemprop=keywords content="记录,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 上记录和重放终端会话活动</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-10-06T12:27:00Z>October 06, 2019</time></div></div></header><div class="content post__content clearfix"><p>通常，Linux 管理员们都使用 <code>history</code> 命令来跟踪在先前的会话中执行过哪些命令，但是 <code>history</code> 命令的局限性在于它不存储命令的输出。在某些情况下，我们要检查上一个会话的命令输出，并希望将其与当前会话进行比较。除此之外，在某些情况下，我们正在对 Linux 生产环境中的问题进行故障排除，并希望保存所有终端会话活动以供将来参考，因此在这种情况下，<code>script</code> 命令就变得很方便。</p><p><img src=/data/attachment/album/201910/06/122659mmi64z8ryr4z2n8a.jpg alt></p><p><code>script</code> 是一个命令行工具，用于捕获/记录你的 Linux 服务器终端会话活动，以后可以使用 <code>scriptreplay</code> 命令重放记录的会话。在本文中，我们将演示如何安装 <code>script</code> 命令行工具以及如何记录 Linux 服务器终端会话活动，然后，我们将看到如何使用 <code>scriptreplay</code> 命令来重放记录的会话。</p><h3 id=安装-script-工具>安装 script 工具</h3><h4 id=在-rhel-7-centos-7-上安装-script-工具>在 RHEL 7/ CentOS 7 上安装 script 工具</h4><p><code>script</code> 命令由 RPM 包 <code>util-linux</code> 提供，如果你没有在你的 CentOS 7 / RHEL 7 系统上安装它，运行下面的 <code>yum</code> 安装它：</p><pre tabindex=0><code>[root@linuxtechi ~]# yum install util-linux -y
+</code></pre><h4 id=在-rhel-8--centos-8-上安装-script-工具>在 RHEL 8 / CentOS 8 上安装 script 工具</h4><p>运行下面的 <code>dnf</code> 命令来在 RHEL 8 / CentOS 8 上安装 <code>script</code> 工具：</p><pre tabindex=0><code>[root@linuxtechi ~]# dnf install util-linux -y
+</code></pre><h4 id=在基于-debian-的系统ubuntu--linux-mint上安装-script-工具>在基于 Debian 的系统（Ubuntu / Linux Mint）上安装 script 工具</h4><p>运行下面的 <code>apt-get</code> 命令来安装 <code>script</code> 工具：</p><pre tabindex=0><code>root@linuxtechi ~]# apt-get install util-linux -y
+</code></pre><h3 id=如何使用-script-工具>如何使用 script 工具</h3><p>直接使用 <code>script</code> 命令，在终端上键入 <code>script</code> 命令，然后按回车，它将开始在名为 <code>typescript</code> 的文件中捕获当前的终端会话活动。</p><pre tabindex=0><code>[root@linuxtechi ~]# script
+Script started, file is typescript
+[root@linuxtechi ~]#
+</code></pre><p>要停止记录会话活动，请键入 <code>exit</code> 命令，然后按回车：</p><pre tabindex=0><code>[root@linuxtechi ~]# exit
+exit
+Script done, file is typescript
+[root@linuxtechi ~]#
+</code></pre><p><code>script</code> 命令的语法格式：</p><pre tabindex=0><code>~] # script {options}  {file_name}
+</code></pre><p>能在 <code>script</code> 命令中使用的不同选项：</p><p><img src=/data/attachment/album/201910/06/122713o4vvjz6xmxljc4vd.png alt=options-script-command></p><p>让我们开始通过执行 <code>script</code> 命令来记录 Linux 终端会话，然后执行诸如 <code>w</code>，<code>route -n</code>，<code>df -h</code> 和 <code>free -h</code>，示例如下所示：</p><p><img src=/data/attachment/album/201910/06/122715ud9bxq9ovq2b0dqa.jpg alt=script-examples-linux-server></p><p>正如我们在上面看到的，终端会话日志保存在文件 <code>typescript</code> 中：</p><p>现在使用 <code>cat</code> / <code>vi</code> 命令查看 <code>typescript</code> 文件的内容，</p><pre tabindex=0><code>[root@linuxtechi ~]# ls -l typescript
+-rw-r--r--. 1 root root 1861 Jun 21 00:50 typescript
+[root@linuxtechi ~]#
+</code></pre><p><img src=/data/attachment/album/201910/06/122716y7f166757hfl56fs.jpg alt=typescript-file-content-linux></p><p>以上内容确认了我们在终端上执行的所有命令都已保存在 <code>typescript</code> 文件中。</p><h3 id=在-script-命令中使用定制文件名>在 script 命令中使用定制文件名</h3><p>假设我们要使用自定义文件名来执行 <code>script</code> 命令，可以在 <code>script</code> 命令后指定文件名。在下面的示例中，我们使用的文件名为 <code>session-log-(当前日期时间).txt</code>。</p><pre tabindex=0><code>[root@linuxtechi ~]# script sessions-log-$(date +%d-%m-%Y-%T).txt
+Script started, file is sessions-log-21-06-2019-01:37:39.txt
+[root@linuxtechi ~]#
+</code></pre><p>现在运行该命令并输入 <code>exit</code>：</p><pre tabindex=0><code>[root@linuxtechi ~]# exit
+exit
+Script done, file is sessions-log-21-06-2019-01:37:39.txt
+[root@linuxtechi ~]#
+</code></pre><h3 id=附加命令输出到-script-记录文件>附加命令输出到 script 记录文件</h3><p>假设 <code>script</code> 命令已经将命令输出记录到名为 <code>session-log.txt</code> 的文件中，现在我们想将新会话命令的输出附加到该文件中，那么可以在 <code>script</code> 命令中使用 <code>-a</code> 选项。</p><pre tabindex=0><code>[root@linuxtechi ~]# script -a sessions-log.txt
+Script started, file is sessions-log.txt
+[root@linuxtechi ~]# xfs_info /dev/mapper/centos-root
+meta-data=/dev/mapper/centos-root isize=512    agcount=4, agsize=2746624 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0 spinodes=0
+data     =                       bsize=4096   blocks=10986496, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal               bsize=4096   blocks=5364, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+[root@linuxtechi ~]# exit
+exit
+Script done, file is sessions-log.txt
+[root@linuxtechi ~]#
+</code></pre><p>要查看更新的会话记录，使用 <code>cat session-log.txt</code> 命令。</p><h3 id=无需-shell-交互而捕获命令输出到-script-记录文件>无需 shell 交互而捕获命令输出到 script 记录文件</h3><p>假设我们要捕获命令的输出到会话记录文件，那么使用 <code>-c</code> 选项，示例如下所示：</p><pre tabindex=0><code>[root@linuxtechi ~]# script -c &#34;uptime &amp;&amp; hostname &amp;&amp; date&#34; root-session.txt
+Script started, file is root-session.txt
+ 01:57:40 up  2:30,  3 users,  load average: 0.00, 0.01, 0.05
+linuxtechi
+Fri Jun 21 01:57:40 EDT 2019
+Script done, file is root-session.txt
+[root@linuxtechi ~]#
+</code></pre><h3 id=以静默模式运行-script-命令>以静默模式运行 script 命令</h3><p>要以静默模式运行 <code>script</code> 命令，请使用 <code>-q</code> 选项，该选项将禁止 <code>script</code> 的启动和完成消息，示例如下所示：</p><pre tabindex=0><code>[root@linuxtechi ~]# script -c &#34;uptime &amp;&amp; date&#34; -q root-session.txt
+ 02:01:10 up  2:33,  3 users,  load average: 0.00, 0.01, 0.05
+Fri Jun 21 02:01:10 EDT 2019
+[root@linuxtechi ~]#
+</code></pre><p>要将时序信息记录到文件中并捕获命令输出到单独的文件中，这可以通过在 <code>script</code> 命令中传递时序文件（<code>-timing</code>）实现，示例如下所示：</p><p>语法格式：</p><pre tabindex=0><code>~ ]# script -t &lt;timing-file-name&gt;  {file_name}
+</code></pre><pre tabindex=0><code>[root@linuxtechi ~]# script --timing=timing.txt session.log
+Script started, file is session.log
+[root@linuxtechi ~]# uptime
+ 02:27:59 up  3:00,  3 users,  load average: 0.00, 0.01, 0.05
+[root@linuxtechi ~]# date
+Fri Jun 21 02:28:02 EDT 2019
+[root@linuxtechi ~]# free -h
+              total        used        free      shared  buff/cache   available
+Mem:           3.9G        171M        2.0G        8.6M        1.7G        3.3G
+Swap:          3.9G          0B        3.9G
+[root@linuxtechi ~]# whoami
+root
+[root@linuxtechi ~]# exit
+exit
+Script done, file is session.log
+[root@linuxtechi ~]#
+[root@linuxtechi ~]# ls -l session.log timing.txt
+-rw-r--r--. 1 root root 673 Jun 21 02:28 session.log
+-rw-r--r--. 1 root root 414 Jun 21 02:28 timing.txt
+[root@linuxtechi ~]#
+</code></pre><h3 id=重放记录的-linux-终端会话活动>重放记录的 Linux 终端会话活动</h3><p>现在，使用 <code>scriptreplay</code> 命令重放录制的终端会话活动。</p><p>注意：<code>scriptreplay</code> 也由 RPM 包 <code>util-linux</code> 提供。<code>scriptreplay</code> 命令需要时序文件才能工作。</p><pre tabindex=0><code>[root@linuxtechi ~]# scriptreplay --timing=timing.txt session.log
+</code></pre><p>上面命令的输出将如下所示，</p><p><img src=/data/attachment/album/201910/06/122718q7riaibd8a7rr8r7.gif alt></p><h3 id=记录所有用户的-linux-终端会话活动>记录所有用户的 Linux 终端会话活动</h3><p>在某些关键业务的 Linux 服务器上，我们希望跟踪所有用户的活动，这可以使用 <code>script</code> 命令来完成，将以下内容放在 <code>/etc/profile</code> 文件中，</p><pre tabindex=0><code>[root@linuxtechi ~]# vi /etc/profile
+……………………………………………………
+if [ &#34;x$SESSION_RECORD&#34; = &#34;x&#34; ]
+then
+timestamp=$(date +%d-%m-%Y-%T)
+session_log=/var/log/session/session.$USER.$$.$timestamp
+SESSION_RECORD=started
+export SESSION_RECORD
+script -t -f -q 2&gt;${session_log}.timing $session_log
+exit
+fi
+……………………………………………………
+</code></pre><p>保存文件并退出。</p><p>在 <code>/var/log</code> 文件夹下创建 <code>session</code> 目录：</p><pre tabindex=0><code>[root@linuxtechi ~]# mkdir /var/log/session
+</code></pre><p>给该文件夹指定权限：</p><pre tabindex=0><code>[root@linuxtechi ~]# chmod 777 /var/log/session/
+[root@linuxtechi ~]#
+</code></pre><p>现在，验证以上代码是否有效。在我正在使用 <code>pkumar</code> 用户的情况下，登录普通用户到 Linux 服务器：</p><pre tabindex=0><code>~ ] # ssh root@linuxtechi
+root@linuxtechi&#39;s password:
+[root@linuxtechi ~]$ uptime
+ 04:34:09 up  5:06,  3 users,  load average: 0.00, 0.01, 0.05
+[root@linuxtechi ~]$ date
+Fri Jun 21 04:34:11 EDT 2019
+[root@linuxtechi ~]$ free -h
+              total        used        free      shared  buff/cache   available
+Mem:           3.9G        172M        2.0G        8.6M        1.7G        3.3G
+Swap:          3.9G          0B        3.9G
+[root@linuxtechi ~]$ id
+uid=1001(pkumar) gid=1002(pkumar) groups=1002(pkumar) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[root@linuxtechi ~]$ whoami
+pkumar
+[root@linuxtechi ~]$ exit
+
+Login as root and view user’s linux terminal session activity
+
+[root@linuxtechi ~]# cd /var/log/session/
+[root@linuxtechi session]# ls -l | grep pkumar
+-rw-rw-r--. 1 pkumar pkumar 870 Jun 21 04:34 session.pkumar.19785.21-06-2019-04:34:05
+-rw-rw-r--. 1 pkumar pkumar 494 Jun 21 04:34 session.pkumar.19785.21-06-2019-04:34:05.timing
+[root@linuxtechi session]#
+</code></pre><p><img src=/data/attachment/album/201910/06/122719dexuklun2x9kx2lf.jpg alt=Session-output-file-linux></p><p>我们还可以使用 <code>scriptreplay</code> 命令来重放用户的终端会话活动：</p><pre tabindex=0><code>[root@linuxtechi session]# scriptreplay --timing session.pkumar.19785.21-06-2019-04\:34\:05.timing session.pkumar.19785.21-06-2019-04\:34\:05
+</code></pre><p>以上就是本教程的全部内容，请在下面的评论部分中分享你的反馈和评论。</p><hr><p>via: <a href=https://www.linuxtechi.com/record-replay-linux-terminal-sessions-activity/>https://www.linuxtechi.com/record-replay-linux-terminal-sessions-activity/</a></p><p>作者：<a href=https://www.linuxtechi.com/author/pradeep/>Pradeep Kumar</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%AE%B0%E5%BD%95/ rel=tag>记录</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

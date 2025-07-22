@@ -1,0 +1,349 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>OpenGL 与 Go 教程（二）绘制游戏面板 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="OpenGL 与 Go 教程（二）绘制游戏面板"><meta property="og:description" content="你现在应该能够创造一个漂亮的白色三角形，但我们不会把三角形当成我们游戏的基本单元，是时候把三角形变成正方形了，然后我们会做出一个完整的方格。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8937-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-10-07T22:35:00+00:00"><meta property="article:modified_time" content="2017-10-07T22:35:00+00:00"><meta itemprop=name content="OpenGL 与 Go 教程（二）绘制游戏面板"><meta itemprop=description content="你现在应该能够创造一个漂亮的白色三角形，但我们不会把三角形当成我们游戏的基本单元，是时候把三角形变成正方形了，然后我们会做出一个完整的方格。"><meta itemprop=datePublished content="2017-10-07T22:35:00+00:00"><meta itemprop=dateModified content="2017-10-07T22:35:00+00:00"><meta itemprop=wordCount content="1130"><meta itemprop=keywords content="OpenGL,Golang,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>OpenGL 与 Go 教程（二）绘制游戏面板</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-10-07T22:35:00Z>October 07, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201710/07/223453r5tqot1qsp0s6ga6.jpg alt></p><ul><li><a href=/article-8933-1.html>第一节: Hello, OpenGL</a></li><li><a href=/article-8937-1.html>第二节: 绘制游戏面板</a></li><li><a href=/article-8969-1.html>第三节：实现游戏功能</a></li></ul><p>这篇教程的所有源代码都可以在 <a href=https://github.com/KyleBanks/conways-gol>GitHub</a> 上找到。</p><p>欢迎回到《OpenGL 与 Go 教程》。如果你还没有看过<a href=/article-8933-1.html>第一节</a>，那就要回过头去看看那一节。</p><p>你现在应该能够创造一个漂亮的白色三角形，但我们不会把三角形当成我们游戏的基本单元，是时候把三角形变成正方形了，然后我们会做出一个完整的方格。</p><p>让我们现在开始做吧！</p><h3 id=利用三角形绘制方形>利用三角形绘制方形</h3><p>在我们绘制方形之前，先把三角形变成直角三角形。打开 <code>main.go</code> 文件，把 <code>triangle</code> 的定义改成像这个样子：</p><pre tabindex=0><code>triangle = []float32{
+    -0.5, 0.5, 0,
+    -0.5, -0.5, 0,
+    0.5, -0.5, 0,
+}
+</code></pre><p>我们做的事情是，把最上面的顶点 X 坐标移动到左边（也就是变为 <code>-0.5</code>），这就变成了像这样的三角形：</p><p><img src=https://img.linux.net.cn/data/attachment/album/201710/07/223511c84rhv985frva4vv.png alt="Conway&rsquo;s Game of Life  - 右弦三角形"></p><p>很简单，对吧？现在让我们用两个这样的三角形顶点做成正方形。把 <code>triangle</code> 重命名为 <code>square</code>，然后添加第二个倒置的三角形的顶点数据，把直角三角形变成这样的：</p><pre tabindex=0><code>square = []float32{
+    -0.5, 0.5, 0,
+    -0.5, -0.5, 0,
+    0.5, -0.5, 0,
+
+    -0.5, 0.5, 0,
+    0.5, 0.5, 0,
+    0.5, -0.5, 0,
+}
+</code></pre><p>注意：你也要把在 <code>main</code> 和 <code>draw</code> 里面命名的 <code>triangle</code> 改为 <code>square</code>。</p><p>我们通过添加三个顶点，把顶点数增加了一倍，这三个顶点就是右上角的三角形，用来拼成方形。运行它看看效果：</p><p><img src=https://img.linux.net.cn/data/attachment/album/201710/07/223511wghwhbgk6j1csvvh.png alt="Conway&rsquo;s Game of Life - 两个三角形构成方形"></p><p>很好，现在我们能够绘制正方形了！OpenGL 一点都不难，对吧？</p><h3 id=在窗口中绘制方形格子>在窗口中绘制方形格子</h3><p>现在我们能画一个方形，怎么画 100 个吗？我们来创建一个 <code>cell</code> 结构体，用来表示格子的每一个单元，因此我们能够很灵活的选择绘制的数量：</p><pre tabindex=0><code>type cell struct {
+    drawable uint32
+
+    x int
+    y int
+}
+</code></pre><p><code>cell</code> 结构体包含一个 <code>drawable</code> 属性，这是一个顶点数组对象，就像我们在之前创建的一样，这个结构体还包含 X 和 Y 坐标，用来表示这个格子的位置。</p><p>我们还需要两个常量，用来设定格子的大小和形状：</p><pre tabindex=0><code>const (
+    ...
+
+    rows = 10
+    columns = 10
+)
+</code></pre><p>现在我们添加一个创建格子的函数：</p><pre tabindex=0><code>func makeCells() [][]*cell {
+    cells := make([][]*cell, rows, rows)
+    for x := 0; x &lt; rows; x++ {
+        for y := 0; y &lt; columns; y++ {
+            c := newCell(x, y)
+            cells[x] = append(cells[x], c)
+        }
+    }
+
+    return cells
+}
+</code></pre><p>这里我们创建多维的 切片 slice ，代表我们的游戏面板，用名为 <code>newCell</code> 的新函数创建的 <code>cell</code> 来填充矩阵的每个元素，我们待会就来实现 <code>newCell</code> 这个函数。</p><p>在接着往下阅读前，我们先花一点时间来看看 <code>makeCells</code> 函数做了些什么。我们创造了一个切片，这个切片的长度和格子的行数相等，每一个切片里面都有一个 细胞 cell 的切片，这些细胞的数量与列数相等。如果我们把 <code>rows</code> 和 <code>columns</code> 都设定成 2，那么就会创建如下的矩阵：</p><pre tabindex=0><code>[
+    [cell, cell],
+    [cell, cell]
+]
+</code></pre><p>还可以创建一个更大的矩阵，包含 <code>10x10</code> 个细胞：</p><pre tabindex=0><code>[
+    [cell, cell, cell, cell, cell, cell, cell, cell, cell, cell],
+    [cell, cell, cell, cell, cell, cell, cell, cell, cell, cell],
+    [cell, cell, cell, cell, cell, cell, cell, cell, cell, cell],
+    [cell, cell, cell, cell, cell, cell, cell, cell, cell, cell],
+    [cell, cell, cell, cell, cell, cell, cell, cell, cell, cell],
+    [cell, cell, cell, cell, cell, cell, cell, cell, cell, cell],
+    [cell, cell, cell, cell, cell, cell, cell, cell, cell, cell],
+    [cell, cell, cell, cell, cell, cell, cell, cell, cell, cell],
+    [cell, cell, cell, cell, cell, cell, cell, cell, cell, cell],
+    [cell, cell, cell, cell, cell, cell, cell, cell, cell, cell]
+]
+</code></pre><p>现在应该理解了我们创造的矩阵的形状和表示方法。让我们看看 <code>newCell</code> 函数到底是怎么填充矩阵的：</p><pre tabindex=0><code>func newCell(x, y int) *cell {
+    points := make([]float32, len(square), len(square))
+    copy(points, square)
+
+    for i := 0; i &lt; len(points); i++ {
+        var position float32
+        var size float32
+        switch i % 3 {
+        case 0:
+                size = 1.0 / float32(columns)
+                position = float32(x) * size
+        case 1:
+                size = 1.0 / float32(rows)
+                position = float32(y) * size
+        default:
+                continue
+        }
+
+        if points[i] &lt; 0 {
+                points[i] = (position * 2) - 1
+        } else {
+                points[i] = ((position + size) * 2) - 1
+        }
+    }
+
+    return &amp;cell{
+        drawable: makeVao(points),
+
+        x: x,
+        y: y,
+    }
+}
+</code></pre><p>这个函数里有很多内容，我们把它分成几个部分。我们做的第一件事是复制了 <code>square</code> 的定义。这让我们能够修改该定义，定制当前的细胞位置，而不会影响其它使用 <code>square</code> 切片定义的细胞。然后我们基于当前索引迭代 <code>points</code> 副本。我们用求余数的方法来判断我们是在操作 X 坐标（<code>i % 3 == 0</code>），还是在操作 Y 坐标（<code>i % 3 == 1</code>）（跳过 Z 坐标是因为我们仅在二维层面上进行操作），跟着确定细胞的大小（也就是占据整个游戏面板的比例），当然它的位置是基于细胞在 <code>相对游戏面板的</code> X 和 Y 坐标。</p><p>接着，我们改变那些包含在 <code>square</code> 切片中定义的 <code>0.5</code>，<code>0</code>， <code>-0.5</code> 这样的点。如果点小于 0，我们就把它设置成原来的 2 倍（因为 OpenGL 坐标的范围在 <code>-1</code> 到 <code>1</code> 之间，范围大小是 2），减 1 是为了归一化 OpenGL 坐标。如果点大于等于 0，我们的做法还是一样的，不过要加上我们计算出的尺寸。</p><p>这样做是为了设置每个细胞的大小，这样它就能只填充它在面板中的部分。因为我们有 10 行 10 列，每一个格子能分到游戏面板的 10% 宽度和高度。</p><p>最后，确定了所有点的位置和大小，我们用提供的 X 和 Y 坐标创建一个 <code>cell</code>，并设置 <code>drawable</code> 字段与我们刚刚操作 <code>points</code> 得到的顶点数组对象（vao）一致。</p><p>好了，现在我们在 <code>main</code> 函数里可以移去对 <code>makeVao</code> 的调用了，用 <code>makeCells</code> 代替。我们还修改了 <code>draw</code>，让它绘制一系列的细胞而不是一个 <code>vao</code>。</p><pre tabindex=0><code>func main() {
+    ...
+
+    // vao := makeVao(square)
+    cells := makeCells()
+
+    for !window.ShouldClose() {
+        draw(cells, window, program)
+    }
+}
+
+func draw(cells [][]*cell, window *glfw.Window, program uint32) {
+    gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+    gl.UseProgram(program)
+
+    // TODO
+
+    glfw.PollEvents()
+    window.SwapBuffers()
+}
+</code></pre><p>现在我们要让每个细胞知道怎么绘制出自己。在 <code>cell</code> 里面添加一个 <code>draw</code> 函数：</p><pre tabindex=0><code>func (c *cell) draw() {
+    gl.BindVertexArray(c.drawable)
+    gl.DrawArrays(gl.TRIANGLES, 0, int32(len(square) / 3))
+}
+</code></pre><p>这看上去很熟悉，它很像我们之前在 <code>vao</code> 里写的 <code>draw</code>，唯一的区别是我们的 <code>BindVertexArray</code> 函数用的是 <code>c.drawable</code>，这是我们在 <code>newCell</code> 中创造的细胞的 <code>vao</code>。</p><p>回到 main 中的 <code>draw</code> 函数上，我们可以循环每个细胞，让它们自己绘制自己：</p><pre tabindex=0><code>func draw(cells [][]*cell, window *glfw.Window, program uint32) {
+    gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+    gl.UseProgram(program)
+
+    for x := range cells {
+        for _, c := range cells[x] {
+            c.draw()
+        }
+    }
+
+    glfw.PollEvents()
+    window.SwapBuffers()
+}
+</code></pre><p>如你所见，我们循环每一个细胞，调用它的 <code>draw</code> 函数。如果运行这段代码，你能看到像下面这样的东西：</p><p><img src=https://img.linux.net.cn/data/attachment/album/201710/07/223512fukkduvyxvxvj5d5.png alt="Conway&rsquo;s Game of Life - 全部格子"></p><p>这是你想看到的吗？我们做的是在格子里为每一行每一列创建了一个方块，然后给它上色，这就填满了整个面板！</p><p>注释掉 for 循环，我们就可以看到一个明显独立的细胞，像这样：</p><pre tabindex=0><code>// for x := range cells {
+//     for _, c := range cells[x] {
+//         c.draw()
+//     }
+// }
+
+cells[2][3].draw()
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201710/07/223512yk5w3el05emzahzi.png alt="Conway&rsquo;s Game of Life - 一个单独的细胞"></p><p>这只绘制坐标在 <code>(X=2, Y=3)</code> 的格子。你可以看到，每一个独立的细胞占据着面板的一小块部分，并且负责绘制自己那部分空间。我们也能看到游戏面板有自己的原点，也就是坐标为 <code>(X=0, Y=0)</code> 的点，在窗口的左下方。这仅仅是我们的 <code>newCell</code> 函数计算位置的方式，也可以用右上角，右下角，左上角，中央，或者其它任何位置当作原点。</p><p>接着往下做，移除 <code>cells[2][3].draw()</code> 这一行，取消 for 循环的那部分注释，变成之前那样全部绘制的样子。</p><h3 id=总结>总结</h3><p>好了，我们现在能用两个三角形画出一个正方形了，我们还有一个游戏的面板了！我们该为此自豪，目前为止我们已经接触到了很多零碎的内容，老实说，最难的部分还在前面等着我们！</p><p>在接下来的第三节，我们会实现游戏核心逻辑，看到很酷的东西！</p><h3 id=回顾>回顾</h3><p>这是这一部分教程中 <code>main.go</code> 文件的内容：</p><pre tabindex=0><code>package main
+
+import (
+    &#34;fmt&#34;
+    &#34;log&#34;
+    &#34;runtime&#34;
+    &#34;strings&#34;
+
+    &#34;github.com/go-gl/gl/v4.1-core/gl&#34; // OR: github.com/go-gl/gl/v2.1/gl
+    &#34;github.com/go-gl/glfw/v3.2/glfw&#34;
+)
+
+const (
+    width  = 500
+    height = 500
+
+    vertexShaderSource = `
+        #version 410
+        in vec3 vp;
+        void main() {
+            gl_Position = vec4(vp, 1.0);
+        }
+    ` + &#34;\x00&#34;
+
+    fragmentShaderSource = `
+        #version 410
+        out vec4 frag_colour;
+        void main() {
+            frag_colour = vec4(1, 1, 1, 1.0);
+        }
+    ` + &#34;\x00&#34;
+
+    rows    = 10
+    columns = 10
+)
+
+var (
+    square = []float32{
+        -0.5, 0.5, 0,
+        -0.5, -0.5, 0,
+        0.5, -0.5, 0,
+
+        -0.5, 0.5, 0,
+        0.5, 0.5, 0,
+        0.5, -0.5, 0,
+    }
+)
+
+type cell struct {
+    drawable uint32
+
+    x int
+    y int
+}
+
+func main() {
+    runtime.LockOSThread()
+
+    window := initGlfw()
+    defer glfw.Terminate()
+    program := initOpenGL()
+
+    cells := makeCells()
+    for !window.ShouldClose() {
+        draw(cells, window, program)
+    }
+}
+
+func draw(cells [][]*cell, window *glfw.Window, program uint32) {
+    gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+    gl.UseProgram(program)
+
+    for x := range cells {
+        for _, c := range cells[x] {
+            c.draw()
+        }
+    }
+
+    glfw.PollEvents()
+    window.SwapBuffers()
+}
+
+func makeCells() [][]*cell {
+    cells := make([][]*cell, rows, rows)
+    for x := 0; x &lt; rows; x++ {
+        for y := 0; y &lt; columns; y++ {
+            c := newCell(x, y)
+            cells[x] = append(cells[x], c)
+        }
+    }
+
+    return cells
+}
+
+func newCell(x, y int) *cell {
+    points := make([]float32, len(square), len(square))
+    copy(points, square)
+
+    for i := 0; i &lt; len(points); i++ {
+        var position float32
+        var size float32
+        switch i % 3 {
+        case 0:
+            size = 1.0 / float32(columns)
+            position = float32(x) * size
+        case 1:
+            size = 1.0 / float32(rows)
+            position = float32(y) * size
+        default:
+            continue
+        }
+
+        if points[i] &lt; 0 {
+            points[i] = (position * 2) - 1
+        } else {
+            points[i] = ((position + size) * 2) - 1
+        }
+    }
+
+    return &amp;cell{
+        drawable: makeVao(points),
+
+        x: x,
+        y: y,
+    }
+}
+
+func (c *cell) draw() {
+    gl.BindVertexArray(c.drawable)
+    gl.DrawArrays(gl.TRIANGLES, 0, int32(len(square)/3))
+}
+
+// 初始化 glfw，返回一个可用的 Window
+func initGlfw() *glfw.Window {
+    if err := glfw.Init(); err != nil {
+        panic(err)
+    }
+    glfw.WindowHint(glfw.Resizable, glfw.False)
+    glfw.WindowHint(glfw.ContextVersionMajor, 4)
+    glfw.WindowHint(glfw.ContextVersionMinor, 1)
+    glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
+    glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
+
+    window, err := glfw.CreateWindow(width, height, &#34;Conway&#39;s Game of Life&#34;, nil, nil)
+    if err != nil {
+        panic(err)
+    }
+    window.MakeContextCurrent()
+
+    return window
+}
+
+// 初始化 OpenGL 并返回一个可用的着色器程序
+func initOpenGL() uint32 {
+    if err := gl.Init(); err != nil {
+        panic(err)
+    }
+    version := gl.GoStr(gl.GetString(gl.VERSION))
+    log.Println(&#34;OpenGL version&#34;, version)
+
+    vertexShader, err := compileShader(vertexShaderSource, gl.VERTEX_SHADER)
+    if err != nil {
+        panic(err)
+    }
+
+    fragmentShader, err := compileShader(fragmentShaderSource, gl.FRAGMENT_SHADER)
+    if err != nil {
+        panic(err)
+    }
+
+    prog := gl.CreateProgram()
+    gl.AttachShader(prog, vertexShader)
+    gl.AttachShader(prog, fragmentShader)
+    gl.LinkProgram(prog)
+    return prog
+}
+
+// 初始化并返回由 points 提供的顶点数组
+func makeVao(points []float32) uint32 {
+    var vbo uint32
+    gl.GenBuffers(1, &amp;vbo)
+    gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
+    gl.BufferData(gl.ARRAY_BUFFER, 4*len(points), gl.Ptr(points), gl.STATIC_DRAW)
+
+    var vao uint32
+    gl.GenVertexArrays(1, &amp;vao)
+    gl.BindVertexArray(vao)
+    gl.EnableVertexAttribArray(0)
+    gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
+    gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 0, nil)
+
+    return vao
+}
+
+func compileShader(source string, shaderType uint32) (uint32, error) {
+    shader := gl.CreateShader(shaderType)
+
+    csources, free := gl.Strs(source)
+    gl.ShaderSource(shader, 1, csources, nil)
+    free()
+    gl.CompileShader(shader)
+
+    var status int32
+    gl.GetShaderiv(shader, gl.COMPILE_STATUS, &amp;status)
+    if status == gl.FALSE {
+        var logLength int32
+        gl.GetShaderiv(shader, gl.INFO_LOG_LENGTH, &amp;logLength)
+
+        log := strings.Repeat(&#34;\x00&#34;, int(logLength+1))
+        gl.GetShaderInfoLog(shader, logLength, nil, gl.Str(log))
+
+        return 0, fmt.Errorf(&#34;failed to compile %v: %v&#34;, source, log)
+    }
+
+    return shader, nil
+}
+</code></pre><p>让我知道这篇文章对你有没有帮助，在 Twitter <a href=https://twitter.com/kylewbanks>@kylewbanks</a> 或者下方的连接，关注我以便获取最新的文章！</p><hr><p>via: <a href=https://kylewbanks.com/blog/tutorial-opengl-with-golang-part-2-drawing-the-game-board>https://kylewbanks.com/blog/tutorial-opengl-with-golang-part-2-drawing-the-game-board</a></p><p>作者：<a href=https://twitter.com/kylewbanks>kylewbanks</a> 译者：<a href=https://github.com/GitFuture>GitFtuture</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/opengl/ rel=tag>OpenGL</a></li><li class=tags__item><a class="tags__link btn" href=/tags/golang/ rel=tag>Golang</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

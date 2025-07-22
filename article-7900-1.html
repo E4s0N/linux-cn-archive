@@ -1,0 +1,94 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>通过 AWS 的 Lambda 和 API Gateway 走向 Serverless - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="通过 AWS 的 Lambda 和 API Gateway 走向 Serverless"><meta property="og:description" content="serverless 是一个概念，它允许你提供代码或可执行程序给某个服务，由服务来为你执行它们，而你无需自己管理服务器。这就是所谓的执行即服务（execution-as-a-service），它带来了很多机会，同时也遇到了它独有的挑战。"><meta property="og:type" content="article"><meta property="og:url" content="/article-7900-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-10-26T11:01:00+00:00"><meta property="article:modified_time" content="2016-10-26T11:01:00+00:00"><meta itemprop=name content="通过 AWS 的 Lambda 和 API Gateway 走向 Serverless"><meta itemprop=description content="serverless 是一个概念，它允许你提供代码或可执行程序给某个服务，由服务来为你执行它们，而你无需自己管理服务器。这就是所谓的执行即服务（execution-as-a-service），它带来了很多机会，同时也遇到了它独有的挑战。"><meta itemprop=datePublished content="2016-10-26T11:01:00+00:00"><meta itemprop=dateModified content="2016-10-26T11:01:00+00:00"><meta itemprop=wordCount content="502"><meta itemprop=keywords content="serverless,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>通过 AWS 的 Lambda 和 API Gateway 走向 Serverless</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-10-26T11:01:00Z>October 26, 2016</time></div></div></header><div class="content post__content clearfix"><p>近来，在计算领域出现了很多关于 serverless 的讨论。serverless 是一个概念，它允许你提供代码或可执行程序给某个服务，由服务来为你执行它们，而你无需自己管理服务器。这就是所谓的 执行即服务 （ execution-as-a-service ） ，它带来了很多机会，同时也遇到了它独有的挑战。</p><h3 id=简短回忆下计算领域的发展>简短回忆下计算领域的发展</h3><p>早期，出现了……好吧，这有点复杂。很早的时候，出现了机械计算机，后来又有了埃尼阿克 ENIAC（Electronic Numerical Integrator And Computer，很早的电子计算机)，但是都没有规模生产。直到大型机出现后，计算领域才快速发展。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201610/26/110123oyk1iy212ld4iyuu.jpg alt></p><ul><li>上世纪 50 年代 - 大型机</li><li>上世纪 60 年代 - 微型机</li><li>1994 - 机架服务器</li><li>2001 - 刀片服务器</li><li>本世纪初 - 虚拟服务器</li><li>2006 - 服务器云化</li><li>2013 - 容器化</li><li>2014 - serverless（计算资源服务化）</li></ul><blockquote><p>这些日期是大概的发布或者流行日期，无需和我争论时间的准确性。</p></blockquote><p>计算领域的演进趋势是执行的功能单元越来越小。每一次演进通常都意味着运维负担的减小和运维灵活性的增加。</p><h3 id=发展前景>发展前景</h3><p>喔，Serverless！但是，serverless 能给我们带来什么好处? 我们将面临什么挑战呢?</p><p>**未执行代码时无需付费。**我认为，这是个巨大的卖点。当无人访问你的站点或用你的 API 时，你无需付钱。没有持续支出的基础设施成本，仅仅支付你需要的部分。换句话说，这履行了云计算的承诺：“仅仅支付你真正用的资源”。</p><p>**无需维护服务器，也无需考虑服务器安全。**服务器的维护和安全将由你的服务提供商来处理（当然，你也可以架设自己的 serverless 主机，只是这似乎是在向错误的方向前进）。由于你的执行时间也是受限的，安全补丁也被简化了，因为完全不需要重启。这些都应该由你的服务提供商无缝地处理。</p><p>**无限的可扩展性。**这是又一个大的好处。假设你又开发了一个 Pokemon Go, 与其频繁地把站点下线维护升级，不如用 serverless 来不断地扩展。当然，这也是个双刃剑，大量的账单也会随之而来。如果你的业务的利润强依赖于站点上线率的话，serverless 确实能帮上忙。</p><p>**强制的微服务架构。**这也有两面性，一方面，微服务似乎是一种好的构建灵活可扩展的、容错的架构的方式。另一方面，如果你的业务没有按照这种方式设计，你将很难在已有的架构中引入 serverless。</p><h3 id=但是现在你被限制在他们的平台上>但是现在你被限制在<strong>他们的</strong>平台上</h3><p>**受限的环境。**你只能用服务提供商提供的环境，你想在 Rust 中用 serverless？你可能不会太幸运。</p><p>**受限的预装包。**你只有提供商预装的包。但是你或许能够提供你自己的包。</p><p>**受限的执行时间。**你的 Function 只可以运行这么长时间。如果你必须处理 1TB 的文件，你可能需要有一个解决办法或者用其他方案。</p><p>**强制的微服务架构。**参考上面的描述。</p><p><strong>受限的监视和诊断能力。<strong>例如，你的代码</strong>在</strong>干什么? 在 serverless 中，基本不可能在调试器中设置断点和跟踪流程。你仍然可以像往常一样记录日志并发出统计度量，但是这带来的帮助很有限，无法定位在 serverless 环境中发生的难点问题。</p><h3 id=竞争领域>竞争领域</h3><p>自从 2014 年出现 AWS Lambda 以后，serverless 的提供商已经增加了一些。下面是一些主流的服务提供商:</p><ul><li>AWS Lambda - 起步最早的</li><li>OpenWhisk - 在 IBM 的 Bluemix 云上可用</li><li>Google Cloud Functions</li><li>Azure Functions</li></ul><p>这些平台都有它们的相对优势和劣势（例如，Azure 支持 C#，或者紧密集成在其他提供商的平台上）。这里面最大的玩家是 AWS。</p><h3 id=通过-aws-的-lambda-和-api-gateway-构建你的第一个-api>通过 AWS 的 Lambda 和 API Gateway 构建你的第一个 API</h3><p>我们来试一试 serverless。我们将用 AWS Lambda 和 API Gateway 来构建一个能返回 <a href=http://blog.ryankelly.us/2016/07/11/jimmy.html>Jimmy</a> 所说的“Guru Meditations”的 API。</p><p>所有代码在 <a href=https://github.com/f0rk/meditations>GitHub</a> 上可以找到。</p><p>API文档：</p><pre tabindex=0><code>POST /
+{
+    &#34;status&#34;: &#34;success&#34;,
+    &#34;meditation&#34;: &#34;did u mention banana cognac shower&#34;
+}
+</code></pre><h3 id=怎样组织工程文件>怎样组织工程文件</h3><p>文件结构树:</p><pre tabindex=0><code>.
+├── LICENSE
+├── README.md
+├── server
+│   ├── __init__.py
+│   ├── meditate.py
+│   └── swagger.json
+├── setup.py
+├── tests
+│   └── test_server
+│       └── test_meditate.py
+└── tools
+    ├── deploy.py
+    ├── serve.py
+    ├── serve.sh
+    ├── setup.sh
+    └── zip.sh
+</code></pre><p>AWS 中的信息（想了解这里究竟在做什么的详细信息，可查看源码 <code>tools/deploy.py</code>）。</p><ul><li>**API。**实际构建的对象。它在 AWS 中表示为一个单独的对象。</li><li>**执行角色。**在 AWS 中，每个 Function 作为一个单独的角色执行。在这里就是 meditations。</li><li>**角色策略。**每个 Function 作为一个角色执行，每个角色需要权限来干活。我们的 Lambda Function 不干太多活，故我们只添加一些日志记录权限。</li><li>**Lambda Function。**运行我们的代码的地方。</li><li><strong>Swagger。</strong> Swagger 是 API 的规范。API Gateway 支持解析 swagger 的定义来为 API 配置大部分资源。</li><li>**部署。**API Gateway 提供部署的概念。我们只需要为我们的 API 用一个就行（例如，所有的都用生产或者 yolo等)，但是得知道它们是存在的，并且对于真正的产品级服务，你可能想用开发和暂存环境。</li><li>**监控。**在我们的业务崩溃的情况下（或者因为使用产生大量账单时），我们想以云告警查看方式为这些错误和费用添加一些监控。注意你应该修改 <code>tools/deploy.py</code> 来正确地设置你的 email。</li></ul><h3 id=代码>代码</h3><p>Lambda Function 将从一个硬编码列表中随机选择一个并返回 guru meditations，非常简单：</p><pre tabindex=0><code>import logging
+import random
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+def handler(event, context):
+
+    logger.info(u&#34;received request with id &#39;{}&#39;&#34;.format(context.aws_request_id))
+
+    meditations = [
+    &#34;off to a regex/&#34;,
+    &#34;the count of machines abides&#34;,
+    &#34;you wouldn&#39;t fax a bat&#34;,
+    &#34;HAZARDOUS CHEMICALS + RKELLY&#34;,
+    &#34;your solution requires a blood eagle&#34;,
+    &#34;testing is broken because I&#39;m lazy&#34;,
+    &#34;did u mention banana cognac shower&#34;,
+    ]
+
+    meditation = random.choice(meditations)
+
+    return {
+        &#34;status&#34;: &#34;success&#34;,
+        &#34;meditation&#34;: meditation,
+    }
+</code></pre><h3 id=deploypy-脚本>deploy.py 脚本</h3><p>这个脚本相当长，我没法贴在这里。它基本只是遍历上述“AWS 中的信息”下的项目，确保每项都存在。</p><h3 id=我们来部署这个脚本>我们来部署这个脚本</h3><p>只需运行 <code>./tools/deploy.py</code>。</p><p>基本完成了。不过似乎在权限申请上有些问题，由于 API Gateway 没有权限去执行你的 Function，所以你的 Lambda Function 将不能执行，报错应该是“Execution failed due to configuration error: Invalid permissions on Lambda function”。我不知道怎么用 botocore 添加权限。你可以通过 AWS console 来解决这个问题，找到你的 API, 进到 <code>/POST</code> 端点，进到“integration request”，点击“Lambda Function”旁边的编辑图标，修改它，然后保存。此时将弹出一个窗口提示“You are about to give API Gateway permission to invoke your Lambda function”， 点击“OK”。</p><p>当你完成后，记录下 <code>./tools/deploy.py</code> 打印出的 URL，像下面这样调用它，然后查看你的新 API 的行为：</p><pre tabindex=0><code>$ curl -X POST https://a1b2c3d4.execute-api.us-east-1.amazonaws.com/prod/
+{&#34;status&#34;: &#34;success&#34;, &#34;meditation&#34;: &#34;the count of machines abides&#34;}
+</code></pre><h3 id=本地运行>本地运行</h3><p>不幸的是，AWS Lambda 没有好的方法能在本地运行你的代码。在这个例子里，我们将用一个简单的 flask 服务器来在本地托管合适的端点，并调用 handler 函数。</p><pre tabindex=0><code>from __future__ import absolute_import
+
+from flask import Flask, jsonify
+
+from server.meditate import handler
+
+app = Flask(__name__)
+
+@app.route(&#34;/&#34;, methods=[&#34;POST&#34;])
+def index():
+
+    class FakeContext(object):
+        aws_request_id = &#34;XXX&#34;
+
+    return jsonify(**handler(None, FakeContext()))
+
+app.run(host=&#34;0.0.0.0&#34;)
+</code></pre><p>你可以在仓库中用 <code>./tools/serve.sh</code> 运行它，像这样调用：</p><pre tabindex=0><code>$ curl -X POST http://localhost:5000/
+{
+    &#34;meditation&#34;: &#34;your solution requires a blood eagle&#34;,
+    &#34;status&#34;: &#34;success&#34;
+}
+</code></pre><h3 id=测试>测试</h3><p>你总是应该测试你的代码。我们的测试方法是导入并运行我们的 handler 函数。这是最基本的 python 测试方法：</p><pre tabindex=0><code>from __future__ import absolute_import
+
+import unittest
+
+from server.meditate import handler
+
+class SubmitTestCase(unittest.TestCase):
+
+    def test_submit(self):
+
+        class FakeContext(object):
+
+            aws_request_id = &#34;XXX&#34;
+
+        response = handler(None, FakeContext())
+
+        self.assertEquals(response[&#34;status&#34;], &#34;success&#34;)
+        self.assertTrue(&#34;meditation&#34; in response)
+</code></pre><p>你可以在仓库里通过 nose2 运行这个测试代码。</p><h3 id=更多前景>更多前景</h3><ul><li>**和 AWS 服务的无缝集成。**通过 boto，你可以完美地轻易连接到任何其他的 AWS 服务。你可以轻易地让你的执行角色用 IAM 访问这些服务。你可以从 S3 取文件或放文件到 S3，连接到 Dynamo DB，调用其他 Lambda Function，等等。</li><li>**访问数据库。**你也可以轻易地访问远程数据库。在你的 Lambda handler 模块的最上面连接数据库，并在handler 函数中执行查询。你很可能必须从它的安装位置上传相关的包内容才能使它正常工作。可能你也需要静态编译某些库。</li><li>**调用其他 webservices。**API Gateway 也是一种把 webservices 的输出从一个格式转换成另一个格式的方法。你可以充分利用这个特点通过不同的 webservices 来代理调用，或者当业务变更时提供后向兼容能力。</li></ul><hr><p>via: <a href=http://blog.ryankelly.us/2016/08/07/going-serverless-with-aws-lambda-and-api-gateway.html>http://blog.ryankelly.us/2016/08/07/going-serverless-with-aws-lambda-and-api-gateway.html</a></p><p>作者：<a href=https://github.com/f0rk/blog.ryankelly.us/>Ryan Kelly</a> 译者：<a href=https://github.com/messon007>messon007</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/serverless/ rel=tag>serverless</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

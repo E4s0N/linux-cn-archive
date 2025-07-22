@@ -1,0 +1,166 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 KRAWL 扫描 Kubernetes 错误 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 KRAWL 扫描 Kubernetes 错误"><meta property="og:description" content="用 KRAWL 脚本来识别 Kubernetes Pod 和容器中的错误。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11936-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-02-27T10:29:43+00:00"><meta property="article:modified_time" content="2020-02-27T10:29:43+00:00"><meta itemprop=name content="使用 KRAWL 扫描 Kubernetes 错误"><meta itemprop=description content="用 KRAWL 脚本来识别 Kubernetes Pod 和容器中的错误。"><meta itemprop=datePublished content="2020-02-27T10:29:43+00:00"><meta itemprop=dateModified content="2020-02-27T10:29:43+00:00"><meta itemprop=wordCount content="599"><meta itemprop=keywords content="Kubernetes,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 KRAWL 扫描 Kubernetes 错误</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-02-27T10:29:43Z>February 27, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>用 KRAWL 脚本来识别 Kubernetes Pod 和容器中的错误。</p></blockquote><p><img src=/data/attachment/album/202002/27/102958u1dprgrx4hh992cr.png alt="Ship captain sailing the Kubernetes seas" title="Ship captain sailing the Kubernetes seas"></p><p>当你使用 Kubernetes 运行容器时，你通常会发现它们堆积在一起。这是设计使然。它是容器的优点之一：每当需要新的容器时，它们启动成本都很低。你可以使用前端工具（如 OpenShift 或 OKD）来管理 Pod 和容器。这些工具使可视化设置变得容易，并且它具有一组丰富的用于快速交互的命令。</p><p>如果管理容器的平台不符合你的要求，你也可以仅使用 Kubernetes 工具链获取这些信息，但这需要大量命令才能全面了解复杂环境。出于这个原因，我编写了 <a href=https://github.com/abhiTamrakar/kube-plugins/tree/master/krawl>KRAWL</a>，这是一个简单的脚本，可用于扫描 Kubernetes 集群命名空间下的 Pod 和容器，并在发现任何事件时，显示事件的输出。它也可用作为 Kubernetes 插件使用。这是获取大量有用信息的快速简便方法。</p><h3 id=先决条件>先决条件</h3><ul><li>必须安装 <code>kubectl</code>。</li><li>集群的 kubeconfig 配置必须在它的默认位置（<code>$HOME/.kube/config</code>）或已被导出到环境变量（<code>KUBECONFIG=/path/to/kubeconfig</code>）。</li></ul><h3 id=使用>使用</h3><pre tabindex=0><code>$ ./krawl
+</code></pre><p><img src=/data/attachment/album/202002/27/102959imepam5p3asfgggs.png alt="KRAWL script" title="KRAWL script"></p><h3 id=脚本>脚本</h3><pre tabindex=0><code>#!/bin/bash
+# AUTHOR: Abhishek Tamrakar
+# EMAIL: abhishek.tamrakar08@gmail.com
+# LICENSE: Copyright (C) 2018 Abhishek Tamrakar
+#
+#  Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an &#34;AS IS&#34; BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+##
+#define the variables
+KUBE_LOC=~/.kube/config
+#define variables
+KUBECTL=$(which kubectl)
+GET=$(which egrep)
+AWK=$(which awk)
+red=$(tput setaf 1)
+normal=$(tput sgr0)
+# define functions
+
+# wrapper for printing info messages
+info()
+{
+  printf &#39;\n\e[34m%s\e[m: %s\n&#39; &#34;INFO&#34; &#34;$@&#34;
+}
+
+# cleanup when all done
+cleanup()
+{
+  rm -f results.csv
+}
+
+# just check if the command we are about to call is available
+checkcmd()
+{
+  #check if command exists
+  local cmd=$1
+  if [ -z &#34;${!cmd}&#34; ]
+  then
+    printf &#39;\n\e[31m%s\e[m: %s\n&#39; &#34;ERROR&#34;  &#34;check if $1 is installed !!!&#34;
+    exit 1
+  fi
+}
+
+get_namespaces()
+{
+  #get namespaces
+  namespaces=( \
+          $($KUBECTL get namespaces --ignore-not-found=true | \
+          $AWK &#39;/Active/ {print $1}&#39; \
+          ORS=&#34; &#34;) \
+          )
+#exit if namespaces are not found
+if [ ${#namespaces[@]} -eq 0 ]
+then
+  printf &#39;\n\e[31m%s\e[m: %s\n&#39; &#34;ERROR&#34;  &#34;No namespaces found!!&#34;
+  exit 1
+fi
+}
+
+#get events for pods in errored state
+get_pod_events()
+{
+  printf &#39;\n&#39;
+  if [ ${#ERRORED[@]} -ne 0 ]
+  then
+      info &#34;${#ERRORED[@]} errored pods found.&#34;
+      for CULPRIT in ${ERRORED[@]}
+      do
+        info &#34;POD: $CULPRIT&#34;
+        info
+        $KUBECTL get events \
+        --field-selector=involvedObject.name=$CULPRIT \
+        -ocustom-columns=LASTSEEN:.lastTimestamp,REASON:.reason,MESSAGE:.message \
+        --all-namespaces \
+        --ignore-not-found=true
+      done
+  else
+      info &#34;0 pods with errored events found.&#34;
+  fi
+}
+
+#define the logic
+get_pod_errors()
+{
+  printf &#34;%s %s %s\n&#34; &#34;NAMESPACE,POD_NAME,CONTAINER_NAME,ERRORS&#34; &gt; results.csv
+  printf &#34;%s %s %s\n&#34; &#34;---------,--------,--------------,------&#34; &gt;&gt; results.csv
+  for NAMESPACE in ${namespaces[@]}
+  do
+    while IFS=&#39; &#39; read -r POD CONTAINERS
+    do
+      for CONTAINER in ${CONTAINERS//,/ }
+      do
+        COUNT=$($KUBECTL logs --since=1h --tail=20 $POD -c $CONTAINER -n $NAMESPACE 2&gt;/dev/null| \
+        $GET -c &#39;^error|Error|ERROR|Warn|WARN&#39;)
+        if [ $COUNT -gt 0 ]
+        then
+            STATE=(&#34;${STATE[@]}&#34; &#34;$NAMESPACE,$POD,$CONTAINER,$COUNT&#34;)
+        else
+        #catch pods in errored state
+            ERRORED=($($KUBECTL get pods -n $NAMESPACE --no-headers=true | \
+                awk &#39;!/Running/ {print $1}&#39; ORS=&#34; &#34;) \
+                )
+        fi
+      done
+    done&lt; &lt;($KUBECTL get pods -n $NAMESPACE --ignore-not-found=true -o=custom-columns=NAME:.metadata.name,CONTAINERS:.spec.containers[*].name --no-headers=true)
+  done
+  printf &#34;%s\n&#34; ${STATE[@]:-None} &gt;&gt; results.csv
+  STATE=()
+}
+#define usage for seprate run
+usage()
+{
+cat &lt;&lt; EOF
+
+  USAGE: &#34;${0##*/} &lt;/path/to/kube-config&gt;(optional)&#34;
+
+  This program is a free software under the terms of Apache 2.0 License.
+  COPYRIGHT (C) 2018 Abhishek Tamrakar
+
+EOF
+exit 0
+}
+
+#check if basic commands are found
+trap cleanup EXIT
+checkcmd KUBECTL
+#
+#set the ground
+if [ $# -lt 1 ]; then
+  if [ ! -e ${KUBE_LOC} -a ! -s ${KUBE_LOC} ]
+  then
+    info &#34;A readable kube config location is required!!&#34;
+    usage
+  fi
+elif [ $# -eq 1 ]
+then
+  export KUBECONFIG=$1
+elif [ $# -gt 1 ]
+then
+  usage
+fi
+#play
+get_namespaces
+get_pod_errors
+
+printf &#39;\n%40s\n&#39; &#39;KRAWL&#39;
+printf &#39;%s\n&#39; &#39;---------------------------------------------------------------------------------&#39;
+printf &#39;%s\n&#39; &#39;  Krawl is a command line utility to scan pods and prints name of errored pods   &#39;
+printf &#39;%s\n\n&#39; &#39; +and containers within. To use it as kubernetes plugin, please check their page &#39;
+printf &#39;%s\n&#39; &#39;=================================================================================&#39;
+
+cat results.csv | sed &#39;s/,/,|/g&#39;| column -s &#39;,&#39; -t
+get_pod_events
+</code></pre><p>此文最初发布在 <a href=https://github.com/abhiTamrakar/kube-plugins/tree/master/krawl>KRAWL 的 GitHub 仓库</a>下的 README 中，并被或许重用。</p><hr><p>via: <a href=https://opensource.com/article/20/2/kubernetes-scanner>https://opensource.com/article/20/2/kubernetes-scanner</a></p><p>作者：<a href=https://opensource.com/users/tamrakar>Abhishek Tamrakar</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/kubernetes/ rel=tag>Kubernetes</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

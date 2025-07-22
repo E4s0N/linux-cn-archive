@@ -1,0 +1,86 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>通过 SSH 在远程 Linux 系统上执行命令 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="通过 SSH 在远程 Linux 系统上执行命令"><meta property="og:description" content="通过安全的网络连接在远程计算机上调用命令或程序。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15263-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-11-17T16:39:12+00:00"><meta property="article:modified_time" content="2022-11-17T16:39:12+00:00"><meta itemprop=name content="通过 SSH 在远程 Linux 系统上执行命令"><meta itemprop=description content="通过安全的网络连接在远程计算机上调用命令或程序。"><meta itemprop=datePublished content="2022-11-17T16:39:12+00:00"><meta itemprop=dateModified content="2022-11-17T16:39:12+00:00"><meta itemprop=wordCount content="578"><meta itemprop=keywords content="SSH,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>通过 SSH 在远程 Linux 系统上执行命令</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-11-17T16:39:12Z>November 17, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202211/17/163910g9u42ssfcuk9c290.jpg alt></p><blockquote><p>通过安全的网络连接在远程计算机上调用命令或程序。</p></blockquote><p>有一天，我正在测试如何在 <a href=https://ostechnix.com/how-to-keep-ownership-and-file-permissions-intact-when-copying-files-or-directories/>将文件或目录复制到多个位置和系统时保持完整的文件权限</a>。当我想检查远程系统上的文件权限时，我必须通过 SSH 登录它并检查属性。从远程系统多次登录和注销的过程让我有点烦，我想，如果我可以<strong>在远程 Linux 系统上通过 SSH 执行命令</strong>就好了。</p><p>幸运的是，在浏览了 <code>ssh</code> 命令的手册页后，我找到了一个解决办法。</p><p>如果你想知道如何本地运行远程系统上运行命令或脚本，而不登录到远程系统，下面的内容会告诉你如何做。</p><h3 id=1通过-ssh-在远程-linux-系统上执行命令>1、通过 SSH 在远程 Linux 系统上执行命令</h3><p>从本地系统通过 SSH 在远程系统上运行命令或脚本的典型方法是：</p><pre tabindex=0><code>$ ssh &lt;username@IP_Address-or-Doman_name&gt; &lt;Command-or-Script&gt;
+</code></pre><p>允许我给你们举几个例子：</p><h4 id=11通过-ssh-在远程系统上运行单个命令>1.1、通过 SSH 在远程系统上运行单个命令</h4><p>假设你想要 <a href=https://ostechnix.com/find-out-the-linux-distribution-name-version-and-kernel-details/>查找远程 Linux 系统的内核详细信息</a>。为此，只需运行：</p><pre tabindex=0><code>$ ssh sk@192.168.225.22 uname -a
+</code></pre><p>这里，</p><ul><li><code>sk</code> 是远程系统的用户名，</li><li><code>192.168.225.22</code> 是远程系统的 IP 地址，</li><li><code>uname -a</code> 是我想在远程系统上运行的命令。</li></ul><p>示例输出：</p><p><img src=/data/attachment/album/202211/17/163913a9tuxt1uvxvmmkvg.gif alt="通过 SSH 在远程 Linux 系统上执行命令"></p><p>看到没？我并没有实际登录到远程系统，但通过 SSH 在远程系统上执行了 <code>uname</code> 命令，并在本地系统的终端上显示了输出。</p><p>你还可以像下面这样用引号指定命令。</p><pre tabindex=0><code>$ ssh sk@192.168.225.22 &#34;uname -a&#34;
+</code></pre><p>或者，</p><pre tabindex=0><code>$ ssh sk@192.168.225.22 &#39;uname -a&#39;
+</code></pre><p>如果你已经 <a href=https://ostechnix.com/how-to-change-apache-ftp-and-ssh-default-port-to-a-custom-port-part-3/>更改了 SSH 协议的默认端口</a>，只需使用 <code>-p</code> 参数指定它。</p><pre tabindex=0><code>$ ssh -p 2200 sk@192.168.225.22 uname -a
+</code></pre><h4 id=12通过-ssh-在远程主机上执行多个命令>1.2、通过 SSH 在远程主机上执行多个命令</h4><p>你还可以在远程主机上运行多个命令，方法是将它们放在引号中。</p><pre tabindex=0><code>$ ssh sk@192.168.225.22 &#34;uname -r &amp;&amp; lsb_release -a&#34;
+</code></pre><p>或者：</p><pre tabindex=0><code>$ ssh sk@192.168.225.22 &#34;uname -r ; lsb_release -a&#34;
+</code></pre><p>上面的命令将显示我的 Ubuntu 服务器的内核版本和发行版详细信息。</p><p>示例输出：</p><p><img src=/data/attachment/album/202211/17/163913kvwqbzpp3ozp2w24.png alt="在 Linux 上通过 SSH 在远程主机上运行多个命令"></p><p>正如一位读者在下面的评论部分提到的那样，你应该用引号指定多个命令。如果不使用引号，第一个命令将在远程系统上执行，第二个命令将仅在本地计算机上执行。整个带引号的命令将按预期在远程计算机上运行。</p><blockquote><p><strong>提示：</strong> 了解 <code>&&</code> 和 <code>;</code> 在命令中的区别：</p><p><code>&&</code> 操作符只有在第一个命令成功时才执行第二个命令。</p><p>示例：</p><pre tabindex=0><code>sudo apt-get update &amp;&amp; sudo apt-get upgrade
+</code></pre><p>在上述示例中，如果第一个命令成功，才会执行 <code>sudo apt-get upgrade</code>。否则，它将不会运行。</p><p><code>;</code> 操作符会执行第二个命令，无论第一个命令是成功还是失败。</p><p>示例：</p><pre tabindex=0><code>sudo apt-get update ; sudo apt-get upgrade
+</code></pre><p>在上述示例中，即使第一个命令失败，<code>sudo apt-get upgrade</code> 也会执行。</p></blockquote><h4 id=13通过-ssh-在远程机器上调用有-sudo-权限的命令>1.3、通过 SSH 在远程机器上调用有 sudo 权限的命令</h4><p>有些命令需要 <code>sudo</code> 权限才能运行。例如，以下命令将在我的远程系统上安装 <code>apache2</code>。</p><pre tabindex=0><code>$ ssh -t sk@192.168.225.22 sudo apt install apache2
+</code></pre><p>示例输出：</p><p><img src=/data/attachment/album/202211/17/163913rgzg1jmqiwhx1lh5.png alt="通过 SSH 在远程机器上运行有 Sudo 权限的命令"></p><p>注意到了吗？我在上面的命令中使用了 <code>-t</code> 标志，我们需要使用它来强制进行伪终端分配。它用于在远程机器上执行任意基于屏幕的程序，这非常有用。例如，在实现菜单服务时。</p><p>另外，我输入了<strong>两次</strong>密码。第一次是远程用户的密码，以便从本地系统通过 SSH 访问远程系统，第二次是为了向远程用户赋予 sudo 权限，以便安装应用程序（在本例中为 apache2）。</p><p>让我们用以下命令检查 Apache 服务是否正在运行：</p><pre tabindex=0><code>$ ssh -t sk@192.168.225.22 sudo systemctl status apache2
+sk@192.168.225.22&#39;s password: 
+[sudo] password for sk: 
+● apache2.service - The Apache HTTP Server
+Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: enabled)
+Drop-In: /lib/systemd/system/apache2.service.d
+└─apache2-systemd.conf
+Active: active (running) since Thu 2019-12-19 11:08:03 UTC; 52s ago
+Main PID: 5251 (apache2)
+Tasks: 55 (limit: 2318)
+CGroup: /system.slice/apache2.service
+├─5251 /usr/sbin/apache2 -k start
+├─5253 /usr/sbin/apache2 -k start
+└─5254 /usr/sbin/apache2 -k start
+
+Dec 19 11:08:03 ubuntuserver systemd[1]: Starting The Apache HTTP Server...
+Dec 19 11:08:03 ubuntuserver apachectl[5227]: AH00558: apache2: Could not reliably determine the server&#39;s fully qualified domain name, using 2409:4072:51f:a1b6:a00:27ff:f
+Dec 19 11:08:03 ubuntuserver systemd[1]: Started The Apache HTTP Server.
+</code></pre><p>同样的，我们可以通过 SSH 在本地系统上运行远程系统上的任何命令或脚本。</p><h4 id=14通过-ssh-在远程系统上运行本地脚本>1.4、通过 SSH 在远程系统上运行本地脚本</h4><p>让我们在本地系统上创建一个简单的脚本来显示关于远程系统的发行版名称、包管理和基本细节等。</p><pre tabindex=0><code>$ vi system_information.sh
+</code></pre><p>添加以下行：</p><pre tabindex=0><code>#!/bin/bash
+#Name: Display System Details
+#Owner: OSTechNIx
+#----------------------------
+echo /etc/*_ver* /etc/*-rel*; cat /etc/*_ver* /etc/*-rel*
+</code></pre><p>按下 <code>ESC</code> 键，输入 <code>:wq</code> 保存退出。</p><p>现在，通过 SSH 命令在远程系统上运行这个脚本：</p><pre tabindex=0><code>$ ssh sk@192.168.225.22 &#39;bash -s&#39; &lt; system_information.sh
+</code></pre><p>示例输出：</p><pre tabindex=0><code>sk@192.168.225.22&#39;s password: 
+/etc/debian_version /etc/lsb-release /etc/os-release
+buster/sid
+DISTRIB_ID=Ubuntu
+DISTRIB_RELEASE=18.04
+DISTRIB_CODENAME=bionic
+DISTRIB_DESCRIPTION=&#34;Ubuntu 18.04.2 LTS&#34;
+NAME=&#34;Ubuntu&#34;
+VERSION=&#34;18.04.2 LTS (Bionic Beaver)&#34;
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME=&#34;Ubuntu 18.04.2 LTS&#34;
+VERSION_ID=&#34;18.04&#34;
+HOME_URL=&#34;https://www.ubuntu.com/&#34;
+SUPPORT_URL=&#34;https://help.ubuntu.com/&#34;
+BUG_REPORT_URL=&#34;https://bugs.launchpad.net/ubuntu/&#34;
+PRIVACY_POLICY_URL=&#34;https://www.ubuntu.com/legal/terms-and-policies/privacy-policy&#34;
+VERSION_CODENAME=bionic
+UBUNTU_CODENAME=bionic
+</code></pre><p>如果你没有在上面的命令中指定 <code>bash -s</code>，你将获得远程系统的详细信息，但伪终端不会被分配。</p><h4 id=15将远程主机的命令输出保存到本地主机>1.5、将远程主机的命令输出保存到本地主机</h4><p>如果你希望与支持团队或同事共享远程系统上运行的命令输出，那么这非常有用。</p><p>以下命令将通过 SSH 在远程系统运行 <code>du -ah</code>，并将输出保存在本地系统的 <code>diskusage.txt</code> 文件中。</p><pre tabindex=0><code>$ ssh sk@192.168.225.22 du -ah &gt; diskusage.txt
+</code></pre><p>然后，你可以通过使用 <code>cat</code> 命令或文本编辑器查看 <code>diskusage.txt</code> 文件来分析磁盘使用细节。</p><pre tabindex=0><code>$ cat diskusage.txt 
+4.0K ./.profile
+4.0K ./.gnupg/private-keys-v1.d
+8.0K ./.gnupg
+76K ./data/image.jpg
+128K ./data/file.pdf
+20K ./data/text.docx
+5.9M ./data/audio.mp3
+6.1M ./data
+0 ./.sudo_as_admin_successful
+4.0K ./pacman?inline=false
+4.0K ./.bash_logout
+4.0K ./.wget-hsts
+4.0K ./.bash_history
+0 ./.cache/motd.legal-displayed
+4.0K ./.cache
+4.0K ./deb-pacman_1.0-0.deb
+4.0K ./.bashrc
+6.2M .
+</code></pre><h4 id=16配置-ssh-密钥认证避免输入密码>1.6、配置 SSH 密钥认证，避免输入密码</h4><p>如果你经常在远程系统上运行命令，你可能需要配置基于 SSH 密钥的身份验证，以便每次跳过密码输入。更多细节可以在以下链接中找到。</p><blockquote><p><strong><a href=https://ostechnix.com/configure-ssh-key-based-authentication-linux/>Linux 系统下如何配置 SSH 密钥认证</a></strong></p></blockquote><p>配置了基于 SSH 密钥的认证后，我们可以通过 SSH 在远程机器上执行命令，从而不需要输入密码：</p><pre tabindex=0><code>$ ssh sk@192.168.225.22 sudo apt update
+</code></pre><h3 id=2通过-sshpass-在远程机器上运行命令>2、通过 sshpass 在远程机器上运行命令</h3><p>如果你不想配置基于 SSH 密钥的身份验证，你可以使用 <code>sshpass</code> 实用程序。</p><h4 id=21什么是-sshpass>2.1、什么是 sshpass?</h4><p><code>sshpass</code> 是为使用键盘交互密码身份验证模式运行 ssh 而设计的，但它以非交互的方式。简单来说，<code>sshpass</code> 提供了非交互式的方式来验证 SSH 会话。</p><p>SSH 使用直接 TTY 访问来确保密码确实是由交互式键盘用户发出的。<code>sshpass</code> 在一个专用 tty 中运行 SSH，让它误以为从交互用户那里获得了密码。</p><h4 id=22在-linux-中安装-sshpass>2.2、在 Linux 中安装 sshpass</h4><p>在许多 Linux 发行版的默认仓库中都有 <code>sshpass</code> 实用程序。例如，在 Debian、Ubuntu 及其衍生版本中，你可以使用下面的命令来安装 <code>sshpass</code>：</p><pre tabindex=0><code>$ sudo apt install sshpass
+</code></pre><h4 id=23通过-ssh-和-sshpass-在远程机器上执行命令>2.3、通过 SSH 和 sshpass 在远程机器上执行命令</h4><p><code>sshpass</code> 可以通过参数接受密码，或者通过环境变量读取密码，也可以从文本文件中读取密码。</p><p><strong>警告：</strong> 所有这些方法都是 <strong>高度不安全的</strong>。所有系统用户都可以通过 <code>ps</code> 命令看到命令中的密码。<strong>不建议</strong>在生产中使用这些方法。最好使用基于密钥的身份验证。</p><p>让我们看看每种方法的示例。</p><h5 id=将密码作为参数提供>将密码作为参数提供</h5><p>将密码作为参数提供，使用 <code>-p</code> 选项，如下所示：</p><pre tabindex=0><code>$ sshpass -p &lt;remote-password&gt; ssh remoteuser@ip-address &lt;command-to-execute&gt;
+</code></pre><p>示例输出：</p><pre tabindex=0><code>$ sshpass -p ubuntu ssh ostechnix@192.168.1.30 uname -a
+</code></pre><p>其中，</p><ul><li><code>-p ubuntu</code> - 提供远程系统的密码。</li><li><code>ostechnix@192.168.1.30</code> - 远程系统用户名和地址。</li><li><code>uname -a</code> - 要在远程计算机上执行的命令。</li></ul><p>示例输出：</p><pre tabindex=0><code>Linux Ubuntu22CT 5.15.60-1-pve #1 SMP PVE 5.15.60-1 (Mon, 19 Sep 2022 17:53:17 +0200) x86_64 x86_64 x86_64 GNU/Linux
+</code></pre><h5 id=密码作为环境变量提供>密码作为环境变量提供</h5><p>在这个方法中，我们声明一个名为 <code>SSHPASS</code> 的环境变量，用远程环境的密码作为其值。然后我们使用 <code>-e</code> 标志，如下所示：</p><pre tabindex=0><code>$ SSHPASS=ubuntu sshpass -e ssh ostechnix@192.168.1.30 uname -a
+</code></pre><h5 id=从文本文件中读取密码>从文本文件中读取密码</h5><p>使用 <code>echo</code> 命令在文本文件中追加密码：</p><pre tabindex=0><code>$ echo &#34;ubuntu&#34; &gt; mypassword.txt
+</code></pre><p>现在，将密码文件传递给带有 <code>-f</code> 标志的 <code>sshpass</code>，如下所示：</p><pre tabindex=0><code>$ sshpass -f mypassword.txt ssh ostechnix@192.168.1.30 uname -a
+</code></pre><p><img src=/data/attachment/album/202211/17/163914gmids5kiqqcq10io.png alt="通过 SSH 和 sshpass 在远程机器上执行命令"></p><h3 id=总结>总结</h3><p>在本教程中，我们学习了一些通过安全的网络连接在远程计算机上调用命令或程序的方法。在所有的方法中，<code>sshpass</code> 方法是最不安全的，建议用户避免在生产系统中使用它。</p><hr><p>via: <a href=https://ostechnix.com/execute-commands-on-remote-linux-systems-via-ssh/>https://ostechnix.com/execute-commands-on-remote-linux-systems-via-ssh/</a></p><p>作者：<a href=https://ostechnix.com/author/sk/>sk</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ssh/ rel=tag>SSH</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

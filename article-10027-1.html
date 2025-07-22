@@ -1,0 +1,117 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 PySimpleGUI 轻松为程序和脚本增加 GUI - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 PySimpleGUI 轻松为程序和脚本增加 GUI"><meta property="og:description" content="五分钟创建定制 GUI。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10027-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-09-18T23:35:26+00:00"><meta property="article:modified_time" content="2018-09-18T23:35:26+00:00"><meta itemprop=name content="使用 PySimpleGUI 轻松为程序和脚本增加 GUI"><meta itemprop=description content="五分钟创建定制 GUI。"><meta itemprop=datePublished content="2018-09-18T23:35:26+00:00"><meta itemprop=dateModified content="2018-09-18T23:35:26+00:00"><meta itemprop=wordCount content="712"><meta itemprop=keywords content="Python,GUI,图形界面,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 PySimpleGUI 轻松为程序和脚本增加 GUI</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-09-18T23:35:26Z>September 18, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>五分钟创建定制 GUI。</p></blockquote><p><img src=/data/attachment/album/201809/18/233529t20dq1juyy8hh2ym.jpg alt></p><p>对于 <code>.exe</code> 类型的程序文件，我们可以通过双击鼠标左键打开；但对于 <code>.py</code> 类型的 Python 程序，几乎不会有人尝试同样的操作。对于一个（非程序员类型的）典型用户，他们双击打开 <code>.exe</code> 文件时预期弹出一个可以交互的窗体。基于 Tkinter，可以通过 标准 Python 安装 standard Python installations 的方式提供 GUI，但很多程序都不太可能这样做。</p><p>如果打开 Python 程序并进入 GUI 界面变得如此容易，以至于真正的初学者也可以掌握，会怎样呢？会有人感兴趣并使用吗？这个问题不好回答，因为直到今天创建自定义 GUI 布局仍不是件容易的事情。</p><p>在为程序或脚本增加 GUI 这件事上，似乎存在能力的“错配”。（缺乏这方面能力的）真正的初学者被迫只能使用命令行方式，而很多（具备这方面能力的）高级程序员却不愿意花时间创建一个 Tkinter GUI。</p><h3 id=gui-框架>GUI 框架</h3><p>Python 的 GUI 框架并不少，其中 Tkinter，wxPython，Qt 和 Kivy 是几种比较主流的框架。此外，还有不少在上述框架基础上封装的简化框架，例如 EasyGUI，PyGUI 和 Pyforms 等。</p><p>但问题在于，对于初学者（这里是指编程经验不超过 6 个月的用户）而言，即使是最简单的主流框架，他们也无从下手；他们也可以选择封装过的（简化）框架，但仍难以甚至无法创建自定义 GUI 布局 layout 。即便学会了某种（简化）框架，也需要编写连篇累牍的代码。</p><p><a href=https://github.com/MikeTheWatchGuy/PySimpleGUI>PySimpleGUI</a> 尝试解决上述 GUI 难题，它提供了一种简单明了、易于理解、方便自定义的 GUI 接口。如果使用 PySimpleGUI，很多复杂的 GUI 也仅需不到 20 行代码。</p><h3 id=秘诀>秘诀</h3><p>PySimpleGUI 极为适合初学者的秘诀在于，它已经包含了绝大多数原本需要用户编写的代码。PySimpleGUI 会处理按钮 回调 callback ，无需用户编写代码。对于初学者，在几周内掌握函数的概念已经不容易了，要求其理解回调函数似乎有些强人所难。</p><p>在大部分 GUI 框架中，布局 GUI 小部件 widgets 通常需要写一些代码，每个小部件至少 1-2 行。PySimpleGUI 使用了 “auto-packer” 技术，可以自动创建布局。因而，布局 GUI 窗口不再需要 pack 或 grid 系统。</p><p>（LCTT 译注：这里提到的 pack 和 grid 都是 Tkinter 的布局管理器，另外一种叫做 place 。）</p><p>最后，PySimpleGUI 框架编写中有效地利用了 Python 语言特性，降低用户代码量并简化 GUI 数据返回的方式。在 窗体 form 布局中创建小部件时，小部件会被部署到对应的布局中，无需额外的代码。</p><h3 id=gui-是什么>GUI 是什么？</h3><p>绝大多数 GUI 只完成一件事情：收集用户数据并返回。在程序员看来，可以归纳为如下的函数调用：</p><pre tabindex=0><code>button, values = GUI_Display(gui_layout)
+</code></pre><p>绝大多数 GUI 支持的用户行为包括鼠标点击（例如，“确认”，“取消”，“保存”，“是”和“否”等）和内容输入。GUI 本质上可以归结为一行代码。</p><p>这也正是 PySimpleGUI （的简单 GUI 模式）的工作原理。当执行命令显示 GUI 后，除非点击鼠标关闭窗体，否则不会执行任何代码。</p><p>当然还有更复杂的 GUI，其中鼠标点击后窗口并不关闭；例如，机器人的远程控制界面，聊天窗口等。这类复杂的窗体也可以用 PySimpleGUI 创建。</p><h3 id=快速创建-gui>快速创建 GUI</h3><p>PySimpleGUI 什么时候有用呢？显然，是你需要 GUI 的时候。仅需不超过 5 分钟，就可以让你创建并尝试 GUI。最便捷的 GUI 创建方式就是从 <a href=https://pysimplegui.readthedocs.io/en/latest/cookbook/>PySimpleGUI 经典实例</a>中拷贝一份代码。具体操作流程如下：</p><ul><li>找到一个与你需求最接近的 GUI</li><li>从经典实例中拷贝代码</li><li>粘贴到 IDE 中并运行</li></ul><p>下面我们看一下书中的第一个 经典实例 recipe ：</p><pre tabindex=0><code>import PySimpleGUI as sg
+
+# Very basic form.  Return values as a list
+form = sg.FlexForm(&#39;Simple data entry form&#39;)  # begin with a blank form
+
+layout = [
+          [sg.Text(&#39;Please enter your Name, Address, Phone&#39;)],
+          [sg.Text(&#39;Name&#39;, size=(15, 1)), sg.InputText(&#39;name&#39;)],
+          [sg.Text(&#39;Address&#39;, size=(15, 1)), sg.InputText(&#39;address&#39;)],
+          [sg.Text(&#39;Phone&#39;, size=(15, 1)), sg.InputText(&#39;phone&#39;)],
+          [sg.Submit(), sg.Cancel()]
+         ]
+
+button, values = form.LayoutAndRead(layout)
+
+print(button, values[0], values[1], values[2])
+</code></pre><p>运行后会打开一个大小适中的窗体。</p><p><img src=/data/attachment/album/201809/18/233532aoqjbq77akjmq0qz.jpg alt></p><p>如果你只是想收集一些字符串类型的值，拷贝上述经典实例中的代码，稍作修改即可满足你的需求。</p><p>你甚至可以只用 5 行代码创建一个自定义 GUI 布局。</p><pre tabindex=0><code>import PySimpleGUI as sg
+
+form = sg.FlexForm(&#39;My first GUI&#39;)
+
+layout = [ [sg.Text(&#39;Enter your name&#39;), sg.InputText()],
+           [sg.OK()] ]
+
+button, (name,) = form.LayoutAndRead(layout)
+</code></pre><p><img src=/data/attachment/album/201809/18/233534j2t8pmv4tp28vg24.jpg alt></p><h3 id=5-分钟内创建一个自定义-gui>5 分钟内创建一个自定义 GUI</h3><p>在简单布局的基础上，通过修改经典实例中的代码，5 分钟内即可使用 PySimpleGUI 创建自定义布局。</p><p>在 PySimpleGUI 中， 小部件 widgets 被称为 元素 elements 。元素的名称与编码中使用的名称保持一致。</p><p>（LCTT 译注：Tkinter 中使用小部件这个词）</p><h4 id=核心元素>核心元素</h4><pre tabindex=0><code>Text
+InputText
+Multiline
+InputCombo
+Listbox
+Radio
+Checkbox
+Spin
+Output
+SimpleButton
+RealtimeButton
+ReadFormButton
+ProgressBar
+Image
+Slider
+Column
+</code></pre><h4 id=元素简写>元素简写</h4><p>PySimpleGUI 还包含两种元素简写方式。一种是元素类型名称简写，例如 <code>T</code> 用作 <code>Text</code> 的简写；另一种是元素参数被配置了默认值，你可以无需指定所有参数，例如 <code>Submit</code> 按钮默认的文本就是 “Submit”。</p><pre tabindex=0><code>T = Text
+Txt = Text
+In = InputText
+Input = IntputText
+Combo = InputCombo
+DropDown = InputCombo
+Drop = InputCombo
+</code></pre><p>（LCTT 译注：第一种简写就是 Python 类的别名，第二种简写是在返回元素对象的 Python 函数定义时指定了参数的默认值）</p><h4 id=按钮简写>按钮简写</h4><p>一些通用按钮具有简写实现，包括：</p><pre tabindex=0><code>FolderBrowse
+FileBrowse
+FileSaveAs
+Save
+Submit
+OK
+Ok （LCTT 译注：这里 `k` 是小写）
+Cancel
+Quit
+Exit
+Yes
+No
+</code></pre><p>此外，还有通用按钮功能对应的简写：</p><pre tabindex=0><code>SimpleButton
+ReadFormButton
+RealtimeButton
+</code></pre><p>（LCTT 译注：其实就是返回 <code>Button</code> 类实例的函数）</p><p>上面就是 PySimpleGUI 支持的全部元素。如果不在上述列表之中，就不会在你的窗口布局中生效。</p><p>（LCTT 译注：上述都是 PySimpleGUI 的类名、类别名或返回实例的函数，自然只能使用列表内的。）</p><h4 id=gui-设计模式>GUI 设计模式</h4><p>对于 GUI 程序，创建并展示窗口的调用大同小异，差异在于元素的布局。</p><p>设计模式代码与上面的例子基本一致，只是移除了布局：</p><pre tabindex=0><code>import PySimpleGUI as sg
+
+form = sg.FlexForm(&#39;Simple data entry form&#39;)
+# Define your form here (it&#39;s a list of lists)
+button, values = form.LayoutAndRead(layout)
+</code></pre><p>（LCTT 译注：这段代码无法运行，只是为了说明每个程序都会用到的设计模式。）</p><p>对于绝大多数 GUI，编码流程如下：</p><ul><li>创建窗体对象</li><li>以“列表的列表”的形式定义 GUI</li><li>展示 GUI 并获取元素的值</li></ul><p>上述流程与 PySimpleGUI 设计模式部分的代码一一对应。</p><h4 id=gui-布局>GUI 布局</h4><p>要创建自定义 GUI，首先要将窗体分割成多个行，因为窗体是一行一行定义的。然后，在每一行中从左到右依次放置元素。</p><p>我们得到的就是一个“列表的列表”，类似如下：</p><pre tabindex=0><code>layout = [  [Text(&#39;Row 1&#39;)],
+            [Text(&#39;Row 2&#39;), Checkbox(&#39;Checkbox 1&#39;, OK()), Checkbox(&#39;Checkbox 2&#39;), OK()] ]
+</code></pre><p>上述布局对应的效果如下：</p><p><img src=/data/attachment/album/201809/18/233536ttaaph7comr8chpu.jpg alt></p><h3 id=展示-gui>展示 GUI</h3><p>当你完成布局、拷贝完用于创建和展示窗体的代码后，下一步就是展示窗体并收集用户数据。</p><p>下面这行代码用于展示窗体并返回收集的数据：</p><pre tabindex=0><code>button, values = form.LayoutAndRead(layout)
+</code></pre><p>窗体返回的结果由两部分组成：一部分是被点击按钮的名称，另一部分是一个列表，包含所有用户输入窗体的值。</p><p>在这个例子中，窗体显示后用户直接点击 “OK” 按钮，返回的结果如下：</p><pre tabindex=0><code>button == &#39;OK&#39;
+values == [False, False]
+</code></pre><p>Checkbox 类型元素返回 <code>True</code> 或 <code>False</code> 类型的值。由于默认处于未选中状态，两个元素的值都是 <code>False</code>。</p><h3 id=显示元素的值>显示元素的值</h3><p>一旦从 GUI 获取返回值，检查返回变量中的值是个不错的想法。与其使用 <code>print</code> 语句进行打印，我们不妨坚持使用 GUI 并在一个窗口中输出这些值。</p><p>（LCTT 译注：考虑使用的是 Python 3 版本，<code>print</code> 应该是函数而不是语句。）</p><p>在 PySimpleGUI 中，有多种消息框可供选取。传递给消息框（函数）的数据会被显示在消息框中；函数可以接受任意数目的参数，你可以轻松的将所有要查看的变量展示出来。</p><p>在 PySimpleGUI 中，最常用的消息框是 <code>MsgBox</code>。要展示上面例子中的数据，只需编写一行代码：</p><pre tabindex=0><code>MsgBox(&#39;The GUI returned:&#39;, button, values)
+</code></pre><h3 id=整合>整合</h3><p>好了，你已经了解了基础知识，让我们创建一个包含尽可能多 PySimpleGUI 元素的窗体吧！此外，为了更好的感观效果，我们将采用绿色/棕褐色的配色方案。</p><pre tabindex=0><code>import PySimpleGUI as sg
+
+sg.ChangeLookAndFeel(&#39;GreenTan&#39;)
+
+form = sg.FlexForm(&#39;Everything bagel&#39;, default_element_size=(40, 1))
+
+column1 = [[sg.Text(&#39;Column 1&#39;, background_color=&#39;#d3dfda&#39;, justification=&#39;center&#39;, size=(10,1))],
+           [sg.Spin(values=(&#39;Spin Box 1&#39;, &#39;2&#39;, &#39;3&#39;), initial_value=&#39;Spin Box 1&#39;)],
+           [sg.Spin(values=(&#39;Spin Box 1&#39;, &#39;2&#39;, &#39;3&#39;), initial_value=&#39;Spin Box 2&#39;)],
+           [sg.Spin(values=(&#39;Spin Box 1&#39;, &#39;2&#39;, &#39;3&#39;), initial_value=&#39;Spin Box 3&#39;)]]
+layout = [
+    [sg.Text(&#39;All graphic widgets in one form!&#39;, size=(30, 1), font=(&#34;Helvetica&#34;, 25))],
+    [sg.Text(&#39;Here is some text.... and a place to enter text&#39;)],
+    [sg.InputText(&#39;This is my text&#39;)],
+    [sg.Checkbox(&#39;My first checkbox!&#39;), sg.Checkbox(&#39;My second checkbox!&#39;, default=True)],
+    [sg.Radio(&#39;My first Radio!     &#39;, &#34;RADIO1&#34;, default=True), sg.Radio(&#39;My second Radio!&#39;, &#34;RADIO1&#34;)],
+    [sg.Multiline(default_text=&#39;This is the default Text should you decide not to type anything&#39;, size=(35, 3)),
+     sg.Multiline(default_text=&#39;A second multi-line&#39;, size=(35, 3))],
+    [sg.InputCombo((&#39;Combobox 1&#39;, &#39;Combobox 2&#39;), size=(20, 3)),
+     sg.Slider(range=(1, 100), orientation=&#39;h&#39;, size=(34, 20), default_value=85)],
+    [sg.Listbox(values=(&#39;Listbox 1&#39;, &#39;Listbox 2&#39;, &#39;Listbox 3&#39;), size=(30, 3)),
+     sg.Slider(range=(1, 100), orientation=&#39;v&#39;, size=(5, 20), default_value=25),
+     sg.Slider(range=(1, 100), orientation=&#39;v&#39;, size=(5, 20), default_value=75),
+     sg.Slider(range=(1, 100), orientation=&#39;v&#39;, size=(5, 20), default_value=10),
+     sg.Column(column1, background_color=&#39;#d3dfda&#39;)],
+    [sg.Text(&#39;_&#39;  * 80)],
+    [sg.Text(&#39;Choose A Folder&#39;, size=(35, 1))],
+    [sg.Text(&#39;Your Folder&#39;, size=(15, 1), auto_size_text=False, justification=&#39;right&#39;),
+     sg.InputText(&#39;Default Folder&#39;), sg.FolderBrowse()],
+    [sg.Submit(), sg.Cancel()]
+     ]
+
+button, values = form.LayoutAndRead(layout)
+sg.MsgBox(button, values)
+</code></pre><p>看上面要写不少代码，但如果你试着直接使用 Tkinter 框架实现同样的 GUI，你很快就会发现 PySimpleGUI 版本的代码是多么的简洁。</p><p><img src=/data/attachment/album/201809/18/233550usb2xhujlcoigi5t.jpg alt></p><p>代码的最后一行打开了一个消息框，效果如下：</p><p><img src=/data/attachment/album/201809/18/233554rzo338oktfjs6nlc.jpg alt></p><p>消息框函数中的每一个参数的内容都会被打印到单独的行中。本例的消息框中包含两行，其中第二行非常长而且包含列表嵌套。</p><p>建议花一点时间将上述结果与 GUI 中的元素一一比对，这样可以更好的理解这些结果是如何产生的。</p><h3 id=为你的程序或脚本添加-gui>为你的程序或脚本添加 GUI</h3><p>如果你有一个命令行方式使用的脚本，添加 GUI 不一定意味着完全放弃该脚本。一种简单的方案如下：如果脚本不需要命令行参数，那么可以直接使用 GUI 调用该脚本；反之，就按原来的方式运行脚本。</p><p>仅需类似如下的逻辑：</p><pre tabindex=0><code>if len(sys.argv) == 1:
+        # collect arguments from GUI
+else:
+    # collect arguements from sys.argv
+</code></pre><p>创建并运行 GUI 最便捷的方式就是从 <a href=https://pysimplegui.readthedocs.io/en/latest/cookbook/>PySimpleGUI 经典实例</a>中拷贝一份代码并修改。</p><p>快来试试吧！给你一直疲于手动执行的脚本增加一些趣味。只需 5-10 分钟即可玩转示例脚本。你可能发现一个几乎满足你需求的经典实例；如果找不到，也很容易自己编写一个。即使你真的玩不转，也只是浪费了 5-10 分钟而已。</p><h3 id=资源>资源</h3><h4 id=安装方式>安装方式</h4><p>支持 Tkinter 的系统就支持 PySimpleGUI，甚至包括 树莓派 Raspberry Pi ，但你需要使用 Python 3。</p><pre tabindex=0><code>pip install PySimpleGUI
+</code></pre><h4 id=文档>文档</h4><ul><li><a href=https://pysimplegui.readthedocs.io/en/latest/>手册</a></li><li><a href=https://pysimplegui.readthedocs.io/en/latest/cookbook/>经典实例</a></li><li><a href=https://github.com/MikeTheWatchGuy/PySimpleGUI>GitHub repository</a></li></ul><hr><p>via: <a href=https://opensource.com/article/18/8/pysimplegui>https://opensource.com/article/18/8/pysimplegui</a></p><p>作者：<a href=https://opensource.com/users/pysimplegui>Mike Barnett</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/pinewall>pinewall</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li><li class=tags__item><a class="tags__link btn" href=/tags/gui/ rel=tag>GUI</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/ rel=tag>图形界面</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

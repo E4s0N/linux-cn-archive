@@ -1,0 +1,94 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 CentOS/RHEL 系统上生成补丁合规报告的 Bash 脚本 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 CentOS/RHEL 系统上生成补丁合规报告的 Bash 脚本"><meta property="og:description" content="补丁合规性报告通常每月创建一次或三个月一次，具体取决于公司的需求。根据你的需要添加 cronjob 来自动执行此功能。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11580-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-11-16T10:15:08+00:00"><meta property="article:modified_time" content="2019-11-16T10:15:08+00:00"><meta itemprop=name content="在 CentOS/RHEL 系统上生成补丁合规报告的 Bash 脚本"><meta itemprop=description content="补丁合规性报告通常每月创建一次或三个月一次，具体取决于公司的需求。根据你的需要添加 cronjob 来自动执行此功能。"><meta itemprop=datePublished content="2019-11-16T10:15:08+00:00"><meta itemprop=dateModified content="2019-11-16T10:15:08+00:00"><meta itemprop=wordCount content="521"><meta itemprop=keywords content="补丁,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 CentOS/RHEL 系统上生成补丁合规报告的 Bash 脚本</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-11-16T10:15:08Z>November 16, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201911/16/101428n1nsj74wifp4k1dz.jpg alt></p><p>如果你运行的是大型 Linux 环境，那么你可能已经将 Red Hat 与 Satellite 集成了。如果是的话，你不必担心补丁合规性报告，因为有一种方法可以从 Satellite 服务器导出它。</p><p>但是，如果你运行的是没有 Satellite 集成的小型 Red Hat 环境，或者它是 CentOS 系统，那么此脚本将帮助你创建该报告。</p><p>补丁合规性报告通常每月创建一次或三个月一次，具体取决于公司的需求。根据你的需要添加 cronjob 来自动执行此功能。</p><p>此 <a href=https://www.2daygeek.com/category/bash-script/>bash 脚本</a> 通常适合于少于 50 个系统运行，但没有限制。</p><p>保持系统最新是 Linux 管理员的一项重要任务，它使你的计算机非常稳定和安全。</p><p>以下文章可以帮助你了解有关在红帽 （RHEL） 和 CentOS 系统上安装安全修补程序的更多详细信息。</p><ul><li><a href=/article-10938-1.html>如何在 CentOS 或 RHEL 系统上检查可用的安全更新？</a></li><li><a href=https://www.2daygeek.com/install-security-updates-on-redhat-rhel-centos-system/>在 RHEL 和 CentOS 系统上安装安全更新的四种方法</a></li><li><a href=/article-10960-1.html>在 RHEL 和 CentOS 上检查或列出已安装的安全更新的两种方法</a></li></ul><p>此教程中包含四个 <a href=https://www.2daygeek.com/category/shell-script/>shell 脚本</a>，请选择适合你的脚本。</p><h3 id=方法-1为-centos--rhel-系统上的安全修补生成补丁合规性报告的-bash-脚本>方法 1：为 CentOS / RHEL 系统上的安全修补生成补丁合规性报告的 Bash 脚本</h3><p>此脚本只会生成安全修补合规性报告。它会通过纯文本发送邮件。</p><pre tabindex=0><code># vi /opt/scripts/small-scripts/sec-errata.sh
+
+#!/bin/sh
+/tmp/sec-up.txt
+SUBJECT=&#34;Patching Reports on &#34;date&#34;&#34;
+MESSAGE=&#34;/tmp/sec-up.txt&#34;
+TO=&#34;[email protected]&#34;
+echo &#34;+---------------+-----------------------------+&#34; &gt;&gt; $MESSAGE
+echo &#34;| Server_Name   |  Security Errata            |&#34; &gt;&gt; $MESSAGE
+echo &#34;+---------------+-----------------------------+&#34; &gt;&gt; $MESSAGE
+for server in `more /opt/scripts/server.txt`
+do
+sec=`ssh $server yum updateinfo summary | grep &#39;Security&#39; | grep -v &#39;Important|Moderate&#39; | tail -1 | awk &#39;{print $1}&#39;`
+echo &#34;$server                $sec&#34; &gt;&gt; $MESSAGE
+done
+echo &#34;+---------------------------------------------+&#34; &gt;&gt; $MESSAGE
+mail -s &#34;$SUBJECT&#34; &#34;$TO&#34; &lt; $MESSAGE
+</code></pre><p>添加完上面的脚本后运行它。</p><pre tabindex=0><code># sh /opt/scripts/small-scripts/sec-errata.sh
+</code></pre><p>你会看到下面的输出。</p><pre tabindex=0><code># cat /tmp/sec-up.txt
+
++---------------+-------------------+
+| Server_Name   |  Security Errata  |
++---------------+-------------------+
+server1
+server2
+server3                21
+server4
++-----------------------------------+
+</code></pre><p>添加下面的 cronjob 来每个月得到一份补丁合规性报告。</p><pre tabindex=0><code># crontab -e
+
+@monthly /bin/bash /opt/scripts/system-uptime-script-1.sh
+</code></pre><h3 id=方法-1a为-centos--rhel-系统上的安全修补生成补丁合规性报告的-bash-脚本>方法 1a：为 CentOS / RHEL 系统上的安全修补生成补丁合规性报告的 Bash 脚本</h3><p>脚本会为你生成安全修补合规性报告。它会通过 CSV 文件发送邮件。</p><pre tabindex=0><code># vi /opt/scripts/small-scripts/sec-errata-1.sh
+
+#!/bin/sh
+echo &#34;Server Name, Security Errata&#34; &gt; /tmp/sec-up.csv
+for server in `more /opt/scripts/server.txt`
+do
+sec=`ssh $server yum updateinfo summary | grep &#39;Security&#39; | grep -v &#39;Important|Moderate&#39; | tail -1 | awk &#39;{print $1}&#39;`
+echo &#34;$server,  $sec&#34; &gt;&gt; /tmp/sec-up.csv
+done
+echo &#34;Patching Report for `date +&#34;%B %Y&#34;`&#34; | mailx -s &#34;Patching Report on `date`&#34; -a /tmp/sec-up.csv [email protected]
+rm /tmp/sec-up.csv
+</code></pre><p>添加完上面的脚本后运行它。</p><pre tabindex=0><code># sh /opt/scripts/small-scripts/sec-errata-1.sh
+</code></pre><p>你会看到下面的输出。</p><p><img src=/data/attachment/album/201911/16/101510n8n42txqneg8niju.png alt></p><h3 id=方法-2为-centos--rhel-系统上的安全修补bugfix增强生成补丁合规性报告的-bash-脚本>方法 2：为 CentOS / RHEL 系统上的安全修补、bugfix、增强生成补丁合规性报告的 Bash 脚本</h3><p>脚本会为你生成安全修补、bugfix、增强的补丁合规性报告。它会通过纯文本发送邮件。</p><pre tabindex=0><code># vi /opt/scripts/small-scripts/sec-errata-bugfix-enhancement.sh
+
+#!/bin/sh
+/tmp/sec-up.txt
+SUBJECT=&#34;Patching Reports on &#34;`date`&#34;&#34;
+MESSAGE=&#34;/tmp/sec-up.txt&#34;
+TO=&#34;[email protected]&#34;
+echo &#34;+---------------+-------------------+--------+---------------------+&#34; &gt;&gt; $MESSAGE
+echo &#34;| Server_Name   |  Security Errata  | Bugfix |  Enhancement        |&#34; &gt;&gt; $MESSAGE
+echo &#34;+---------------+-------------------+--------+---------------------+&#34; &gt;&gt; $MESSAGE
+for server in `more /opt/scripts/server.txt`
+do
+sec=`ssh $server yum updateinfo summary | grep &#39;Security&#39; | grep -v &#39;Important|Moderate&#39; | tail -1 | awk &#39;{print $1}&#39;`
+bug=`ssh $server yum updateinfo summary | grep &#39;Bugfix&#39; | tail -1 | awk &#39;{print $1}&#39;`
+enhance=`ssh $server yum updateinfo summary | grep &#39;Enhancement&#39; | tail -1 | awk &#39;{print $1}&#39;`
+echo &#34;$server                $sec               $bug             $enhance&#34; &gt;&gt; $MESSAGE
+done
+echo &#34;+------------------------------------------------------------------+&#34; &gt;&gt; $MESSAGE
+mail -s &#34;$SUBJECT&#34; &#34;$TO&#34; &lt; $MESSAGE
+</code></pre><p>添加完上面的脚本后运行它。</p><pre tabindex=0><code># sh /opt/scripts/small-scripts/sec-errata-bugfix-enhancement.sh
+</code></pre><p>你会看到下面的输出。</p><pre tabindex=0><code># cat /tmp/sec-up.txt
+
++---------------+-------------------+--------+---------------------+
+| Server_Name   |  Security Errata  | Bugfix |  Enhancement        |
++---------------+-------------------+--------+---------------------+
+server01                                16
+server02                  5             16
+server03                  21           266             20
+server04                                16
++------------------------------------------------------------------+
+</code></pre><p>添加下面的 cronjob 来每三个月得到补丁合规性报告。该脚本计划在一月、四月、七月、十月的 1 号运行。</p><pre tabindex=0><code># crontab -e
+
+0 0 01 */3 * /bin/bash /opt/scripts/system-uptime-script-1.sh
+</code></pre><h3 id=方法-2a为-centos--rhel-系统上的安全修补bugfix增强生成补丁合规性报告的-bash-脚本>方法 2a：为 CentOS / RHEL 系统上的安全修补、bugfix、增强生成补丁合规性报告的 Bash 脚本</h3><p>脚本会为你生成安全修补、bugfix、增强的补丁合规性报告。它会通过 CSV 文件发送邮件。</p><pre tabindex=0><code># vi /opt/scripts/small-scripts/sec-errata-bugfix-enhancement-1.sh
+
+#!/bin/sh
+echo &#34;Server Name, Security Errata,Bugfix,Enhancement&#34; &gt; /tmp/sec-up.csv
+for server in `more /opt/scripts/server.txt`
+do
+sec=`ssh $server yum updateinfo summary | grep &#39;Security&#39; | grep -v &#39;Important|Moderate&#39; | tail -1 | awk &#39;{print $1}&#39;`
+bug=`ssh $server yum updateinfo summary | grep &#39;Bugfix&#39; | tail -1 | awk &#39;{print $1}&#39;`
+enhance=`ssh $server yum updateinfo summary | grep &#39;Enhancement&#39; | tail -1 | awk &#39;{print $1}&#39;`
+echo &#34;$server,$sec,$bug,$enhance&#34; &gt;&gt; /tmp/sec-up.csv
+done
+echo &#34;Patching Report for `date +&#34;%B %Y&#34;`&#34; | mailx -s &#34;Patching Report on `date`&#34; -a /tmp/sec-up.csv [email protected]
+rm /tmp/sec-up.csv
+</code></pre><p>添加完上面的脚本后运行它。</p><pre tabindex=0><code># sh /opt/scripts/small-scripts/sec-errata-bugfix-enhancement-1.sh
+</code></pre><p>你会看到下面的输出。</p><p><img src=/data/attachment/album/201911/16/101511ftqoqetdqnomvciz.png alt></p><hr><p>via: <a href=https://www.2daygeek.com/bash-script-to-generate-patching-compliance-report-on-centos-rhel-systems/>https://www.2daygeek.com/bash-script-to-generate-patching-compliance-report-on-centos-rhel-systems/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/%E6%A0%A1%E5%AF%B9%E8%80%85ID>校对者ID</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%A1%A5%E4%B8%81/ rel=tag>补丁</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

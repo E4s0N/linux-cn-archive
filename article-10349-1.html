@@ -1,0 +1,82 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>创建一个容器化的机器学习模型 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="创建一个容器化的机器学习模型"><meta property="og:description" content="数据科学家在创建机器学习模型后，必须将其部署到生产中。要在不同的基础架构上运行它，使用容器并通过 REST API 公开模型是部署机器学习模型的常用方法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10349-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-12-15T09:18:26+00:00"><meta property="article:modified_time" content="2018-12-15T09:18:26+00:00"><meta itemprop=name content="创建一个容器化的机器学习模型"><meta itemprop=description content="数据科学家在创建机器学习模型后，必须将其部署到生产中。要在不同的基础架构上运行它，使用容器并通过 REST API 公开模型是部署机器学习模型的常用方法。"><meta itemprop=datePublished content="2018-12-15T09:18:26+00:00"><meta itemprop=dateModified content="2018-12-15T09:18:26+00:00"><meta itemprop=wordCount content="314"><meta itemprop=keywords content="机器学习,容器,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>创建一个容器化的机器学习模型</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-12-15T09:18:26Z>December 15, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201812/15/091829w45rgg1peoawzce7.jpg alt></p><p>数据科学家在创建机器学习模型后，必须将其部署到生产中。要在不同的基础架构上运行它，使用容器并通过 REST API 公开模型是部署机器学习模型的常用方法。本文演示了如何在 <a href=https://fedoramagazine.org/running-containers-with-podman/>Podman</a> 容器中使用 <a href=https://connexion.readthedocs.io/en/latest/>Connexion</a> 推出使用 REST API 的 <a href=https://www.tensorflow.org>TensorFlow</a> 机器学习模型。</p><h3 id=准备>准备</h3><p>首先，使用以下命令安装 Podman：</p><pre tabindex=0><code>sudo dnf -y install podman
+</code></pre><p>接下来，为容器创建一个新文件夹并切换到该目录。</p><pre tabindex=0><code>mkdir deployment_container &amp;&amp; cd deployment_container
+</code></pre><h3 id=tensorflow-模型的-rest-api>TensorFlow 模型的 REST API</h3><p>下一步是为机器学习模型创建 REST API。这个 <a href=https://github.com/svenboesiger/titanic_tf_ml_model>github 仓库</a>包含一个预训练模型，以及能让 REST API 工作的设置。</p><p>使用以下命令在 <code>deployment_container</code> 目录中克隆它：</p><pre tabindex=0><code>git clone https://github.com/svenboesiger/titanic_tf_ml_model.git
+</code></pre><h4 id=predictionpy-和-ml_model>prediction.py 和 ml_model/</h4><p><a href=https://github.com/svenboesiger/titanic_tf_ml_model/blob/master/prediction.py>prediction.py</a> 能进行 Tensorflow 预测，而 20x20x20 神经网络的权重位于文件夹 <a href=https://github.com/svenboesiger/titanic_tf_ml_model/tree/master/ml_model/titanic>ml_model/</a> 中。</p><h4 id=swaggeryaml>swagger.yaml</h4><p><a href=https://github.com/svenboesiger/titanic_tf_ml_model/blob/master/swagger.yaml>swagger.yaml</a> 使用 <a href=https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md>Swagger规范</a> 定义 Connexion 库的 API。此文件包含让你的服务器提供输入参数验证、输出响应数据验证、URL 端点定义所需的所有信息。</p><p>额外地，Connexion 还将给你提供一个简单但有用的单页 Web 应用，它演示了如何使用 Javascript 调用 API 和更新 DOM。</p><pre tabindex=0><code>swagger: &#34;2.0&#34;
+info:
+  description: This is the swagger file that goes with our server code
+  version: &#34;1.0.0&#34;
+  title: Tensorflow Podman Article
+consumes:
+  - &#34;application/json&#34;
+produces:
+  - &#34;application/json&#34;
+
+
+basePath: &#34;/&#34;
+
+paths:
+  /survival_probability:
+    post:
+      operationId: &#34;prediction.post&#34;
+      tags:
+        - &#34;Prediction&#34;
+      summary: &#34;The prediction data structure provided by the server application&#34;
+      description: &#34;Retrieve the chance of surviving the titanic disaster&#34;
+      parameters:
+        - in: body
+          name: passenger
+          required: true
+          schema:
+            $ref: &#39;#/definitions/PredictionPost&#39;
+      responses:
+        &#39;201&#39;:
+          description: &#39;Survival probability of an individual Titanic passenger&#39;
+
+definitions:
+  PredictionPost:
+    type: object
+</code></pre><h4 id=serverpy-和-requirementstxt>server.py 和 requirements.txt</h4><p><a href=https://github.com/svenboesiger/titanic_tf_ml_model/blob/master/server.py>server.py</a> 定义了启动 Connexion 服务器的入口点。</p><pre tabindex=0><code>import connexion
+
+app = connexion.App(__name__, specification_dir=&#39;./&#39;)
+
+app.add_api(&#39;swagger.yaml&#39;)
+
+if __name__ == &#39;__main__&#39;:
+ app.run(debug=True)
+</code></pre><p><a href=https://github.com/svenboesiger/titanic_tf_ml_model/blob/master/requirements.txt>requirements.txt</a> 定义了运行程序所需的 python 包。</p><pre tabindex=0><code>connexion
+tensorflow
+pandas
+</code></pre><h3 id=容器化>容器化！</h3><p>为了让 Podman 构建映像，请在上面的准备步骤中创建的 <code>deployment_container</code> 目录中创建一个名为 <code>Dockerfile</code> 的新文件：</p><pre tabindex=0><code>FROM fedora:28
+
+# File Author / Maintainer
+MAINTAINER Sven Boesiger &lt;donotspam@ujelang.com&gt;
+
+# Update the sources
+RUN dnf -y update --refresh
+
+# Install additional dependencies
+RUN dnf -y install libstdc++
+
+RUN dnf -y autoremove
+
+# Copy the application folder inside the container
+ADD /titanic_tf_ml_model /titanic_tf_ml_model
+
+# Get pip to download and install requirements:
+RUN pip3 install -r /titanic_tf_ml_model/requirements.txt
+
+# Expose ports
+EXPOSE 5000
+
+# Set the default directory where CMD will execute
+WORKDIR /titanic_tf_ml_model
+
+# Set the default command to execute
+# when creating a new container
+CMD python3 server.py
+</code></pre><p>接下来，使用以下命令构建容器镜像：</p><pre tabindex=0><code>podman build -t ml_deployment .
+</code></pre><h3 id=运行容器>运行容器</h3><p>随着容器镜像的构建和准备就绪，你可以使用以下命令在本地运行它：</p><pre tabindex=0><code>podman run -p 5000:5000 ml_deployment
+</code></pre><p>在 Web 浏览器中输入 <a href=http://0.0.0.0:5000/>http://0.0.0.0:5000/ui</a> 访问 Swagger/Connexion UI 并测试模型：</p><p><img src=/data/attachment/album/201812/15/091830ggg293pc3q19z377.png alt></p><p>当然，你现在也可以在应用中通过 REST API 访问模型。</p><hr><p>via: <a href=https://fedoramagazine.org/create-containerized-machine-learning-model/>https://fedoramagazine.org/create-containerized-machine-learning-model/</a></p><p>作者：<a href=https://fedoramagazine.org/author/r00nz/>Sven Bösiger</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ rel=tag>机器学习</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%B9%E5%99%A8/ rel=tag>容器</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

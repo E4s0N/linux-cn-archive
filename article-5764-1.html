@@ -1,0 +1,122 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何用Perl访问SQLite数据库 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何用Perl访问SQLite数据库"><meta property="og:description" content="SQLite是一个零配置、无服务端、基于文件的事务型数据库系统。由于它的轻量级，自包含和紧凑的设计，所以当你想要集成数据库到你的程序中时，SQLite是一个非常不错的选择。在这篇文章中，我会展示如何用Perl脚本来创建和访问SQLite数据库。我演示的Perl代码片段是完整的，所以你可以很简单地修改并集成到你的项目中。  访问SQLite的准备 我会使用SQLite DBI Perl驱动来连接到SQLite3。因此你需要在Linux中安装它（和SQLite3一起）。 Debian、 Ubuntu 或者 Linux Mint $ sudo apt-get install sqlite3 libdbd-sqlite3-perl  CentOS、 Fedor"><meta property="og:type" content="article"><meta property="og:url" content="/article-5764-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-07-06T10:04:00+00:00"><meta property="article:modified_time" content="2015-07-06T10:04:00+00:00"><meta itemprop=name content="如何用Perl访问SQLite数据库"><meta itemprop=description content="SQLite是一个零配置、无服务端、基于文件的事务型数据库系统。由于它的轻量级，自包含和紧凑的设计，所以当你想要集成数据库到你的程序中时，SQLite是一个非常不错的选择。在这篇文章中，我会展示如何用Perl脚本来创建和访问SQLite数据库。我演示的Perl代码片段是完整的，所以你可以很简单地修改并集成到你的项目中。  访问SQLite的准备 我会使用SQLite DBI Perl驱动来连接到SQLite3。因此你需要在Linux中安装它（和SQLite3一起）。 Debian、 Ubuntu 或者 Linux Mint $ sudo apt-get install sqlite3 libdbd-sqlite3-perl  CentOS、 Fedor"><meta itemprop=datePublished content="2015-07-06T10:04:00+00:00"><meta itemprop=dateModified content="2015-07-06T10:04:00+00:00"><meta itemprop=wordCount content="436"><meta itemprop=keywords content="SQLite,Perl,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何用Perl访问SQLite数据库</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-07-06T10:04:00Z>July 06, 2015</time></div></div></header><div class="content post__content clearfix"><p>SQLite是一个零配置、无服务端、基于文件的事务型数据库系统。由于它的轻量级，自包含和紧凑的设计，所以当你想要集成数据库到你的程序中时，SQLite是一个非常不错的选择。在这篇文章中，我会展示如何用Perl脚本来创建和访问SQLite数据库。我演示的Perl代码片段是完整的，所以你可以很简单地修改并集成到你的项目中。</p><p><img src=/data/attachment/album/201507/05/220606jrfr4gjrrmrz1cjr.jpg alt></p><h3 id=访问sqlite的准备>访问SQLite的准备</h3><p>我会使用SQLite DBI Perl驱动来连接到SQLite3。因此你需要在Linux中安装它（和SQLite3一起）。</p><p><strong>Debian、 Ubuntu 或者 Linux Mint</strong></p><pre tabindex=0><code>$ sudo apt-get install sqlite3 libdbd-sqlite3-perl
+</code></pre><p><strong>CentOS、 Fedora 或者 RHEL</strong></p><pre tabindex=0><code>$ sudo yum install sqlite perl-DBD-SQLite
+</code></pre><p>安装后，你可以检查SQLite驱动可以通过下面的脚本访问到。</p><pre tabindex=0><code>#!/usr/bin/perl
+
+my @drv = DBI-&gt;available_drivers();
+print join(&#34;\n&#34;, @drv), &#34;\n&#34;;
+</code></pre><p>如果你运行脚本，你应该会看见下面的输出。</p><pre tabindex=0><code>DBM
+ExampleP
+File
+Gofer
+Proxy
+SQLite
+Sponge
+</code></pre><h3 id=perl-sqlite-访问示例>Perl SQLite 访问示例</h3><p>下面就是Perl访问SQLite的示例。这个Perl脚本会演示下面这些SQLite数据库的常规管理。</p><ul><li>创建和连接SQLite数据库</li><li>在SQLite数据库中创建新表</li><li>在表中插入行</li><li>在表中搜索和迭代行</li><li>在表中更新行</li><li>在表中删除行</li></ul><pre tabindex=0><code>use DBI;
+use strict;
+
+# 定义数据库名称和驱动
+my $driver   = &#34;SQLite&#34;;
+my $db_name = &#34;xmodulo.db&#34;;
+my $dbd = &#34;DBI:$driver:dbname=$db_name&#34;;
+
+# sqlite 没有用户名密码的概念
+my $username = &#34;&#34;;
+my $password = &#34;&#34;;
+
+# 创建并连接到数据库
+# 以下创建的文件名为 xmodulo.db
+my $dbh = DBI-&gt;connect($dbd, $username, $password, { RaiseError =&gt; 1 })
+                      or die $DBI::errstr;
+print STDERR &#34;Database opened successfully\n&#34;;
+
+# 创建表
+my $stmt = qq(CREATE TABLE IF NOT EXISTS NETWORK
+             (ID INTEGER PRIMARY KEY     AUTOINCREMENT,
+              HOSTNAME       TEXT    NOT NULL,
+              IPADDRESS      INT     NOT NULL,
+              OS             CHAR(50),
+              CPULOAD        REAL););
+my $ret = $dbh-&gt;do($stmt);
+if($ret &lt; 0) {
+   print STDERR $DBI::errstr;
+} else {
+   print STDERR &#34;Table created successfully\n&#34;;
+}
+
+# 插入三行到表中
+$stmt = qq(INSERT INTO NETWORK (HOSTNAME,IPADDRESS,OS,CPULOAD)
+           VALUES (&#39;xmodulo&#39;, 16843009, &#39;Ubuntu 14.10&#39;, 0.0));
+$ret = $dbh-&gt;do($stmt) or die $DBI::errstr;
+
+$stmt = qq(INSERT INTO NETWORK (HOSTNAME,IPADDRESS,OS,CPULOAD)
+           VALUES (&#39;bert&#39;, 16843010, &#39;CentOS 7&#39;, 0.0));
+$ret = $dbh-&gt;do($stmt) or die $DBI::errstr;
+
+$stmt = qq(INSERT INTO NETWORK (HOSTNAME,IPADDRESS,OS,CPULOAD)
+           VALUES (&#39;puppy&#39;, 16843011, &#39;Ubuntu 14.10&#39;, 0.0));
+$ret = $dbh-&gt;do($stmt) or die $DBI::errstr;
+
+# 在表中检索行
+$stmt = qq(SELECT id, hostname, os, cpuload from NETWORK;);
+my $obj = $dbh-&gt;prepare($stmt);
+$ret = $obj-&gt;execute() or die $DBI::errstr;
+
+if($ret &lt; 0) {
+   print STDERR $DBI::errstr;
+}
+while(my @row = $obj-&gt;fetchrow_array()) {
+      print &#34;ID: &#34;. $row[0] . &#34;\n&#34;;
+      print &#34;HOSTNAME: &#34;. $row[1] .&#34;\n&#34;;
+      print &#34;OS: &#34;. $row[2] .&#34;\n&#34;;
+      print &#34;CPULOAD: &#34;. $row[3] .&#34;\n\n&#34;;
+}
+
+# 更新表中的某行
+$stmt = qq(UPDATE NETWORK set CPULOAD = 50 where OS=&#39;Ubuntu 14.10&#39;;);
+$ret = $dbh-&gt;do($stmt) or die $DBI::errstr;
+
+if( $ret &lt; 0 ) {
+   print STDERR $DBI::errstr;
+} else {
+   print STDERR &#34;A total of $ret rows updated\n&#34;;
+}
+
+# 从表中删除某行
+$stmt = qq(DELETE from NETWORK where ID=2;);
+$ret = $dbh-&gt;do($stmt) or die $DBI::errstr;
+
+if($ret &lt; 0) {
+   print STDERR $DBI::errstr;
+} else {
+   print STDERR &#34;A total of $ret rows deleted\n&#34;;
+}
+
+# 断开数据库连接
+$dbh-&gt;disconnect();
+print STDERR &#34;Exit the database\n&#34;;
+</code></pre><p>上面的Perl脚本运行成功后会创建一个叫“xmodulo.db”的数据库文件，并会有下面的输出。</p><pre tabindex=0><code>Database opened successfully
+Table created successfully
+ID: 1
+HOSTNAME: xmodulo
+OS: Ubuntu 14.10
+CPULOAD: 0
+
+ID: 2
+HOSTNAME: bert
+OS: CentOS 7
+CPULOAD: 0
+
+ID: 3
+HOSTNAME: puppy
+OS: Ubuntu 14.10
+CPULOAD: 0
+
+A total of 2 rows updated
+A total of 1 rows deleted
+Exit the database
+</code></pre><h3 id=错误定位>错误定位</h3><p>如果你尝试没有安装SQLite DBI驱动的情况下使用Perl访问SQLite的话，你会遇到下面的错误。你必须按开始说的安装DBI驱动。</p><pre tabindex=0><code>Can&#39;t locate DBI.pm in @INC (@INC contains: /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5 .) at ./script.pl line 3.
+BEGIN failed--compilation aborted at ./script.pl line 3.
+</code></pre><hr><p>via: <a href=http://xmodulo.com/access-sqlite-database-perl.html>http://xmodulo.com/access-sqlite-database-perl.html</a></p><p>作者：<a href=http://xmodulo.com/author/nanni>Dan Nanni</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/sqlite/ rel=tag>SQLite</a></li><li class=tags__item><a class="tags__link btn" href=/tags/perl/ rel=tag>Perl</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

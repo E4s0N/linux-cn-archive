@@ -1,0 +1,66 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PyLint 的优点、缺点和危险 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="PyLint 的优点、缺点和危险"><meta property="og:description" content="充分利用 PyLint。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15144-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-10-16T09:38:00+00:00"><meta property="article:modified_time" content="2022-10-16T09:38:00+00:00"><meta itemprop=name content="PyLint 的优点、缺点和危险"><meta itemprop=description content="充分利用 PyLint。"><meta itemprop=datePublished content="2022-10-16T09:38:00+00:00"><meta itemprop=dateModified content="2022-10-16T09:38:00+00:00"><meta itemprop=wordCount content="225"><meta itemprop=keywords content="Python,PyLint,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>PyLint 的优点、缺点和危险</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-10-16T09:38:00Z>October 16, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202210/16/093840z9pnzfv9ykfccoq9.jpg alt></p><blockquote><p>充分利用 PyLint。</p></blockquote><p>敲黑板：PyLint 实际上很好！</p><p>“PyLint 可以拯救你的生命”，这是一句夸张的描述，但没有你想象的那么夸张。PyLint 可以让你远离非常难找到的和复杂的缺陷。最差的情况下，它只可以节省测试运行的时间。最好的情况下，它可以帮你避免生产环境中复杂的错误。</p><h3 id=优点>优点</h3><p>我不好意思说这种情况是多么普遍。测试的命名总是<em>那么奇怪</em>：没有人关心这个名称，而且通常也找不到一个自然的名称。例如以下代码：</p><pre tabindex=0><code>def test_add_small():
+    # Math, am I right?
+    assert 1 + 1 == 3
+    
+def test_add_large():
+    assert 5 + 6 == 11
+    
+def test_add_small():
+    assert 1 + 10 == 11
+</code></pre><p>测试生效：</p><pre tabindex=0><code>collected 2 items                                                                         
+test.py .. 
+2 passed
+</code></pre><p>但问题是：如果你覆盖了一个测试的名称，测试框架将愉快地跳过这个测试！</p><p>实际上，这些文件可能有数百行，而添加新测试的人可能并不知道所有的名称。除非有人仔细查看测试输出，否则一切看起来都很好。</p><p>最糟糕的是，<em>被覆盖测试的添加</em>、<em>被覆盖测试造成的破坏</em>，以及<em>连锁反应的问题</em>可能要几天、几月甚至几年才能发现。</p><h3 id=pylint-会找到它>PyLint 会找到它</h3><p>就像一个好朋友一样，PyLint 可以帮助你。</p><pre tabindex=0><code>test.py:8:0: E0102: function already defined line 1
+     (function-redefined)
+</code></pre><h3 id=缺点>缺点</h3><p>就像 90 年代的情景喜剧一样，你对 PyLint 了解的越多，问题就越多。以下是一个库存建模程序的常规代码：</p><pre tabindex=0><code>&#34;&#34;&#34;Inventory abstractions&#34;&#34;&#34;
+
+import attrs
+
+@attrs.define
+class Laptop:
+    &#34;&#34;&#34;A laptop&#34;&#34;&#34;
+    ident: str
+    cpu: str
+</code></pre><p>但 PyLint 似乎有自己的观点（可能形成于 90 年代），并且不怕把它们作为事实陈述出来：</p><pre tabindex=0><code>$ pylint laptop.py | sed -n &#39;/^laptop/s/[^ ]*: //p&#39;
+R0903: Too few public methods (0/2) (too-few-public-methods)
+</code></pre><h3 id=危险>危险</h3><p>有没有想过在一个数百万人使用的工具中加入自己未证实的观点？PyLint 每月有 1200 万次下载。</p><blockquote><p>“如果太挑剔，人们会取消检查” — 这是 PyLint GitHub 的 6987 号议题，于 2022 年 7 月 3 号提出</p></blockquote><p>对于添加一个可能有许多误报的测试，它的态度是 &mldr; “<em>嗯</em>”。</p><h3 id=让它为你工作>让它为你工作</h3><p>PyLint 很好，但你需要小心地与它配合。为了让 PyLint 为你工作，以下是我推荐的三件事：</p><h4 id=1固定版本>1、固定版本</h4><p>固定你使用的 PyLint 版本，避免任何惊喜！</p><p>在你的 <code>.toml</code> 文件中定义:</p><pre tabindex=0><code>[project.optional-dependencies]
+pylint = [&#34;pylint&#34;]
+</code></pre><p>在代码中定义：</p><pre tabindex=0><code>from unittest import mock
+</code></pre><p>这与以下代码对应：</p><pre tabindex=0><code># noxfile.py
+...
+@nox.session(python=VERSIONS[-1])
+def refresh_deps(session):
+    &#34;&#34;&#34;Refresh the requirements-*.txt files&#34;&#34;&#34;
+    session.install(&#34;pip-tools&#34;)
+    for deps in [..., &#34;pylint&#34;]:
+        session.run(
+            &#34;pip-compile&#34;,
+            &#34;--extra&#34;,
+            deps,
+            &#34;pyproject.toml&#34;,
+            &#34;--output-file&#34;,
+            f&#34;requirements-{deps}.txt&#34;,
+        )
+</code></pre><h4 id=2默认禁止>2、默认禁止</h4><p>禁用所有检查，然后启用那些你认为误报比率高的。（不仅仅是漏报/误报的比率！）</p><pre tabindex=0><code># noxfile.py
+...
+@nox.session(python=&#34;3.10&#34;)
+def lint(session):
+    files = [&#34;src/&#34;, &#34;noxfile.py&#34;]
+    session.install(&#34;-r&#34;, &#34;requirements-pylint.txt&#34;)
+    session.install(&#34;-e&#34;, &#34;.&#34;)
+    session.run(
+        &#34;pylint&#34;,
+        &#34;--disable=all&#34;,
+        *(f&#34;--enable={checker}&#34; for checker in checkers)
+        &#34;src&#34;,
+    )
+</code></pre><h4 id=3检查器>3、检查器</h4><p>以下是我喜欢的检查器。加强项目的一致性，避免一些明显的错误。</p><pre tabindex=0><code>checkers = [
+    &#34;missing-class-docstring&#34;,
+    &#34;missing-function-docstring&#34;,
+    &#34;missing-module-docstring&#34;,
+    &#34;function-redefined&#34;,
+]
+</code></pre><h3 id=使用-pylint>使用 PyLint</h3><p>你可以只使用 PyLint 好的部分。在 CI 中运行它以保持一致性，并使用常用检查器。</p><p>放弃不好的部分：默认禁止检查器。</p><p>避免危险的部分：固定版本以避免意外。</p><hr><p>via: <a href=https://opensource.com/article/22/9/pylint-good-bad-ugly>https://opensource.com/article/22/9/pylint-good-bad-ugly</a></p><p>作者：<a href=https://opensource.com/users/moshez>Moshe Zadka</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li><li class=tags__item><a class="tags__link btn" href=/tags/pylint/ rel=tag>PyLint</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

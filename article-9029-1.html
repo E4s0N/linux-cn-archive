@@ -1,0 +1,50 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>3 个简单、优秀的 Linux 网络监视器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="3 个简单、优秀的 Linux 网络监视器"><meta property="og:description" content="用 iftop、Nethogs 和 vnstat 了解更多关于你的网络连接。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9029-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-11-03T16:14:00+00:00"><meta property="article:modified_time" content="2017-11-03T16:14:00+00:00"><meta itemprop=name content="3 个简单、优秀的 Linux 网络监视器"><meta itemprop=description content="用 iftop、Nethogs 和 vnstat 了解更多关于你的网络连接。"><meta itemprop=datePublished content="2017-11-03T16:14:00+00:00"><meta itemprop=dateModified content="2017-11-03T16:14:00+00:00"><meta itemprop=wordCount content="341"><meta itemprop=keywords content="iftop,nethogs,vnstat,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>3 个简单、优秀的 Linux 网络监视器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-11-03T16:14:00Z>November 03, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201711/03/161319bf9oqn99gnggeggg.jpeg alt></p><p><em>用 iftop、Nethogs 和 vnstat 了解更多关于你的网络连接。</em></p><p>你可以通过这三个 Linux 网络命令，了解有关你网络连接的大量信息。iftop 通过进程号跟踪网络连接，Nethogs 可以快速显示哪个在占用你的带宽，而 vnstat 作为一个很好的轻量级守护进程运行，可以随时随地记录你的使用情况。</p><h3 id=iftop>iftop</h3><p><a href=http://www.ex-parrot.com/pdw/iftop/>iftop</a> 监听你指定的网络接口，并以 <code>top</code> 的形式展示连接。</p><p>这是一个很好的小工具，用于快速识别占用、测量速度，并保持网络流量的总体运行。看到我们使用了多少带宽是非常令人惊讶的，特别是对于我们这些还记得使用电话线、调制解调器、让人尖叫的 Kbit 速度和真实的实时波特率的老年人来说。我们很久以前就放弃了波特率，转而使用比特率。波特率测量信号变化，有时与比特率相同，但大多数情况下不是。</p><p>如果你只有一个网络接口，可以不带选项运行 <code>iftop</code>。<code>iftop</code> 需要 root 权限：</p><pre tabindex=0><code>$ sudo iftop
+</code></pre><p>当你有多个接口时，指定要监控的接口：</p><pre tabindex=0><code>$ sudo iftop -i wlan0
+</code></pre><p>就像 top 一样，你可以在运行时更改显示选项。</p><ul><li><code>h</code> 切换帮助屏幕。</li><li><code>n</code> 切换名称解析。</li><li><code>s</code> 切换源主机显示，<code>d</code> 切换目标主机。</li><li><code>s</code> 切换端口号。</li><li><code>N</code> 切换端口解析。要全看到端口号，请关闭解析。</li><li><code>t</code> 切换文本界面。默认显示需要 ncurses。我认为文本显示更易于阅读和更好的组织（图1）。</li><li><code>p</code> 暂停显示。</li><li><code>q</code> 退出程序。</li></ul><p><img src=https://img.linux.net.cn/data/attachment/album/201711/03/161404vwjt127p1uot0j7f.png alt="text display" title="text display"></p><p><em>图 1：文本显示是可读的和可组织的。</em></p><p>当你切换显示选项时，<code>iftop</code> 会继续测量所有流量。你还可以选择要监控的单个主机。你需要主机的 IP 地址和网络掩码。我很好奇 Pandora 在我那可怜的带宽中占用了多少，所以我先用 <code>dig</code> 找到它们的 IP 地址：</p><pre tabindex=0><code>$ dig A pandora.com
+[...]
+;; ANSWER SECTION:
+pandora.com.            267     IN      A       208.85.40.20
+pandora.com.            267     IN      A       208.85.40.50
+</code></pre><p>网络掩码是什么？ <a href=https://www.linux.com/learn/intro-to-linux/2017/8/how-calculate-network-addresses-ipcalc>ipcalc</a> 告诉我们：</p><pre tabindex=0><code>$ ipcalc -b 208.85.40.20
+Address:   208.85.40.20   
+Netmask:   255.255.255.0 = 24
+Wildcard:  0.0.0.255  
+=&gt;
+Network:   208.85.40.0/24 
+</code></pre><p>现在将地址和网络掩码提供给 iftop：</p><pre tabindex=0><code>$ sudo iftop -F 208.85.40.20/24 -i wlan0
+</code></pre><p>这不是真的吗？我很惊讶地发现，我珍贵的带宽对于 Pandora 很宽裕，每小时使用大约使用 500Kb。而且，像大多数流媒体服务一样，Pandora 的流量也有峰值，其依赖于缓存来缓解阻塞。</p><p>你可以使用 <code>-G</code> 选项对 IPv6 地址执行相同操作。请参阅手册页了解 <code>iftop</code> 的其他功能，包括使用自定义配置文件定制默认选项，并应用自定义过滤器（请参阅 <a href=http://www.tcpdump.org/manpages/pcap-filter.7.html>PCAP-FILTER</a> 作为过滤器参考）。</p><h3 id=nethogs>Nethogs</h3><p>当你想要快速了解谁占用了你的带宽时，Nethogs 是快速和容易的。以 root 身份运行，并指定要监听的接口。它显示了空闲的应用程序和进程号，以便如果你愿意的话，你可以杀死它：</p><pre tabindex=0><code>$ sudo nethogs wlan0
+
+NetHogs version 0.8.1
+
+PID USER   PROGRAM              DEV    SENT   RECEIVED       
+7690 carla /usr/lib/firefox     wlan0 12.494 556.580 KB/sec
+5648 carla .../chromium-browser wlan0  0.052   0.038 KB/sec
+TOTAL                                 12.546 556.618 KB/sec 
+</code></pre><p>Nethogs 选项很少：在 kb/s、kb、b 和 mb 之间循环；通过接收或发送的数据包进行排序；并调整刷新之间的延迟。请参阅 <code>man nethogs</code>，或者运行 <code>nethogs -h</code>。</p><h3 id=vnstat>vnstat</h3><p><a href=http://humdi.net/vnstat/>vnstat</a> 是最容易使用的网络数据收集器。它是轻量级的，不需要 root 权限。它作为守护进程运行，并记录你网络统计信息。<code>vnstat</code> 命令显示累计的数据：</p><pre tabindex=0><code>$ vnstat -i wlan0
+Database updated: Tue Oct 17 08:36:38 2017
+
+   wlan0 since 10/17/2017
+
+          rx:  45.27 MiB      tx:  3.77 MiB      total:  49.04 MiB
+
+   monthly
+                     rx      |     tx      |    total    |   avg. rate
+     ------------------------+-------------+-------------+---------------
+       Oct &#39;17     45.27 MiB |    3.77 MiB |   49.04 MiB |    0.28 kbit/s
+     ------------------------+-------------+-------------+---------------
+     estimated        85 MiB |       5 MiB |      90 MiB |
+
+   daily
+                     rx      |     tx      |    total    |   avg. rate
+     ------------------------+-------------+-------------+---------------
+         today     45.27 MiB |    3.77 MiB |   49.04 MiB |   12.96 kbit/s
+     ------------------------+-------------+-------------+---------------
+     estimated       125 MiB |       8 MiB |     133 MiB |
+</code></pre><p>它默认显示所有的网络接口。使用 <code>-i</code> 选项选择单个接口。以这种方式合并多个接口的数据：</p><pre tabindex=0><code>$ vnstat -i wlan0+eth0+eth1
+</code></pre><p>你可以通过以下几种方式过滤显示：</p><ul><li><code>-h</code> 以小时显示统计数据。</li><li><code>-d</code> 以天数显示统计数据。</li><li><code>-w</code> 和 <code>-m</code> 按周和月显示统计数据。</li><li>使用 <code>-l</code> 选项查看实时更新。</li></ul><p>此命令删除 wlan1 的数据库，并停止监控它：</p><pre tabindex=0><code>$ vnstat -i wlan1 --delete
+</code></pre><p>此命令为网络接口创建别名。此例使用 Ubuntu 16.04 中的一个奇怪的接口名称：</p><pre tabindex=0><code>$ vnstat -u -i enp0s25 --nick eth0
+</code></pre><p>默认情况下，vnstat 监视 eth0。你可以在 <code>/etc/vnstat.conf</code> 中更改此内容，或在主目录中创建自己的个人配置文件。请参见 <code>man vnstat</code> 以获得完整的参考。</p><p>你还可以安装 <code>vnstati</code> 创建简单的彩色图（图2）：</p><pre tabindex=0><code>$ vnstati -s -i wlx7cdd90a0a1c2 -o vnstat.png
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201711/03/161404n9zda0t4jt9mg0vf.png alt=vnstati title=vnstati></p><p><em>图 2：你可以使用 vnstati 创建简单的彩色图表。</em></p><p>有关完整选项，请参见 <code>man vnstati</code>。</p><hr><p>via: <a href=https://www.linux.com/learn/intro-to-linux/2017/10/3-simple-excellent-linux-network-monitors>https://www.linux.com/learn/intro-to-linux/2017/10/3-simple-excellent-linux-network-monitors</a></p><p>作者：<a href=https://www.linux.com/users/cschroder>CARLA SCHRODER</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/iftop/ rel=tag>iftop</a></li><li class=tags__item><a class="tags__link btn" href=/tags/nethogs/ rel=tag>nethogs</a></li><li class=tags__item><a class="tags__link btn" href=/tags/vnstat/ rel=tag>vnstat</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

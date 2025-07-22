@@ -1,0 +1,72 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 ansible-bender 构建容器镜像 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 ansible-bender 构建容器镜像"><meta property="og:description" content="了解如何使用 Ansible 在容器中执行命令。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11518-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-10-30T09:08:37+00:00"><meta property="article:modified_time" content="2019-10-30T09:08:37+00:00"><meta itemprop=name content="使用 ansible-bender 构建容器镜像"><meta itemprop=description content="了解如何使用 Ansible 在容器中执行命令。"><meta itemprop=datePublished content="2019-10-30T09:08:37+00:00"><meta itemprop=dateModified content="2019-10-30T09:08:37+00:00"><meta itemprop=wordCount content="289"><meta itemprop=keywords content="Ansible,容器,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 ansible-bender 构建容器镜像</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-10-30T09:08:37Z>October 30, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>了解如何使用 Ansible 在容器中执行命令。</p></blockquote><p><img src=/data/attachment/album/201910/30/090738vzbifzfpa6qz9bij.jpg alt></p><p>容器和 <a href=https://www.ansible.com/>Ansible</a> 可以很好地融合在一起：从管理和编排到供应和构建。在本文中，我们将重点介绍构建部分。</p><p>如果你熟悉 Ansible，就会知道你可以编写一系列任务，<code>ansible-playbook</code> 命令将为你执行这些任务。你知道吗，如果你编写 Dockerfile 并运行 <code>podman build</code>，你还可以在容器环境中执行此类命令，并获得相同​​的结果。</p><p>这是一个例子：</p><pre tabindex=0><code>- name: Serve our file using httpd
+  hosts: all
+  tasks:
+  - name: Install httpd
+    package:
+      name: httpd
+      state: installed
+  - name: Copy our file to httpd’s webroot
+    copy:
+      src: our-file.txt
+      dest: /var/www/html/
+</code></pre><p>你可以在 Web 服务器本地或容器中执行这个剧本，并且只要你记得先创建 <code>our-file.txt</code>，它就可以工作。</p><p>但是这里缺少了一些东西。你需要启动（并配置）httpd 以便提供文件。这是容器构建和基础架构供应之间的区别：构建镜像时，你只需准备内容；而运行容器是另一项任务。另一方面，你可以将元数据附加到容器镜像，它会默认运行命令。</p><p>这有个工具可以帮助。试试看 <code>ansible-bender</code> 怎么样？</p><pre tabindex=0><code>$ ansible-bender build the-playbook.yaml fedora:30 our-httpd
+</code></pre><p>该脚本使用 <code>ansible-bender</code> 对 Fedora 30 容器镜像执行该剧本，并将生成的容器镜像命名为 <code>our-httpd</code>。</p><p>但是，当你运行该容器时，它不会启动 httpd，因为它不知道如何操作。你可以通过向该剧本添加一些元数据来解决此问题：</p><pre tabindex=0><code>- name: Serve our file using httpd
+  hosts: all
+  vars:
+    ansible_bender:
+      base_image: fedora:30
+      target_image:
+        name: our-httpd
+        cmd: httpd -DFOREGROUND
+  tasks:
+  - name: Install httpd
+    package:
+      name: httpd
+      state: installed
+  - name: Listen on all network interfaces.
+    lineinfile:    
+      path: /etc/httpd/conf/httpd.conf  
+      regexp: &#39;^Listen &#39;
+      line: Listen 0.0.0.0:80  
+  - name: Copy our file to httpd’s webroot
+    copy:
+      src: our-file.txt
+      dest: /var/www/html
+</code></pre><p>现在你可以构建镜像（从这里开始，请以 root 用户身份运行所有命令。目前，Buildah 和 Podman 不会为无 root 容器创建专用网络）：</p><pre tabindex=0><code># ansible-bender build the-playbook.yaml
+PLAY [Serve our file using httpd] ****************************************************
+                                                                                                                                                                             
+TASK [Gathering Facts] ***************************************************************    
+ok: [our-httpd-20191004-131941266141-cont]
+
+TASK [Install httpd] *****************************************************************
+loaded from cache: &#39;f053578ed2d47581307e9ba3f64f4b4da945579a082c6f99bd797635e62befd0&#39;
+skipping: [our-httpd-20191004-131941266141-cont]
+
+TASK [Listen on all network interfaces.] *********************************************
+changed: [our-httpd-20191004-131941266141-cont]
+
+TASK [Copy our file to httpd’s webroot] **********************************************
+changed: [our-httpd-20191004-131941266141-cont]
+
+PLAY RECAP ***************************************************************************
+our-httpd-20191004-131941266141-cont : ok=3    changed=2    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+
+Getting image source signatures
+Copying blob sha256:4650c04b851c62897e9c02c6041a0e3127f8253fafa3a09642552a8e77c044c8
+Copying blob sha256:87b740bba596291af8e9d6d91e30a01d5eba9dd815b55895b8705a2acc3a825e
+Copying blob sha256:82c21252bd87532e93e77498e3767ac2617aa9e578e32e4de09e87156b9189a0
+Copying config sha256:44c6dc6dda1afe28892400c825de1c987c4641fd44fa5919a44cf0a94f58949f
+Writing manifest to image destination
+Storing signatures
+44c6dc6dda1afe28892400c825de1c987c4641fd44fa5919a44cf0a94f58949f
+Image &#39;our-httpd&#39; was built successfully \o/
+</code></pre><p>镜像构建完毕，可以运行容器了：</p><pre tabindex=0><code># podman run our-httpd
+AH00558: httpd: Could not reliably determine the server&#39;s fully qualified domain name, using 10.88.2.106. Set the &#39;ServerName&#39; directive globally to suppress this message
+</code></pre><p>是否提供文件了？首先，找出你容器的 IP：</p><pre tabindex=0><code># podman inspect -f &#39;{{ .NetworkSettings.IPAddress }}&#39; 7418570ba5a0
+10.88.2.106
+</code></pre><p>你现在可以检查了：</p><pre tabindex=0><code>$ curl http://10.88.2.106/our-file.txt
+Ansible is ❤
+</code></pre><p>你文件内容是什么？</p><p>这只是使用 Ansible 构建容器镜像的介绍。如果你想了解有关 <code>ansible-bender</code> 可以做什么的更多信息，请查看它的 <a href=https://github.com/ansible-community/ansible-bender>GitHub</a> 页面。构建快乐！</p><hr><p>via: <a href=https://opensource.com/article/19/10/building-container-images-ansible>https://opensource.com/article/19/10/building-container-images-ansible</a></p><p>作者：<a href=https://opensource.com/users/tomastomecek>Tomas Tomecek</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ansible/ rel=tag>Ansible</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%B9%E5%99%A8/ rel=tag>容器</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

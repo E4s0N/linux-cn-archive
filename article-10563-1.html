@@ -1,0 +1,178 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>5 个好用的开发者 Vim 插件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="5 个好用的开发者 Vim 插件"><meta property="og:description" content="通过这 5 个插件扩展 Vim 功能来提升你的编码效率。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10563-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-02-23T11:11:55+00:00"><meta property="article:modified_time" content="2019-02-23T11:11:55+00:00"><meta itemprop=name content="5 个好用的开发者 Vim 插件"><meta itemprop=description content="通过这 5 个插件扩展 Vim 功能来提升你的编码效率。"><meta itemprop=datePublished content="2019-02-23T11:11:55+00:00"><meta itemprop=dateModified content="2019-02-23T11:11:55+00:00"><meta itemprop=wordCount content="994"><meta itemprop=keywords content="Vim,开发,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>5 个好用的开发者 Vim 插件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-02-23T11:11:55Z>February 23, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>通过这 5 个插件扩展 Vim 功能来提升你的编码效率。</p></blockquote><p><img src=/data/attachment/album/201902/23/111135wos7r6mssyzrtoxl.jpg alt></p><p>我用 Vim 已经超过 20 年了，两年前我决定把它作为我的首要文本编辑器。我用 Vim 来编写代码、配置文件、博客文章及其它任意可以用纯文本表达的东西。Vim 有很多超级棒的功能，一旦你适合了它，你的工作会变得非常高效。</p><p>在日常编辑工作中，我更倾向于使用 Vim 稳定的原生功能，但开源社区对 Vim 开发了大量的插件，可以扩展 Vim 的功能、改进你的工作流程和提升工作效率。</p><p>以下列举 5 个非常好用的可以用于编写任意编程语言的插件。</p><h3 id=1auto-pairs>1、Auto Pairs</h3><p><a href="https://www.vim.org/scripts/script.php?script_id=3599">Auto Pairs</a> 插件可以帮助你插入和删除成对的文字，如花括号、圆括号或引号。这在编写代码时非常有用，因为很多编程语言都有成对标记的语法，就像圆括号用于函数调用，或引号用于字符串定义。</p><p>Auto Pairs 最基本的功能是在你输入一个左括号时会自动补全对应的另一半括号。比如，你输入了一个 <code>[</code>，它会自动帮你补充另一半 <code>]</code>。相反，如果你用退格键删除开头的一半括号，Auto Pairs 会删除另一半。</p><p>如果你设置了自动缩进，当你按下回车键时 Auto Pairs 会在恰当的缩进位置补全另一半括号，这比你找到放置另一半的位置并选择一个正确的括号要省劲多了。</p><p>例如下面这段代码：</p><pre tabindex=0><code>package main
+
+import &#34;fmt&#34;
+
+func main() {
+    x := true
+    items := []string{&#34;tv&#34;, &#34;pc&#34;, &#34;tablet&#34;}
+
+    if x { 
+        for _, i := range items
+    } 
+}
+</code></pre><p>在 <code>items</code> 后面输入一个左花括号按下回车会产生下面的结果：</p><pre tabindex=0><code>package main
+
+import &#34;fmt&#34;
+
+func main() {
+    x := true
+    items := []string{&#34;tv&#34;, &#34;pc&#34;, &#34;tablet&#34;}
+
+    if x {
+        for _, i := range items  {
+            | (cursor here)
+        }
+    }
+}
+</code></pre><p>Auto Pairs 提供了大量其它选项（你可以在 <a href=https://github.com/jiangmiao/auto-pairs>GitHub</a> 上找到），但最基本的功能已经很让人省时间了。</p><h3 id=2nerd-commenter>2、NERD Commenter</h3><p><a href=https://github.com/scrooloose/nerdcommenter>NERD Commenter</a> 插件给 Vim 增加了代码注释的功能，类似在 IDE integrated development environment 中注释功能。有了这个插件，你可以一键注释单行或多行代码。</p><p>NERD Commenter 可以与标准的 Vim <a href=http://vim.wikia.com/wiki/Filetype.vim>filetype</a> 插件配合，所以它能理解一些编程语言并使用合适的方式来注释代码。</p><p>最易上手的方法是按 <code>Leader+Space</code> 组合键来切换注释当前行。Vim 默认的 Leader 键是 <code>\</code>。</p><p>在 可视化模式 Visual mode 中，你可以选择多行一并注释。NERD Commenter 也可以按计数注释，所以你可以加个数量 n 来注释 n 行。</p><p>还有个有用的特性 “Sexy Comment” 可以用 <code>Leader+cs</code> 来触发，它的块注释风格更漂亮一些。例如下面这段代码：</p><pre tabindex=0><code>package main
+
+import &#34;fmt&#34;
+
+func main() {
+    x := true
+    items := []string{&#34;tv&#34;, &#34;pc&#34;, &#34;tablet&#34;}
+
+    if x {
+        for _, i := range items {
+            fmt.Println(i)
+        }
+    }
+}
+</code></pre><p>选择 <code>main</code> 函数中的所有行然后按下 <code>Leader+cs</code> 会出来以下注释效果：</p><pre tabindex=0><code>package main
+
+import &#34;fmt&#34;
+
+func main() {
+/*
+ *    x := true
+ *    items := []string{&#34;tv&#34;, &#34;pc&#34;, &#34;tablet&#34;}
+ *
+ *    if x {
+ *        for _, i := range items {
+ *            fmt.Println(i)
+ *        }
+ *    }
+ */
+}
+</code></pre><p>因为这些行都是在一个块中注释的，你可以用 <code>Leader+Space</code> 组合键一次去掉这里所有的注释。</p><p>NERD Commenter 是任何使用 Vim 写代码的开发者都必装的插件。</p><h3 id=3vim-surround>3、VIM Surround</h3><p><a href="https://www.vim.org/scripts/script.php?script_id=1697">Vim Surround</a> 插件可以帮你“环绕”现有文本插入成对的符号（如括号或双引号）或标签（如 HTML 或 XML 标签）。它和 Auto Pairs 有点儿类似，但是用于处理已有文本，在编辑文本时更有用。</p><p>比如你有以下一个句子：</p><pre tabindex=0><code>&#34;Vim plugins are awesome !&#34;
+</code></pre><p>当你的光标处于引起来的句中任何位置时，你可以用 <code>ds"</code> 组合键删除句子两端的双引号。</p><pre tabindex=0><code>Vim plugins are awesome !
+</code></pre><p>你也可以用 <code>cs"'</code> 把双端的双引号换成单引号：</p><pre tabindex=0><code>&#39;Vim plugins are awesome !&#39;
+</code></pre><p>或者再用 <code>cs'[</code> 替换成中括号：</p><pre tabindex=0><code>[ Vim plugins are awesome ! ]
+</code></pre><p>它对编辑 HTML 或 XML 文本中的 标签 tag 尤其在行。假如你有以下一行 HTML 代码：</p><pre tabindex=0><code>&lt;p&gt;Vim plugins are awesome !&lt;/p&gt;
+</code></pre><p>当光标在 “awesome” 这个单词的任何位置时，你可以按 <code>ysiw&lt;em></code> 直接给它加上着重标签（<code>&lt;em></code>）：</p><pre tabindex=0><code>&lt;p&gt;Vim plugins are &lt;em&gt;awesome&lt;/em&gt; !&lt;/p&gt;
+</code></pre><p>注意它聪明地加上了 <code>&lt;/em></code> 闭合标签。</p><p>Vim Surround 也可以用 <code>ySS</code> 缩进文本并加上标签。比如你有以下文本：</p><pre tabindex=0><code>&lt;p&gt;Vim plugins are &lt;em&gt;awesome&lt;/em&gt; !&lt;/p&gt;
+</code></pre><p>你可以用 <code>ySS&lt;div class="normal"></code> 加上 <code>div</code> 标签，注意生成的段落是自动缩进的。</p><pre tabindex=0><code>&lt;div class=&#34;normal&#34;&gt;
+        &lt;p&gt;Vim plugins are &lt;em&gt;awesome&lt;/em&gt; !&lt;/p&gt;
+&lt;/div&gt;
+</code></pre><p>Vim Surround 有很多其它选项，你可以参照 <a href=https://github.com/tpope/vim-surround>GitHub</a> 上的说明尝试它们。</p><h3 id=4vim-gitgutter>4、Vim Gitgutter</h3><p><a href=https://github.com/airblade/vim-gitgutter>Vim Gitgutter</a> 插件对使用 Git 作为版本控制工具的人来说非常有用。它会在 Vim 的行号列旁显示 <code>git diff</code> 的差异标记。假设你有如下已提交过的代码：</p><pre tabindex=0><code>  1 package main
+  2
+  3 import &#34;fmt&#34;
+  4
+  5 func main() {
+  6     x := true
+  7     items := []string{&#34;tv&#34;, &#34;pc&#34;, &#34;tablet&#34;}
+  8
+  9     if x {
+ 10         for _, i := range items {
+ 11             fmt.Println(i)
+ 12         }
+ 13     }
+ 14 }
+</code></pre><p>当你做出一些修改后，Vim Gitgutter 会显示如下标记：</p><pre tabindex=0><code>    1 package main
+    2
+    3 import &#34;fmt&#34;
+    4
+_   5 func main() {
+    6     items := []string{&#34;tv&#34;, &#34;pc&#34;, &#34;tablet&#34;}
+    7
+~   8     if len(items) &gt; 0 {
+    9         for _, i := range items {
+   10             fmt.Println(i)
++  11             fmt.Println(&#34;------&#34;)
+   12         }
+   13     }
+   14 }
+</code></pre><p><code>_</code> 标记表示在第 5 行和第 6 行之间删除了一行。<code>~</code> 表示第 8 行有修改，<code>+</code> 表示新增了第 11 行。</p><p>另外，Vim Gitgutter 允许你用 <code>[c</code> 和 <code>]c</code> 在多个有修改的块之间跳转，甚至可以用 <code>Leader+hs</code> 来暂存某个变更集。</p><p>这个插件提供了对变更的即时视觉反馈，如果你用 Git 的话，有了它简直是如虎添翼。</p><h3 id=5vim-fugitive>5、VIM Fugitive</h3><p><a href="https://www.vim.org/scripts/script.php?script_id=2975">Vim Fugitive</a> 是另一个将 Git 工作流集成到 Vim 中的超棒插件。它对 Git 做了一些封装，可以让你在 Vim 里直接执行 Git 命令并将结果集成在 Vim 界面里。这个插件有超多的特性，更多信息请访问它的 <a href=https://github.com/tpope/vim-fugitive>GitHub</a> 项目页面。</p><p>这里有一个使用 Vim Fugitive 的基础 Git 工作流示例。设想我们已经对下面的 Go 代码做出修改，你可以用 <code>:Gblame</code> 调用 <code>git blame</code> 来查看每行最后的提交信息：</p><pre tabindex=0><code>e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│    1 package main
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│    2
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│    3 import &#34;fmt&#34;
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│    4
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│_   5 func main() {
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│    6     items := []string{&#34;tv&#34;, &#34;pc&#34;, &#34;tablet&#34;}
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│    7
+00000000 (Not Committed Yet 2018-12-05 18:55:00 -0500)│~   8     if len(items) &gt; 0 {
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│    9         for _, i := range items {
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│   10             fmt.Println(i)
+00000000 (Not Committed Yet 2018-12-05 18:55:00 -0500)│+  11             fmt.Println(&#34;------&#34;)
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│   12         }
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│   13     }
+e9949066 (Ricardo Gerardi   2018-12-05 18:17:19 -0500)│   14 }
+</code></pre><p>可以看到第 8 行和第 11 行显示还未提交。用 <code>:Gstatus</code> 命令检查仓库当前的状态：</p><pre tabindex=0><code>  1 # On branch master
+  2 # Your branch is up to date with &#39;origin/master&#39;.
+  3 #
+  4 # Changes not staged for commit:
+  5 #   (use &#34;git add &lt;file&gt;...&#34; to update what will be committed)
+  6 #   (use &#34;git checkout -- &lt;file&gt;...&#34; to discard changes in working directory)
+  7 #
+  8 #       modified:   vim-5plugins/examples/test1.go
+  9 #
+ 10 no changes added to commit (use &#34;git add&#34; and/or &#34;git commit -a&#34;)
+--------------------------------------------------------------------------------------------------------
+    1 package main
+    2
+    3 import &#34;fmt&#34;
+    4
+_   5 func main() {
+    6     items := []string{&#34;tv&#34;, &#34;pc&#34;, &#34;tablet&#34;}
+    7
+~   8     if len(items) &gt; 0 {
+    9         for _, i := range items {
+   10             fmt.Println(i)
++  11             fmt.Println(&#34;------&#34;)
+   12         }
+   13     }
+   14 }
+</code></pre><p>Vim Fugitive 在分割的窗口里显示 <code>git status</code> 的输出结果。你可以在该行按下 <code>-</code> 键用该文件的名字暂存这个文件的提交，再按一次 <code>-</code> 可以取消暂存。这个信息会随着你的操作自动更新：</p><pre tabindex=0><code>  1 # On branch master
+  2 # Your branch is up to date with &#39;origin/master&#39;.
+  3 #
+  4 # Changes to be committed:
+  5 #   (use &#34;git reset HEAD &lt;file&gt;...&#34; to unstage)
+  6 #
+  7 #       modified:   vim-5plugins/examples/test1.go
+  8 #
+--------------------------------------------------------------------------------------------------------
+    1 package main
+    2
+    3 import &#34;fmt&#34;
+    4
+_   5 func main() {
+    6     items := []string{&#34;tv&#34;, &#34;pc&#34;, &#34;tablet&#34;}
+    7
+~   8     if len(items) &gt; 0 {
+    9         for _, i := range items {
+   10             fmt.Println(i)
++  11             fmt.Println(&#34;------&#34;)
+   12         }
+   13     }
+   14 }
+</code></pre><p>现在你可以用 <code>:Gcommit</code> 来提交修改了。Vim Fugitive 会打开另一个分割窗口让你输入提交信息：</p><pre tabindex=0><code>  1 vim-5plugins: Updated test1.go example file
+  2 # Please enter the commit message for your changes. Lines starting
+  3 # with &#39;#&#39; will be ignored, and an empty message aborts the commit.
+  4 #
+  5 # On branch master
+  6 # Your branch is up to date with &#39;origin/master&#39;.
+  7 #
+  8 # Changes to be committed:
+  9 #       modified:   vim-5plugins/examples/test1.go
+ 10 #
+</code></pre><p>按 <code>:wq</code> 保存文件完成提交：</p><pre tabindex=0><code>[master c3bf80f] vim-5plugins: Updated test1.go example file
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+Press ENTER or type command to continue
+</code></pre><p>然后你可以再用 <code>:Gstatus</code> 检查结果并用 <code>:Gpush</code> 把新的提交推送到远程。</p><pre tabindex=0><code>  1 # On branch master
+  2 # Your branch is ahead of &#39;origin/master&#39; by 1 commit.
+  3 #   (use &#34;git push&#34; to publish your local commits)
+  4 #
+  5 nothing to commit, working tree clean
+</code></pre><p>Vim Fugitive 的 GitHub 项目主页有很多屏幕录像展示了它的更多功能和工作流，如果你喜欢它并想多学一些，快去看看吧。</p><h3 id=接下来>接下来？</h3><p>这些 Vim 插件都是程序开发者的神器！还有另外两类开发者常用的插件：自动完成插件和语法检查插件。它些大都是和具体的编程语言相关的，以后我会在一些文章中介绍它们。</p><p>你在写代码时是否用到一些其它 Vim 插件？请在评论区留言分享。</p><hr><p>via: <a href=https://opensource.com/article/19/1/vim-plugins-developers>https://opensource.com/article/19/1/vim-plugins-developers</a></p><p>作者：<a href=https://opensource.com/users/rgerardi>Ricardo Gerardi</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/pityonline>pityonline</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/vim/ rel=tag>Vim</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%BC%80%E5%8F%91/ rel=tag>开发</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

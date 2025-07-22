@@ -1,0 +1,71 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在不重启的情况下为 Vmware Linux 客户机添加新硬盘 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在不重启的情况下为 Vmware Linux 客户机添加新硬盘"><meta property="og:description" content="作为一名系统管理员，我经常需要用额外的硬盘来扩充存储空间或将系统数据从用户数据中分离出来。我将告诉你在将物理块设备加到虚拟主机的这个过程中，如何将一个主机上的硬盘加到一台使用 VMWare 软件虚拟化的 Linux 客户机上。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9231-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-01-13T12:20:34+00:00"><meta property="article:modified_time" content="2018-01-13T12:20:34+00:00"><meta itemprop=name content="在不重启的情况下为 Vmware Linux 客户机添加新硬盘"><meta itemprop=description content="作为一名系统管理员，我经常需要用额外的硬盘来扩充存储空间或将系统数据从用户数据中分离出来。我将告诉你在将物理块设备加到虚拟主机的这个过程中，如何将一个主机上的硬盘加到一台使用 VMWare 软件虚拟化的 Linux 客户机上。"><meta itemprop=datePublished content="2018-01-13T12:20:34+00:00"><meta itemprop=dateModified content="2018-01-13T12:20:34+00:00"><meta itemprop=wordCount content="704"><meta itemprop=keywords content="VMWare,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在不重启的情况下为 Vmware Linux 客户机添加新硬盘</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-01-13T12:20:34Z>January 13, 2018</time></div></div></header><div class="content post__content clearfix"><p>作为一名系统管理员，我经常需要用额外的硬盘来扩充存储空间或将系统数据从用户数据中分离出来。我将告诉你在将物理块设备加到虚拟主机的这个过程中，如何将一个主机上的硬盘加到一台使用 VMWare 软件虚拟化的 Linux 客户机上。</p><p><img src=/data/attachment/album/201801/13/122029lsgsdnzy9fsadani.jpg alt></p><p>你可以显式的添加或删除一个 SCSI 设备，或者重新扫描整个 SCSI 总线而不用重启 Linux 虚拟机。本指南在 Vmware Server 和 Vmware Workstation v6.0 中通过测试（更老版本应该也支持）。所有命令在 RHEL、Fedora、CentOS 和 Ubuntu Linux 客户机 / 主机操作系统下都经过了测试。</p><h3 id=步骤-1添加新硬盘到虚拟客户机>步骤 1：添加新硬盘到虚拟客户机</h3><p>首先，通过 vmware 硬件设置菜单添加硬盘。点击 “VM > Settings”</p><p><img src=/data/attachment/album/201801/13/122035dmz16c9xw7zq5pop.png alt="Fig.01：Vmware Virtual Machine Settings " title="Vmware Virtual Machine Settings "></p><p>或者你也可以按下 <code>CTRL + D</code> 也能进入设置对话框。</p><p>点击 “Add” 添加新硬盘到客户机：</p><p><img src=/data/attachment/album/201801/13/122036hqxxqf7bpdzdmtlq.png alt="Fig.02：VMWare adding a new hardware" title="VMWare adding a new hardware"></p><p>选择硬件类型为“Hard disk”然后点击 “Next”：</p><p><img src=/data/attachment/album/201801/13/122036syhd15qkadidm3vf.png alt="Fig.03 VMware Adding a new disk wizard " title="VMware Adding a new disk wizard "></p><p>选择 “create a new virtual disk” 然后点击 “Next”：</p><p><img src=/data/attachment/album/201801/13/122037rhmzlwp8mzh3pctp.png alt="Fig.04：Vmware Wizard Disk " title="Vmware Wizard Disk "></p><p>设置虚拟磁盘类型为 “SCSI” ，然后点击 “Next”：</p><p><img src=/data/attachment/album/201801/13/122038vhihh9n4zxjhj7i9.png alt="Fig.05：Vmware Virtual Disk" title="Vmware Virtual Disk"></p><p>按需要设置最大磁盘大小，然后点击 “Next”</p><p><img src=/data/attachment/album/201801/13/122039rjp1pgef9mrrqxoz.png alt="Fig.06：Finalizing Disk Virtual Addition " title="Finalizing Disk Virtual Addition"></p><p>最后，选择文件存放位置然后点击 “Finish”。</p><h3 id=步骤-2重新扫描-scsi-总线在不重启虚拟机的情况下添加-scsi-设备>步骤 2：重新扫描 SCSI 总线，在不重启虚拟机的情况下添加 SCSI 设备</h3><p>输入下面命令重新扫描 SCSI 总线：</p><pre tabindex=0><code>echo &#34;- - -&#34; &gt; /sys/class/scsi_host/host# /scan
+fdisk -l
+tail -f /var/log/message
+</code></pre><p>输出为：</p><p><img src=/data/attachment/album/201801/13/122039n8dmdsdt341k4ba7.png alt="Linux Vmware Rescan New Scsi Disk Without Reboot" title="Linux Vmware Rescan New Scsi Disk Without Reboot"></p><p>你需要将 <code>host#</code> 替换成真实的值，比如 <code>host0</code>。你可以通过下面命令来查出这个值：</p><p><code># ls /sys/class/scsi_host</code></p><p>输出：</p><pre tabindex=0><code>host0
+</code></pre><p>然后输入下面过命令来请求重新扫描：</p><pre tabindex=0><code>echo &#34;- - -&#34; &gt; /sys/class/scsi_host/host0/scan
+fdisk -l
+tail -f /var/log/message
+</code></pre><p>输出为：</p><pre tabindex=0><code>Jul 18 16:29:39 localhost kernel: Vendor: VMware, Model: VMware Virtual S Rev: 1.0
+Jul 18 16:29:39 localhost kernel: Type: Direct-Access ANSI SCSI revision: 02
+Jul 18 16:29:39 localhost kernel: target0:0:1: Beginning Domain Validation
+Jul 18 16:29:39 localhost kernel: target0:0:1: Domain Validation skipping write tests
+Jul 18 16:29:39 localhost kernel: target0:0:1: Ending Domain Validation
+Jul 18 16:29:39 localhost kernel: target0:0:1: FAST-40 WIDE SCSI 80.0 MB/s ST (25 ns, offset 127)
+Jul 18 16:29:39 localhost kernel: SCSI device sdb: 2097152 512-byte hdwr sectors (1074 MB)
+Jul 18 16:29:39 localhost kernel: sdb: Write Protect is off
+Jul 18 16:29:39 localhost kernel: sdb: cache data unavailable
+Jul 18 16:29:39 localhost kernel: sdb: assuming drive cache: write through
+Jul 18 16:29:39 localhost kernel: SCSI device sdb: 2097152 512-byte hdwr sectors (1074 MB)
+Jul 18 16:29:39 localhost kernel: sdb: Write Protect is off
+Jul 18 16:29:39 localhost kernel: sdb: cache data unavailable
+Jul 18 16:29:39 localhost kernel: sdb: assuming drive cache: write through
+Jul 18 16:29:39 localhost kernel: sdb: unknown partition table
+Jul 18 16:29:39 localhost kernel: sd 0:0:1:0: Attached scsi disk sdb
+Jul 18 16:29:39 localhost kernel: sd 0:0:1:0: Attached scsi generic sg1 type 0
+Jul 18 16:29:39 localhost kernel: Vendor: VMware, Model: VMware Virtual S Rev: 1.0
+Jul 18 16:29:39 localhost kernel: Type: Direct-Access ANSI SCSI revision: 02
+Jul 18 16:29:39 localhost kernel: target0:0:2: Beginning Domain Validation
+Jul 18 16:29:39 localhost kernel: target0:0:2: Domain Validation skipping write tests
+Jul 18 16:29:39 localhost kernel: target0:0:2: Ending Domain Validation
+Jul 18 16:29:39 localhost kernel: target0:0:2: FAST-40 WIDE SCSI 80.0 MB/s ST (25 ns, offset 127)
+Jul 18 16:29:39 localhost kernel: SCSI device sdc: 2097152 512-byte hdwr sectors (1074 MB)
+Jul 18 16:29:39 localhost kernel: sdc: Write Protect is off
+Jul 18 16:29:39 localhost kernel: sdc: cache data unavailable
+Jul 18 16:29:39 localhost kernel: sdc: assuming drive cache: write through
+Jul 18 16:29:39 localhost kernel: SCSI device sdc: 2097152 512-byte hdwr sectors (1074 MB)
+Jul 18 16:29:39 localhost kernel: sdc: Write Protect is off
+Jul 18 16:29:39 localhost kernel: sdc: cache data unavailable
+Jul 18 16:29:39 localhost kernel: sdc: assuming drive cache: write through
+Jul 18 16:29:39 localhost kernel: sdc: unknown partition table
+Jul 18 16:29:39 localhost kernel: sd 0:0:2:0: Attached scsi disk sdc
+Jul 18 16:29:39 localhost kernel: sd 0:0:2:0: Attached scsi generic sg2 type 0
+</code></pre><h4 id=如何删除-devsdc-这块设备>如何删除 /dev/sdc 这块设备？</h4><p>除了重新扫描整个总线外，你也可以使用下面命令添加或删除指定磁盘：</p><pre tabindex=0><code># echo 1 &gt; /sys/block/devName/device/delete
+# echo 1 &gt; /sys/block/sdc/device/delete
+</code></pre><h4 id=如何添加-devsdc-这块设备>如何添加 /dev/sdc 这块设备？</h4><p>使用下面语法添加指定设备：</p><pre tabindex=0><code># echo &#34;scsi add-single-device &lt;H&gt; &lt;B&gt; &lt;T&gt; &lt;L&gt;&#34; &gt; /proc/scsi/scsi
+</code></pre><p>这里，</p><ul><li>：主机</li><li><strong>：总线（通道）</strong></li><li>：目标 （Id）</li><li>：LUN 号</li></ul><p>例如。使用参数 <code>host#0</code>，<code>bus#0</code>，<code>target#2</code>，以及 <code>LUN#0</code> 来添加 <code>/dev/sdc</code>，则输入：</p><pre tabindex=0><code># echo &#34;scsi add-single-device 0 0 2 0&#34;&gt;/proc/scsi/scsi
+# fdisk -l
+# cat /proc/scsi/scsi
+</code></pre><p>结果输出：</p><pre tabindex=0><code>Attached devices:
+Host: scsi0 Channel: 00 Id: 00 Lun: 00
+ Vendor: VMware, Model: VMware Virtual S Rev: 1.0
+ Type: Direct-Access ANSI SCSI revision: 02
+Host: scsi0 Channel: 00 Id: 01 Lun: 00
+ Vendor: VMware, Model: VMware Virtual S Rev: 1.0
+ Type: Direct-Access ANSI SCSI revision: 02
+Host: scsi0 Channel: 00 Id: 02 Lun: 00
+ Vendor: VMware, Model: VMware Virtual S Rev: 1.0
+ Type: Direct-Access ANSI SCSI revision: 02
+</code></pre><h3 id=步骤-3格式化新磁盘>步骤 #3：格式化新磁盘</h3><p>现在使用 <a href=https://www.cyberciti.biz/faq/linux-disk-format/>fdisk 并通过 mkfs.ext3</a> 命令创建分区：</p><pre tabindex=0><code># fdisk /dev/sdc
+### [if you want ext3 fs] ###
+# mkfs.ext3 /dev/sdc3
+### [if you want ext4 fs] ###
+# mkfs.ext4 /dev/sdc3
+</code></pre><h3 id=步骤-4创建挂载点并更新-etcfstab>步骤 #4：创建挂载点并更新 /etc/fstab</h3><pre tabindex=0><code># mkdir /disk3
+</code></pre><p>打开 <code>/etc/fstab</code> 文件，输入：</p><pre tabindex=0><code># vi /etc/fstab
+</code></pre><p>加入下面这行：</p><pre tabindex=0><code>/dev/sdc3 /disk3 ext3 defaults 1 2
+</code></pre><p>若是 ext4 文件系统则加入：</p><pre tabindex=0><code>/dev/sdc3 /disk3 ext4 defaults 1 2
+</code></pre><p>保存并关闭文件。</p><h4 id=可选操作为分区加标签>可选操作：为分区加标签</h4><p><a href=https://www.cyberciti.biz/faq/linux-modify-partition-labels-command-to-change-diskname/>你可以使用 e2label 命令为分区加标签</a> 。假设，你想要为 <code>/backupDisk</code> 这块新分区加标签，则输入：</p><pre tabindex=0><code># e2label /dev/sdc1 /backupDisk
+</code></pre><p>详情参见 &ldquo;<a href="https://www.cyberciti.biz/faq/linux-partition-howto-set-labels/%3Ehow%20to%20label%20a%20Linux%20partition%3C/a%3E%E2%80%9D%20for%20more%20info.%3C/p%3E%3Ch2%3EConclusion%3C/h2%3E%3Cp%3EThe%20VMware%20guest%20now%20has%20an%20additional%20virtualized%20storage%20device.%20%20The%20procedure%20works%20for%20all%20physical%20block%20devices,%20this%20includes%20CD-ROM,%20DVD%20and%20floppy%20devices.%20Next,%20time%20I%20will%20write%20about%20adding%20an%20additional%20virtualized%20storage%20device%20using%20XEN%20software.%3C/p%3E%3Ch2%3ESee%20also%3C/h2%3E%3Cul%3E%3Cli%3E%3Ca%20href=">Linux 分区的重要性</a> 。</p><h3 id=关于作者>关于作者</h3><p>作者是 nixCraft 的创始人，也是一名经验丰富的系统管理员，还是 Linux 操作系统 /Unix shell 脚本培训师。他曾服务过全球客户并与多个行业合作过，包括 IT，教育，国防和空间研究，以及非盈利机构。你可以在 <a href=https://twitter.com/nixcraft>Twitter</a>，<a href=https://facebook.com/nixcraft>Facebook</a>，<a href=https://plus.google.com/+CybercitiBiz>Google+</a> 上关注他。</p><hr><p>via: <a href=https://www.cyberciti.biz/tips/vmware-add-a-new-hard-disk-without-rebooting-guest.html>https://www.cyberciti.biz/tips/vmware-add-a-new-hard-disk-without-rebooting-guest.html</a></p><p>作者：<a href=https://www.cyberciti.biz>Vivek Gite</a> 译者：<a href=https://github.com/lujun9972>lujun9972</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/vmware/ rel=tag>VMWare</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

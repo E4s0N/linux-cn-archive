@@ -1,0 +1,115 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Asciinema：在云端记录并分享你的终端会话 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Asciinema：在云端记录并分享你的终端会话"><meta property="og:description" content="asciinema 是一个自由开源的用于录制终端会话并将它们分享到网络上的解决方案。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10520-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-02-08T23:30:50+00:00"><meta property="article:modified_time" content="2019-02-08T23:30:50+00:00"><meta itemprop=name content="Asciinema：在云端记录并分享你的终端会话"><meta itemprop=description content="asciinema 是一个自由开源的用于录制终端会话并将它们分享到网络上的解决方案。"><meta itemprop=datePublished content="2019-02-08T23:30:50+00:00"><meta itemprop=dateModified content="2019-02-08T23:30:50+00:00"><meta itemprop=wordCount content="744"><meta itemprop=keywords content="asciinema,终端,会话,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Asciinema：在云端记录并分享你的终端会话</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-02-08T23:30:50Z>February 08, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201902/08/233016gh6peg96l0lp2js5.jpg alt></p><p>这个众所周知的话题我们早已经写过了足够多的文章。即使这样，我们今天也要去讨论相同的话题。</p><p>其他的工具都是在本地运行的，但是 Asciinema 可以以相同的方式在本地和 Web 端运行。我的意思是我们可以在 Web 上分享这个录像。</p><p>默认情况下，每个人都更愿意使用 <code>history</code> 命令来回看、调用之前在终端内输入的命令。不过，不行的是，这个命令只展示了我们运行的命令却没有展示这些命令上次运行时的输出。</p><p>在 Linux 下有很多的组件来记录终端会话活动。在过去，我们也写了一些组件，不过今天我们依然要讨论这同一类心的工具。</p><p>如果你想要使用其他工具来记录你的 Linux 终端会话活动，你可以试试 <a href=https://www.2daygeek.com/script-command-record-save-your-terminal-session-activity-linux/>Script 命令</a>、<a href=https://www.2daygeek.com/terminalizer-a-tool-to-record-your-terminal-and-generate-animated-gif-images/>Terminalizer 工具</a> 和 <a href=https://www.2daygeek.com/Asciinema-record-your-terminal-sessions-as-svg-animations-in-linux/>Asciinema 工具</a>。</p><p>不过如果你想要找一个 <a href=https://www.2daygeek.com/category/gif-recorder/>GIF 录制工具</a>，可以试试 <a href=https://www.2daygeek.com/gifine-create-animated-gif-vedio-recorder-linux-mint-debian-ubuntu/>Gifine</a>、<a href=https://www.2daygeek.com/kgif-create-animated-gif-file-active-window-screen-recorder-capture-arch-linux-mint-fedora-ubuntu-debian-opensuse-centos/>Kgif</a> 和 <a href=https://www.2daygeek.com/peek-create-animated-gif-screen-recorder-capture-arch-linux-mint-fedora-ubuntu/>Peek</a>。</p><h3 id=什么是-asciinema>什么是 Asciinema</h3><p><code>asciinema</code> 是一个自由开源的用于录制终端会话并将它们分享到网络上的解决方案。</p><p>当你在你的终端内运行 <code>asciinema rec</code> 来启动录像时，你输入命令的时候，终端内的所有输出都会被抓取。</p><p>当抓取停止时（通过按下 <code>Ctrl-D</code> 或输出 <code>exit</code>)，抓取的输出将会被上传到 asciinema.org 的网站，并为后续的回放做准备。</p><p>Asciinema 项目由多个不同的完整的部分组成，比如 <code>asciinema</code> 命令行工具、asciinema.org API 和 JavaScript 播放器。</p><p>Asciinema 的灵感来自于 <code>script</code> 和 <code>scriptreplay</code> 命令。</p><h3 id=如何在-linux-上安装-asciinema>如何在 Linux 上安装 Asciinema</h3><p>Asciinema 由 Python 写就，在 Linux 上，推荐使用 <code>pip</code> 安装的方法来安装。</p><p>确保你已经在你的系统里安装了 python-pip 包。如果没有，使用下述命令来安装它。</p><p>对于 Debian/Ubuntu 用户，使用 <a href=https://www.2daygeek.com/apt-command-examples-manage-packages-debian-ubuntu-systems/>Apt 命令</a> 或 <a href=https://www.2daygeek.com/apt-get-apt-cache-command-examples-manage-packages-debian-ubuntu-systems/>Apt-Get 命令</a> 来安装 pip 包。</p><pre tabindex=0><code>$ sudo apt install python-pip
+</code></pre><p>对于 Archlinux 用户，使用 <a href=https://www.2daygeek.com/pacman-command-examples-manage-packages-arch-linux-system/>Pacman 命令</a> 来安装 pip 包。</p><pre tabindex=0><code>$ sudo pacman -S python-pip
+</code></pre><p>对于 Fedora 用户，使用 <a href=https://www.2daygeek.com/dnf-command-examples-manage-packages-fedora-system/>DNF 命令</a> 来安装 pip 包。</p><pre tabindex=0><code>$ sudo dnf install python-pip
+</code></pre><p>对于 CentOS/RHEL 用户，使用 <a href=https://www.2daygeek.com/yum-command-examples-manage-packages-rhel-centos-systems/>YUM 命令</a> 来安装 pip 包。</p><pre tabindex=0><code>$ sudo yum install python-pip
+</code></pre><p>对于 openSUSE 用户，使用 <a href=https://www.2daygeek.com/zypper-command-examples-manage-packages-opensuse-system/>Zypper 命令</a> 来安装 pip 包。</p><pre tabindex=0><code>$ sudo zypper install python-pip
+</code></pre><p>最后，运行如下的 <a href=https://www.2daygeek.com/install-pip-manage-python-packages-linux/>pip 命令</a> 来在 Linux 上安装 Asciinema 工具。</p><pre tabindex=0><code>$ sudo pip3 install asciinema
+</code></pre><h3 id=如何使用-asciinema-工具来记录你的终端会话>如何使用 Asciinema 工具来记录你的终端会话</h3><p>一旦你成功的安装了 Asciinema，只需要运行如下命令来开始录制：</p><pre tabindex=0><code>$ asciinema rec 2g-test
+asciinema: recording asciicast to 2g-test
+asciinema: press &#34;ctrl-d&#34; or type &#34;exit&#34; when you&#39;re done
+</code></pre><p>出于测试的目的，运行一些简单的命令，并看一看它是否运行良好。</p><pre tabindex=0><code>$ free
+              total        used        free      shared  buff/cache   available
+Mem:          15867        2783       10537        1264        2546       11510
+Swap:         17454           0       17454
+
+$ hostnamectl
+   Static hostname: daygeek-Y700
+         Icon name: computer-laptop
+           Chassis: laptop
+        Machine ID: 31bdeb7b833547368d230a2025d475bc
+           Boot ID: c84f7e6f39394d1f8fdc4bcaa251aee2
+  Operating System: Manjaro Linux
+            Kernel: Linux 4.19.8-2-MANJARO
+      Architecture: x86-64
+
+$ uname -a
+Linux daygeek-Y700 4.19.8-2-MANJARO #1 SMP PREEMPT Sat Dec 8 14:45:36 UTC 2018 x86_64 GNU/Linux
+
+$ lscpu
+Architecture:        x86_64
+CPU op-mode(s):      32-bit, 64-bit
+Byte Order:          Little Endian
+Address sizes:       39 bits physical, 48 bits virtual
+CPU(s):              8
+On-line CPU(s) list: 0-7
+Thread(s) per core:  2
+Core(s) per socket:  4
+Socket(s):           1
+NUMA node(s):        1
+Vendor ID:           GenuineIntel
+CPU family:          6
+Model:               94
+Model name:          Intel(R) Core(TM) i7-6700HQ CPU @ 2.60GHz
+Stepping:            3
+CPU MHz:             800.047
+CPU max MHz:         3500.0000
+CPU min MHz:         800.0000
+BogoMIPS:            5186.00
+Virtualization:      VT-x
+L1d cache:           32K
+L1i cache:           32K
+L2 cache:            256K
+L3 cache:            6144K
+NUMA node0 CPU(s):   0-7
+Flags:               fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid ept_add fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp flush_l1d
+</code></pre><p>当你完成后，简单的按下 <code>CTRL+D</code> 或输入 <code>exit</code> 来退出录制。这个结果将会被保存在同一个目录。</p><pre tabindex=0><code>$ exit
+exit
+asciinema: recording finished
+asciinema: asciicast saved to 2g-test
+</code></pre><p>如果你想要保存输出到不同的目录中，就需要提醒 Asciinema 你想要保存文件的目录。</p><pre tabindex=0><code>$ asciinema rec /opt/session-record/2g-test1
+</code></pre><p>我们可以使用如下命令来回放录制的会话。</p><pre tabindex=0><code>$ asciinema play 2g-test
+</code></pre><p>我们能够以两倍速来回放录制的会话。</p><pre tabindex=0><code>$ asciinema play -s 2 2g-test
+</code></pre><p>或者，我们可以以正常速度播放录制的会话，限制空闲时间为 2 秒。</p><pre tabindex=0><code>$ asciinema play -i 2 2g-test
+</code></pre><h3 id=如何在网络上分享已经录制的会话>如何在网络上分享已经录制的会话</h3><p>如果你想要分享录制的会话给你的朋友，只要运行下述命令上传你的会话到 asciinema.org，就可以获得一个唯一链接。</p><p>它将会在被上传 7 天后被归档。</p><pre tabindex=0><code>$ asciinema upload 2g-test
+View the recording at:
+
+    https://asciinema.org/a/jdJrxhDLboeyrhzZRHsve0x8i
+
+This installation of asciinema recorder hasn&#39;t been linked to any asciinema.org
+account. All unclaimed recordings (from unknown installations like this one)
+are automatically archived 7 days after upload.
+
+If you want to preserve all recordings made on this machine, connect this
+installation with asciinema.org account by opening the following link:
+
+    https://asciinema.org/connect/10cd4f24-45b6-4f64-b737-ae0e5d12baf8
+</code></pre><p><img src=/data/attachment/album/201902/08/233054vkuukotuzvu95lu9.png alt></p><p>如果你想要分享录制的会话在社交媒体上，只需要点击页面底部的 “Share” 按钮。</p><p>如果任何人想要去下载这个录制，只需要点击页面底部的 “Download” 按钮，就可以将其保存在你系统里。</p><h3 id=如何管理-asciinemaorg-中的录制片段>如何管理 asciinema.org 中的录制片段</h3><p>如果你想要留存所有在这个机器上录制的片段，点击上述显示的链接并使用你在 asciinema.org 的账户登录，然后跟随这个说明继续操作，来将你的机器和该网站连接起来。</p><pre tabindex=0><code>https://asciinema.org/connect/10cd4f24-45b6-4f64-b737-ae0e5d12baf8
+</code></pre><p>如果你早已录制了一份，但是你没有在你的 asciinema.org 账户界面看到它，只需要运行 <code>asciinema auth</code> 命令来移动它们。</p><pre tabindex=0><code>$ asciinema auth
+
+Open the following URL in a web browser to link your install ID with your asciinema.org user account:
+
+https://asciinema.org/connect/10cd4f24-45b6-4f64-b737-ae0e5d12baf8
+
+This will associate all recordings uploaded from this machine (past and future ones) to your account, and allow you to manage them (change title/theme, delete) at asciinema.org.
+</code></pre><p><img src=/data/attachment/album/201902/08/233056uqzgs6r4u3zsfu3f.png alt></p><p>如果你想直接上传文件而不是将其保存在本地，直接运行如下命令：</p><pre tabindex=0><code>$ asciinema rec
+asciinema: recording asciicast to /tmp/tmp6kuh4247-ascii.cast
+asciinema: press &#34;ctrl-d&#34; or type &#34;exit&#34; when you&#39;re done
+</code></pre><p>出于测试目的，运行下述命令，并看一看它是否运行的很好。</p><pre tabindex=0><code>$ free
+              total        used        free      shared  buff/cache   available
+Mem:          15867        2783       10537        1264        2546       11510
+Swap:         17454           0       17454
+
+$ hostnamectl
+   Static hostname: daygeek-Y700
+         Icon name: computer-laptop
+           Chassis: laptop
+        Machine ID: 31bdeb7b833547368d230a2025d475bc
+           Boot ID: c84f7e6f39394d1f8fdc4bcaa251aee2
+  Operating System: Manjaro Linux
+            Kernel: Linux 4.19.8-2-MANJARO
+      Architecture: x86-64
+
+$ uname -a
+Linux daygeek-Y700 4.19.8-2-MANJARO #1 SMP PREEMPT Sat Dec 8 14:45:36 UTC 2018 x86_64 GNU/Linux
+</code></pre><p>如果你完成了，简单的按下 <code>CTRL+D</code> 或输入 <code>exit</code> 来停止录制，然后按下回车来上传文件到 asciinema.org 网站。</p><p>这将会花费一些时间来为你的录制生成唯一链接。一旦它完成，你会看到和下面一样的样式：</p><pre tabindex=0><code>$ exit
+exit
+asciinema: recording finished
+asciinema: press &#34;enter&#34; to upload to asciinema.org, &#34;ctrl-c&#34; to save locally
+
+View the recording at:
+
+ https://asciinema.org/a/b7bu5OhuCy2vUH7M8RRPjsSxg
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/linux-asciinema-record-your-terminal-sessions-share-them-on-web/>https://www.2daygeek.com/linux-asciinema-record-your-terminal-sessions-share-them-on-web/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/bestony>Bestony</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/asciinema/ rel=tag>asciinema</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%BB%88%E7%AB%AF/ rel=tag>终端</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E4%BC%9A%E8%AF%9D/ rel=tag>会话</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

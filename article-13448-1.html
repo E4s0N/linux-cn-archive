@@ -1,0 +1,72 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Python 3.5 带给我们的方便的矩阵以及其他改进 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Python 3.5 带给我们的方便的矩阵以及其他改进"><meta property="og:description" content="探索一些未被充分利用但仍然有用的 Python 特性。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13448-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-06-01T20:20:01+00:00"><meta property="article:modified_time" content="2021-06-01T20:20:01+00:00"><meta itemprop=name content="Python 3.5 带给我们的方便的矩阵以及其他改进"><meta itemprop=description content="探索一些未被充分利用但仍然有用的 Python 特性。"><meta itemprop=datePublished content="2021-06-01T20:20:01+00:00"><meta itemprop=dateModified content="2021-06-01T20:20:01+00:00"><meta itemprop=wordCount content="213"><meta itemprop=keywords content="Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Python 3.5 带给我们的方便的矩阵以及其他改进</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-06-01T20:20:01Z>June 01, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>探索一些未被充分利用但仍然有用的 Python 特性。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202106/01/201953lua9t9f3vvwqbqet.jpg alt title="Hacker code matrix"></p><p>这是 Python 3.x 首发特性系列文章的第六篇。Python 3.5 在 2015 年首次发布，尽管它已经发布了很长时间，但它引入的许多特性都没有被充分利用，而且相当酷。下面是其中的三个。</p><h3 id=-操作符>@ 操作符</h3><p><code>@</code> 操作符在 Python 中是独一无二的，因为在标准库中没有任何对象可以实现它！它是为了在有矩阵的数学包中使用而添加的。</p><p>矩阵有两个乘法的概念。元素积是用 <code>*</code> 运算符完成的。但是矩阵组合（也被认为是乘法）需要自己的符号。它是用 <code>@</code> 完成的。</p><p>例如，将一个“八转”矩阵（将轴旋转 45 度）与自身合成，就会产生一个四转矩阵。</p><pre tabindex=0><code>import numpy
+
+hrt2 = 2**0.5 / 2
+eighth_turn = numpy.array([
+    [hrt2, hrt2],
+    [-hrt2, hrt2]
+])
+eighth_turn @ eighth_turn
+</code></pre><pre tabindex=0><code>    array([[ 4.26642159e-17,  1.00000000e+00],
+           [-1.00000000e+00, -4.26642159e-17]])
+</code></pre><p>浮点数是不精确的，这比较难以看出。从结果中减去四转矩阵，将其平方相加，然后取其平方根，这样就比较容易检查。</p><p>这是新运算符的一个优点：特别是在复杂的公式中，代码看起来更像基础数学：</p><pre tabindex=0><code>almost_zero = ((eighth_turn @ eighth_turn) - numpy.array([[0, 1], [-1, 0]]))**2
+round(numpy.sum(almost_zero) ** 0.5, 10)
+</code></pre><pre tabindex=0><code>    0.0
+</code></pre><h3 id=参数中的多个关键词字典>参数中的多个关键词字典</h3><p>Python 3.5 使得调用具有多个关键字-参数字典的函数成为可能。这意味着多个默认值的源可以与更清晰的代码”互操作“。</p><p>例如，这里有个可笑的关键字参数的函数：</p><pre tabindex=0><code>def show_status(
+    *,
+    the_good=None,
+    the_bad=None,
+    the_ugly=None,
+    fistful=None,
+    dollars=None,
+    more=None
+):
+    if the_good:
+        print(&#34;Good&#34;, the_good)
+    if the_bad:
+        print(&#34;Bad&#34;, the_bad)
+    if the_ugly:
+        print(&#34;Ugly&#34;, the_ugly)
+    if fistful:
+        print(&#34;Fist&#34;, fistful)
+    if dollars:
+        print(&#34;Dollars&#34;, dollars)
+    if more:
+        print(&#34;More&#34;, more)
+</code></pre><p>当你在应用中调用这个函数时，有些参数是硬编码的：</p><pre tabindex=0><code>defaults = dict(
+    the_good=&#34;You dig&#34;,
+    the_bad=&#34;I have to have respect&#34;,
+    the_ugly=&#34;Shoot, don&#39;t talk&#34;,
+)
+</code></pre><p>从配置文件中读取更多参数：</p><pre tabindex=0><code>import json
+
+others = json.loads(&#34;&#34;&#34;
+{
+&#34;fistful&#34;: &#34;Get three coffins ready&#34;,
+&#34;dollars&#34;: &#34;Remember me?&#34;,
+&#34;more&#34;: &#34;It&#39;s a small world&#34;
+}
+&#34;&#34;&#34;)
+</code></pre><p>你可以从两个源一起调用这个函数，而不必构建一个中间字典：</p><pre tabindex=0><code>show_status(**defaults, **others)
+</code></pre><pre tabindex=0><code>    Good You dig
+    Bad I have to have respect
+    Ugly Shoot, don&#39;t talk
+    Fist Get three coffins ready
+    Dollars Remember me?
+    More It&#39;s a small world
+</code></pre><h3 id=osscandir>os.scandir</h3><p><code>os.scandir</code> 函数是一种新的方法来遍历目录内容。它返回一个生成器，产生关于每个对象的丰富数据。例如，这里有一种打印目录清单的方法，在目录的末尾跟着 <code>/</code>：</p><pre tabindex=0><code>for entry in os.scandir(&#34;.git&#34;):
+    print(entry.name + (&#34;/&#34; if entry.is_dir() else &#34;&#34;))
+</code></pre><pre tabindex=0><code>    refs/
+    HEAD
+    logs/
+    index
+    branches/
+    config
+    objects/
+    description
+    COMMIT_EDITMSG
+    info/
+    hooks/
+</code></pre><h3 id=欢迎来到-2015-年>欢迎来到 2015 年</h3><p>Python 3.5 在六年前就已经发布了，但是在这个版本中首次出现的一些特性非常酷，而且没有得到充分利用。如果你还没使用，那么将他们添加到你的工具箱中。</p><hr><p>via: <a href=https://opensource.com/article/21/5/python-35-features>https://opensource.com/article/21/5/python-35-features</a></p><p>作者：<a href=https://opensource.com/users/moshez>Moshe Zadka</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

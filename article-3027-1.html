@@ -1,0 +1,94 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何从Web浏览器远程监视Linux服务器和桌面 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何从Web浏览器远程监视Linux服务器和桌面"><meta property="og:description" content="当你要监视一台Linux机器时，你会有很多的选择。虽然现在有很多产品质量监控方案(比如 Nagios、 Zabbix、 Zenoss)，它们拥有华丽的UI，可扩展监控，易于理解的报告等等，这些方案对于大多数终端用户都太过于强大了。如果你只需检查Linux服务器或桌面的基本状态（比如，CPU负载、内存使用、活跃进程），就请考虑一下linux-dash。  linux-dash是一款面向Linux机器的基于web的轻量级监控面板，可以实时显示不同的系统属性，比如CPU负载、内存使用、磁盘使用、网络速度、网络连接、上下行带宽、登录用户、运行中的进程等等。linux-dash没有后"><meta property="og:type" content="article"><meta property="og:url" content="/article-3027-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-05-15T19:37:19+00:00"><meta property="article:modified_time" content="2014-05-15T19:37:19+00:00"><meta itemprop=name content="如何从Web浏览器远程监视Linux服务器和桌面"><meta itemprop=description content="当你要监视一台Linux机器时，你会有很多的选择。虽然现在有很多产品质量监控方案(比如 Nagios、 Zabbix、 Zenoss)，它们拥有华丽的UI，可扩展监控，易于理解的报告等等，这些方案对于大多数终端用户都太过于强大了。如果你只需检查Linux服务器或桌面的基本状态（比如，CPU负载、内存使用、活跃进程），就请考虑一下linux-dash。  linux-dash是一款面向Linux机器的基于web的轻量级监控面板，可以实时显示不同的系统属性，比如CPU负载、内存使用、磁盘使用、网络速度、网络连接、上下行带宽、登录用户、运行中的进程等等。linux-dash没有后"><meta itemprop=datePublished content="2014-05-15T19:37:19+00:00"><meta itemprop=dateModified content="2014-05-15T19:37:19+00:00"><meta itemprop=wordCount content="305"><meta itemprop=keywords content="监控,Web,linux-dash,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何从Web浏览器远程监视Linux服务器和桌面</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-05-15T19:37:19Z>May 15, 2014</time></div></div></header><div class="content post__content clearfix"><p>当你要监视一台Linux机器时，你会有很多的选择。虽然现在有很多产品质量监控方案(比如 Nagios、 Zabbix、 Zenoss)，它们拥有华丽的UI，可扩展监控，易于理解的报告等等，这些方案对于大多数终端用户都太过于强大了。如果你只需检查Linux服务器或桌面的基本状态（比如，CPU负载、内存使用、活跃进程），就请考虑一下<a href=https://github.com/afaqurk/linux-dash>linux-dash</a>。</p><p><img src=/data/attachment/album/201405/15/193721gfftn6yyu3yx4l3s.png alt></p><p>linux-dash是一款面向Linux机器的基于web的轻量级监控面板，可以实时显示不同的系统属性，比如CPU负载、内存使用、磁盘使用、网络速度、网络连接、上下行带宽、登录用户、运行中的进程等等。linux-dash没有后端数据库库来存储长期统计。在任何已有的web服务器(如Apache、Nginx)上运行linux-dash，你就可以用了。这是一个快速又简单的方法来对个人项目进行远程监控。</p><p>在这篇教程中，我会描述<strong>如何在Linux的Nginx web服务器上设置linux-dash</strong>。这里用Nginx，而不是Apache，是因为它更轻量。</p><h3 id=在debianubuntu或者linux-mint上设置linux-dash>在Debian、Ubuntu或者Linux Mint上设置linux-dash</h3><p>首先，安装带php-fpm的Nginx web服务器。</p><pre tabindex=0><code>$ sudo apt-get install git nginx php5-json php5-fpm php5-curl
+</code></pre><p>为linux-dash创建如下Nginx配置文件/etc/nginx/conf.d/linuxdash.conf。 本例中，我们使用8080端口。</p><pre tabindex=0><code>$ sudo vi /etc/nginx/conf.d/linuxdash.conf 
+</code></pre><hr><pre tabindex=0><code>server {
+    server_name     $domain_name;
+    listen          8080;
+    root            /var/www;
+    index           index.html index.php;
+    access_log      /var/log/nginx/access.log;
+    error_log       /var/log/nginx/error.log;
+
+    location ~* \.(?:xml|ogg|mp3|mp4|ogv|svg|svgz|eot|otf|woff|ttf|css|js|jpg|jpeg|gif|png|ico)$ {
+            try_files $uri =404;
+            expires max;
+            access_log off;
+            add_header Pragma public;
+            add_header Cache-Control &#34;public, must-revalidate, proxy-revalidate&#34;;
+    }
+
+    location /linux-dash {
+        index index.html index.php;
+    }
+
+    # PHP-FPM via sockets
+    location ~ \.php(/|$) {
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+            fastcgi_pass unix:/var/run/php5-fpm.sock;
+            if (!-f $document_root$fastcgi_script_name) {
+                    return 404;
+            }
+            try_files $uri $uri/ /index.php?$args;
+            include fastcgi_params;
+    }
+}
+</code></pre><p>禁止默认站点配置。</p><pre tabindex=0><code>$ sudo rm /etc/nginx/sites-enabled/default
+</code></pre><p>编辑/etc/php5/fpm/pool.d/www.conf来配置php-fpm。确保按如下编辑"user", &ldquo;group&rdquo; 和 &ldquo;listen"指令。你可以不改变剩下的配置。</p><pre tabindex=0><code>$ sudo vi /etc/php5/fpm/pool.d/www.conf 
+
+user = www-data
+group = www-data
+listen = /var/run/php5-fpm.sock
+</code></pre><p>开始下载并安装linux-dash。</p><pre tabindex=0><code>$ git clone https://github.com/afaqurk/linux-dash.git
+$ sudo cp -r linux-dash/ /var/www/
+$ sudo chown -R www-data:www-data /var/www
+</code></pre><p>重启Nginx与php-fpm来完成安装。</p><pre tabindex=0><code>$ sudo service php5-fpm restart
+$ sudo service nginx restart 
+</code></pre><h3 id=在centosfedorarhel上设置linux-dash>在CentOS、Fedora、RHEL上设置linux-dash</h3><p>在CentOS上，需要首先<a href=http://xmodulo.com/2013/03/how-to-set-up-epel-repository-on-centos.html>启用EPEL仓库</a></p><p>安装Nginx与php-fpm组件。</p><pre tabindex=0><code>$ sudo yum install git nginx php-common php-fpm 
+</code></pre><p>为linux-dash程序配置Nginx，如下创建/etc/nginx/conf.d/linuxdash.conf</p><pre tabindex=0><code>$ sudo vi /etc/nginx/conf.d/linuxdash.conf 
+</code></pre><hr><pre tabindex=0><code>server {
+    server_name     $domain_name;
+    listen          8080;
+    root            /var/www;
+    index           index.html index.php;
+    access_log      /var/log/nginx/access.log;
+    error_log       /var/log/nginx/error.log;
+
+    location ~* \.(?:xml|ogg|mp3|mp4|ogv|svg|svgz|eot|otf|woff|ttf|css|js|jpg|jpeg|gif|png|ico)$ {
+            try_files $uri =404;
+            expires max;
+            access_log off;
+            add_header Pragma public;
+            add_header Cache-Control &#34;public, must-revalidate, proxy-revalidate&#34;;
+    }
+
+    location /linux-dash {
+        index index.html index.php;
+    }
+
+    # PHP-FPM via sockets
+    location ~ \.php(/|$) {
+            fastcgi_param  SCRIPT_FILENAME   $document_root$fastcgi_script_name;
+            fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+            fastcgi_pass unix:/var/run/php-fpm.sock;
+            if (!-f $document_root$fastcgi_script_name) {
+                    return 404;
+            }
+            try_files $uri $uri/ /index.php?$args;
+            include fastcgi_params;
+    }
+}
+</code></pre><p>接下来，编辑/etc/php-fpm.d/www.conf来配置php-fpm。在这个文件中，确保按如下编辑"user&rdquo;, &ldquo;group&rdquo; 和 &ldquo;listen"字段。你可以不改变剩下的配置。</p><pre tabindex=0><code>$ sudo vi /etc/php-fpm.d/www.conf 
+listen = /var/run/php-fpm.sock
+user = nginx
+group = nginx
+</code></pre><p>在/var/wwwx下载并安装linux-dash。</p><pre tabindex=0><code>$ git clone https://github.com/afaqurk/linux-dash.git
+$ sudo cp -r linux-dash/ /var/www/
+$ sudo chown -R nginx:nginx /var/www 
+</code></pre><p>最后，重启Nginx和php-fpm，并设置开机自启。</p><pre tabindex=0><code>$ sudo service php-fpm restart
+$ sudo service nginx restart
+$ sudo chkconfig nginx on
+$ sudo chkconfig php-fpm on 
+</code></pre><p>在本例中，我们已经配置linux-dash使用TCP端口8080。所以确保防火墙没有阻止TCP 8080端口。</p><h3 id=用linux-dash监视linux机器>用linux-dash监视Linux机器</h3><p>要在web浏览器上访问linux-dash，只需在web浏览器中输入http://&lt;linux ip地址>:8080/linux-dash/</p><p>下面是linux-dash的截图。web面板包含了几个小部件，每个都会显示特性的系统参数。你可以通过重安排并且/或者关闭一些小部件来自定义web面板的外观。<a href=http://afaq.dreamhosters.com/linux-dash/>这里</a>是一个linux-dash创建者的演示站点。</p><p><img src=/data/attachment/album/201405/15/193725gzhc4nk8hdlqz48v.jpg alt></p><p><img src=/data/attachment/album/201405/15/193728cyu087bqy2huy87x.jpg alt></p><p>via: <a href=http://xmodulo.com/2014/04/monitor-linux-server-desktop-remotely-web-browser.html>http://xmodulo.com/2014/04/monitor-linux-server-desktop-remotely-web-browser.html</a></p><p>译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%9B%91%E6%8E%A7/ rel=tag>监控</a></li><li class=tags__item><a class="tags__link btn" href=/tags/web/ rel=tag>Web</a></li><li class=tags__item><a class="tags__link btn" href=/tags/linux-dash/ rel=tag>linux-dash</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

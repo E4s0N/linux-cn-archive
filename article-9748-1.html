@@ -1,0 +1,415 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>无密码验证：服务器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="无密码验证：服务器"><meta property="og:description" content="无密码验证可以让你只输入一个 email 而无需输入密码即可登入系统。这是一种比传统的电子邮件/密码验证方式登入更安全的方法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9748-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-06-15T00:01:00+00:00"><meta property="article:modified_time" content="2018-06-15T00:01:00+00:00"><meta itemprop=name content="无密码验证：服务器"><meta itemprop=description content="无密码验证可以让你只输入一个 email 而无需输入密码即可登入系统。这是一种比传统的电子邮件/密码验证方式登入更安全的方法。"><meta itemprop=datePublished content="2018-06-15T00:01:00+00:00"><meta itemprop=dateModified content="2018-06-15T00:01:00+00:00"><meta itemprop=wordCount content="1782"><meta itemprop=keywords content="密码,登录,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>无密码验证：服务器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-06-15T00:01:00Z>June 15, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201806/15/000057ms1oszswwhooiiis.jpg alt></p><p>无密码验证可以让你只输入一个 email 而无需输入密码即可登入系统。这是一种比传统的电子邮件/密码验证方式登入更安全的方法。</p><p>下面我将为你展示，如何在 <a href=https://golang.org/>Go</a> 中实现一个 HTTP API 去提供这种服务。</p><h3 id=流程>流程</h3><ul><li>用户输入他的电子邮件地址。</li><li>服务器创建一个临时的一次性使用的代码（就像一个临时密码一样）关联到用户，然后给用户邮箱中发送一个“魔法链接”。</li><li>用户点击魔法链接。</li><li>服务器提取魔法链接中的代码，获取关联的用户，并且使用一个新的 JWT 重定向到客户端。</li><li>在每次有新请求时，客户端使用 JWT 去验证用户。</li></ul><h3 id=必需条件>必需条件</h3><ul><li>数据库：我们为这个服务使用了一个叫 <a href=https://www.cockroachlabs.com/>CockroachDB</a> 的 SQL 数据库。它非常像 postgres，但它是用 Go 写的。</li><li>SMTP 服务器：我们将使用一个第三方的邮件服务器去发送邮件。开发的时我们使用 <a href=https://mailtrap.io/>mailtrap</a>。Mailtrap 发送所有的邮件到它的收件箱，因此，你在测试时不需要创建多个假邮件帐户。</li></ul><p>从 <a href=https://golang.org/dl/>Go 的主页</a> 上安装它，然后使用 <code>go version</code>（1.10.1 atm）命令去检查它能否正常工作。</p><p>从 <a href=https://www.cockroachlabs.com/docs/stable/install-cockroachdb.html>CockroachDB 的主页</a> 上下载它，展开它并添加到你的 <code>PATH</code> 变量中。使用 <code>cockroach version</code>（2.0 atm）命令检查它能否正常工作。</p><h3 id=数据库模式>数据库模式</h3><p>现在，我们在 <code>GOPATH</code> 目录下为这个项目创建一个目录，然后使用 <code>cockroach start</code> 启动一个新的 CockroachDB 节点：</p><pre tabindex=0><code>cockroach start --insecure --host 127.0.0.1
+</code></pre><p>它会输出一些内容，找到 SQL 地址行，它将显示像 <code>postgresql://root@127.0.0.1:26257?sslmode=disable</code> 这样的内容。稍后我们将使用它去连接到数据库。</p><p>使用如下的内容去创建一个 <code>schema.sql</code> 文件。</p><pre tabindex=0><code>DROP DATABASE IF EXISTS passwordless_demo CASCADE;
+CREATE DATABASE IF NOT EXISTS passwordless_demo;
+SET DATABASE = passwordless_demo;
+
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email STRING UNIQUE,
+    username STRING UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS verification_codes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+INSERT INTO users (email, username) VALUES
+    (&#39;john@passwordless.local&#39;, &#39;john_doe&#39;);
+</code></pre><p>这个脚本创建了一个名为 <code>passwordless_demo</code> 的数据库、两个名为 <code>users</code> 和 <code>verification_codes</code> 的表，以及为了稍后测试而插入的一些假用户。每个验证代码都与用户关联并保存创建时间，以用于去检查验证代码是否过期。</p><p>在另外的终端中使用 <code>cockroach sql</code> 命令去运行这个脚本：</p><pre tabindex=0><code>cat schema.sql | cockroach sql --insecure
+</code></pre><h3 id=环境配置>环境配置</h3><p>需要配置两个环境变量：<code>SMTP_USERNAME</code> 和 <code>SMTP_PASSWORD</code>，你可以从你的 mailtrap 帐户中获得它们。将在我们的程序中用到它们。</p><h3 id=go-依赖>Go 依赖</h3><p>我们需要下列的 Go 包：</p><ul><li><a href=https://github.com/lib/pq>github.com/lib/pq</a>：它是 CockroachDB 使用的 postgres 驱动</li><li><a href=https://github.com/matryer/way>github.com/matryer/way</a>: 路由器</li><li><a href=https://github.com/dgrijalva/jwt-go>github.com/dgrijalva/jwt-go</a>: JWT 实现</li></ul><pre tabindex=0><code>go get -u github.com/lib/pq
+go get -u github.com/matryer/way
+go get -u github.com/dgrijalva/jwt-go
+</code></pre><h3 id=代码>代码</h3><h4 id=初始化函数>初始化函数</h4><p>创建 <code>main.go</code> 并且通过 <code>init</code> 函数里的环境变量中取得一些配置来启动。</p><pre tabindex=0><code>var config struct {
+    port        int
+    appURL      *url.URL
+    databaseURL string
+    jwtKey      []byte
+    smtpAddr    string
+    smtpAuth    smtp.Auth
+}
+
+func init() {
+    config.port, _ = strconv.Atoi(env(&#34;PORT&#34;, &#34;80&#34;))
+    config.appURL, _ = url.Parse(env(&#34;APP_URL&#34;, &#34;http://localhost:&#34;+strconv.Itoa(config.port)+&#34;/&#34;))
+    config.databaseURL = env(&#34;DATABASE_URL&#34;, &#34;postgresql://root@127.0.0.1:26257/passwordless_demo?sslmode=disable&#34;)
+    config.jwtKey = []byte(env(&#34;JWT_KEY&#34;, &#34;super-duper-secret-key&#34;))
+    smtpHost := env(&#34;SMTP_HOST&#34;, &#34;smtp.mailtrap.io&#34;)
+    config.smtpAddr = net.JoinHostPort(smtpHost, env(&#34;SMTP_PORT&#34;, &#34;25&#34;))
+    smtpUsername, ok := os.LookupEnv(&#34;SMTP_USERNAME&#34;)
+    if !ok {
+        log.Fatalln(&#34;could not find SMTP_USERNAME on environment variables&#34;)
+    }
+    smtpPassword, ok := os.LookupEnv(&#34;SMTP_PASSWORD&#34;)
+    if !ok {
+        log.Fatalln(&#34;could not find SMTP_PASSWORD on environment variables&#34;)
+    }
+    config.smtpAuth = smtp.PlainAuth(&#34;&#34;, smtpUsername, smtpPassword, smtpHost)
+}
+
+func env(key, fallbackValue string) string {
+    v, ok := os.LookupEnv(key)
+    if !ok {
+        return fallbackValue
+    }
+    return v
+}
+</code></pre><ul><li><code>appURL</code> 将去构建我们的 “魔法链接”。</li><li><code>port</code> 将要启动的 HTTP 服务器。</li><li><code>databaseURL</code> 是 CockroachDB 地址，我添加 <code>/passwordless_demo</code> 前面的数据库地址去表示数据库名字。</li><li><code>jwtKey</code> 用于签名 JWT。</li><li><code>smtpAddr</code> 是 <code>SMTP_HOST</code> + <code>SMTP_PORT</code> 的联合；我们将使用它去发送邮件。</li><li><code>smtpUsername</code> 和 <code>smtpPassword</code> 是两个必需的变量。</li><li><code>smtpAuth</code> 也是用于发送邮件。</li></ul><p><code>env</code> 函数允许我们去获得环境变量，不存在时返回一个回退值。</p><h4 id=主函数>主函数</h4><pre tabindex=0><code>var db *sql.DB
+
+func main() {
+    var err error
+    if db, err = sql.Open(&#34;postgres&#34;, config.databaseURL); err != nil {
+        log.Fatalf(&#34;could not open database connection: %v\n&#34;, err)
+    }
+    defer db.Close()
+    if err = db.Ping(); err != nil {
+        log.Fatalf(&#34;could not ping to database: %v\n&#34;, err)
+    }
+
+    router := way.NewRouter()
+    router.HandleFunc(&#34;POST&#34;, &#34;/api/users&#34;, jsonRequired(createUser))
+    router.HandleFunc(&#34;POST&#34;, &#34;/api/passwordless/start&#34;, jsonRequired(passwordlessStart))
+    router.HandleFunc(&#34;GET&#34;, &#34;/api/passwordless/verify_redirect&#34;, passwordlessVerifyRedirect)
+    router.Handle(&#34;GET&#34;, &#34;/api/auth_user&#34;, authRequired(getAuthUser))
+
+    addr := fmt.Sprintf(&#34;:%d&#34;, config.port)
+    log.Printf(&#34;starting server at %s \n&#34;, config.appURL)
+    log.Fatalf(&#34;could not start server: %v\n&#34;, http.ListenAndServe(addr, router))
+}
+</code></pre><p>首先，打开数据库连接。记得要加载驱动。</p><pre tabindex=0><code>import (
+    _ &#34;github.com/lib/pq&#34;
+)
+</code></pre><p>然后，我们创建路由器并定义一些端点。对于无密码流程来说，我们使用两个端点：<code>/api/passwordless/start</code> 发送魔法链接，和 <code>/api/passwordless/verify_redirect</code> 用 JWT 响应。</p><p>最后，我们启动服务器。</p><p>你可以创建空处理程序和中间件去测试服务器启动。</p><pre tabindex=0><code>func createUser(w http.ResponseWriter, r *http.Request) {
+    http.Error(w, http.StatusText(http.StatusNotImplemented), http.StatusNotImplemented)
+}
+
+func passwordlessStart(w http.ResponseWriter, r *http.Request) {
+    http.Error(w, http.StatusText(http.StatusNotImplemented), http.StatusNotImplemented)
+}
+
+func passwordlessVerifyRedirect(w http.ResponseWriter, r *http.Request) {
+    http.Error(w, http.StatusText(http.StatusNotImplemented), http.StatusNotImplemented)
+}
+
+func getAuthUser(w http.ResponseWriter, r *http.Request) {
+    http.Error(w, http.StatusText(http.StatusNotImplemented), http.StatusNotImplemented)
+}
+
+func jsonRequired(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        next(w, r)
+    }
+}
+
+func authRequired(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        next(w, r)
+    }
+}
+</code></pre><p>接下来：</p><pre tabindex=0><code>go build
+./passwordless-demo
+</code></pre><p>我们在目录中有了一个 “passwordless-demo”，但是你的目录中可能与示例不一样，<code>go build</code> 将创建一个同名的可执行文件。如果你没有关闭前面的 cockroach 节点，并且你正确配置了 <code>SMTP_USERNAME</code> 和 <code>SMTP_PASSWORD</code> 变量，你将看到命令 <code>starting server at http://localhost/</code> 没有错误输出。</p><h4 id=请求-json-的中间件>请求 JSON 的中间件</h4><p>端点需要从请求体中解码 JSON，因此要确保请求是 <code>application/json</code> 类型。因为它是一个通用的东西，我将它解耦到中间件。</p><pre tabindex=0><code>func jsonRequired(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        ct := r.Header.Get(&#34;Content-Type&#34;)
+        isJSON := strings.HasPrefix(ct, &#34;application/json&#34;)
+        if !isJSON {
+            respondJSON(w, &#34;JSON body required&#34;, http.StatusUnsupportedMediaType)
+            return
+        }
+        next(w, r)
+    }
+}
+</code></pre><p>实现很容易。首先它从请求头中获得内容的类型，然后检查它是否是以 “application/json” 开始，如果不是则以 <code>415 Unsupported Media Type</code> 提前返回。</p><h4 id=响应-json-的函数>响应 JSON 的函数</h4><p>以 JSON 响应是非常通用的做法，因此我把它提取到函数中。</p><pre tabindex=0><code>func respondJSON(w http.ResponseWriter, payload interface{}, code int) {
+    switch value := payload.(type) {
+    case string:
+        payload = map[string]string{&#34;message&#34;: value}
+    case int:
+        payload = map[string]int{&#34;value&#34;: value}
+    case bool:
+        payload = map[string]bool{&#34;result&#34;: value}
+    }
+    b, err := json.Marshal(payload)
+    if err != nil {
+        respondInternalError(w, fmt.Errorf(&#34;could not marshal response payload: %v&#34;, err))
+        return
+    }
+    w.Header().Set(&#34;Content-Type&#34;, &#34;application/json; charset=utf-8&#34;)
+    w.WriteHeader(code)
+    w.Write(b)
+}
+</code></pre><p>首先，对原始类型做一个类型判断，并将它们封装到一个 <code>map</code>。然后将它们编组到 JSON，设置响应内容类型和状态码，并写 JSON。如果 JSON 编组失败，则响应一个内部错误。</p><h4 id=响应内部错误的函数>响应内部错误的函数</h4><p><code>respondInternalError</code> 是一个响应 <code>500 Internal Server Error</code> 的函数，但是也同时将错误输出到控制台。</p><pre tabindex=0><code>func respondInternalError(w http.ResponseWriter, err error) {
+    log.Println(err)
+    respondJSON(w,
+        http.StatusText(http.StatusInternalServerError),
+        http.StatusInternalServerError)
+}
+</code></pre><h4 id=创建用户的处理程序>创建用户的处理程序</h4><p>下面开始编写 <code>createUser</code> 处理程序，因为它非常容易并且是 REST 式的。</p><pre tabindex=0><code>type User struct {
+    ID       string `json:&#34;id&#34;`
+    Email    string `json:&#34;email&#34;`
+    Username string `json:&#34;username&#34;`
+}
+</code></pre><p><code>User</code> 类型和 <code>users</code> 表相似。</p><pre tabindex=0><code>var (
+    rxEmail = regexp.MustCompile(&#34;^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$&#34;)
+    rxUsername = regexp.MustCompile(&#34;^[a-zA-Z][\\w|-]{1,17}$&#34;)
+)
+</code></pre><p>这些正则表达式是分别用于去验证电子邮件和用户名的。这些都很简单，可以根据你的需要随意去适配。</p><p>现在，在 <code>createUser</code> 函数内部，我们将开始解码请求体。</p><pre tabindex=0><code>var user User
+if err := json.NewDecoder(r.Body).Decode(&amp;user); err != nil {
+    respondJSON(w, err.Error(), http.StatusBadRequest)
+    return
+}
+defer r.Body.Close()
+</code></pre><p>我们将使用请求体去创建一个 JSON 解码器来解码出一个用户指针。如果发生错误则返回一个 <code>400 Bad Request</code>。不要忘记关闭请求体读取器。</p><pre tabindex=0><code>errs := make(map[string]string)
+if user.Email == &#34;&#34; {
+    errs[&#34;email&#34;] = &#34;Email required&#34;
+} else if !rxEmail.MatchString(user.Email) {
+    errs[&#34;email&#34;] = &#34;Invalid email&#34;
+}
+if user.Username == &#34;&#34; {
+    errs[&#34;username&#34;] = &#34;Username required&#34;
+} else if !rxUsername.MatchString(user.Username) {
+    errs[&#34;username&#34;] = &#34;Invalid username&#34;
+}
+if len(errs) != 0 {
+    respondJSON(w, errs, http.StatusUnprocessableEntity)
+    return
+}
+</code></pre><p>这是我如何做验证；一个简单的 <code>map</code> 并检查如果 <code>len(errs) != 0</code>，则使用 <code>422 Unprocessable Entity</code> 去返回。</p><pre tabindex=0><code>err := db.QueryRowContext(r.Context(), `
+    INSERT INTO users (email, username) VALUES ($1, $2)
+    RETURNING id
+`, user.Email, user.Username).Scan(&amp;user.ID)
+
+if errPq, ok := err.(*pq.Error); ok &amp;&amp; errPq.Code.Name() == &#34;unique_violation&#34; {
+    if strings.Contains(errPq.Error(), &#34;email&#34;) {
+        errs[&#34;email&#34;] = &#34;Email taken&#34;
+    } else {
+        errs[&#34;username&#34;] = &#34;Username taken&#34;
+    }
+    respondJSON(w, errs, http.StatusForbidden)
+    return
+} else if err != nil {
+    respondInternalError(w, fmt.Errorf(&#34;could not insert user: %v&#34;, err))
+    return
+}
+</code></pre><p>这个 SQL 查询使用一个给定的 email 和用户名去插入一个新用户，并返回自动生成的 id，每个 <code>$</code> 将被接下来传递给 <code>QueryRowContext</code> 的参数替换掉。</p><p>因为 <code>users</code> 表在 <code>email</code> 和 <code>username</code> 字段上有唯一性约束，因此我将检查 “unique_violation” 错误并返回 <code>403 Forbidden</code> 或者返回一个内部错误。</p><pre tabindex=0><code>respondJSON(w, user, http.StatusCreated)
+</code></pre><p>最后使用创建的用户去响应。</p><h4 id=无密码验证开始部分的处理程序>无密码验证开始部分的处理程序</h4><pre tabindex=0><code>type PasswordlessStartRequest struct {
+    Email       string `json:&#34;email&#34;`
+    RedirectURI string `json:&#34;redirectUri&#34;`
+}
+</code></pre><p>这个结构体含有 <code>passwordlessStart</code> 的请求体：希望去登入的用户 email、来自客户端的重定向 URI（这个应用中将使用我们的 API）如：<code>https://frontend.app/callback</code>。</p><pre tabindex=0><code>var magicLinkTmpl = template.Must(template.ParseFiles(&#34;templates/magic-link.html&#34;))
+</code></pre><p>我们将使用 golang 模板引擎去构建邮件，因此需要你在 <code>templates</code> 目录中，用如下的内容创建一个 <code>magic-link.html</code> 文件：</p><pre tabindex=0><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+&lt;head&gt;
+    &lt;meta charset=&#34;utf-8&#34;&gt;
+    &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34;&gt;
+    &lt;title&gt;Magic Link&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    Click &lt;a href=&#34;{{ .MagicLink }}&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt; to login.
+    &lt;br&gt;
+    &lt;em&gt;This link expires in 15 minutes and can only be used once.&lt;/em&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>这个模板是给用户发送魔法链接邮件用的。你可以根据你的需要去随意调整它。</p><p>现在， 进入 <code>passwordlessStart</code> 函数内部：</p><pre tabindex=0><code>var input PasswordlessStartRequest
+if err := json.NewDecoder(r.Body).Decode(&amp;input); err != nil {
+    respondJSON(w, err.Error(), http.StatusBadRequest)
+    return
+}
+defer r.Body.Close()
+</code></pre><p>首先，我们像前面一样解码请求体。</p><pre tabindex=0><code>errs := make(map[string]string)
+if input.Email == &#34;&#34; {
+    errs[&#34;email&#34;] = &#34;Email required&#34;
+} else if !rxEmail.MatchString(input.Email) {
+    errs[&#34;email&#34;] = &#34;Invalid email&#34;
+}
+if input.RedirectURI == &#34;&#34; {
+    errs[&#34;redirectUri&#34;] = &#34;Redirect URI required&#34;
+} else if u, err := url.Parse(input.RedirectURI); err != nil || !u.IsAbs() {
+    errs[&#34;redirectUri&#34;] = &#34;Invalid redirect URI&#34;
+}
+if len(errs) != 0 {
+    respondJSON(w, errs, http.StatusUnprocessableEntity)
+    return
+}
+</code></pre><p>我们使用 golang 的 URL 解析器去验证重定向 URI，检查那个 URI 是否为绝对地址。</p><pre tabindex=0><code>var verificationCode string
+err := db.QueryRowContext(r.Context(), `
+    INSERT INTO verification_codes (user_id) VALUES
+        ((SELECT id FROM users WHERE email = $1))
+    RETURNING id
+`, input.Email).Scan(&amp;verificationCode)
+if errPq, ok := err.(*pq.Error); ok &amp;&amp; errPq.Code.Name() == &#34;not_null_violation&#34; {
+    respondJSON(w, &#34;No user found with that email&#34;, http.StatusNotFound)
+    return
+} else if err != nil {
+    respondInternalError(w, fmt.Errorf(&#34;could not insert verification code: %v&#34;, err))
+    return
+}
+</code></pre><p>这个 SQL 查询将插入一个验证代码，这个代码通过给定的 email 关联到用户，并且返回一个自动生成的 id。因为有可能会出现用户不存在的情况，那样的话子查询可能解析为 <code>NULL</code>，这将导致在 <code>user_id</code> 字段上因违反 <code>NOT NULL</code> 约束而导致失败，因此需要对这种情况进行检查，如果用户不存在，则返回 <code>404 Not Found</code> 或者一个内部错误。</p><pre tabindex=0><code>q := make(url.Values)
+q.Set(&#34;verification_code&#34;, verificationCode)
+q.Set(&#34;redirect_uri&#34;, input.RedirectURI)
+magicLink := *config.appURL
+magicLink.Path = &#34;/api/passwordless/verify_redirect&#34;
+magicLink.RawQuery = q.Encode()
+</code></pre><p>现在，构建魔法链接并设置查询字符串中的 <code>verification_code</code> 和 <code>redirect_uri</code> 的值。如：<code>http://localhost/api/passwordless/verify_redirect?verification_code=some_code&amp;redirect_uri=https://frontend.app/callback</code>。</p><pre tabindex=0><code>var body bytes.Buffer
+data := map[string]string{&#34;MagicLink&#34;: magicLink.String()}
+if err := magicLinkTmpl.Execute(&amp;body, data); err != nil {
+    respondInternalError(w, fmt.Errorf(&#34;could not execute magic link template: %v&#34;, err))
+    return
+}
+</code></pre><p>我们将得到的魔法链接模板的内容保存到缓冲区中。如果发生错误则返回一个内部错误。</p><pre tabindex=0><code>to := mail.Address{Address: input.Email}
+if err := sendMail(to, &#34;Magic Link&#34;, body.String()); err != nil {
+    respondInternalError(w, fmt.Errorf(&#34;could not mail magic link: %v&#34;, err))
+    return
+}
+</code></pre><p>现在来写给用户发邮件的 <code>sendMail</code> 函数。如果发生错误则返回一个内部错误。</p><pre tabindex=0><code>w.WriteHeader(http.StatusNoContent)
+</code></pre><p>最后，设置响应状态码为 <code>204 No Content</code>。对于成功的状态码，客户端不需要很多数据。</p><h4 id=发送邮件函数>发送邮件函数</h4><pre tabindex=0><code>func sendMail(to mail.Address, subject, body string) error {
+    from := mail.Address{
+        Name:    &#34;Passwordless Demo&#34;,
+        Address: &#34;noreply@&#34; + config.appURL.Host,
+    }
+    headers := map[string]string{
+        &#34;From&#34;:         from.String(),
+        &#34;To&#34;:           to.String(),
+        &#34;Subject&#34;:      subject,
+        &#34;Content-Type&#34;: `text/html; charset=&#34;utf-8&#34;`,
+    }
+    msg := &#34;&#34;
+    for k, v := range headers {
+        msg += fmt.Sprintf(&#34;%s: %s\r\n&#34;, k, v)
+    }
+    msg += &#34;\r\n&#34;
+    msg += body
+
+    return smtp.SendMail(
+        config.smtpAddr,
+        config.smtpAuth,
+        from.Address,
+        []string{to.Address},
+        []byte(msg))
+}
+</code></pre><p>这个函数创建一个基本的 HTML 邮件结构体并使用 SMTP 服务器去发送它。邮件的内容你可以随意定制，我喜欢使用比较简单的内容。</p><h4 id=无密码验证重定向的处理程序>无密码验证重定向的处理程序</h4><pre tabindex=0><code>var rxUUID = regexp.MustCompile(&#34;^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$&#34;)
+</code></pre><p>首先，这个正则表达式去验证一个 UUID（即验证代码）。</p><p>现在进入 <code>passwordlessVerifyRedirect</code> 函数内部：</p><pre tabindex=0><code>q := r.URL.Query()
+verificationCode := q.Get(&#34;verification_code&#34;)
+redirectURI := q.Get(&#34;redirect_uri&#34;)
+</code></pre><p><code>/api/passwordless/verify_redirect</code> 是一个 <code>GET</code> 端点，以便于我们从查询字符串中读取数据。</p><pre tabindex=0><code>errs := make(map[string]string)
+if verificationCode == &#34;&#34; {
+    errs[&#34;verification_code&#34;] = &#34;Verification code required&#34;
+} else if !rxUUID.MatchString(verificationCode) {
+    errs[&#34;verification_code&#34;] = &#34;Invalid verification code&#34;
+}
+var callback *url.URL
+var err error
+if redirectURI == &#34;&#34; {
+    errs[&#34;redirect_uri&#34;] = &#34;Redirect URI required&#34;
+} else if callback, err = url.Parse(redirectURI); err != nil || !callback.IsAbs() {
+    errs[&#34;redirect_uri&#34;] = &#34;Invalid redirect URI&#34;
+}
+if len(errs) != 0 {
+    respondJSON(w, errs, http.StatusUnprocessableEntity)
+    return
+}
+</code></pre><p>类似的验证，我们保存解析后的重定向 URI 到一个 <code>callback</code> 变量中。</p><pre tabindex=0><code>var userID string
+if err := db.QueryRowContext(r.Context(), `
+    DELETE FROM verification_codes
+    WHERE id = $1
+        AND created_at &gt;= now() - INTERVAL &#39;15m&#39;
+    RETURNING user_id
+`, verificationCode).Scan(&amp;userID); err == sql.ErrNoRows {
+    respondJSON(w, &#34;Link expired or already used&#34;, http.StatusBadRequest)
+    return
+} else if err != nil {
+    respondInternalError(w, fmt.Errorf(&#34;could not delete verification code: %v&#34;, err))
+    return
+}
+</code></pre><p>这个 SQL 查询通过给定的 id 去删除相应的验证代码，并且确保它创建之后时间不超过 15 分钟，它也返回关联的 <code>user_id</code>。如果没有检索到内容，意味着代码不存在或者已过期，我们返回一个响应信息，否则就返回一个内部错误。</p><pre tabindex=0><code>expiresAt := time.Now().Add(time.Hour * 24 * 60)
+tokenString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+    Subject:   userID,
+    ExpiresAt: expiresAt.Unix(),
+}).SignedString(config.jwtKey)
+if err != nil {
+    respondInternalError(w, fmt.Errorf(&#34;could not create JWT: %v&#34;, err))
+    return
+}
+</code></pre><p>这些是如何去创建 JWT。我们为 JWT 设置一个 60 天的过期值，你也可以设置更短的时间（大约 2 周），并添加一个新端点去刷新令牌，但是不要搞的过于复杂。</p><pre tabindex=0><code>expiresAtB, err := expiresAt.MarshalText()
+if err != nil {
+    respondInternalError(w, fmt.Errorf(&#34;could not marshal expiration date: %v&#34;, err))
+    return
+}
+f := make(url.Values)
+f.Set(&#34;jwt&#34;, tokenString)
+f.Set(&#34;expires_at&#34;, string(expiresAtB))
+callback.Fragment = f.Encode()
+</code></pre><p>我们去规划重定向；你可使用查询字符串去添加 JWT，但是更常见的是使用一个哈希片段。如：<code>https://frontend.app/callback#jwt=token_here&amp;expires_at=some_date</code>.</p><p>过期日期可以从 JWT 中提取出来，但是这样做的话，就需要在客户端上实现一个 JWT 库来解码它，因此为了简化，我将它加到这里。</p><pre tabindex=0><code>http.Redirect(w, r, callback.String(), http.StatusFound)
+</code></pre><p>最后我们使用一个 <code>302 Found</code> 重定向。</p><hr><p>无密码的流程已经完成。现在需要去写 <code>getAuthUser</code> 端点的代码了，它用于获取当前验证用户的信息。你应该还记得，这个端点使用了 <code>guard</code> 中间件。</p><h4 id=使用-auth-中间件>使用 Auth 中间件</h4><p>在编写 <code>guard</code> 中间件之前，我将编写一个不需要验证的分支。目的是，如果没有传递 JWT，它将不去验证用户。</p><pre tabindex=0><code>type ContextKey struct {
+    Name string
+}
+
+var keyAuthUserID = ContextKey{&#34;auth_user_id&#34;}
+
+func withAuth(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        a := r.Header.Get(&#34;Authorization&#34;)
+        hasToken := strings.HasPrefix(a, &#34;Bearer &#34;)
+        if !hasToken {
+            next(w, r)
+            return
+        }
+        tokenString := a[7:]
+
+        p := jwt.Parser{ValidMethods: []string{jwt.SigningMethodHS256.Name}}
+        token, err := p.ParseWithClaims(
+            tokenString,
+            &amp;jwt.StandardClaims{},
+            func (*jwt.Token) (interface{}, error) { return config.jwtKey, nil },
+        )
+        if err != nil {
+            respondJSON(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+            return
+        }
+
+        claims, ok := token.Claims.(*jwt.StandardClaims)
+        if !ok || !token.Valid {
+            respondJSON(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+            return
+        }
+
+        ctx := r.Context()
+        ctx = context.WithValue(ctx, keyAuthUserID, claims.Subject)
+
+        next(w, r.WithContext(ctx))
+    }
+}
+</code></pre><p>JWT 将在每次请求时以 <code>Bearer &lt;token_here></code> 格式包含在 <code>Authorization</code> 头中。因此，如果没有提供令牌，我们将直接通过，进入接下来的中间件。</p><p>我们创建一个解析器来解析令牌。如果解析失败则返回 <code>401 Unauthorized</code>。</p><p>然后我们从 JWT 中提取出要求的内容，并添加 <code>Subject</code>（就是用户 ID）到需要的地方。</p><h4 id=guard-中间件>Guard 中间件</h4><pre tabindex=0><code>func guard(next http.HandlerFunc) http.HandlerFunc {
+    return withAuth(func(w http.ResponseWriter, r *http.Request) {
+        _, ok := r.Context().Value(keyAuthUserID).(string)
+        if !ok {
+            respondJSON(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+            return
+        }
+        next(w, r)
+    })
+}
+</code></pre><p>现在，<code>guard</code> 将使用 <code>withAuth</code> 并从请求内容中提取出验证用户的 ID。如果提取失败，它将返回 <code>401 Unauthorized</code>，提取成功则继续下一步。</p><h4 id=获取-auth-用户>获取 Auth 用户</h4><p>在 <code>getAuthUser</code> 处理程序内部：</p><pre tabindex=0><code>ctx := r.Context()
+authUserID := ctx.Value(keyAuthUserID).(string)
+
+user, err := fetchUser(ctx, authUserID)
+if err == sql.ErrNoRows {
+    respondJSON(w, http.StatusText(http.StatusTeapot), http.StatusTeapot)
+    return
+} else if err != nil {
+    respondInternalError(w, fmt.Errorf(&#34;could not query auth user: %v&#34;, err))
+    return
+}
+
+respondJSON(w, user, http.StatusOK)
+</code></pre><p>首先，我们从请求内容中提取验证用户的 ID，我们使用这个 ID 去获取用户。如果没有获取到内容，则发送一个 <code>418 I'm a teapot</code>，或者一个内部错误。最后，我们将用这个用户去响应。</p><h4 id=获取-user-函数>获取 User 函数</h4><p>下面你看到的是 <code>fetchUser</code> 函数。</p><pre tabindex=0><code>func fetchUser(ctx context.Context, id string) (User, error) {
+    user := User{ID: id}
+    err := db.QueryRowContext(ctx, `
+        SELECT email, username FROM users WHERE id = $1
+    `, id).Scan(&amp;user.Email, &amp;user.Username)
+    return user, err
+}
+</code></pre><p>我将它解耦是因为通过 ID 来获取用户是个常做的事。</p><hr><p>以上就是全部的代码。你可以自己去构建它和测试它。<a href=https://go-passwordless-demo.herokuapp.com/>这里</a> 还有一个 demo 你可以试用一下。</p><p>如果你在 mailtrap 上点击之后出现有关 <code>脚本运行被拦截，因为文档的框架是沙箱化的，并且没有设置 'allow-scripts' 权限</code> 的问题，你可以尝试右键点击 “在新标签中打开链接“。这样做是安全的，因为邮件内容是 <a href=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#attr-sandbox>沙箱化的</a>。我在 <code>localhost</code> 上有时也会出现这个问题，但是我认为你一旦以 <code>https://</code> 方式部署到服务器上应该不会出现这个问题了。</p><p>如果有任何问题，请在我的 <a href=https://github.com/nicolasparada/go-passwordless-demo>GitHub repo</a> 留言或者提交 PRs</p><p>以后，我为这个 API 写了一个客户端作为这篇文章的<a href=https://nicolasparada.netlify.com/posts/passwordless-auth-client/>第二部分</a>。</p><hr><p>via: <a href=https://nicolasparada.netlify.com/posts/passwordless-auth-server/>https://nicolasparada.netlify.com/posts/passwordless-auth-server/</a></p><p>作者：<a href=https://nicolasparada.netlify.com/>Nicolás Parada</a> 译者：<a href=https://github.com/qhwdw>qhwdw</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AF%86%E7%A0%81/ rel=tag>密码</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%99%BB%E5%BD%95/ rel=tag>登录</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,89 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Python Plumbum 简介：用 Python 来写脚本 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Python Plumbum 简介：用 Python 来写脚本"><meta property="og:description" content="你是否曾希望将 shell 脚本紧凑地融入到真正的编程语言里面？ 那么可以了解下 Plumbum Shell 组合器。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9471-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-03-22T10:11:40+00:00"><meta property="article:modified_time" content="2018-03-22T10:11:40+00:00"><meta itemprop=name content="Python Plumbum 简介：用 Python 来写脚本"><meta itemprop=description content="你是否曾希望将 shell 脚本紧凑地融入到真正的编程语言里面？ 那么可以了解下 Plumbum Shell 组合器。"><meta itemprop=datePublished content="2018-03-22T10:11:40+00:00"><meta itemprop=dateModified content="2018-03-22T10:11:40+00:00"><meta itemprop=wordCount content="563"><meta itemprop=keywords content="Shell,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Python Plumbum 简介：用 Python 来写脚本</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-03-22T10:11:40Z>March 22, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201803/22/101111fawijaevfv3d7e3l.jpg alt></p><h3 id=plumbumshell-组合器>Plumbum：Shell 组合器</h3><p>你是否曾希望将 shell 脚本紧凑地融入到<strong>真正</strong>的编程语言里面？ 那么可以了解下 Plumbum Shell 组合器。Plumbum （lead 的拉丁语，以前用来制作管道）是一个小型但功能丰富的类库，用于以 Python 进行类似 shell 脚本编程。该库的理念是 “<strong>永远不要再写 shell 脚本</strong>”，因此它试图合理地模仿 shell 语法（shell 组合器），同时保持 <strong>Python 特性和跨平台</strong>。</p><p>除了<a href=https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands>类似 shell 的语法</a>和<a href=https://plumbum.readthedocs.io/en/latest/utils.html#guide-utils>便捷的快捷方式</a>之外，该库还提供本地和<a href=https://plumbum.readthedocs.io/en/latest/remote.html#guide-remote-commands>远程</a>命令执行（通过 SSH）、本地和远程文件系统<a href=https://plumbum.readthedocs.io/en/latest/paths.html#guide-paths>路径</a>、简单的工作目录和环境<a href=https://plumbum.readthedocs.io/en/latest/local_machine.html#guide-local-machine>操作</a>、快捷访问 ANSI 颜色，以及<a href=https://plumbum.readthedocs.io/en/latest/cli.html#guide-cli>编程命令行接口（CLI）</a>应用程序工具包。现在让我们看一些代码！</p><p>其最新版本 1.6.6 发布于 2018 年 2 月 12 日。</p><h3 id=快捷使用指南>快捷使用指南</h3><h4 id=heading></h4><h4 id=基本使用>基本使用</h4><pre tabindex=0><code>&gt;&gt;&gt; from plumbum import local
+&gt;&gt;&gt; ls = local[&#34;ls&#34;]
+&gt;&gt;&gt; ls
+LocalCommand(&lt;LocalPath /bin/ls&gt;)
+&gt;&gt;&gt; ls()
+u&#39;build.py\ndist\ndocs\nLICENSE\nplumbum\nREADME.rst\nsetup.py\ntests\ntodo.txt\n&#39;
+&gt;&gt;&gt; notepad = local[&#34;c:\\windows\\notepad.exe&#34;]
+&gt;&gt;&gt; notepad()                                   # Notepad window pops up
+u&#39;&#39;                                             # Notepad window is closed by user, command returns
+</code></pre><p>不需要为每个你想使用的命令写 <code>xxx = local["xxx"]</code>，你可以<a href=https://plumbum.readthedocs.io/en/latest/local_commands.html#import-hack>导入命令行</a>：</p><pre tabindex=0><code>&gt;&gt;&gt; from plumbum.cmd import grep, wc, cat, head
+&gt;&gt;&gt; grep
+LocalCommand(&lt;LocalPath /bin/grep&gt;)
+</code></pre><p>参见<a href=https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands>本地命令行</a> 。</p><h4 id=管道>管道</h4><pre tabindex=0><code>&gt;&gt;&gt; chain = ls[&#34;-a&#34;] | grep[&#34;-v&#34;, &#34;\\.py&#34;] | wc[&#34;-l&#34;]
+&gt;&gt;&gt; print chain
+/bin/ls -a | /bin/grep -v &#39;\.py&#39; | /usr/bin/wc -l
+&gt;&gt;&gt; chain()
+u&#39;13\n&#39;
+</code></pre><p>参见<a href=https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-pipelining>管道</a>。</p><h4 id=重定向>重定向</h4><pre tabindex=0><code>&gt;&gt;&gt; ((cat &lt; &#34;setup.py&#34;) | head[&#34;-n&#34;, 4])()
+u&#39;#!/usr/bin/env python\nimport os\n\ntry:\n&#39;
+&gt;&gt;&gt; (ls[&#34;-a&#34;] &gt; &#34;file.list&#34;)()
+u&#39;&#39;
+&gt;&gt;&gt; (cat[&#34;file.list&#34;] | wc[&#34;-l&#34;])()
+u&#39;17\n&#39;
+</code></pre><p>参见<a href=https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-redir>输入/输出重定向</a>。</p><h4 id=工作目录操作>工作目录操作</h4><pre tabindex=0><code>&gt;&gt;&gt; local.cwd
+&lt;Workdir /home/tomer/workspace/plumbum&gt;
+&gt;&gt;&gt; with local.cwd(local.cwd / &#34;docs&#34;):
+...     chain()
+...
+u&#39;15\n&#39;
+</code></pre><p>参见<a href=https://plumbum.readthedocs.io/en/latest/paths.html#guide-paths>路径</a>和<a href=https://plumbum.readthedocs.io/en/latest/local_machine.html#guide-local-machine>本地对象</a> 。</p><h4 id=前台后和后台执行>前台后和后台执行</h4><pre tabindex=0><code>&gt;&gt;&gt; from plumbum import FG, BG
+&gt;&gt;&gt; (ls[&#34;-a&#34;] | grep[&#34;\\.py&#34;]) &amp; FG         # The output is printed to stdout directly
+build.py
+.pydevproject
+setup.py
+&gt;&gt;&gt; (ls[&#34;-a&#34;] | grep[&#34;\\.py&#34;]) &amp; BG         # The process runs &#34;in the background&#34;
+&lt;Future [&#39;/bin/grep&#39;, &#39;\\.py&#39;] (running)&gt;
+</code></pre><p>参见<a href=https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-bgfg>前台和后台</a>。</p><h4 id=命令行嵌套>命令行嵌套</h4><pre tabindex=0><code>&gt;&gt;&gt; from plumbum.cmd import sudo
+&gt;&gt;&gt; print sudo[ifconfig[&#34;-a&#34;]]
+/usr/bin/sudo /sbin/ifconfig -a
+&gt;&gt;&gt; (sudo[ifconfig[&#34;-a&#34;]] | grep[&#34;-i&#34;, &#34;loop&#34;]) &amp; FG
+lo        Link encap:Local Loopback
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+</code></pre><p>参见<a href=https://plumbum.readthedocs.io/en/latest/local_commands.html#guide-local-commands-nesting>命令行嵌套</a>。</p><h4 id=远程命令通过-ssh>远程命令（通过 SSH）</h4><pre tabindex=0><code>&gt;&gt;&gt; from plumbum import SshMachine
+&gt;&gt;&gt; remote = SshMachine(&#34;somehost&#34;, user = &#34;john&#34;, keyfile = &#34;/path/to/idrsa&#34;)
+&gt;&gt;&gt; r_ls = remote[&#34;ls&#34;]
+&gt;&gt;&gt; with remote.cwd(&#34;/lib&#34;):
+...     (r_ls | grep[&#34;0.so.0&#34;])()
+...
+u&#39;libusb-1.0.so.0\nlibusb-1.0.so.0.0.0\n&#39;
+</code></pre><p>参见<a href=https://plumbum.readthedocs.io/en/latest/remote.html#guide-remote>远程</a>。</p><h4 id=cli-应用程序>CLI 应用程序</h4><pre tabindex=0><code>import logging
+from plumbum import cli
+
+class MyCompiler(cli.Application):
+    verbose = cli.Flag([&#34;-v&#34;, &#34;--verbose&#34;], help = &#34;Enable verbose mode&#34;)
+    include_dirs = cli.SwitchAttr(&#34;-I&#34;, list = True, help = &#34;Specify include directories&#34;)
+
+    @cli.switch(&#34;-loglevel&#34;, int)
+    def set_log_level(self, level):
+        &#34;&#34;&#34;Sets the log-level of the logger&#34;&#34;&#34;
+        logging.root.setLevel(level)
+
+    def main(self, *srcfiles):
+        print &#34;Verbose:&#34;, self.verbose
+        print &#34;Include dirs:&#34;, self.include_dirs
+        print &#34;Compiling:&#34;, srcfiles
+
+if __name__ == &#34;__main__&#34;:
+    MyCompiler.run()
+</code></pre><p>输出样例：</p><pre tabindex=0><code>$ python simple_cli.py -v -I foo/bar -Ispam/eggs x.cpp y.cpp z.cpp
+Verbose: True
+Include dirs: [&#39;foo/bar&#39;, &#39;spam/eggs&#39;]
+Compiling: (&#39;x.cpp&#39;, &#39;y.cpp&#39;, &#39;z.cpp&#39;)
+</code></pre><p>参见<a href=https://plumbum.readthedocs.io/en/latest/cli.html#guide-cli>命令行应用程序</a>。</p><h4 id=颜色和风格>颜色和风格</h4><pre tabindex=0><code>from plumbum import colors
+with colors.red:
+    print(&#34;This library provides safe, flexible color access.&#34;)
+    print(colors.bold | &#34;(and styles in general)&#34;, &#34;are easy!&#34;)
+print(&#34;The simple 16 colors or&#34;,
+      colors.orchid &amp; colors.underline | &#39;256 named colors,&#39;,
+      colors.rgb(18, 146, 64) | &#34;or full rgb colors&#34; ,
+      &#39;can be used.&#39;)
+print(&#34;Unsafe &#34; + colors.bg.dark_khaki + &#34;color access&#34; + colors.bg.reset + &#34; is available too.&#34;)
+</code></pre><p>输出样例：</p><pre tabindex=0><code>This library provides safe color access.
+Color (and styles in general) are easy!
+The simple 16 colors, 256 named colors, or full hex colors can be used.
+Unsafe color access is available too.
+</code></pre><p>参见<a href=https://plumbum.readthedocs.io/en/latest/colors.html#guide-colors>颜色</a>。</p><h3 id=开发和安装>开发和安装</h3><p>该库在 <a href=https://github.com/tomerfiliba/plumbum>Github</a> 上开发，非常乐意接受来自用户的<a href=https://help.github.com/send-pull-requests/>补丁</a>。请使用 GitHub 的内置 <a href=https://github.com/tomerfiliba/plumbum/issues>issue 跟踪器</a>报告您遇到的任何问题或提出功能上的需求。该库在 <a href=https://github.com/tomerfiliba/plumbum/blob/master/LICENSE>IMIT 许可</a>下发布。</p><h4 id=要求>要求</h4><p>Plumbum 支持 Python 2.6-3.6 和 PyPy，并且通过 <a href=https://travis-ci.org/tomerfiliba/plumbum>Travis CI</a> 和 <a href=https://ci.appveyor.com/project/HenrySchreiner/plumbum/branch/master>Appveyor</a> 持续地在 Linux，Mac 和 Windows 机器上测试。Plumbum 在任何类 Unix 的机器都应该可以正常工作，但是在 Windows 上，你也许需要安装一个合适的 <a href=https://www.wikiwand.com/en/Coreutils>coreutils</a> 环境并把其加入到你的<code>PATH</code>环境变量中。我推荐 <a href=http://mingw.org/>mingw</a>（与 <a href=http://msysgit.github.io/>Windows Git</a> 捆绑在一起），但是 <a href=http://www.cygwin.com/>cygwin</a> 应该也可以。如果你仅仅是使用 Plumbum 代替 Popen 来运行 Windows 程序，那么就不需要 Unix 工具了。 注意远程命令的执行，你需要一个 openSHH 兼容的客户端（同样与 Windows Git 捆绑在一起）和一个 bash 兼容的 shell，也需要在主机上有一个 coreutils 环境。</p><h4 id=下载>下载</h4><p>你可以在 <a href=https://pypi.python.org/pypi/plumbum#downloads><strong>Python Package Index</strong></a> （多种格式）下载该库，或者直接运行 <code>pip install plumbum</code>。如果你使用 Anaconda，你可以使用 <code>conda install -c conda-forge plumbum</code> 从 <code>conda-forge</code> 通道获取。</p><h3 id=用户指南>用户指南</h3><p>用户指南涵盖了 Plumbum 大部分功能，拥有大量的代码片段，你可以不用花多少时间即可开始使用。该指南逐渐介绍概念和"语法"，因此推荐你按照顺序阅读。一个<a href=https://plumbum.readthedocs.io/en/latest/quickref.html#guide-quickref><strong>有效的快速参考指南</strong></a>。 <em>略。。。</em></p><h4 id=heading-1></h4><h3 id=关于>关于</h3><p>Plumburn 最初的目的是让本地和远程程序轻松地执行，假设没有比老的 ssh 更时髦的东西了。在此基础上，设计了一个文件系统抽象层，以便能够无缝地处理本地和远程文件。 我有这个想法一段时间了，直到我必须要个给我当前工作的项目写一个构建脚本，我决定使用 shell 脚本，现在是实现它的时候了。Plumbum 诞生自 <code>Path</code> 类的片段和我为 <a href=http://rpyc.readthedocs.io/en/latest/><strong>RPyC</strong></a> 写的 <code>SshContext</code> 和 <code>SshTunnel</code> 类。<code>Path</code> 类是我为前面说的构建系统写的。当我将两者与 <em>shell 组合器</em>（因为 shell 脚本在这里确实有优势）组合在一起时，奇迹就发生了，便产生了Plumbun。</p><h3 id=致谢>致谢</h3><p>该项目受到了 <a href=https://github.com/amoffat><strong>Andrew Moffat</strong></a> 的 <strong>PBS</strong>（现在被称作 <a href=http://amoffat.github.io/sh/><strong>sh</strong></a>）启发，并且借用了他的一些思想（即像函数一样看待程序，导入命令行的技巧）。然而我感觉在 PBS 中有太多的神秘的东西，当我编写类 shell 程序时，语法不是我想要的。关于这个问题我联系了 Andrew，但是他想让 PBS 保持这种状态。除此之外，两个库走不同的方向，Plumbum 试图提供一种更合理的方法。</p><p>Plumbum 也向 <a href=https://github.com/vmalloc/><strong>Rotem Yaari</strong></a> 致敬，他为特定的目的建议了一个代号为 <code>pyplatform</code> 的库，但是尚未实现过。</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/shell/ rel=tag>Shell</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

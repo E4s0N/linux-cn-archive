@@ -1,0 +1,43 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Ansible 部署无服务（serverless）应用 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Ansible 部署无服务（serverless）应用"><meta property="og:description" content="无服务是托管服务发展方向的又一步，并且与 Ansible 的无代理体系结构相得益彰。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8843-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-09-06T08:25:00+00:00"><meta property="article:modified_time" content="2017-09-06T08:25:00+00:00"><meta itemprop=name content="使用 Ansible 部署无服务（serverless）应用"><meta itemprop=description content="无服务是托管服务发展方向的又一步，并且与 Ansible 的无代理体系结构相得益彰。"><meta itemprop=datePublished content="2017-09-06T08:25:00+00:00"><meta itemprop=dateModified content="2017-09-06T08:25:00+00:00"><meta itemprop=wordCount content="236"><meta itemprop=keywords content="serverless,无服务,Ansible,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Ansible 部署无服务（serverless）应用</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-09-06T08:25:00Z>September 06, 2017</time></div></div></header><div class="content post__content clearfix"><blockquote><p>无服务 serverless 是 托管服务 managed service 发展方向的又一步，并且与 Ansible 的无代理体系结构相得益彰。</p></blockquote><p><img src=/data/attachment/album/201709/05/223609d2d6dxaevxo2466a.jpg alt></p><p><a href=https://www.ansible.com/>Ansible</a> 被设计为实际工作中的最简化的部署工具。这意味着它不是一个完整的编程语言。你需要编写定义任务的 YAML 模板，并列出任何需要自动完成的任务。</p><p>大多数人认为 Ansible 是一种更强大的“处于 for 循环中的 SSH”，在简单的使用场景下这是真的。但其实 Ansible 是<em>任务</em>，而非 SSH。在很多情况下，我们通过 SSH 进行连接，但它也支持 Windows 机器上的 Windows 远程管理（WinRM），以及作为云服务的通用语言的 HTTPS API 之类的东西。</p><p>在云中，Ansible 可以在两个独立的层面上操作： 控制面 control plane 和 实例资源 on-instance resource 。控制面由所有<em>没有</em>运行在操作系统上的东西组成。包括设置网络、新建实例、供给更高级别的服务，如亚马逊的 S3 或 DynamoDB，以及保持云基础设施安全和服务客户​​所需的一切。</p><p>实例上的工作是你已经知道 Ansible 可以做的：启动和停止服务、配置文件 模版化 templating 、安装软件包以及通过 SSH 执行的所有与操作系统相关的操作。</p><p>现在，什么是 无服务 serverless 呢？这要看你问谁，无服务要么是对公有云的无限延伸，或者是一个全新的范例，其中所有的东西都是 API 调用，以前从来没有这样做过。</p><p>Ansible 采取第一种观点。在 “无服务” 是专门术语之前，用户不得不管理和配置 EC2 实例、虚拟私有云 （VPC） 网络以及其他所有内容。无服务是托管服务方向迈出的另一步，并且与 Ansible 的无代理体系结构相得益彰。</p><p>在我们开始 <a href=https://aws.amazon.com/lambda/>Lambda</a> 示例之前，让我们来看一个简单的配置 CloudFormation 栈任务：</p><pre tabindex=0><code>- name: Build network
+  cloudformation:
+    stack_name: prod-vpc
+    state: present
+    template: base_vpc.yml
+</code></pre><p>编写这样的任务只需要几分钟，但它是构建基础架构所涉及的最后的半手动步骤 - 点击 “Create Stack” - 这将 playbook 与其他放在一起。现在你的 VPC 只是在建立新区域时可以调用的另一项任务了。</p><p>由于云提供商是你帐户中发生些什么的真相来源，因此 Ansible 有许多方法来取回并使用 ID、名称和其他参数来过滤和查询运行的实例或网络。以 <code>cloudformation_facts</code> 模块为例，我们可以从我们刚刚创建的模板中得到子网 ID、网络范围和其他数据。</p><pre tabindex=0><code>- name: Pull all new resources back in as a variable
+  cloudformation_facts:
+    stack_name: prod-vpc
+  register: network_stack
+</code></pre><p>对于无服务应用，除了 DynamoDB 表，S3 bucket 和其他任何其他功能之外，你肯定还需要一个 Lambda 函数的补充。幸运的是，通过使用 <code>lambda</code> 模块， Lambda 函数可以以上次任务的堆栈相同的方式创建：</p><pre tabindex=0><code>- lambda:
+    name: sendReportMail
+    zip_file: &#34;{{ deployment_package }}&#34;
+    runtime: python3.6
+    handler: report.send
+    memory_size: 1024
+    role: &#34;{{ iam_exec_role }}&#34;
+  register: new_function
+</code></pre><p>如果你有其他想用来交付无服务应用的工具，这也是可以的。开源的<a href=https://serverless.com/>无服务框架</a>有自己的 Ansible 模块，它也可以工作：</p><pre tabindex=0><code>- serverless:
+    service_path: &#39;{{ project_dir }}&#39;
+    stage: dev
+  register: sls
+- name: Serverless uses CloudFormation under the hood, so you can easily pull info back into Ansible
+  cloudformation_facts:
+    stack_name: &#34;{{ sls.service_name }}&#34;
+  register: sls_facts
+</code></pre><p>这不是你需要的全部，因为无服务项目也必须存在，你将在那里大量的定义你的函数和事件源。对于此例，我们将制作一个响应 HTTP 请求的函数。无服务框架使用 YAML 作为其配置语言（和 Ansible 一样），所以这应该看起来很熟悉。</p><pre tabindex=0><code># serverless.yml
+service: fakeservice
+
+provider:
+  name: aws
+  runtime: python3.6
+
+functions:
+  main:
+    handler: test_function.handler
+    events:
+      - http:
+          path: /
+          method: get
+</code></pre><p>在 <a href="https://www.ansible.com/ansiblefest?intcmp=701f2000000h4RcAAI">AnsibleFest</a> 中，我将介绍这个例子和其他深入的部署策略，以最大限度地利用你已经拥有的 playbook 和基础设施，还有新的无服务实践。无论你是否能到，我希望这些例子可以让你开始使用 Ansible，无论你是否有任何服务要管理。</p><p><em>AnsibleFest 是一个单日会议，汇集了数百名 Ansible 用户、开发人员和行业合作伙伴。加入我们吧，这里有产品更新、鼓舞人心的交谈、技术深度潜水，动手演示和整天的网络。</em></p><p>（题图： opensource.com）</p><hr><p>via: <a href=https://opensource.com/article/17/8/ansible-serverless-applications>https://opensource.com/article/17/8/ansible-serverless-applications</a></p><p>作者：<a href=https://opensource.com/users/ryansb>Ryan Scott Brown</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/serverless/ rel=tag>serverless</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%97%A0%E6%9C%8D%E5%8A%A1/ rel=tag>无服务</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ansible/ rel=tag>Ansible</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

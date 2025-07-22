@@ -1,0 +1,125 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Buildah 入门 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Buildah 入门"><meta property="og:description" content="Buildah 提供一种灵活、可脚本编程的方式，来使用你熟悉的工具创建精简、高效的容器镜像。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9836-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-07-13T23:33:32+00:00"><meta property="article:modified_time" content="2018-07-13T23:33:32+00:00"><meta itemprop=name content="Buildah 入门"><meta itemprop=description content="Buildah 提供一种灵活、可脚本编程的方式，来使用你熟悉的工具创建精简、高效的容器镜像。"><meta itemprop=datePublished content="2018-07-13T23:33:32+00:00"><meta itemprop=dateModified content="2018-07-13T23:33:32+00:00"><meta itemprop=wordCount content="748"><meta itemprop=keywords content="Buildah,容器,Docker,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Buildah 入门</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-07-13T23:33:32Z>July 13, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>Buildah 提供一种灵活、可脚本编程的方式，来使用你熟悉的工具创建精简、高效的容器镜像。</p></blockquote><p><img src=/data/attachment/album/201807/13/233303ah3m26y2bsnb2rk2.jpg alt></p><p><a href=https://github.com/projectatomic/buildah>Buildah</a> 是一个命令行工具，可以方便、快捷的构建与 开放容器标准 Open Container Initiative （OCI）兼容的容器镜像，这意味着其构建的镜像与 Docker 和 Kubernetes 兼容。该工具可作为 Docker 守护进程 <code>docker build</code> 命令（即使用传统的 Dockerfile 构建镜像）的一种 简单 drop-in 替换，而且更加灵活，允许构建镜像时使用你擅长的工具。Buildah 可以轻松与脚本集成并生成 流水线 pipeline ，最好之处在于构建镜像不再需要运行容器守护进程（LCTT 译注：这里主要是指 Docker 守护进程）。</p><h3 id=docker-build-的简单替换>docker build 的简单替换</h3><p>目前你可能使用 Dockerfile 和 <code>docker build</code> 命令构建镜像，那么你可以马上使用 Buildah 进行替代。Buildah 的 <code>build-using-dockerfile</code> （或 <code>bud</code>）子命令与 <code>docker build</code> 基本等价，因此可以轻松的与已有脚本结合或构建流水线。</p><p>类似我的上一篇关于 Buildah 的<a href=http://chris.collins.is/2017/08/17/buildah-a-new-way-to-build-container-images/>文章</a>，我也将以使用源码安装 “GNU Hello” 为例进行说明，对应的 Dockerfile 文件如下：</p><pre tabindex=0><code>FROM fedora:28
+LABEL maintainer Chris Collins &lt;collins.christopher@gmail.com&gt;
+
+RUN dnf install -y tar gzip gcc make \
+        &amp;&amp; dnf clean all
+
+ADD http://ftpmirror.gnu.org/hello/hello-2.10.tar.gz /tmp/hello-2.10.tar.gz
+
+RUN tar xvzf /tmp/hello-2.10.tar.gz -C /opt
+
+WORKDIR /opt/hello-2.10
+
+RUN ./configure
+RUN make
+RUN make install
+RUN hello -v
+ENTRYPOINT &#34;/usr/local/bin/hello&#34;
+</code></pre><p>使用 Buildah 从 Dockerfile 构建镜像也很简单，使用 <code>buildah bud -t hello .</code> 替换 <code>docker build -t hello .</code> 即可：</p><pre tabindex=0><code>[chris@krang] $ sudo buildah bud -t hello .
+STEP 1: FROM fedora:28
+Getting image source signatures
+Copying blob sha256:e06fd16225608e5b92ebe226185edb7422c3f581755deadf1312c6b14041fe73
+ 81.48 MiB / 81.48 MiB [====================================================] 8s
+Copying config sha256:30190780b56e33521971b0213810005a69051d720b73154c6e473c1a07ebd609
+ 2.29 KiB / 2.29 KiB [======================================================] 0s
+Writing manifest to image destination
+Storing signatures
+STEP 2: LABEL maintainer Chris Collins &lt;collins.christopher@gmail.com&gt;
+STEP 3: RUN dnf install -y tar gzip gcc make    &amp;&amp; dnf clean all
+
+&lt;考虑篇幅，略去后续输出&gt;
+</code></pre><p>镜像构建完毕后，可以使用 <code>buildah images</code> 命令查看这个新镜像：</p><pre tabindex=0><code>[chris@krang] $ sudo buildah images
+IMAGE ID        IMAGE NAME                              CREATED AT              SIZE
+30190780b56e    docker.io/library/fedora:28             Mar 7, 2018 16:53       247 MB
+6d54bef73e63    docker.io/library/hello:latest    May 3, 2018 15:24     391.8 MB
+</code></pre><p>新镜像的标签为 <code>hello:latest</code>，我们可以将其推送至远程镜像仓库，可以使用 <a href=http://cri-o.io/>CRI-O</a> 或其它 Kubernetes CRI 兼容的运行时来运行该镜像，也可以推送到远程仓库。如果你要测试对 Docker build 命令的替代性，你可以将镜像拷贝至 docker 守护进程的本地镜像存储中，这样 Docker 也可以使用该镜像。使用 <code>buildah push</code> 可以很容易的完成推送操作：</p><pre tabindex=0><code>[chris@krang] $ sudo buildah push hello:latest docker-daemon:hello:latest
+Getting image source signatures
+Copying blob sha256:72fcdba8cff9f105a61370d930d7f184702eeea634ac986da0105d8422a17028
+ 247.02 MiB / 247.02 MiB [==================================================] 2s
+Copying blob sha256:e567905cf805891b514af250400cc75db3cb47d61219750e0db047c5308bd916
+ 144.75 MiB / 144.75 MiB [==================================================] 1s
+Copying config sha256:6d54bef73e638f2e2dd8b7bf1c4dfa26e7ed1188f1113ee787893e23151ff3ff
+ 1.59 KiB / 1.59 KiB [======================================================] 0s
+Writing manifest to image destination
+Storing signatures
+
+[chris@krang] $ sudo docker images | head -n2
+REPOSITORY              TAG             IMAGE ID        CREATED                 SIZE
+docker.io/hello      latest       6d54bef73e63  2 minutes ago   398 MB
+
+[chris@krang] $ sudo docker run -t hello:latest
+Hello, world!
+</code></pre><h3 id=若干差异>若干差异</h3><p>与 Docker build 不同，Buildah 不会自动的将 Dockerfile 中的每条指令产生的变更提到新的 分层 layer 中，只是简单的每次从头到尾执行构建。类似于 自动化 automation 和 流水线构建 build pipeline ，这种 无缓存构建 non-cached 方式的好处是可以提高构建速度，在指令较多时尤为明显。从 自动部署 automated deployment 或 持续交付 continuous delivery 的视角来看，使用这种方式可以快速的将新变更落实到生产环境中。</p><p>但从实际角度出发，缓存机制的缺乏对镜像开发不利，毕竟缓存层可以避免一遍遍的执行构建，从而显著的节省时间。自动分层只在 <code>build-using-dockerfile</code> 命令中生效。但我们在下面会看到，Buildah 原生命令允许我们选择将变更提交到硬盘的时间，提高了开发的灵活性。</p><h3 id=buildah-原生命令>Buildah 原生命令</h3><p>Buildah <em>真正</em> 有趣之处在于它的原生命令，你可以在容器构建过程中使用这些命令进行交互。相比与使用 <code>build-using-dockerfile/bud</code> 命令执行每次构建，Buildah 提供命令让你可以与构建过程中的临时容器进行交互。（Docker 也使用临时或 中间 intermediate 容器，但你无法在镜像构建过程中与其交互。）</p><p>还是使用 “GNU Hello” 为例，考虑使用如下 Buildah 命令构建的镜像：</p><pre tabindex=0><code>#!/usr/bin/env bash
+
+set -o errexit
+
+# Create a container
+container=$(buildah from fedora:28)
+
+# Labels are part of the &#34;buildah config&#34; command
+buildah config --label maintainer=&#34;Chris Collins &lt;collins.christopher@gmail.com&gt;&#34; $container
+
+# Grab the source code outside of the container
+curl -sSL http://ftpmirror.gnu.org/hello/hello-2.10.tar.gz -o hello-2.10.tar.gz
+
+buildah copy $container hello-2.10.tar.gz /tmp/hello-2.10.tar.gz
+
+buildah run $container dnf install -y tar gzip gcc make
+buildah run $container dnf clean all
+buildah run $container tar xvzf /tmp/hello-2.10.tar.gz -C /opt
+
+# Workingdir is also a &#34;buildah config&#34; command
+buildah config --workingdir /opt/hello-2.10 $container
+
+buildah run $container ./configure
+buildah run $container make
+buildah run $container make install
+buildah run $container hello -v
+
+# Entrypoint, too, is a “buildah config” command
+buildah config --entrypoint /usr/local/bin/hello $container
+
+# Finally saves the running container to an image
+buildah commit --format docker $container hello:latest
+</code></pre><p>我们可以一眼看出这是一个 Bash 脚本而不是 Dockerfile。基于 Buildah 的原生命令，可以轻易的使用任何脚本语言或你擅长的自动化工具编写脚本。形式可以是 makefile、Python 脚本或其它你擅长的类型。</p><p>这个脚本做了哪些工作呢？首先，Buildah 命令 <code>container=$(buildah from fedora:28)</code> 基于 fedora:28 镜像创建了一个正在运行的容器，将容器名（<code>buildah from</code> 命令的返回值）保存到变量中，便于后续使用。后续所有命令都是有 <code>$container</code> 变量指明需要操作的容器。这些命令的功能大多可以从名称看出：<code>buildah copy</code> 将文件拷贝至容器，<code>buildah run</code> 会在容器中执行命令。可以很容易的将上述命令与 Dockerfile 中的指令对应起来。</p><p>最后一条命令 <code>buildah commit</code> 将容器提交到硬盘上的镜像中。当不使用 Dockerfile 而是使用 Buildah 命令构建镜像时，你可以使用 <code>commit</code> 命令决定何时保存变更。在上例中，所有的变更是一起提交的；但也可以增加中间提交，让你可以选择作为起点的 缓存点 cache point 。（例如，执行完 <code>dnf install</code> 命令后将变更缓存到硬盘是特别有意义的，一方面因为该操作耗时较长，另一方面每次执行的结果也确实相同。）</p><h3 id=挂载点安装目录以及-chroot>挂载点，安装目录以及 chroot</h3><p>另一个可以大大增加构建镜像灵活性的 Buildah 命令是 <code>buildah mount</code>，可以将容器的根目录挂载到你主机的一个挂载点上。例如：</p><pre tabindex=0><code>[chris@krang] $ container=$(sudo buildah from fedora:28)
+[chris@krang] $ mountpoint=$(sudo buildah mount ${container})
+[chris@krang] $ echo $mountpoint
+/var/lib/containers/storage/overlay2/463eda71ec74713d8cebbe41ee07da5f6df41c636f65139a7bd17b24a0e845e3/merged
+[chris@krang] $ cat ${mountpoint}/etc/redhat-release
+Fedora release 28 (Twenty Eight)
+[chris@krang] $ ls ${mountpoint}
+bin   dev  home  lib64          media  opt   root  sbin  sys  usr
+boot  etc  lib   lost+found  mnt        proc  run   srv   tmp  var
+</code></pre><p>这太棒了，你可以通过与挂载点交互对容器镜像进行修改。这允许你使用主机上的工具进行构建和安装软件，不用将这些构建工具打包到容器镜像本身中。例如，在我们上面的 Bash 脚本中，我们需要安装 tar、Gzip、GCC 和 make，在容器内编译 “GNU Hello”。如果使用挂载点，我仍使用同样的工具进行构建，但下载的压缩包和 tar、Gzip 等 RPM 包都在主机而不是容器和生成的镜像内：</p><pre tabindex=0><code>#!/usr/bin/env bash
+
+set -o errexit
+
+# Create a container
+container=$(buildah from fedora:28)
+mountpoint=$(buildah mount $container)
+
+buildah config --label maintainer=&#34;Chris Collins &lt;collins.christopher@gmail.com&gt;&#34; $container
+
+curl -sSL http://ftpmirror.gnu.org/hello/hello-2.10.tar.gz \
+     -o /tmp/hello-2.10.tar.gz
+tar xvzf src/hello-2.10.tar.gz -C ${mountpoint}/opt
+
+pushd ${mountpoint}/opt/hello-2.10
+./configure
+make
+make install DESTDIR=${mountpoint}
+popd
+
+chroot $mountpoint bash -c &#34;/usr/local/bin/hello -v&#34;
+
+buildah config --entrypoint &#34;/usr/local/bin/hello&#34; $container
+buildah commit --format docker $container hello
+buildah unmount $container
+</code></pre><p>在上述脚本中，需要提到如下几点：</p><ol><li><code>curl</code> 命令将压缩包下载到主机中，而不是镜像中；</li><li>（主机中的） <code>tar</code> 命令将压缩包中的源代码解压到容器的 <code>/opt</code> 目录；</li><li><code>configure</code>，<code>make</code> 和 <code>make install</code> 命令都在主机的挂载点目录中执行，而不是在容器内；</li><li>这里的 <code>chroot</code> 命令用于将挂载点本身当作根路径并测试 &ldquo;hello&rdquo; 是否正常工作；类似于前面例子中用到的 <code>buildah run</code> 命令。</li></ol><p>这个脚本更加短小，使用大多数 Linux 爱好者都很熟悉的工具，最后生成的镜像也更小（没有 tar 包，没有额外的软件包等）。你甚至可以使用主机系统上的包管理器为容器安装软件。例如，（出于某种原因）你希望安装 GNU Hello 的同时在容器中安装 <a href=https://www.nginx.com/>NGINX</a>：</p><pre tabindex=0><code>[chris@krang] $ mountpoint=$(sudo buildah mount ${container})
+[chris@krang] $ sudo dnf install nginx --installroot $mountpoint
+[chris@krang] $ sudo chroot $mountpoint nginx -v
+nginx version: nginx/1.12.1
+</code></pre><p>在上面的例子中，DNF 使用 <code>--installroot</code> 参数将 NGINX 安装到容器中，可以通过 chroot 进行校验。</p><h3 id=快来试试吧>快来试试吧！</h3><p>Buildah 是一种轻量级、灵活的容器镜像构建方法，不需要在主机上运行完整的 Docker 守护进程。除了提供基于 Dockerfile 构建容器的开箱即用支持，Buildah 还可以很容易的与脚本或你喜欢的构建工具相结合，特别是可以使用主机上已有的工具构建容器镜像。Buildah 生成的容器体积更小，更便于网络传输，占用更小的存储空间，而且潜在的受攻击面更小。快来试试吧！</p><p><strong>[阅读相关的故事，<a href=/article-9719-1.html>使用 Buildah 创建小体积的容器</a>]</strong></p><hr><p>via: <a href=https://opensource.com/article/18/6/getting-started-buildah>https://opensource.com/article/18/6/getting-started-buildah</a></p><p>作者：<a href=https://opensource.com/users/clcollins>Chris Collins</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/pinewall>pinewall</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/buildah/ rel=tag>Buildah</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%B9%E5%99%A8/ rel=tag>容器</a></li><li class=tags__item><a class="tags__link btn" href=/tags/docker/ rel=tag>Docker</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

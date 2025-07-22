@@ -1,0 +1,74 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>高效使用 Org 模式 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="高效使用 Org 模式"><meta property="og:description" content="在我 前一篇关于 Emacs 的文章中 我提到了 Org 模式（Org-mode），这是一个笔记管理工具和组织工具。本文中，我将会描述一下我日常的 Org 模式使用案例。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10634-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-03-19T18:10:00+00:00"><meta property="article:modified_time" content="2019-03-19T18:10:00+00:00"><meta itemprop=name content="高效使用 Org 模式"><meta itemprop=description content="在我 前一篇关于 Emacs 的文章中 我提到了 Org 模式（Org-mode），这是一个笔记管理工具和组织工具。本文中，我将会描述一下我日常的 Org 模式使用案例。"><meta itemprop=datePublished content="2019-03-19T18:10:00+00:00"><meta itemprop=dateModified content="2019-03-19T18:10:00+00:00"><meta itemprop=wordCount content="414"><meta itemprop=keywords content="Org模式,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>高效使用 Org 模式</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-03-19T18:10:00Z>March 19, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201903/19/181033i6pi9imlnvgzzlml.jpg alt></p><h3 id=简介>简介</h3><p>在我 <a href=http://www.badykov.com/emacs/2018/07/31/why-emacs-is-a-great-editor/>前一篇关于 Emacs 的文章中</a> 我提到了 Org 模式 Org-mode ，这是一个笔记管理工具和组织工具。本文中，我将会描述一下我日常的 Org 模式使用案例。</p><h3 id=笔记和代办列表>笔记和代办列表</h3><p>首先而且最重要的是，Org 模式是一个管理笔记和待办列表的工具，Org 模式的所有工具都聚焦于使用纯文本文件记录笔记。我使用 Org 模式管理多种笔记。</p><h4 id=一般性笔记>一般性笔记</h4><p>Org 模式最基本的应用场景就是以笔记的形式记录下你想记住的事情。比如，下面是我正在学习的笔记内容：</p><pre tabindex=0><code>* Learn
+** Emacs LISP
+*** Plan
+
+   - [ ] Read best practices
+   - [ ] Finish reading Emacs Manual
+   - [ ] Finish Exercism Exercises
+   - [ ] Write a couple of simple plugins
+     - Notification plugin
+
+*** Resources
+
+   https://www.gnu.org/software/emacs/manual/html_node/elisp/index.html
+   http://exercism.io/languages/elisp/about
+   [[http://batsov.com/articles/2011/11/30/the-ultimate-collection-of-emacs-resources/][The Ultimate Collection of Emacs Resources]]
+
+** Rust gamedev
+*** Study [[https://github.com/SergiusIW/gate][gate]] 2d game engine with web assembly support
+*** [[ggez][https://github.com/ggez/ggez]]
+*** [[https://www.amethyst.rs/blog/release-0-8/][Amethyst 0.8 Relesed]]
+
+** Upgrade Elixir/Erlang Skills
+*** Read Erlang in Anger
+</code></pre><p>借助 <a href=https://github.com/sabof/org-bullets>org-bullets</a> 它看起来是这样的：</p><p><img src=/data/attachment/album/201903/19/181143pzj9k7jfj9j25m22.png alt></p><p>在这个简单的例子中，你能看到 Org 模式的一些功能：</p><ul><li>笔记允许嵌套</li><li>链接</li><li>带复选框的列表</li></ul><h4 id=项目待办>项目待办</h4><p>我在工作时时常会发现一些能够改进或修复的事情。我并不会在代码文件中留下 TODO 注释 (坏味道)，相反我使用 <a href=https://github.com/IvanMalison/org-projectile>org-projectile</a> 来在另一个文件中记录一个 TODO 事项，并留下一个快捷方式。下面是一个该文件的例子：</p><pre tabindex=0><code>* [[elisp:(org-projectile-open-project%20&#34;mana&#34;)][mana]] [3/9]
+  :PROPERTIES:
+  :CATEGORY: mana
+  :END:
+** DONE [[file:~/Development/mana/apps/blockchain/lib/blockchain/contract/create_contract.ex::insufficient_gas_before_homestead%20=][fix this check using evm.configuration]]
+   CLOSED: [2018-08-08 Ср 09:14]
+  [[https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2.md][eip2]]:
+  If contract creation does not have enough gas to pay for the final gas fee for
+  adding the contract code to the state, the contract creation fails (i.e. goes out-of-gas)
+  rather than leaving an empty contract.
+** DONE Upgrade Elixir to 1.7.
+   CLOSED: [2018-08-08 Ср 09:14]
+** TODO [#A] Difficulty tests
+** TODO [#C] Upgrage to OTP 21
+** DONE [#A] EIP150
+   CLOSED: [2018-08-14 Вт 21:25]
+*** DONE operation cost changes
+    CLOSED: [2018-08-08 Ср 20:31]
+*** DONE 1/64th for a call and create
+    CLOSED: [2018-08-14 Вт 21:25]
+** TODO [#C] Refactor interfaces
+** TODO [#B] Caching for storage during execution
+** TODO [#B] Removing old merkle trees
+** TODO do not calculate cost twice
+* [[elisp:(org-projectile-open-project%20&#34;.emacs.d&#34;)][.emacs.d]] [1/3]
+  :PROPERTIES:
+  :CATEGORY: .emacs.d
+  :END:
+** TODO fix flycheck issues (emacs config)
+** TODO use-package for fetching dependencies
+** DONE clean configuration
+   CLOSED: [2018-08-26 Вс 11:48]
+</code></pre><p>它看起来是这样的：</p><p><img src=/data/attachment/album/201903/19/181203uua4c8agox482w8p.png alt></p><p>本例中你能看到更多的 Org 模式的功能：</p><ul><li>代办列表具有 <code>TODO</code>、<code>DONE</code> 两个状态。你还可以定义自己的状态 (<code>WAITING</code> 等)</li><li>关闭的事项有 <code>CLOSED</code> 时间戳</li><li>有些事项有优先级 - A、B、C</li><li>链接可以指向文件内部 (<code>[[file:~/。..]</code>)</li></ul><h4 id=捕获模板>捕获模板</h4><p>正如 Org 模式的文档中所描述的，捕获可以在不怎么干扰你工作流的情况下让你快速存储笔记。</p><p>我配置了许多捕获模板，可以帮我快速记录想要记住的事情。</p><pre tabindex=0><code>  (setq org-capture-templates
+        &#39;((&#34;t&#34; &#34;Todo&#34; entry (file+headline &#34;~/Dropbox/org/todo.org&#34; &#34;Todo soon&#34;)
+           &#34;* TODO %? \n  %^t&#34;)
+          (&#34;i&#34; &#34;Idea&#34; entry (file+headline &#34;~/Dropbox/org/ideas.org&#34; &#34;Ideas&#34;)
+           &#34;* %? \n %U&#34;)
+          (&#34;e&#34; &#34;Tweak&#34; entry (file+headline &#34;~/Dropbox/org/tweaks.org&#34; &#34;Tweaks&#34;)
+           &#34;* %? \n %U&#34;)
+          (&#34;l&#34; &#34;Learn&#34; entry (file+headline &#34;~/Dropbox/org/learn.org&#34; &#34;Learn&#34;)
+           &#34;* %? \n&#34;)
+          (&#34;w&#34; &#34;Work note&#34; entry (file+headline &#34;~/Dropbox/org/work.org&#34; &#34;Work&#34;)
+           &#34;* %? \n&#34;)
+          (&#34;m&#34; &#34;Check movie&#34; entry (file+headline &#34;~/Dropbox/org/check.org&#34; &#34;Movies&#34;)
+           &#34;* %? %^g&#34;)
+          (&#34;n&#34; &#34;Check book&#34; entry (file+headline &#34;~/Dropbox/org/check.org&#34; &#34;Books&#34;)
+           &#34;* %^{book name} by %^{author} %^g&#34;)))
+</code></pre><p>做书本记录时我需要记下它的名字和作者，做电影记录时我需要记下标签，等等。</p><h3 id=规划>规划</h3><p>Org 模式的另一个超棒的功能是你可以用它来作日常规划。让我们来看一个例子：</p><p><img src=/data/attachment/album/201903/19/181226wf39ogos679tzp70.png alt></p><p>我没有挖空心思虚构一个例子，这就是我现在真实文件的样子。它看起来内容并不多，但它有助于你花时间在在重要的事情上并且帮你对抗拖延症。</p><h4 id=习惯>习惯</h4><p>根据 Org 模式的文档，Org 能够跟踪一种特殊的代办事情，称为 “习惯”。当我想养成新的习惯时，我会将该功能与日常规划功能一起连用：</p><p><img src=/data/attachment/album/201903/19/181247idgdwd006blmwm6a.png alt></p><p>你可以看到，目前我在尝试每天早期并且每两天锻炼一次。另外，它也有助于让我每天阅读书籍。</p><h4 id=议事日程视图>议事日程视图</h4><p>最后，我还使用议事日程视图功能。待办事项可能分散在不同文件中(比如我就是日常规划和习惯分散在不同文件中)，议事日程视图可以提供所有待办事项的总览：</p><p><img src=/data/attachment/album/201903/19/181310y999x3xozxxztx7b.png alt></p><h3 id=更多-org-模式的功能>更多 Org 模式的功能</h3><ul><li>手机应用（<a href="https://play.google.com/store/apps/details%EF%BC%9Fid=com.orgzly&amp;hl=en">Android</a>、<a href=https://itunes.apple.com/app/id1238649962%5D>ios</a>）</li><li><a href=https://orgmode.org/manual/Exporting.html>将 Org 模式文档导出为其他格式</a>（html、markdown、pdf、latex 等）</li><li>使用 <a href=https://github.com/ledger/ledger-mode>ledger</a> <a href=https://orgmode.org/worg/org-tutorials/weaving-a-budget.html>追踪财务状况</a></li></ul><h3 id=总结>总结</h3><p>本文我描述了 Org 模式广泛功能中的一小部分，我每天都用它来提高工作效率，把时间花在重要的事情上。</p><hr><p>via: <a href=https://www.badykov.com/emacs/2018/08/26/be-productive-with-org-mode/>https://www.badykov.com/emacs/2018/08/26/be-productive-with-org-mode/</a></p><p>作者：<a href=https://www.badykov.com>Ayrat Badykov</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/lujun9972>lujun9972</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/org%E6%A8%A1%E5%BC%8F/ rel=tag>Org模式</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

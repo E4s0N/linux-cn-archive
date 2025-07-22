@@ -1,0 +1,43 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 HTTP/2 服务端推送技术加速 Node.js 应用 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 HTTP/2 服务端推送技术加速 Node.js 应用"><meta property="og:description" content="四月份，Cloudflare 宣布了对 HTTP/2 服务端推送技术的支持，他们是通过 HTTP 的 Link 头部来实现这项支持的。"><meta property="og:type" content="article"><meta property="og:url" content="/article-7770-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-09-14T14:28:00+00:00"><meta property="article:modified_time" content="2016-09-14T14:28:00+00:00"><meta itemprop=name content="使用 HTTP/2 服务端推送技术加速 Node.js 应用"><meta itemprop=description content="四月份，Cloudflare 宣布了对 HTTP/2 服务端推送技术的支持，他们是通过 HTTP 的 Link 头部来实现这项支持的。"><meta itemprop=datePublished content="2016-09-14T14:28:00+00:00"><meta itemprop=dateModified content="2016-09-14T14:28:00+00:00"><meta itemprop=wordCount content="217"><meta itemprop=keywords content="netjet,服务器推送,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 HTTP/2 服务端推送技术加速 Node.js 应用</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-09-14T14:28:00Z>September 14, 2016</time></div></div></header><div class="content post__content clearfix"><p>四月份，我们宣布了对 <a href=https://www.cloudflare.com/http2/server-push/>HTTP/2 服务端推送技术</a>的支持，我们是通过 HTTP 的 <a href=https://www.w3.org/wiki/LinkHeader>Link 头部</a>来实现这项支持的。我的同事 John 曾经通过一个例子演示了<a href=https://blog.cloudflare.com/using-http-2-server-push-with-php/>在 PHP 里支持服务端推送功能</a>是多么的简单。</p><p><img src=/data/attachment/album/201609/14/142937id3ze66x6eqd6j63.jpg alt></p><p>我们想让现今使用 Node.js 构建的网站能够更加轻松的获得性能提升。为此，我们开发了 <a href=https://www.npmjs.com/package/netjet>netjet</a> 中间件，它可以解析应用生成的 HTML 并自动添加 Link 头部。当在一个示例的 Express 应用中使用这个中间件时，我们可以看到应用程序的输出多了如下 HTTP 头：</p><p><img src=/data/attachment/album/201609/14/142907thea5xd18s8ot8xo.png alt></p><p><a href=https://blog.cloudflare.com/accelerating-node-js-applications-with-http-2-server-push/>本博客</a>是使用 <a href=https://ghost.org/>Ghost</a>（LCTT 译注：一个博客发布平台）进行发布的，因此如果你的浏览器支持 HTTP/2，你已经在不知不觉中享受了服务端推送技术带来的好处了。接下来，我们将进行更详细的说明。</p><p>netjet 使用了带有定制插件的 <a href=https://github.com/posthtml/posthtml>PostHTML</a> 来解析 HTML。目前，netjet 用它来查找图片、脚本和外部 CSS 样式表。你也可以用其它的技术来实现这个。</p><p>在响应过程中增加 HTML 解析器有个明显的缺点：这将增加页面加载的延时（到加载第一个字节所花的时间)。大多数情况下，所新增的延时被应用里的其他耗时掩盖掉了，比如数据库访问。为了解决这个问题，netjet 包含了一个可调节的 LRU 缓存，该缓存以 HTTP 的 ETag 头部作为索引，这使得 netjet 可以非常快的为已经解析过的页面插入 Link 头部。</p><p>不过，如果我们现在从头设计一款全新的应用，我们就应该考虑把页面内容和页面中的元数据分开存放，从而整体地减少 HTML 解析和其它可能增加的延时了。</p><p>任意的 Node.js HTML 框架，只要它支持类似 Express 这样的中间件，netjet 都是能够兼容的。只要把 netjet 像下面这样加到中间件加载链里就可以了。</p><pre tabindex=0><code>var express = require(&#39;express&#39;);
+var netjet = require(&#39;netjet&#39;);
+var root = &#39;/path/to/static/folder&#39;;
+
+express()
+  .use(netjet({
+    cache: {
+      max: 100
+    }
+  }))
+  .use(express.static(root))
+  .listen(1337);
+</code></pre><p>稍微加点代码，netjet 也可以摆脱 HTML 框架，独立工作：</p><pre tabindex=0><code>var http = require(&#39;http&#39;);
+var netjet = require(&#39;netjet&#39;);
+
+var port = 1337;
+var hostname = &#39;localhost&#39;;
+var preload = netjet({
+  cache: {
+    max: 100
+  }
+});
+
+var server = http.createServer(function (req, res) {
+  preload(req, res, function () {
+      res.statusCode = 200;
+      res.setHeader(&#39;Content-Type&#39;, &#39;text/html&#39;);
+      res.end(&#39;&lt;!doctype html&gt;&lt;h1&gt;Hello World&lt;/h1&gt;&#39;);
+  });
+});
+
+server.listen(port, hostname, function () {
+  console.log(&#39;Server running at http://&#39; + hostname + &#39;:&#39; + port+ &#39;/&#39;);
+});
+</code></pre><p><a href=https://www.npmjs.com/package/netjet>netjet 文档里</a>有更多选项的信息。</p><h3 id=查看推送了什么数据>查看推送了什么数据</h3><p><img src=/data/attachment/album/201609/14/142909eebxdjlvb8pvz3vg.png alt></p><p>访问<a href=https://blog.cloudflare.com/accelerating-node-js-applications-with-http-2-server-push/>本文</a>时，通过 Chrome 的开发者工具，我们可以轻松的验证网站是否正在使用服务器推送技术（LCTT 译注： Chrome 版本至少为 53）。在“Network”选项卡中，我们可以看到有些资源的“Initiator”这一列中包含了<code>Push</code>字样，这些资源就是服务器端推送的。</p><p>不过，目前 Firefox 的开发者工具还不能直观的展示被推送的资源。不过我们可以通过页面响应头部里的<code>cf-h2-pushed</code>头部看到一个列表，这个列表包含了本页面主动推送给浏览器的资源。</p><p>希望大家能够踊跃为 netjet 添砖加瓦，我也乐于看到有人正在使用 netjet。</p><h3 id=ghost-和服务端推送技术>Ghost 和服务端推送技术</h3><p>Ghost 真是包罗万象。在 Ghost 团队的帮助下，我把 netjet 也集成到里面了，而且作为测试版内容可以在 Ghost 的 0.8.0 版本中用上它。</p><p>如果你正在使用 Ghost，你可以通过修改 config.js、并在<code>production</code>配置块中增加 <code>preloadHeaders</code> 选项来启用服务端推送。</p><pre tabindex=0><code>production: {
+  url: &#39;https://my-ghost-blog.com&#39;,
+  preloadHeaders: 100,
+  // ...
+}
+</code></pre><p>Ghost 已经为其用户整理了<a href=http://support.ghost.org/preload-headers/>一篇支持文档</a>。</p><h3 id=总结>总结</h3><p>使用 netjet，你的 Node.js 应用也可以使用浏览器预加载技术。并且 <a href=https://blog.cloudflare.com/accelerating-node-js-applications-with-http-2-server-push/>CloudFlare</a> 已经使用它在提供了 HTTP/2 服务端推送了。</p><hr><p>via: <a href=https://blog.cloudflare.com/accelerating-node-js-applications-with-http-2-server-push/>https://blog.cloudflare.com/accelerating-node-js-applications-with-http-2-server-push/</a></p><p>作者：<a href=https://blog.cloudflare.com/author/terin-stock/>Terin Stock</a> 译者：<a href=https://github.com/echoma>echoma</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/netjet/ rel=tag>netjet</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8E%A8%E9%80%81/ rel=tag>服务器推送</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

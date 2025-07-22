@@ -1,0 +1,191 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用开源库 GObject 和 libsoup 提升 C 语言编程能力 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用开源库 GObject 和 libsoup 提升 C 语言编程能力"><meta property="og:description" content="开源库 GObject 和 libsoup 做了很多工作，因此你可以专注于使用 C 语言开发神奇的应用。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15065-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-09-24T14:52:20+00:00"><meta property="article:modified_time" content="2022-09-24T14:52:20+00:00"><meta itemprop=name content="使用开源库 GObject 和 libsoup 提升 C 语言编程能力"><meta itemprop=description content="开源库 GObject 和 libsoup 做了很多工作，因此你可以专注于使用 C 语言开发神奇的应用。"><meta itemprop=datePublished content="2022-09-24T14:52:20+00:00"><meta itemprop=dateModified content="2022-09-24T14:52:20+00:00"><meta itemprop=wordCount content="475"><meta itemprop=keywords content="GObject,libsoup,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用开源库 GObject 和 libsoup 提升 C 语言编程能力</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-09-24T14:52:20Z>September 24, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202209/24/145218s1s1xk6s1mm2kg1x.jpg alt></p><blockquote><p>开源库 GObject 和 libsoup 做了很多工作，因此你可以专注于使用 C 语言开发神奇的应用。</p></blockquote><p>GLib 对象系统 Object System （GObject）是一个为 C 语言提供灵活且可扩展的面向对象框架的库。在这篇文章中，我将使用该库的 2.4 版本进行演示。</p><p>GObject 库继承了 ANSI C 标准，拥有一些常见的数据类型，例如：</p><ul><li><code>gchar</code>：字符型</li><li><code>guchar</code>：无符号字符型</li><li><code>gunichar</code>：32 位定宽 Unicode 字符型</li><li><code>gboolean</code>：布尔型</li><li><code>gint8</code>、<code>gint16</code>、<code>gint32</code>、<code>gint64</code>：有符号 8、16、32 和 64 位整数</li><li><code>guint8</code>、<code>guint16</code>、<code>guint32</code>、<code>guint64</code>：无符号 8、16、32 和 64 位整数</li><li><code>gfloat</code>：IEEE 754 标准单精度浮点数</li><li><code>gdouble</code>：IEEE 754 标准双精度浮点数</li><li><code>gpointer</code>：泛指针</li></ul><h3 id=函数指针>函数指针</h3><p>GObject 库还引入了类和接口的类型和对象体系。之所以可以，是因为 ANSI C 语言可以理解函数指针。</p><p>你可以这样做来声明函数指针：</p><pre tabindex=0><code>void (*my_callback)(gpointer data);
+</code></pre><p>首先，你需要给变量 <code>my_callback</code> 赋值：</p><pre tabindex=0><code>void my_callback_func(gpointer data)
+{
+  //do something
+}
+
+my_callback = my_callback_func;
+</code></pre><p>函数指针 <code>my_callback</code> 可以这样来调用：</p><pre tabindex=0><code>gpointer data;
+data = g_malloc(512 * sizeof(gint16));
+my_callback(data);
+</code></pre><h3 id=对象类>对象类</h3><p><code>GObject</code> 基类由 2 个结构（<code>GObject</code> 和 <code>GObjectClass</code>）组成，你可以继承它们以实现你自己的对象。</p><p>你需要在结构体中先嵌入 <code>GObject</code> 和 <code>GObjectClass</code>：</p><pre tabindex=0><code>struct _MyObject
+{
+  GObject gobject;
+  //your fields
+};
+
+struct _MyObjectClass
+{
+  GObjectClass gobject;
+  //your class methods
+};
+
+GType my_object_get_type(void);
+</code></pre><p>对象的实现包含了公有成员。GObject 也提供了私有成员的方法。这实际上是 C 源文件中的一个结构，而不是在头文件。该类通常只包含函数指针。</p><p>一个接口不能派生自另一个接口，比如：</p><pre tabindex=0><code>struct _MyInterface
+{
+  GInterface ginterface;
+  //your interface methods
+};
+</code></pre><p>通过调用 <code>g_object_get()</code> 和 <code>g_object_set()</code> 函数来访问属性。若要获取属性，你必须提供特定类型的返回位置。建议先初始化返回位置：</p><pre tabindex=0><code>gchar *str
+
+str = NULL;
+
+g_object_get(gobject,
+  &#34;my-name&#34;, &amp;str,
+  NULL);
+</code></pre><p>或者你想要设置属性：</p><pre tabindex=0><code>g_object_set(gobject,
+  &#34;my-name&#34;, &#34;Anderson&#34;,
+  NULL);
+</code></pre><h3 id=libsoup-http-库>libsoup HTTP 库</h3><p><code>libsoup</code> 项目为 GNOME 提供了 HTTP 客服端和服务端使用的库。它使用 GObjects 和 glib 主循环与集成到 GNOME 应用，并且还具有用于命令行的同步 API。</p><p>首先，创建一个特定身份验证回调的 <code>libsoup</code> 会话。你也可以使用 cookie。</p><pre tabindex=0><code>SoupSession *soup_session;
+SoupCookieJar *jar;
+
+soup_session = soup_session_new_with_options(SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_AUTH_BASIC,
+  SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_AUTH_DIGEST,
+  NULL);
+
+jar = soup_cookie_jar_text_new(&#34;cookies.txt&#34;,
+  FALSE);     
+
+soup_session_add_feature(soup_session, jar);
+g_signal_connect(soup_session, &#34;authenticate&#34;,
+  G_CALLBACK(my_authenticate_callback), NULL);
+</code></pre><p>然后你可以像这样创建一个 HTTP GET 请求：</p><pre tabindex=0><code>SoupMessage *msg;
+SoupMessageHeaders *response_headers;
+SoupMessageBody *response_body;
+guint status;
+GError *error;
+
+msg = soup_form_request_new(&#34;GET&#34;,
+  &#34;http://127.0.0.1:8080/my-xmlrpc&#34;,
+  NULL);
+
+status = soup_session_send_message(soup_session,
+  msg);
+
+response_headers = NULL;
+response_body = NULL;
+
+g_object_get(msg,
+  &#34;response-headers&#34;, &amp;response_headers,
+  &#34;response-body&#34;, &amp;response_body,
+  NULL);
+
+g_message(&#34;status %d&#34;, status);
+cookie = NULL;
+soup_message_headers_iter_init(&amp;iter,
+response_headers);
+
+while(soup_message_headers_iter_next(&amp;iter, &amp;name, &amp;value)){    
+  g_message(&#34;%s: %s&#34;, name, value);
+}
+
+g_message(&#34;%s&#34;, response_body-&gt;data);
+if(status == 200){
+  cookie = soup_cookies_from_response(msg);
+  while(cookie != NULL){
+    char *cookie_name;
+    cookie_name = soup_cookie_get_name(cookie-&gt;data);
+    //parse cookies
+    cookie = cookie-&gt;next;
+  }
+}
+</code></pre><p>当网络服务器进行身份认证时，会调用身份认证回调函数。</p><p>这是一个函数签名：</p><pre tabindex=0><code>#define MY_AUTHENTICATE_LOGIN &#34;my-username&#34;
+#define MY_AUTHENTICATE_PASSWORD &#34;my-password&#34;
+
+void my_authenticate_callback(SoupSession *session,
+  SoupMessage *msg,
+  SoupAuth *auth,
+  gboolean retrying,
+  gpointer user_data)
+{
+  g_message(&#34;authenticate: ****&#34;);
+  soup_auth_authenticate(auth,
+                         MY_AUTHENTICATE_LOGIN,
+                         MY_AUTHENTICATE_PASSWORD);
+}
+</code></pre><h3 id=一个-libsoup-服务器>一个 libsoup 服务器</h3><p>想要基础的 HTTP 身份认证能够运行，你需要指定回调函数和服务器上下文路径。然后再添加一个带有另一个回调的处理程序。</p><p>下面这个例子展示了在 8080 端口监听任何 IPv4 地址的消息：</p><pre tabindex=0><code>SoupServer *soup_server;
+SoupAuthDomain *auth_domain;
+GSocket *ip4_socket;
+GSocketAddress *ip4_address;
+MyObject *my_object;
+GError *error;
+
+soup_server = soup_server_new(NULL);
+auth_domain = soup_auth_domain_basic_new(SOUP_AUTH_DOMAIN_REALM, &#34;my-realm&#34;,
+  SOUP_AUTH_DOMAIN_BASIC_AUTH_CALLBACK, my_xmlrpc_server_auth_callback,
+  SOUP_AUTH_DOMAIN_BASIC_AUTH_DATA, my_object,
+  SOUP_AUTH_DOMAIN_ADD_PATH, &#34;my-xmlrpc&#34;,
+  NULL);
+
+soup_server_add_auth_domain(soup_server, auth_domain);
+soup_server_add_handler(soup_server,
+  &#34;my-xmlrpc&#34;,
+  my_xmlrpc_server_callback,
+  my_object,
+  NULL);
+
+ip4_socket = g_socket_new(G_SOCKET_FAMILY_IPV4,
+  G_SOCKET_TYPE_STREAM,
+  G_SOCKET_PROTOCOL_TCP,
+  &amp;error);
+
+ip4_address = g_inet_socket_address_new(g_inet_address_new_any(G_SOCKET_FAMILY_IPV4),
+  8080);
+error = NULL;
+g_socket_bind(ip4_socket,
+  ip4_address,
+  TRUE,
+  &amp;error);
+error = NULL;
+g_socket_listen(ip4_socket, &amp;error);
+
+error = NULL;
+soup_server_listen_socket(soup_server,
+  ip4_socket, 0, &amp;error);
+</code></pre><p>示例代码中，有两个回调函数。一个处理身份认证，另一个处理对它的请求。</p><p>假设你想要网页服务器允许用户名为 <code>my-username</code> 和口令为 <code>my-password</code> 的凭证登录，并且用一个随机且唯一的用户 ID 字符串设置会话 cookie。</p><pre tabindex=0><code>gboolean my_xmlrpc_server_auth_callback(SoupAuthDomain *domain,
+  SoupMessage *msg,
+  const char *username,
+  const char *password,
+  MyObject *my_object)
+{
+  if(username == NULL || password == NULL){
+    return(FALSE);
+  }
+
+  if(!strcmp(username, &#34;my-username&#34;) &amp;&amp;
+     !strcmp(password, &#34;my-password&#34;)){
+    SoupCookie *session_cookie;
+    GSList *cookie;
+    gchar *security_token;
+    cookie = NULL;
+
+    security_token = g_uuid_string_random();
+    session_cookie = soup_cookie_new(&#34;my-srv-security-token&#34;,
+      security_token,
+      &#34;localhost&#34;,
+      &#34;my-xmlrpc&#34;,
+      -1);
+
+     cookie = g_slist_prepend(cookie,
+       session_cookie);  
+     soup_cookies_to_request(cookie,
+       msg);
+    return(TRUE);
+  }
+  return(FALSE);
+}
+</code></pre><p>对上下文路径 <code>my-xmlrpc</code> 进行处理的函数：</p><pre tabindex=0><code>void my_xmlrpc_server_callback(SoupServer *soup_server,
+  SoupMessage *msg,
+  const char *path,
+  GHashTable *query,
+  SoupClientContext *client,
+  MyObject *my_object)
+{
+  GSList *cookie;
+  cookie = soup_cookies_from_request(msg);
+  //check cookies
+}
+</code></pre><h3 id=更加强大的-c-语言>更加强大的 C 语言</h3><p>希望我的示例展现了 GObject 和 libsoup 项目给 C 语言带来了真正的提升。像这样在字面意义上扩展 C 语言，可以使 C 语言更易于使用。它们已经为你做了许多工作，这样你可以专注于用 C 语言开发简单、直接的应用程序了。</p><hr><p>via: <a href=https://opensource.com/article/22/5/libsoup-gobject-c>https://opensource.com/article/22/5/libsoup-gobject-c</a></p><p>作者：<a href=https://opensource.com/users/joel2001k>Joël Krähemann</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/Donkey-Hao>Donkey-Hao</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/gobject/ rel=tag>GObject</a></li><li class=tags__item><a class="tags__link btn" href=/tags/libsoup/ rel=tag>libsoup</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

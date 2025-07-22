@@ -1,0 +1,96 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux 中 10 个有用的命令行补全例子 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux 中 10 个有用的命令行补全例子"><meta property="og:description" content="在 Linux 系统中，当你输入一个命令，再按两次 TAB 键，就会列出所有以你输入字符开头的可用命令。这并不新鲜，可能你已经知道了。这个功能被称作命令行补全bash completion。默认情况下，bash 命令行可以自动补全文件或目录名称。不过，我们可以增强 bash 命令补全功能，通过 complete 命令让它达到新的高度。  这个教程说明了我们是怎样使用可编程的命令行补全功能（programmable completion）把自动补全功能应用于选项或者命令行参数。 例如：在输入 write 命令之后，如果你按两次 TAB 按键，自动补全功能会提供可供执行 write 操作的"><meta property="og:type" content="article"><meta property="og:url" content="/article-6301-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-09-26T15:56:51+00:00"><meta property="article:modified_time" content="2015-09-26T15:56:51+00:00"><meta itemprop=name content="Linux 中 10 个有用的命令行补全例子"><meta itemprop=description content="在 Linux 系统中，当你输入一个命令，再按两次 TAB 键，就会列出所有以你输入字符开头的可用命令。这并不新鲜，可能你已经知道了。这个功能被称作命令行补全bash completion。默认情况下，bash 命令行可以自动补全文件或目录名称。不过，我们可以增强 bash 命令补全功能，通过 complete 命令让它达到新的高度。  这个教程说明了我们是怎样使用可编程的命令行补全功能（programmable completion）把自动补全功能应用于选项或者命令行参数。 例如：在输入 write 命令之后，如果你按两次 TAB 按键，自动补全功能会提供可供执行 write 操作的"><meta itemprop=datePublished content="2015-09-26T15:56:51+00:00"><meta itemprop=dateModified content="2015-09-26T15:56:51+00:00"><meta itemprop=wordCount content="418"><meta itemprop=keywords content="补全,bash,命令行,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux 中 10 个有用的命令行补全例子</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-09-26T15:56:51Z>September 26, 2015</time></div></div></header><div class="content post__content clearfix"><p>在 Linux 系统中，当你输入一个命令，再按两次 <code>TAB</code> 键，就会列出所有以你输入字符开头的可用命令。这并不新鲜，可能你已经知道了。这个功能被称作 命令行补全 bash completion 。默认情况下，bash 命令行可以自动补全文件或目录名称。不过，我们可以增强 bash 命令补全功能，通过 <code>complete</code> 命令让它达到新的高度。</p><p><img src=/data/attachment/album/201509/26/155653mcpob0l6u4fzdjnp.jpg alt></p><p>这个教程说明了我们是怎样使用 可编程的命令行补全功能 （ programmable completion ） 把自动补全功能应用于选项或者命令行参数。</p><p>例如：在输入 <code>write</code> 命令之后，如果你按两次 <code>TAB</code> 按键，自动补全功能会提供可供执行 <code>write</code> 操作的用户列表。</p><pre tabindex=0><code>$ write [TAB][TAB]
+bala      raj
+jason     randy
+john      ritu
+mayla     thomas
+nisha     www-data
+</code></pre><p>在下面的例子中，可以为 <code>telnet</code> 命令显示可用的主机名：</p><pre tabindex=0><code>$ telnet [TAB][TAB]
+localhost  dev-db  fileserver
+</code></pre><p>要让可编程命令补全功能在你的终端起作用 ，你只需要如下执行<code>/etc/bash_completion</code>即可：</p><pre tabindex=0><code># . /etc/bash_completion
+</code></pre><p>你也可以取消<code>/etc/bash.bashrc</code>（来自 Ubuntu Linux 13.04 系统）中如下的注释，这样，你就可以不需要执行上面的命令了：</p><pre tabindex=0><code>### enable bash completion in interactive shells
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+</code></pre><p>如果你没有发现这些代码，也没有找到<code>/etc/bash_completion</code>文件，那么你只需要通过使用<code>apt-get</code>命令来安装bash_completion 包即可。</p><h3 id=1-查看已有的命令行补全>1. 查看已有的命令行补全</h3><p>在启用可编程的命令行补全功能后，就已经有了一些定义好的命令补全功能。<code>complete</code> 命令用于定义命令行补全。</p><p>要查看已有的命令行补全，如下使用 <code>complete</code> 命令：</p><pre tabindex=0><code>complete -p | less
+</code></pre><p>上面例子中的 -p 选项是可选的。</p><h3 id=2-列出-bash-中标准补全功能>2. 列出 bash 中标准补全功能</h3><p>默认情况下，Bash 为 Linux 用户提供了下列标准补全功能。</p><ol><li>变量补全</li><li>用户名补全</li><li>主机名补全</li><li>路径补全</li><li>文件名补全</li></ol><p>我们在之前的 <a href=http://www.thegeekstuff.com/2013/11/bash-standard-completion/>bash 标准补全</a>中讨论过这些。</p><h3 id=3-定义一个命令名补全>3. 定义一个命令名补全</h3><p>通过 -c 选项可以将所有的可用命令作为一个命令的补全参数。在下面的例子里面，为 <code>which</code> 命令定义了一个补全（LCTT译注：在按两下 <code>TAB</code> 时，可以列出所有命令名作为可补全的参数）。</p><pre tabindex=0><code>$ complete -c which
+
+$ which [TAB][TAB]
+Display all 2116 possibilities? (y or n)
+</code></pre><p>如上，如果按下 ‘y’，就会列出所有的命令名。</p><h3 id=4-定义一个目录补全>4. 定义一个目录补全</h3><p>通过选项 -d，可以定义一个仅包含目录名的补全参数。在下面的例子中，为 <code>ls</code> 命令定义了补全。</p><pre tabindex=0><code>$ ls
+countfiles.sh  dir1/          dir2/          dir3/
+
+$ complete -d ls
+
+$ ls [TAB][TAB]
+dir1/          dir2/          dir3/
+</code></pre><p>如上，连按下 <code>TAB</code> 仅会显示目录名。</p><h3 id=5-定义一个后台任务名补全>5. 定义一个后台任务名补全</h3><p>补全功能也能够以任务名作为补全参数。选项 -j 可以定义任务名作为传递给命令的参数，如下：</p><pre tabindex=0><code>$ jobs
+[1]-  Stopped                 cat
+[2]+  Stopped                 sed &#39;p&#39;
+
+$ complete -j ./list_job_attrib.sh
+
+$ ./list_job_attrib.sh [TAB][TAB]
+cat   sed
+</code></pre><p>关于后台任务，你可以参考 <a href=http://www.thegeekstuff.com/2010/05/unix-background-job/>Linux 后台任务</a>中的例子了解如何管理后台任务。</p><h3 id=6-带有前缀和后缀的补全>6. 带有前缀和后缀的补全</h3><p>补全功能可以为实际的补全内容定义前缀和后缀。在下面的例子中，为 list_job_attrib.sh 定义了补全内容的前缀和后缀。</p><pre tabindex=0><code>$ jobs 
+[1]+  Stopped                 cat
+
+$ complete -P &#39;&#34;&gt;&#39; -S &#39;&lt;&#34;&#39; ./list_job_attrib.sh
+
+$ ./list_job_attrib.sh [TAB][TAB]
+
+$ ./list_job_attrib.sh &#34;&gt;cat&lt;&#34;
+</code></pre><h3 id=7-带有排除的文件名和目录名补全>7. 带有排除的文件名和目录名补全</h3><p>假如脚本运行完成后，输出目录如下：</p><pre tabindex=0><code>$ cd output/
+
+$ ls
+all_calls.txt   incoming_calls.txt   outgoing_calls.txt   missed_calls.txt
+parser_mod.tmp  extract.o
+</code></pre><p>如上，如果你想要 <code>ls</code> 命令的补全忽略 .tmp 和 .o 文件：</p><pre tabindex=0><code>$ export FIGNORE=&#39;.tmp:.o&#39;
+
+$ complete -f -d ls
+
+$ cd output
+
+$ ls [TAB][TAB]
+all_calls.txt   incoming_calls.txt   outgoing_calls.txt   missed_calls.txt
+</code></pre><p><code>FIGNORE</code> 是一个环境变量，它包含了自动补全所需要排除的文件名后缀。</p><h3 id=8-通过-ifs-变量分割字符串得到补全值>8. 通过 IFS 变量分割字符串得到补全值</h3><p>可以通过 -W 选项定义补全值列表，然后通过 <code>IFS</code> 环境变量进行切分。切分结果会展开变量并作为补全显示。</p><pre tabindex=0><code>$ export IFS=&#34; &#34;
+
+$ complete -W &#34;bubble quick&#34; ./sort_numbers.sh
+
+$ ./sort_numbers.sh [TAB][TAB]
+bubble   quick
+</code></pre><p>如上所述，字符串通过 <code>IFS</code> 分隔符进行切分后，内嵌的变量会被展开为变量值，所以可以如下使用变量：</p><pre tabindex=0><code>$ echo $SORT_TYPE1
+bubble
+
+$ echo $SORT_TYPE2
+quick
+
+$ complete -W &#34;$SORT_TYPE1 $SORT_TYPE2&#34; ./sort_numbers.sh
+$ ./sort_numbers.sh [TAB][TAB]
+bubble   quick
+</code></pre><h3 id=9-写个函数来生成补全>9. 写个函数来生成补全</h3><p>你可以引入一个函数来定义补全。使用 -F 选项将函数名传给 <code>complete</code> 命令，执行函数生成补全内容。例如，函数如下：</p><pre tabindex=0><code>_parser_options()
+{
+  local curr_arg;
+
+  curr_arg=${COMP_WORDS[COMP_CWORD]}
+
+  COMPREPLY=( $(compgen -W &#39;-i --incoming -o --outgoing -m --missed&#39; -- $curr_arg ) );
+}
+</code></pre><p>在上述函数中：</p><ol><li>COMPREPLY : 该数组控制连按下 <code>TAB</code> 后显示的结果</li><li>COMP_WORDS : 该数组包含命令行输入的单词</li><li>COMP_CWORD : COMP_WORDS 数组的索引，使用它来区分命令行可以访问的单词位置</li><li>compgen : -W 基于 $current_arg 提供可能的补全及其参数</li></ol><p>该函数放在 parser_option 文件中，并通过 <code>source</code> 命令引入：</p><pre tabindex=0><code>$ source parser_option
+</code></pre><p>将该函数和你的 parser.pl 脚本关联起来：</p><pre tabindex=0><code>$ complete -F _parser_options ./parser.pl
+
+$ ./parser.pl [TAB][TAB]
+-i       --incoming       -o       --outgoing       -m       --missed
+</code></pre><p>如上，parser.pl 的选项是由函数 _parser_options() 生成的。</p><p>提示： 查看<code>/etc/bash_completion</code> 来了解更多的可编程补全函数。</p><h3 id=10-当第一个规则没有生成结果时就使用第二个>10. 当第一个规则没有生成结果时，就使用第二个</h3><p>如果定义的补全规则没有生成匹配时，可以使用 -o 选项生成补全。</p><pre tabindex=0><code>$ complete -F _count_files -o dirnames ./countfiles.sh
+</code></pre><p>如上，为 ./countfiles.sh 定义了 _count_files 补全函数。 如果 the _count_files() 函数没有生成任何匹配的话，就会触发目录补全。</p><pre tabindex=0><code>$ ls 
+countfiles.sh    dir1/      dir2/      dir3/
+
+$./countfiles.sh [TAB][TAB]
+dir1    dir2    dir3
+</code></pre></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%A1%A5%E5%85%A8/ rel=tag>补全</a></li><li class=tags__item><a class="tags__link btn" href=/tags/bash/ rel=tag>bash</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/ rel=tag>命令行</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,94 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 LaTeX 创建优美的 PDF 文件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 LaTeX 创建优美的 PDF 文件"><meta property="og:description" content="使用 LaTeX 标记语言来撰写文档。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14957-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-08-23T12:03:00+00:00"><meta property="article:modified_time" content="2022-08-23T12:03:00+00:00"><meta itemprop=name content="使用 LaTeX 创建优美的 PDF 文件"><meta itemprop=description content="使用 LaTeX 标记语言来撰写文档。"><meta itemprop=datePublished content="2022-08-23T12:03:00+00:00"><meta itemprop=dateModified content="2022-08-23T12:03:00+00:00"><meta itemprop=wordCount content="538"><meta itemprop=keywords content="PDF,LaTeX,排版,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 LaTeX 创建优美的 PDF 文件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-08-23T12:03:00Z>August 23, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202208/23/120339s9ek65lo8cce5jj4.jpg alt></p><blockquote><p>使用 LaTeX 标记语言来撰写文档。</p></blockquote><p>LaTeX 文件准备系统有一段有趣的历史。在 1968 年，程序员 Don Knuth 用一种老式印刷排版方式，撰写了他的第一本书《 计算机程序设计艺术 The Art of Computer Programming 》。当他在 1976 年出版第二版时，出版商已经转向现代照相排版技术。</p><p>Knuth 对新版本的外观不满意。他从程序员的角度解决问题，决定创建他自己的文字处理系统，这样以后他出版的书就可以以相同格式排版，拥有相同的外观。因此，Don Knuth 在 1978 年编写了第一版 TeX 。</p><p>几年后，Leslie Lamport 创建了一组宏定义，以便作者更容易编写复杂文档。Lamport 的宏定义扩展，即 LaTeX，有效地扩展了 TeX 能够轻松创建各种文档。例如，许多学术组织使用 LaTeX 出版期刊和论文集。</p><h3 id=使用-latex-编写文档>使用 LaTeX 编写文档</h3><p>通过写一些短文就可以很容易掌握 LaTeX 基础。让我们从 <a href=https://opensource.com/about>Opensource.com</a> 介绍页面借用一下内容，创建一个示例：</p><pre tabindex=0><code>$ cat about.tex 
+\documentclass{article}
+\begin{document}
+
+Opensource.com is a premier, daily publication focused on
+open source and Linux tutorials, stories, and resources.
+
+We&#39;re a diverse and inviting group, made up of staff
+editors, Correspondents, contributors, and readers. We
+value differences in skills, talents, backgrounds, and
+experiences. There are a few different ways to get involved
+as a reader or a writer.
+
+\end{document}
+</code></pre><p>类似其他文档格式程序， LaTeX 会将单词汇集起来，填充成段落 。这意味着你可以在段落中间添加新文本，而不用担心最终文档的段落参差不齐。只要你不在段落中添加空行， LaTeX 就会创建完全对齐的段落。当它找到一个空行时， LaTeX 会开启一个新段落。</p><p>LaTeX 需要一些定义文档的控制语句。任何 LaTeX 文档应当以“文档类别”声明开始。LaTeX 支持多种文档，包括书信、书籍和文章。例如，我使用 <code>\documentclass{article}</code> 设置类别为 “文章” 。</p><p>使用 <code>\begin{document}</code> 和 <code>\end{document}</code> 声明来定义文本的开始和结束。如果你在 <code>\begin{document}</code> 前添加了文本，那么 LaTeX 会报错。在 <code>\end{document}</code> 之后的文本都会被忽略。</p><p>使用 LaTeX 的 <code>latex</code> 命令处理文档：</p><pre tabindex=0><code>$ latex about.tex
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=latex)
+ restricted \write18 enabled.
+entering extended mode
+(./about.tex
+LaTeX2e &lt;2020-10-01&gt; patch level 4
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2020/04/10 v1.4m Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo))
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-dvips.def)
+No file about.aux.
+[1] (./about.aux) )
+Output written on about.dvi (1 page, 736 bytes).
+Transcript written on about.log.
+</code></pre><p>LaTeX 会输出许多文本，这样你就可以知道它在干什么。若你的文档包含错误， LaTeX 会报错并提示它可以做什么。大多数情况下，你可以在提示后输入 <code>exit</code> 来强制退出 LaTeX 。</p><p>如果用 LaTeX 成功生成一个文档，会生成一个带 <code>.dvi</code> 后缀的文件。<code>DVI</code> 表示 “ 设备无关 Device Independent ”，因为你可以使用不同的工具来生成其他格式。例如， <code>dvipdf</code> 程序可以将 DVI 文件转换为 PDF 文件。</p><pre tabindex=0><code>$ dvipdf about.dvi
+</code></pre><p><img src=/data/attachment/album/202208/23/120344k8wkdwwwtwuyk5kd.jpg alt="LaTeX output"></p><h3 id=添加列表>添加列表</h3><p>LaTeX 支持两种列表：一种以数字开头的 “枚举” 列表，一种 “逐项” 或 “项目符号” 列表。在第二段后添加一个简短的枚举列表，列出人们可以参与 <a href=http://Opensource.com>Opensource.com</a> 的方式：</p><pre tabindex=0><code>\begin{enumerate}
+\item Be a writer
+\item Be a reader
+\end{enumerate}
+</code></pre><p>与在文档定义中添加 <code>\begin</code> 和 <code>\end</code> 声明类似，你也需要在列表前后添加 <code>\begin</code> 和 <code>\end</code> 声明。在列表中，每个项目以 <code>\item</code> 命令开始。当你用 LaTeX 处理该文档并转换为 PDF 格式后，你会看到该列表为数字列表：</p><p><img src=/data/attachment/album/202208/23/120344f2sc24crn3ge2r2j.jpg alt="LaTeX output"></p><p>你也可以在列表中嵌套列表。这是一个优雅的功能，如果你需要在列表中为每个条目添加选项。例如，你可以为想要在 <a href=http://Opensource.com>Opensource.com</a> 中成为作者的人们提供一些不同的资源。嵌入列表使用单独的 <code>\begin</code> 和 <code>\end</code> 声明。为了看起来方便，我在示例中添加了空行，但是 LaTeX 会忽略这些空行：</p><pre tabindex=0><code>\begin{enumerate}
+\item Be a writer
+
+  \begin{itemize}
+  \item Resources for writers
+  \item Contributor Club
+  \item Correspondent Program
+  \end{itemize}
+
+\item Be a reader
+\end{enumerate}
+</code></pre><p>作为嵌套列表，新列表嵌入在编号 1 的项目中，因为你在原先的 <code>\item</code> 声明之间添加了列表。你可以通过在 <code>\end{enumerate}</code> 语句前添加新列表，作为编号 2 项目的嵌套列表。</p><p><img src=/data/attachment/album/202208/23/120345samfmf29zh006hm0.jpg alt="LaTeX output"></p><h3 id=章节和小节>章节和小节</h3><p>你可以将冗长文章分成多个章节，这样更易于阅读。使用 <code>\section{...}</code> 语句在大括号内添加章节标题。例如，你可以在文档顶部添加一个标题为 “About <a href=http://Opensource.com>Opensource.com</a>” 的新章节：</p><pre tabindex=0><code>$ head about.tex 
+\documentclass{article}
+\begin{document}
+
+\section{About Opensource.com}
+
+Opensource.com is a premier, daily publication focused on
+open source and Linux tutorials, stories, and resources.
+
+We&#39;re a diverse and inviting group, made up of staff
+editors, Correspondents, contributors, and readers. We
+</code></pre><p><code>article</code> 文档类会在每个主要章节添加编号，并使字体变大来突出显示。</p><p><img src=/data/attachment/album/202208/23/120345k4q5q60tl5q0rrcg.jpg alt="LaTeX output"></p><p>你可以使用 <code>\subsection{...}</code> 命令来组织文档。就像 <code>\section{...}</code> 命令一样，在大括号中输入副标题名称。</p><pre tabindex=0><code>$ head about.tex
+\documentclass{article}
+\begin{document}
+
+\section{About Opensource.com}
+
+Opensource.com is a premier, daily publication focused on
+open source and Linux tutorials, stories, and resources.
+
+\subsection{Welcome to the Opensource.com community}
+</code></pre><p><img src=/data/attachment/album/202208/23/120346f71z7633znjntw7n.jpg alt="LaTeX output"></p><h3 id=标题和作者>标题和作者</h3><p>用于出版的科学类的文章需要标题、作者以及发表日期。LaTeX 提供了通过插入命令的方式来添加这些信息，然后使用单独的 <code>\maketitle</code> 命令生成文章的标题。</p><p>将 “About Us” 作为文章标题，作者为 “<a href=http://Opensource.com>Opensource.com</a> Editors”，发表日期为 “July 10, 2022” 。你必须在 <code>\begin{document}</code> 之后，文章内容前插入这些内容。</p><pre tabindex=0><code>\title{About Us}
+\author{Opensource.com Editors}
+\date{July 10, 2022}
+\maketitle
+</code></pre><p>当你在生成文档时，LaTeX 会将标题、作者和日期添加到文章的顶部：</p><p><img src=/data/attachment/album/202208/23/120346x54r4f5ms2f2x2m4.jpg alt="LaTeX output"></p><h3 id=着重强调>着重强调</h3><p>科学和其他技术类文章通常会突出术语和短语。 LaTeX 提供了几种可以在技术文档中使用的字体效果，包括强调文本（通常以斜体显示）、粗体文本和 小型大写字母 small caps 。</p><p>将短语“staff editors, Correspondents, contributors, and readers”放在斜体文本中，并将特定词“reader”和“writer”放在段落后面的强调文本中。你也可以将“skills, talents, backgrounds, and experiences”加粗。虽然这不是正确的样式设置方式，但你可以使用小型大写字母来键入 “Linux” 。</p><pre tabindex=0><code>$ head -20 about.tex 
+\documentclass{article}
+\begin{document}
+
+\title{About Us}
+\author{Opensource.com Editors}
+\date{July 10, 2022}
+\maketitle
+
+\section{About Opensource.com}
+
+Opensource.com is a premier, daily publication focused on
+open source and \textsc{Linux} tutorials, stories, and resources.
+
+\subsection{Welcome to the Opensource.com community}
+
+We&#39;re a diverse and inviting group, made up of \textit{staff
+editors, Correspondents, contributors, and readers}. We
+value differences in \textbf{skills, talents, backgrounds, and
+experiences}. There are a few different ways to get involved
+as a \emph{reader} or a \emph{writer}.
+</code></pre><p>该示例展示了不同样式的文本的应用方法。当你需要强调时，使用 <code>\emph{...}</code> 命令，将强调主题放在大括号内。要以斜体、粗体或小型大写字母显示文本，使用 <code>\text</code> 命令的变体：<code>\textit{...}</code> 用于斜体，<code>\textbf{...}</code> 用于粗体，以及 <code>\ textsc{...}</code> 用于小型大写字母。LaTeX 支持许多其他方式来设置文本样式，这些样式有助于你编写科学技术类文章。</p><p><img src=/data/attachment/album/202208/23/120346dc0h00si873his3h.jpg alt="LaTeX output"></p><h3 id=使用-latex>使用 LaTeX</h3><p>我只是介绍了使用 LaTeX 撰写科学技术文章的几种方式。你也可以在 LaTeX 中添加脚注，进行数学公式和方程的排版，取决于你的需求。你也可以通过阅读 <a href=http://Opensource.com>Opensource.com</a> 中的文章 <a href=https://opensource.com/article/17/6/introduction-latex>《在 LaTeX 中创建文档的介绍》</a> ，了解使用 LaTeX 撰写科学技术文章的其他方式。</p><hr><p>via: <a href=https://opensource.com/article/22/8/pdf-latex>https://opensource.com/article/22/8/pdf-latex</a></p><p>作者：<a href=https://opensource.com/users/jim-hall>Jim Hall</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/Donkey-Hao>Donkey</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/pdf/ rel=tag>PDF</a></li><li class=tags__item><a class="tags__link btn" href=/tags/latex/ rel=tag>LaTeX</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8E%92%E7%89%88/ rel=tag>排版</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

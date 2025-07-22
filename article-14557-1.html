@@ -1,0 +1,46 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 watch 和 tail 命令监视 Linux 上的活动 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 watch 和 tail 命令监视 Linux 上的活动"><meta property="og:description" content="watch 和 tail 命令可以帮助监视 Linux 系统上的活动。本文介绍了这两个命令的一些有用的使用方法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14557-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-05-07T09:17:45+00:00"><meta property="article:modified_time" content="2022-05-07T09:17:45+00:00"><meta itemprop=name content="使用 watch 和 tail 命令监视 Linux 上的活动"><meta itemprop=description content="watch 和 tail 命令可以帮助监视 Linux 系统上的活动。本文介绍了这两个命令的一些有用的使用方法。"><meta itemprop=datePublished content="2022-05-07T09:17:45+00:00"><meta itemprop=dateModified content="2022-05-07T09:17:45+00:00"><meta itemprop=wordCount content="312"><meta itemprop=keywords content="watch,tail,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 watch 和 tail 命令监视 Linux 上的活动</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-05-07T09:17:45Z>May 07, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202205/07/091736ja5yt2yottef0kl4.jpg alt></p><blockquote><p>watch 和 tail 命令可以帮助监视 Linux 系统上的活动。本文介绍了这两个命令的一些有用的使用方法。</p></blockquote><p><code>watch</code> 和 <code>tail</code> 命令为持续监视 Linux 系统上的活动提供了一些有趣的选项。</p><p>也就是说，你可以通过 <code>watch</code> 来显示谁已登录，并随着用户登录和注销不断更新，而不是仅仅提出问题并获得答案（例如询问 <code>who</code> 并获取当前登录用户的列表）。</p><p>使用 <code>tail</code>，你可以显示文件的底部并在添加内容时查看内容。这种监控一般非常有用，并且比定期运行命令所需的工作更少。</p><h3 id=使用-watch-命令>使用 watch 命令</h3><p>使用 <code>watch</code> 的最简单示例之一是使用命令 <code>watch who</code>。你会看到一个列表，其中显示了谁登录了，以及他们登录的时间和登录位置。请注意，默认设置是每两秒更新一次显示（左上角），日期和时间（右上角）将按该间隔自行更新。用户列表将随着用户登录和注销而增长和缩小。</p><pre tabindex=0><code>$ watch who
+</code></pre><p>此命令将显示如下所示的登录列表：</p><pre tabindex=0><code>Every 2.0s: who                              dragonfly: Thu Feb 27 10:52:00 2020
+
+nemo     pts/0        2020-02-27 08:07 (192.168.0.11)
+shs      pts/1        2020-02-27 10:58 (192.168.0.5)
+</code></pre><p>你可以通过添加 <code>-n</code> 选项（例如 <code>-n 10</code>）来修改更新间的不同秒数，以修改更新间隔，从而获取较少的更新频率。</p><pre tabindex=0><code>$ watch -n 10 who
+</code></pre><p>上述命令将以新的间隔显示，并且显示的时间更新频率较低，从而使显示时间与所选间隔保持一致。</p><pre tabindex=0><code>Every 10.0s: who                             dragonfly: Thu Feb 27 11:05:47 2020
+
+nemo     pts/0        2020-02-27 08:07 (192.168.0.11)
+shs      pts/1        2020-02-27 10:58 (192.168.0.5)
+</code></pre><p>如果你希望仅查看命令的输出，而不是标题（前 2 行），则可以通过添加 <code>-t</code>（无标题）选项来省略这些行。</p><pre tabindex=0><code>$ watch -t who
+</code></pre><p>然后，你的屏幕将显示如下所示：</p><pre tabindex=0><code>nemo     pts/0        2020-02-27 08:07 (192.168.0.11)
+shs      pts/1        2020-02-27 10:58 (192.168.0.5)
+</code></pre><p>如果每次运行监视的命令时，输出都是相同的，则只有标题行（如果未省略）会更改。其余显示的信息将保持不变。</p><p>如果你希望 <code>watch</code> 命令在它正在监视的命令的输出发生更新后立即退出，则可以使用 <code>-g</code>（将其视为“ 离开 go away ”）选项。例如，如果你只是在等待其他人开始登录系统，则可以选择执行此操作。</p><p>你还可以使用 <code>-d</code>（ 差异 differences ）选项突出显示显示输出中的更改。突出显示只会持续一个间隔（默认为 2 秒），但有助于引起你对更新的注意。</p><p>下面是一个更复杂的示例，该示例使用 <code>watch</code> 命令显示正在侦听连接的服务及其使用的端口。虽然输出不太可能更改，但它会提醒你任何新服务正在启动或关闭。</p><pre tabindex=0><code>$ watch &#39;sudo lsof -i -P -n | grep LISTEN&#39;
+</code></pre><p>值得注意的是，正在运行的命令需要用引号扩起来，以确保不会将 <code>watch</code> 命令的输出发送到 <code>grep</code> 命令。</p><p>使用 <code>watch -h</code> 命令将为你提供命令选项的列表。</p><pre tabindex=0><code>$ watch -h
+
+Usage:
+ watch [options] command
+
+Options:
+  -b, --beep             beep if command has a non-zero exit
+  -c, --color            interpret ANSI color and style sequences
+  -d, --differences[=&lt;permanent&gt;]
+                         highlight changes between updates
+  -e, --errexit          exit if command has a non-zero exit
+  -g, --chgexit          exit when output from command changes
+  -n, --interval &lt;secs&gt;  seconds to wait between updates
+  -p, --precise          attempt run command in precise intervals
+  -t, --no-title         turn off header
+  -x, --exec             pass command to exec instead of &#34;sh -c&#34;
+
+ -h, --help     display this help and exit
+ -v, --version  output version information and exit
+</code></pre><h3 id=使用-tail--f>使用 tail -f</h3><p><code>tail -f</code> 命令与 <code>watch</code> 有一些相同之处。它也会在添加文件时显示文件的底部和其他内容。你不必一次又一次地运行 <code>tail</code> 命令，而是运行一个命令并获得可重复更新显示视图的结果。例如，你可以使用如下命令查看系统日志：</p><pre tabindex=0><code>$ tail -f /var/log/syslog
+</code></pre><p>某些文件（如 <code>/var/log/wtmp</code>）不适合这种类型的处理，因为它们的格式不是普通文本文件，但是通过组合 <code>watch</code> 和 <code>tail</code>，你可以获得类似的结果，如下所示：</p><pre tabindex=0><code>watch &#39;who /var/log/wtmp | tail -20&#39;
+</code></pre><p>无论有多少用户仍处于登录状态，此命令都将只显示最近的 5 次登录。如果发生其他登录，显示结果将添加一行记录并删除顶行记录。</p><pre tabindex=0><code>Every 60.0s: who /var/log/wtmp | tail -5    dragonfly: Thu Feb 27 12:46:07 2020
+
+shs      pts/0        2020-02-27 08:07 (192.168.0.5)
+nemo     pts/1        2020-02-27 08:26 (192.168.0.5)
+shs      pts/1        2020-02-27 10:58 (192.168.0.5)
+nemo     pts/1        2020-02-27 11:34 (192.168.0.5)
+dory     pts/1        2020-02-27 12:14 (192.168.0.5)
+</code></pre><p>对你有时可能想要监视的信息，无论监视进程、登录名还是系统资源，<code>watch</code> 和 <code>tail -f</code> 命令都可以提供自动更新视图，从而使监视任务变得更加容易。</p><hr><p>via: <a href=https://www.networkworld.com/article/3529891/watching-activity-on-linux-with-watch-and-tail-commands.html>https://www.networkworld.com/article/3529891/watching-activity-on-linux-with-watch-and-tail-commands.html</a></p><p>作者：<a href=https://www.networkworld.com/author/Sandra-Henry_Stocker/>Sandra Henry-Stocker</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/Starryi>Starryi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/watch/ rel=tag>watch</a></li><li class=tags__item><a class="tags__link btn" href=/tags/tail/ rel=tag>tail</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

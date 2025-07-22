@@ -1,0 +1,77 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 React 条件渲染中使用三元表达式和 “&amp;amp;&amp;amp;” - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 React 条件渲染中使用三元表达式和 “&amp;amp;&amp;amp;”"><meta property="og:description" content="React 组件可以通过多种方式决定渲染内容。你可以使用传统的 if 语句或 switch 语句。在本文中，我们将探讨一些替代方案。但要注意，如果你不小心，有些方案会带来自己的陷阱。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10090-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-10-07T21:18:00+00:00"><meta property="article:modified_time" content="2018-10-07T21:18:00+00:00"><meta itemprop=name content="在 React 条件渲染中使用三元表达式和 “&amp;amp;&amp;amp;”"><meta itemprop=description content="React 组件可以通过多种方式决定渲染内容。你可以使用传统的 if 语句或 switch 语句。在本文中，我们将探讨一些替代方案。但要注意，如果你不小心，有些方案会带来自己的陷阱。"><meta itemprop=datePublished content="2018-10-07T21:18:00+00:00"><meta itemprop=dateModified content="2018-10-07T21:18:00+00:00"><meta itemprop=wordCount content="332"><meta itemprop=keywords content="React,三元表达式,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 React 条件渲染中使用三元表达式和 “&amp;amp;&amp;amp;”</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-10-07T21:18:00Z>October 07, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201810/07/211923fcc9p9ghyvpvqgby.jpg alt></p><p>React 组件可以通过多种方式决定渲染内容。你可以使用传统的 <code>if</code> 语句或 <code>switch</code> 语句。在本文中，我们将探讨一些替代方案。但要注意，如果你不小心，有些方案会带来自己的陷阱。</p><h3 id=三元表达式-vs-ifelse>三元表达式 vs if/else</h3><p>假设我们有一个组件被传进来一个 <code>name</code> 属性。 如果这个字符串非空，我们会显示一个问候语。否则，我们会告诉用户他们需要登录。</p><p>这是一个只实现了如上功能的无状态函数式组件（SFC）。</p><pre tabindex=0><code>const MyComponent = ({ name }) =&gt; {
+  if (name) {
+    return (
+      &lt;div className=&#34;hello&#34;&gt;
+        Hello {name}
+      &lt;/div&gt;
+    );
+  }
+  return (
+    &lt;div className=&#34;hello&#34;&gt;
+      Please sign in
+    &lt;/div&gt;
+  );
+};
+</code></pre><p>这个很简单但是我们可以做得更好。这是使用 三元运算符 conditional ternary operator 编写的相同组件。</p><pre tabindex=0><code>const MyComponent = ({ name }) =&gt; (
+  &lt;div className=&#34;hello&#34;&gt;
+    {name ? `Hello ${name}` : &#39;Please sign in&#39;}
+  &lt;/div&gt;
+);
+</code></pre><p>请注意这段代码与上面的例子相比是多么简洁。</p><p>有几点需要注意。因为我们使用了箭头函数的单语句形式，所以隐含了<code>return</code> 语句。另外，使用三元运算符允许我们省略掉重复的 <code>&lt;div className="hello"></code> 标记。</p><h3 id=三元表达式-vs->三元表达式 vs &&</h3><p>正如您所看到的，三元表达式用于表达 <code>if</code>/<code>else</code> 条件式非常好。但是对于简单的 <code>if</code> 条件式怎么样呢？</p><p>让我们看另一个例子。如果 <code>isPro</code>（一个布尔值）为真，我们将显示一个奖杯表情符号。我们也要渲染星星的数量（如果不是 0）。我们可以这样写。</p><pre tabindex=0><code>const MyComponent = ({ name, isPro, stars}) =&gt; (
+  &lt;div className=&#34;hello&#34;&gt;
+    &lt;div&gt;
+      Hello {name}
+      {isPro ? &#39;♨&#39; : null}
+    &lt;/div&gt;
+    {stars ? (
+      &lt;div&gt;
+        Stars:{&#39;☆&#39;.repeat(stars)}
+      &lt;/div&gt;
+    ) : null}
+  &lt;/div&gt;
+);
+</code></pre><p>请注意 <code>else</code> 条件返回 <code>null</code> 。 这是因为三元表达式要有“否则”条件。</p><p>对于简单的 <code>if</code> 条件式，我们可以使用更合适的东西：<code>&&</code> 运算符。这是使用 <code>&&</code> 编写的相同代码。</p><pre tabindex=0><code>const MyComponent = ({ name, isPro, stars}) =&gt; (
+  &lt;div className=&#34;hello&#34;&gt;
+    &lt;div&gt;
+      Hello {name}
+      {isPro &amp;&amp; &#39;♨&#39;}
+    &lt;/div&gt;
+    {stars &amp;&amp; (
+      &lt;div&gt;
+        Stars:{&#39;☆&#39;.repeat(stars)}
+      &lt;/div&gt;
+    )}
+  &lt;/div&gt;
+);
+</code></pre><p>没有太多区别，但是注意我们消除了每个三元表达式最后面的 <code>: null</code> （<code>else</code> 条件式）。一切都应该像以前一样渲染。</p><p>嘿！约翰得到了什么？当什么都不应该渲染时，只有一个 <code>0</code>。这就是我上面提到的陷阱。这里有解释为什么：</p><p><a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_Operators>根据 MDN</a>，一个逻辑运算符“和”（也就是 <code>&&</code>）：</p><blockquote><p><code>expr1 && expr2</code></p><p>如果 <code>expr1</code> 可以被转换成 <code>false</code> ，返回 <code>expr1</code>；否则返回 <code>expr2</code>。 如此，当与布尔值一起使用时，如果两个操作数都是 <code>true</code>，<code>&&</code> 返回 <code>true</code> ；否则，返回 <code>false</code>。</p></blockquote><p>好的，在你开始拔头发之前，让我为你解释它。</p><p>在我们这个例子里， <code>expr1</code> 是变量 <code>stars</code>，它的值是 <code>0</code>，因为 0 是假值，<code>0</code> 会被返回和渲染。看，这还不算太坏。</p><p>我会简单地这么写。</p><blockquote><p>如果 <code>expr1</code> 是假值，返回 <code>expr1</code> ，否则返回 <code>expr2</code>。</p></blockquote><p>所以，当对非布尔值使用 <code>&&</code> 时，我们必须让这个假值返回 React 无法渲染的东西，比如说，<code>false</code> 这个值。</p><p>我们可以通过几种方式实现这一目标。让我们试试吧。</p><pre tabindex=0><code>{!!stars &amp;&amp; (
+  &lt;div&gt;
+    {&#39;☆&#39;.repeat(stars)}
+  &lt;/div&gt;
+)}
+</code></pre><p>注意 <code>stars</code> 前的双感叹操作符（<code>!!</code>）（呃，其实没有双感叹操作符。我们只是用了感叹操作符两次）。</p><p>第一个感叹操作符会强迫 <code>stars</code> 的值变成布尔值并且进行一次“非”操作。如果 <code>stars</code> 是 <code>0</code> ，那么 <code>!stars</code> 会是 <code>true</code>。</p><p>然后我们执行第二个<code>非</code>操作，所以如果 <code>stars</code> 是 <code>0</code>，<code>!!stars</code> 会是 <code>false</code>。正好是我们想要的。</p><p>如果你不喜欢 <code>!!</code>，那么你也可以强制转换出一个布尔数比如这样（这种方式我觉得有点冗长）。</p><pre tabindex=0><code>{Boolean(stars) &amp;&amp; (
+</code></pre><p>或者只是用比较符产生一个布尔值（有些人会说这样甚至更加语义化）。</p><pre tabindex=0><code>{stars &gt; 0 &amp;&amp; (
+</code></pre><h4 id=关于字符串>关于字符串</h4><p>空字符串与数字有一样的毛病。但是因为渲染后的空字符串是不可见的，所以这不是那种你很可能会去处理的难题，甚至可能不会注意到它。然而，如果你是完美主义者并且不希望 DOM 上有空字符串，你应采取我们上面对数字采取的预防措施。</p><h3 id=其它解决方案>其它解决方案</h3><p>一种可能的将来可扩展到其他变量的解决方案，是创建一个单独的 <code>shouldRenderStars</code> 变量。然后你用 <code>&&</code> 处理布尔值。</p><pre tabindex=0><code>const shouldRenderStars = stars &gt; 0;
+</code></pre><pre tabindex=0><code>return (
+  &lt;div&gt;
+    {shouldRenderStars &amp;&amp; (
+      &lt;div&gt;
+        {&#39;☆&#39;.repeat(stars)}
+      &lt;/div&gt;
+    )}
+  &lt;/div&gt;
+);
+</code></pre><p>之后，在将来，如果业务规则要求你还需要已登录，拥有一条狗以及喝淡啤酒，你可以改变 <code>shouldRenderStars</code> 的得出方式，而返回的内容保持不变。你还可以把这个逻辑放在其它可测试的地方，并且保持渲染明晰。</p><pre tabindex=0><code>const shouldRenderStars = 
+  stars &gt; 0 &amp;&amp; loggedIn &amp;&amp; pet === &#39;dog&#39; &amp;&amp; beerPref === &#39;light`;
+</code></pre><pre tabindex=0><code>return (
+  &lt;div&gt;
+    {shouldRenderStars &amp;&amp; (
+      &lt;div&gt;
+        {&#39;☆&#39;.repeat(stars)}
+      &lt;/div&gt;
+    )}
+  &lt;/div&gt;
+);
+</code></pre><h3 id=结论>结论</h3><p>我认为你应该充分利用这种语言。对于 JavaScript，这意味着为 <code>if/else</code> 条件式使用三元表达式，以及为 <code>if</code> 条件式使用 <code>&&</code> 操作符。</p><p>我们可以回到每处都使用三元运算符的舒适区，但你现在消化了这些知识和力量，可以继续前进 <code>&&</code> 取得成功了。</p><hr><p>作者简介：</p><p>美国运通工程博客的执行编辑 <a href=http://aexp.io>http://aexp.io</a> 以及 @AmericanExpress 的工程总监。MyViews !== ThoseOfMyEmployer.</p><hr><p>via: <a href=https://medium.freecodecamp.org/conditional-rendering-in-react-using-ternaries-and-logical-and-7807f53b6935>https://medium.freecodecamp.org/conditional-rendering-in-react-using-ternaries-and-logical-and-7807f53b6935</a></p><p>作者：<a href=https://medium.freecodecamp.org/@donavon>Donavon West</a> 译者：<a href=https://github.com/GraveAccent>GraveAccent</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/react/ rel=tag>React</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E4%B8%89%E5%85%83%E8%A1%A8%E8%BE%BE%E5%BC%8F/ rel=tag>三元表达式</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

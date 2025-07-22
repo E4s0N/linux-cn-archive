@@ -1,0 +1,44 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 中创建 LVM 分区的分步指南 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 中创建 LVM 分区的分步指南"><meta property="og:description" content="在本指南中，我们将逐步介绍如何在 Linux 中创建 LVM 分区。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15152-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-10-18T11:36:17+00:00"><meta property="article:modified_time" content="2022-10-18T11:36:17+00:00"><meta itemprop=name content="在 Linux 中创建 LVM 分区的分步指南"><meta itemprop=description content="在本指南中，我们将逐步介绍如何在 Linux 中创建 LVM 分区。"><meta itemprop=datePublished content="2022-10-18T11:36:17+00:00"><meta itemprop=dateModified content="2022-10-18T11:36:17+00:00"><meta itemprop=wordCount content="375"><meta itemprop=keywords content="LVM,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 中创建 LVM 分区的分步指南</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-10-18T11:36:17Z>October 18, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202210/18/113615swffwazya3nyfve2.jpg alt></p><blockquote><p>在本指南中，我们将逐步介绍如何在 Linux 中创建 LVM 分区。</p></blockquote><p>LVM 代表 “ 逻辑卷管理 Logical Volume Management ”，它是专门为服务器管理 Linux 系统上的磁盘或存储的推荐方式。 LVM 分区的主要优点之一是我们可以实时扩展其大小而无需停机。 LVM 分区也可以缩小，但不推荐。</p><p>为了演示，我在我的 Ubuntu 22.04 系统上连接了 15GB 磁盘，我们将从命令行在该磁盘上创建 LVM 分区。</p><h5 id=准备>准备</h5><ul><li>连接到 Linux 系统的原始磁盘</li><li>具有 sudo 权限的本地用户</li><li>预装 lvm2 包</li></ul><p>事不宜迟，让我们深入了解这些步骤。</p><h3 id=步骤-1识别新连接的原始磁盘>步骤 1、识别新连接的原始磁盘</h3><p>登录到你的系统，打开终端并运行以下 <code>dmesg</code> 命令：</p><pre tabindex=0><code>$ sudo dmesg | grep -i sd
+</code></pre><p>在输出中，查找大小为 15GB 的新磁盘。</p><p><img src=/data/attachment/album/202210/18/113618icvckmdctcwietas.png alt=dmesg-command-new-attached-disk-linux></p><p>识别新连接的原始磁盘的另一种方法是通过 <code>fdisk</code> 命令：</p><pre tabindex=0><code>$ sudo fdisk -l | grep -i /dev/sd
+</code></pre><p>输出：</p><p><img src=/data/attachment/album/202210/18/113618pzeg7en8vqb72w1a.png alt=fdisk-command-output-new-disk></p><p>从上面的输出，可以确认新连接的磁盘是 <code>/dev/sdb</code>。</p><h3 id=步骤-2创建-pv物理卷>步骤 2、创建 PV（物理卷）</h3><p>在开始在磁盘 <code>/dev/sdb</code> 上创建 物理卷 Physical Volume （PV）之前，请确保已安装 <code>lvm2</code> 包。如果未安装，请运行以下命令：</p><pre tabindex=0><code>$ sudo apt install lvm2     // On Ubuntu / Debian
+$ sudo dnf install lvm2    // on RHEL / CentOS
+</code></pre><p>运行以下 <code>pvcreate</code> 命令在磁盘 <code>/dev/sdb</code> 上创建 PV：</p><pre tabindex=0><code>$ sudo pvcreate /dev/sdb
+  Physical volume &#34;/dev/sdb&#34; successfully created.
+$
+</code></pre><p>要验证 PV 状态，运行：</p><pre tabindex=0><code>$ sudo pvs /dev/sdb
+或者
+$ sudo pvdisplay /dev/sdb
+</code></pre><p><img src=/data/attachment/album/202210/18/113619jn9a77a6o6w6tvrr.png alt=pvdisplay-command-output-linux></p><h3 id=步骤-3创建-vg卷组>步骤 3、创建 VG（卷组）</h3><p>要创建 卷组 Volume Group （VG），我们将使用 <code>vgcreate</code> 命令。创建 VG 意味着将 PV 添加到其中。</p><p>语法：</p><pre tabindex=0><code>$ sudo vgcreare &lt;vg_name&gt;  &lt;pv&gt;
+</code></pre><p>在我们的例子中，命令是：</p><pre tabindex=0><code>$ sudo vgcreate volgrp01 /dev/sdb
+  Volume group &#34;volgrp01&#34; successfully created
+$
+</code></pre><p>运行以下命令以验证 VG（<code>volgrp01</code>）的状态：</p><pre tabindex=0><code>$ sudo vgs volgrp01
+或者
+$ sudo vgdisplay volgrp01
+</code></pre><p>上述命令的输出：</p><p><img src=/data/attachment/album/202210/18/113620myys3otbawa3y7tz.png alt=vgs-command-output-linux></p><p>以上输出确认大小为 15 GiB 的卷组 <code>volgrp01</code> 已成功创建，一个 物理扩展Physical Extend（PE）的大小为 4 MB。创建 VG 时可以更改 PE 大小。</p><h3 id=步骤-4创建-lv逻辑卷>步骤 4、创建 LV（逻辑卷）</h3><p><code>lvcreate</code> 命令用于从 VG 中创建 逻辑卷 Logical Volume LV。 <code>lvcreate</code> 命令的语法如下所示：</p><pre tabindex=0><code>$ sudo lvcreate -L &lt;Size-of-LV&gt; -n &lt;LV-Name&gt;   &lt;VG-Name&gt;
+</code></pre><p>在我们的例子中，以下命令将用于创建大小为 14 GB 的 LV：</p><pre tabindex=0><code>$ sudo lvcreate -L 14G -n lv01 volgrp01
+  Logical volume &#34;lv01&#34; created.
+$
+</code></pre><p>验证 LV 的状态，运行：</p><pre tabindex=0><code>$ sudo lvs /dev/volgrp01/lv01
+或者
+$ sudo lvdisplay /dev/volgrp01/lv01
+</code></pre><p>输出：</p><p><img src=/data/attachment/album/202210/18/113620qdkeuswsfc53gd3f.png alt=lvs-command-output-linux></p><p>上面的输出显示 LV（<code>lv01</code>）已成功创建，大小为 14 GiB。</p><h3 id=步骤-5格式化-lvm-分区>步骤 5、格式化 LVM 分区</h3><p>使用 <code>mkfs</code> 命令格式化 LVM 分区。在我们的例子中，LVM 分区是 <code>/dev/volgrp01/lv01</code>。</p><p>注意：我们可以将分区格式化为 ext4 或 xfs，因此请根据你的设置和要求选择文件系统类型。</p><p>运行以下命令将 LVM 分区格式化为 ext4 文件系统。</p><pre tabindex=0><code>$ sudo mkfs.ext4 /dev/volgrp01/lv01
+</code></pre><p><img src=/data/attachment/album/202210/18/113621h6lzlo6qdqrzt6qx.png alt=mkfs-ext4-filesystem-lvm></p><p>执行下面的命令，用 xfs 文件系统格式化 LVM 分区：</p><pre tabindex=0><code>$ sudo mkfs.xfs /dev/volgrp01/lv01
+</code></pre><p>要使用上述格式化分区，我们必须将其挂载到某个文件夹中。所以，让我们创建一个文件夹 <code>/mnt/data</code>：</p><pre tabindex=0><code>$ sudo mkdir /mnt/data
+</code></pre><p>现在运行 <code>mount</code> 命令将其挂载到 <code>/mnt/data</code> 文件夹：</p><pre tabindex=0><code>$ sudo mount /dev/volgrp01/lv01 /mnt/data/
+$ df -Th /mnt/data/
+Filesystem                Type  Size  Used Avail Use% Mounted on
+/dev/mapper/volgrp01-lv01 ext4   14G   24K   13G   1% /mnt/data
+$
+</code></pre><p>尝试创建一些没用的文件，运行以下命令：</p><pre tabindex=0><code>$ cd /mnt/data/
+$ echo &#34;testing lvm partition&#34; | sudo tee dummy.txt
+$ cat dummy.txt
+testing lvm partition
+$
+$ sudo rm -f  dummy.txt
+</code></pre><p>完美，以上命令输出确认我们可以访问 LVM 分区。</p><p>要永久挂载上述 LVM 分区，请使用以下 <code>echo</code> 命令将其条目添加到 <code>fstab</code> 文件中：</p><pre tabindex=0><code>$ echo &#39;/dev/volgrp01/lv01  /mnt/data  ext4  defaults 0 0&#39; | sudo  tee -a /etc/fstab
+$ sudo mount -a
+</code></pre><p>以上就是本指南的全部内容，感谢阅读。请在下面的评论区发表你的问题和反馈。</p><hr><p>via: <a href=https://www.linuxtechi.com/how-to-create-lvm-partition-in-linux/>https://www.linuxtechi.com/how-to-create-lvm-partition-in-linux/</a></p><p>作者：<a href=https://www.linuxtechi.com/author/james/>James Kiarie</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux 中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/lvm/ rel=tag>LVM</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

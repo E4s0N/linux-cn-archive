@@ -1,0 +1,67 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>采用转发服务器增强 Postfix 邮件服务器的安全 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="采用转发服务器增强 Postfix 邮件服务器的安全"><meta property="og:description" content="当你启动并运行应用服务器后，你就需要一台好的邮件服务器来为你传递邮件。我为我所有的服务器开通了postfix邮件服务，下面就是我常用的配置。 CentOS 6上安装Postfix yum install postfix  默认安装了Sendmail，所以最好将它停掉并移除。 service sendmail stop yum remove sendmail  Postfix包含了两个配置文件main.cf和master.cf，对于基本的配置，你需要修改main.cf。同时，postfix可以像shell变量一样定义参数，并通过$来调用。这些参数不需要再使用前定义，Postfix只在运行中需要时才会查询某个参数。 配置postfix vim /etc/postfix"><meta property="og:type" content="article"><meta property="og:url" content="/article-4699-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-01-19T10:06:00+00:00"><meta property="article:modified_time" content="2015-01-19T10:06:00+00:00"><meta itemprop=name content="采用转发服务器增强 Postfix 邮件服务器的安全"><meta itemprop=description content="当你启动并运行应用服务器后，你就需要一台好的邮件服务器来为你传递邮件。我为我所有的服务器开通了postfix邮件服务，下面就是我常用的配置。 CentOS 6上安装Postfix yum install postfix  默认安装了Sendmail，所以最好将它停掉并移除。 service sendmail stop yum remove sendmail  Postfix包含了两个配置文件main.cf和master.cf，对于基本的配置，你需要修改main.cf。同时，postfix可以像shell变量一样定义参数，并通过$来调用。这些参数不需要再使用前定义，Postfix只在运行中需要时才会查询某个参数。 配置postfix vim /etc/postfix"><meta itemprop=datePublished content="2015-01-19T10:06:00+00:00"><meta itemprop=dateModified content="2015-01-19T10:06:00+00:00"><meta itemprop=wordCount content="268"><meta itemprop=keywords content="Postfix,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>采用转发服务器增强 Postfix 邮件服务器的安全</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-01-19T10:06:00Z>January 19, 2015</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201501/19/100749yy85b6l3byrvddrv.png alt></p><p>当你启动并运行应用服务器后，你就需要一台好的邮件服务器来为你传递邮件。我为我所有的服务器开通了postfix邮件服务，下面就是我常用的配置。</p><h3 id=centos-6上安装postfix>CentOS 6上安装Postfix</h3><pre tabindex=0><code>yum install postfix
+</code></pre><p>默认安装了Sendmail，所以最好将它停掉并移除。</p><pre tabindex=0><code>service sendmail stop
+yum remove sendmail
+</code></pre><p>Postfix包含了<strong>两个配置文件main.cf和master.cf</strong>，对于基本的配置，你需要修改main.cf。同时，postfix可以像shell变量一样定义参数，并通过$来调用。这些参数不需要再使用前定义，Postfix只在运行中需要时才会查询某个参数。</p><h3 id=配置postfix>配置postfix</h3><pre tabindex=0><code>vim /etc/postfix/main.cf
+</code></pre><p>去掉以下行的注释</p><pre tabindex=0><code># 你的主机名
+myhostname = yourhostname.com
+
+# 你的发件域
+myorigin = $myhostname
+
+# 指定用于接收邮件的网络接口，这里指定 localhost 是因为我们只用来接受本地的程序投递
+inet_interfaces = localhost
+
+# 指定所使用的协议，可以使用“all”来增加 IPv6 支持
+inet_protocols = ipv4
+
+
+# 指定所接受的邮件域    
+mydestination = $myhostname, localhost.$mydomain, localhost
+
+# 仅转发本地主机的邮件，而不是主机所在的网络
+mynetworks_style = host
+</code></pre><p>启动postfix</p><pre tabindex=0><code>service postfix start
+</code></pre><p>这些基本的postfix配置可以让你的机器发送邮件，你可以通过发送邮件并检查“maillog”日志文件来验证。</p><pre tabindex=0><code>echo test mail | mail -s &#34;test&#34;  leo@techarena51.com &amp;&amp; sudo tail -f /var/log/maillog
+
+# 输出的日志类似如下
+Aug 25 14:16:21 vps postfix/smtp[32622]: E6A372DC065D: to=, relay=smtp.mailserver.org[50.56.21.176], delay=0.8, delays=0.1/0/0.43/0.27, dsn=2.0.0, status=sent (250 Great success)
+Aug 25 14:16:21 vps postfix/qmgr[5355]: E6A372DC065D: removed
+</code></pre><p>但是，上述配置并不够，因为邮件服务大多数时候都会被垃圾邮件挤满，你需要添加SPF、PTR和DKIM记录。即便如此，你的邮件仍然可能被当作垃圾邮件来投递，因为你的IP地址被列入了黑名单，大多数时候是因为你的vps先前被入侵了。</p><p>还有另外一种选择，或者说是更好的方式是使用第三方邮件提供商提供的邮件服务，如Gmail，或者甚至是Mailgun。我使用Mailgun，因为它们提供了每个月10000封免费电子邮件，而Gmail则提供了每天100封左右的邮件。</p><p>在“/etc/postfix/main.cf”中，你需要添加“smtp.mailgun.com”作为你的“转发主机”，并启用“SASL”验证，这样postfix就可以连接并验证到远程Mailgun服务器。</p><p>添加或取消以下行的注释。</p><pre tabindex=0><code>relayhost = [smtp.mailgun.org]
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps=static:your_username:your_password
+smtp_sasl_security_options=noanonymous
+</code></pre><p>Postfix本身不会实施“SASL”验证，因此你需要安装“cyrus-sasl-plain”。</p><pre tabindex=0><code>sudo yum install cyrus-sasl-plain
+</code></pre><p>如果你不安装此包，那么你就会收到这条错误信息“SASL authentication failed; cannot authenticate to server smtp.mailgun.org[50.56.21.176]: no mechanism available)”</p><p>重启postfix</p><pre tabindex=0><code>sudo service postfix restart
+</code></pre><h3 id=使用tls加固postfix安全>使用TLS加固Postfix安全</h3><p>Postfix支持TLS，它是SSL的后继者，允许你使用基于密钥的验证来加密数据。我推荐你阅读 <a href=http://www.postfix.org/TLS_README.html>http://www.postfix.org/TLS_README.html</a> ，以了解TLS是怎么和postfix一起工作的。</p><p>为了使用TLS，你需要生成一个私钥和一个由证书授权机构颁发的证书。在本例中，我将使用自颁发的证书。</p><pre tabindex=0><code>sudo yum install mod_ssl openssl
+# 生成私钥 
+openssl genrsa -out smtp.key 2048 
+
+# 生成 CSR 
+openssl req -new -key smtp.key -out smtp.csr
+
+# 生成自签名的钥匙
+openssl x509 -req -days 365 -in smtp.csr -signkey smtp.key -out smtp.crt
+
+# 将文件复制到正确的位置
+cp smtp.crt /etc/pki/tls/certs
+cp smtp.key /etc/pki/tls/private/smtp.key
+cp smtp.csr /etc/pki/tls/private/smtp.csr
+</code></pre><p>打开postfix配置文件，然后添加以下参数。</p><pre tabindex=0><code>sudo vim /etc/postfix/main.cf
+
+smtp_tls_security_level = may
+smtpd_tls_security_level = may
+smtp_tls_note_starttls_offer = yes
+
+smtpd_tls_key_file = /etc/pki/tls/private/smtp.key
+smtpd_tls_cert_file = /etc/pki/tls/certs
+smtp_tls_CAfile = /etc/ssl/certs/ca.crt
+smtp_tls_loglevel = 1
+</code></pre><p>安全级别“may”意味着宣告对远程SMTP客户端上的STARTTLS的支持，但是客户端不需要使用加密。我在这里按照<a href=http://documentation.mailgun.com/user_manual.html#smtp-relay>mailgun文档</a>提示使用“may”，但是如果你想要强制使用TLS加密，可以使用“encrypt”。</p><pre tabindex=0><code>service postfix restart
+# 发送一封测试邮件
+echo test mail | mail -s &#34;test&#34;  test@yourdomain.com &amp;&amp; sudo tail -f /var/log/maillog
+</code></pre><p>你应该会看到以下信息</p><pre tabindex=0><code>Aug 21 00:00:06 vps postfix/smtp[4997]: setting up TLS connection to smtp.mailgun.org[50.56.21.176]:587
+Aug 21 00:00:06 vps postfix/smtp[4997]: Trusted TLS connection established to smtp.mailgun.org[50.56.21.176]:587: TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits)
+</code></pre><p>如果一切正常，你可以注释掉以下参数。</p><p>“smtp_tls_loglevel = 1”</p><p>对于故障排除，我推荐你阅读<a href=http://techarena51.com/index.php/postfix-configuration-and-explanation-of-parameters/>Postfix小建议和排障命令</a></p><hr><p>via: <a href=http://techarena51.com/index.php/configure-secure-postfix-email-server/>http://techarena51.com/index.php/configure-secure-postfix-email-server/</a></p><p>作者：<a href=http://techarena51.com/>Leo G</a> 译者：<a href=https://github.com/GOLinux>GOLinux</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/postfix/ rel=tag>Postfix</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

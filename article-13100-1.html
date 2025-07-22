@@ -1,0 +1,75 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>我为什么要用 D 语言写脚本？ - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="我为什么要用 D 语言写脚本？"><meta property="og:description" content="D 语言以系统编程语言而闻名，但它也是编写脚本的一个很好的选择。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13100-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-02-09T13:44:46+00:00"><meta property="article:modified_time" content="2021-02-09T13:44:46+00:00"><meta itemprop=name content="我为什么要用 D 语言写脚本？"><meta itemprop=description content="D 语言以系统编程语言而闻名，但它也是编写脚本的一个很好的选择。"><meta itemprop=datePublished content="2021-02-09T13:44:46+00:00"><meta itemprop=dateModified content="2021-02-09T13:44:46+00:00"><meta itemprop=wordCount content="260"><meta itemprop=keywords content="D语言,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>我为什么要用 D 语言写脚本？</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-02-09T13:44:46Z>February 09, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>D 语言以系统编程语言而闻名，但它也是编写脚本的一个很好的选择。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202102/09/134351j4m3hrhll0h38plp.jpg alt title="Woman using laptop concentrating"></p><p>D 语言由于其静态类型和元编程能力，经常被宣传为系统编程语言。然而，它也是一种非常高效的脚本语言。</p><p>由于 Python 在自动化任务和快速实现原型想法方面的灵活性，它通常被选为脚本语言。这使得 Python 对系统管理员、<a href=https://opensource.com/article/20/3/automating-community-management-python>管理者</a>和一般的开发人员非常有吸引力，因为它可以自动完成他们可能需要手动完成的重复性任务。</p><p>我们自然也可以期待任何其他的脚本编写语言具有 Python 的这些特性和能力。以下是我认为 D 是一个不错的选择的两个原因。</p><h3 id=1d-很容易读和写>1、D 很容易读和写</h3><p>作为一种类似于 C 的语言，D 应该是大多数程序员所熟悉的。任何使用 JavaScript、Java、PHP 或 Python 的人对 D 语言都很容易上手。</p><p>如果你还没有安装 D，请<a href=https://tour.dlang.org/tour/en/welcome/install-d-locally>安装 D 编译器</a>，这样你就可以<a href=https://tour.dlang.org/tour/en/welcome/run-d-program-locally>运行本文中的 D 代码</a>。你也可以使用<a href=https://run.dlang.io/>在线 D 编辑器</a>。</p><p>下面是一个 D 代码的例子，它从一个名为 <code>words.txt</code> 的文件中读取单词，并在命令行中打印出来：</p><pre tabindex=0><code>open
+source
+is
+cool
+</code></pre><p>用 D 语言写脚本:</p><pre tabindex=0><code>#!/usr/bin/env rdmd
+// file print_words.d
+
+// import the D standard library
+import std;
+
+void main(){
+    // open the file
+     File(&#34;./words.txt&#34;)
+
+         //iterate by line
+        .byLine
+
+        // print each number
+        .each!writeln;
+}
+</code></pre><p>这段代码以 <a href=https://en.wikipedia.org/wiki/Shebang_(Unix)>释伴</a> 开头，它将使用 <a href=https://dlang.org/rdmd.html>rdmd</a> 来运行这段代码，<code>rdmd</code> 是 D 编译器自带的编译和运行代码的工具。假设你运行的是 Unix 或 Linux，在运行这个脚本之前，你必须使用<code>chmod</code> 命令使其可执行：</p><pre tabindex=0><code>chmod u+x print_words.d
+</code></pre><p>现在脚本是可执行的，你可以运行它：</p><pre tabindex=0><code>./print_words.d
+</code></pre><p>这将在你的命令行中打印以下内容：</p><pre tabindex=0><code>open
+source
+is
+cool
+</code></pre><p>恭喜你，你写了第一个 D 语言脚本。你可以看到 D 是如何让你按顺序链式调用函数，这让阅读代码的感觉很自然，类似于你在头脑中思考问题的方式。这个<a href=https://opensource.com/article/20/7/d-programming>功能让 D 成为我最喜欢的编程语言</a>。</p><p>试着再写一个脚本：一个非营利组织的管理员有一个捐款的文本文件，每笔金额都是单独的一行。管理员想把前 10 笔捐款相加，然后打印出金额：</p><pre tabindex=0><code>#!/usr/bin/env rdmd
+// file sum_donations.d
+
+import std;
+
+void main()
+{
+    double total = 0;
+
+    // open the file
+    File(&#34;monies.txt&#34;)
+
+         // iterate by line
+        .byLine
+
+         // pick first 10 lines
+        .take(10)
+
+        // remove new line characters (\n)
+        .map!(strip)
+
+         // convert each to double
+        .map!(to!double)
+
+        // add element to total
+        .tee!((x) { total += x; })
+
+        // print each number
+        .each!writeln;
+
+    // print total
+    writeln(&#34;total: &#34;, total);
+}
+</code></pre><p>与 <code>each</code> 一起使用的 <code>!</code> 操作符是<a href=http://ddili.org/ders/d.en/templates.html>模板参数</a>的语法。</p><h3 id=2d-是快速原型设计的好帮手>2、D 是快速原型设计的好帮手</h3><p>D 是灵活的，它可以快速地将代码敲打在一起，并使其发挥作用。它的标准库中包含了丰富的实用函数，用于执行常见的任务，如操作数据（JSON、CSV、文本等）。它还带有一套丰富的通用算法，用于迭代、搜索、比较和 mutate 数据。这些巧妙的算法通过定义通用的 <a href=http://ddili.org/ders/d.en/ranges.html>基于范围的接口</a> 而按照序列进行处理。</p><p>上面的脚本显示了 D 中的链式调用函数如何提供顺序处理和操作数据的要领。D 的另一个吸引人的地方是它不断增长的用于执行普通任务的第三方包的生态系统。一个例子是，使用 <a href=https://vibed.org>Vibe.d</a> web 框架构建一个简单的 web 服务器很容易。下面是一个例子：</p><pre tabindex=0><code>#!/usr/bin/env dub
+/+ dub.sdl:
+dependency &#34;vibe-d&#34; version=&#34;~&gt;0.8.0&#34;
++/
+void main()
+{
+    import vibe.d;
+    listenHTTP(&#34;:8080&#34;, (req, res) {
+        res.writeBody(&#34;Hello, World: &#34; ~ req.path);
+    });
+    runApplication();
+}
+</code></pre><p>它使用官方的 D 软件包管理器 <a href=https://dub.pm/getting_started>Dub</a>，从 <a href=https://code.dlang.org>D 软件包仓库</a>中获取 vibe.d Web 框架。Dub 负责下载 Vibe.d 包，然后在本地主机 8080 端口上编译并启动一个 web 服务器。</p><h3 id=尝试一下-d-语言>尝试一下 D 语言</h3><p>这些只是你可能想用 D 来写脚本的几个原因。</p><p>D 是一种非常适合开发的语言。你可以很容易从 D 下载页面安装，因此下载编译器，看看例子，并亲自体验 D 语言。</p><hr><p>via: <a href=https://opensource.com/article/21/1/d-scripting>https://opensource.com/article/21/1/d-scripting</a></p><p>作者：<a href=https://opensource.com/users/aberba>Lawrence Aberba</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/d%E8%AF%AD%E8%A8%80/ rel=tag>D语言</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

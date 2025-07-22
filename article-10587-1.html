@@ -1,0 +1,46 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linux 中的 &amp;amp; - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Linux 中的 &amp;amp;"><meta property="og:description" content="这篇文章将了解一下 & 符号及它在 Linux 命令行中的各种用法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10587-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-03-04T01:49:50+00:00"><meta property="article:modified_time" content="2019-03-04T01:49:50+00:00"><meta itemprop=name content="Linux 中的 &amp;amp;"><meta itemprop=description content="这篇文章将了解一下 & 符号及它在 Linux 命令行中的各种用法。"><meta itemprop=datePublished content="2019-03-04T01:49:50+00:00"><meta itemprop=dateModified content="2019-03-04T01:49:50+00:00"><meta itemprop=wordCount content="321"><meta itemprop=keywords content="命令行,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Linux 中的 &amp;amp;</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-03-04T01:49:50Z>March 04, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>这篇文章将了解一下 & 符号及它在 Linux 命令行中的各种用法。</p></blockquote><p><img src=/data/attachment/album/201903/04/014953jqxs74t33www3tdw.png alt></p><p>如果阅读过我之前的三篇文章（<a href=/article-10465-1.html>1</a>、<a href=/article-10502-1.html>2</a>、<a href=/article-10529-1.html>3</a>），你会觉得掌握连接各个命令之间的连接符号用法也是很重要的。实际上，命令的用法并不难，例如 <code>mkdir</code>、<code>touch</code> 和 <code>find</code> 也分别可以简单概括为“建立新目录”、“更新文件”和“在目录树中查找文件”而已。</p><p>但如果要理解</p><pre tabindex=0><code>mkdir test_dir 2&gt;/dev/null || touch images.txt &amp;&amp; find . -iname &#34;*jpg&#34; &gt; backup/dir/images.txt &amp;
+</code></pre><p>这一串命令的目的，以及为什么要这样写，就没有这么简单了。</p><p>关键之处就在于命令之间的连接符号。掌握了这些符号的用法，不仅可以让你更好理解整体的工作原理，还可以让你知道如何将不同的命令有效地结合起来，提高工作效率。</p><p>在这一篇文章和接下来的文章中，我会介绍如何使用 <code>&</code> 号和管道符号（<code>|</code>）在不同场景下的使用方法。</p><h3 id=幕后工作>幕后工作</h3><p>我来举一个简单的例子，看看如何使用 <code>&</code> 号将下面这个命令放到后台运行：</p><pre tabindex=0><code>cp -R original/dir/ backup/dir/
+</code></pre><p>这个命令的目的是将 <code>original/dir/</code> 的内容递归地复制到 <code>backup/dir/</code> 中。虽然看起来很简单，但是如果原目录里面的文件太大，在执行过程中终端就会一直被卡住。</p><p>所以，可以在命令的末尾加上一个 <code>&</code> 号，将这个任务放到后台去执行：</p><pre tabindex=0><code>cp -R original/dir/ backup/dir/ &amp;
+</code></pre><p>任务被放到后台执行之后，就可以立即继续在同一个终端上工作了，甚至关闭终端也不影响这个任务的正常执行。需要注意的是，如果要求这个任务输出内容到标准输出中（例如 <code>echo</code> 或 <code>ls</code>），即使使用了 <code>&</code>，也会等待这些输出任务在前台运行完毕。</p><p>当使用 <code>&</code> 将一个进程放置到后台运行的时候，Bash 会提示这个进程的进程 ID。在 Linux 系统中运行的每一个进程都有一个唯一的进程 ID，你可以使用进程 ID 来暂停、恢复或者终止对应的进程，因此进程 ID 是非常重要的。</p><p>这个时候，只要你还停留在启动进程的终端当中，就可以使用以下几个命令来对管理后台进程：</p><ul><li><code>jobs</code> 命令可以显示当前终端正在运行的进程，包括前台运行和后台运行的进程。它对每个正在执行中的进程任务分配了一个序号（这个序号不是进程 ID），可以使用这些序号来引用各个进程任务。</li></ul><pre tabindex=0><code>$ jobs
+[1]- Running cp -i -R original/dir/* backup/dir/ &amp;
+[2]+ Running find . -iname &#34;*jpg&#34; &gt; backup/dir/images.txt &amp;
+</code></pre><ul><li><code>fg</code> 命令可以将后台运行的进程任务放到前台运行，这样可以比较方便地进行交互。根据 <code>jobs</code> 命令提供的进程任务序号，再在前面加上 <code>%</code> 符号，就可以把相应的进程任务放到前台运行。</li></ul><pre tabindex=0><code>$ fg %1 # 将上面序号为 1 的 cp 任务放到前台运行
+cp -i -R original/dir/* backup/dir/
+</code></pre><p>如果这个进程任务是暂停状态，<code>fg</code> 命令会将它启动起来。</p><ul><li>使用 <code>ctrl+z</code> 组合键可以将前台运行的任务暂停，仅仅是暂停，而不是将任务终止。当使用 <code>fg</code> 或者 <code>bg</code> 命令将任务重新启动起来的时候，任务会从被暂停的位置开始执行。但 <a href=https://ss64.com/bash/sleep.html>sleep</a> 命令是一个特例，<code>sleep</code> 任务被暂停的时间会计算在 <code>sleep</code> 时间之内。因为 <code>sleep</code> 命令依据的是系统时钟的时间，而不是实际运行的时间。也就是说，如果运行了 <code>sleep 30</code>，然后将任务暂停 30 秒以上，那么任务恢复执行的时候会立即终止并退出。</li><li><code>bg</code> 命令会将任务放置到后台执行，如果任务是暂停状态，也会被启动起来。</li></ul><pre tabindex=0><code>$ bg %1
+[1]+ cp -i -R original/dir/* backup/dir/ &amp;
+</code></pre><p>如上所述，以上几个命令只能在同一个终端里才能使用。如果启动进程任务的终端被关闭了，或者切换到了另一个终端，以上几个命令就无法使用了。</p><p>如果要在另一个终端管理后台进程，就需要其它工具了。例如可以使用 <a href=https://bash.cyberciti.biz/guide/Sending_signal_to_Processes>kill</a> 命令从另一个终端终止某个进程：</p><pre tabindex=0><code>kill -s STOP &lt;PID&gt;
+</code></pre><p>这里的 PID 就是使用 <code>&</code> 将进程放到后台时 Bash 显示的那个进程 ID。如果你当时没有把进程 ID 记录下来，也可以使用 <code>ps</code> 命令（代表 process）来获取所有正在运行的进程的进程 ID，就像这样：</p><pre tabindex=0><code>ps | grep cp
+</code></pre><p>执行以后会显示出包含 <code>cp</code> 字符串的所有进程，例如上面例子中的 <code>cp</code> 进程。同时还会显示出对应的进程 ID：</p><pre tabindex=0><code>$ ps | grep cp
+14444 pts/3 00:00:13 cp
+</code></pre><p>在这个例子中，进程 ID 是 14444，因此可以使用以下命令来暂停这个后台进程：</p><pre tabindex=0><code>kill -s STOP 14444
+</code></pre><p>注意，这里的 <code>STOP</code> 等同于前面提到的 <code>ctrl+z</code> 组合键的效果，也就是仅仅把进程暂停掉。</p><p>如果想要把暂停了的进程启动起来，可以对进程发出 <code>CONT</code> 信号：</p><pre tabindex=0><code>kill -s CONT 14444
+</code></pre><p>这个给出一个<a href=https://www.computerhope.com/unix/signals.htm>可以向进程发出的常用信号</a>列表。如果想要终止一个进程，可以发送 <code>TERM</code> 信号：</p><pre tabindex=0><code>kill -s TERM 14444
+</code></pre><p>如果进程不响应 <code>TERM</code> 信号并拒绝退出，还可以发送 <code>KILL</code> 信号强制终止进程：</p><pre tabindex=0><code>kill -s KILL 14444
+</code></pre><p>强制终止进程可能会有一定的风险，但如果遇到进程无节制消耗资源的情况，这样的信号还是能够派上用场的。</p><p>另外，如果你不确定进程 ID 是否正确，可以在 <code>ps</code> 命令中加上 <code>x</code> 参数：</p><pre tabindex=0><code>$ ps x| grep cp
+14444 pts/3 D 0:14 cp -i -R original/dir/Hols_2014.mp4
+  original/dir/Hols_2015.mp4 original/dir/Hols_2016.mp4
+  original/dir/Hols_2017.mp4 original/dir/Hols_2018.mp4 backup/dir/
+</code></pre><p>这样就可以看到是不是你需要的进程 ID 了。</p><p>最后介绍一个将 <code>ps</code> 和 <code>grep</code> 结合到一起的命令：</p><pre tabindex=0><code>$ pgrep cp
+8
+18
+19
+26
+33
+40
+47
+54
+61
+72
+88
+96
+136
+339
+6680
+13735
+14444
+</code></pre><p><code>pgrep</code> 可以直接将带有字符串 <code>cp</code> 的进程的进程 ID 显示出来。</p><p>可以加上一些参数让它的输出更清晰：</p><pre tabindex=0><code>$ pgrep -lx cp
+14444 cp
+</code></pre><p>在这里，<code>-l</code> 参数会让 <code>pgrep</code> 将进程的名称显示出来，<code>-x</code> 参数则是让 <code>pgrep</code> 完全匹配 <code>cp</code> 这个命令。如果还想了解这个命令的更多细节，可以尝试运行 <code>pgrep -ax</code>。</p><h3 id=总结>总结</h3><p>在命令的末尾加上 <code>&</code> 可以让我们理解前台进程和后台进程的概念，以及如何管理这些进程。</p><p>在 UNIX/Linux 术语中，在后台运行的进程被称为 守护进程 daemon 。如果你曾经听说过这个词，那你现在应该知道它的意义了。</p><p>和其它符号一样，<code>&</code> 在命令行中还有很多别的用法。在下一篇文章中，我会更详细地介绍。</p><hr><p>via: <a href=https://www.linux.com/blog/learn/2019/2/and-ampersand-and-linux>https://www.linux.com/blog/learn/2019/2/and-ampersand-and-linux</a></p><p>作者：<a href=https://www.linux.com/users/bro66>Paul Brown</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/HankChow>HankChow</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/ rel=tag>命令行</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

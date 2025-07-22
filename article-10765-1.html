@@ -1,0 +1,128 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>HTTPie：替代 Curl 和 Wget 的现代 HTTP 命令行客户端 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="HTTPie：替代 Curl 和 Wget 的现代 HTTP 命令行客户端"><meta property="og:description" content="HTTPie 工具是现代的 HTTP 命令行客户端，它能通过命令行界面与 Web 服务进行交互。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10765-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-04-22T12:30:48+00:00"><meta property="article:modified_time" content="2019-04-22T12:30:48+00:00"><meta itemprop=name content="HTTPie：替代 Curl 和 Wget 的现代 HTTP 命令行客户端"><meta itemprop=description content="HTTPie 工具是现代的 HTTP 命令行客户端，它能通过命令行界面与 Web 服务进行交互。"><meta itemprop=datePublished content="2019-04-22T12:30:48+00:00"><meta itemprop=dateModified content="2019-04-22T12:30:48+00:00"><meta itemprop=wordCount content="650"><meta itemprop=keywords content="HTTPie,curl,wget,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>HTTPie：替代 Curl 和 Wget 的现代 HTTP 命令行客户端</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-04-22T12:30:48Z>April 22, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201904/22/123041icp13cxtkrs0morx.jpg alt></p><p>大多数时间我们会使用 <code>curl</code> 命令或是 <code>wget</code> 命令下载文件或者做其他事。</p><p>我们以前曾写过 <a href=https://www.2daygeek.com/best-4-command-line-download-managers-accelerators-for-linux/>最佳命令行下载管理器</a> 的文章。你可以点击相应的 URL 连接来浏览这些文章。</p><ul><li><a href=https://www.2daygeek.com/aria2-linux-command-line-download-utility-tool/>aria2 – Linux 下的多协议命令行下载工具</a></li><li><a href=https://www.2daygeek.com/axel-linux-command-line-download-accelerator/>Axel – Linux 下的轻量级命令行下载加速器</a></li><li><a href=https://www.2daygeek.com/wget-linux-command-line-download-utility-tool/>Wget – Linux 下的标准命令行下载工具</a></li><li><a href=https://www.2daygeek.com/curl-linux-command-line-download-manager/>curl – Linux 下的实用的命令行下载工具</a></li></ul><p>今天我们将讨论同样的话题。这个实用程序名为 HTTPie。</p><p>它是现代命令行 http 客户端，也是 <code>curl</code> 和 <code>wget</code> 命令的最佳替代品。</p><h3 id=什么是-httpie>什么是 HTTPie？</h3><p>HTTPie (发音是 aitch-tee-tee-pie) 是一个 HTTP 命令行客户端。</p><p>HTTPie 工具是现代的 HTTP 命令行客户端，它能通过命令行界面与 Web 服务进行交互。</p><p>它提供一个简单的 <code>http</code> 命令，允许使用简单而自然的语法发送任意的 HTTP 请求，并会显示彩色的输出。</p><p>HTTPie 能用于测试、调试及与 HTTP 服务器交互。</p><h3 id=主要特点>主要特点</h3><ul><li>具表达力的和直观语法</li><li>格式化的及彩色化的终端输出</li><li>内置 JSON 支持</li><li>表单和文件上传</li><li>HTTPS、代理和认证</li><li>任意请求数据</li><li>自定义头部</li><li>持久化会话</li><li>类似 <code>wget</code> 的下载</li><li>支持 Python 2.7 和 3.x</li></ul><h3 id=在-linux-下如何安装-httpie>在 Linux 下如何安装 HTTPie</h3><p>大部分 Linux 发行版都提供了系统包管理器，可以用它来安装。</p><p>Fedora 系统，使用 <a href=https://www.2daygeek.com/dnf-command-examples-manage-packages-fedora-system/>DNF 命令</a> 来安装 httpie：</p><pre tabindex=0><code>$ sudo dnf install httpie
+</code></pre><p>Debian/Ubuntu 系统，使用 <a href=https://www.2daygeek.com/apt-get-apt-cache-command-examples-manage-packages-debian-ubuntu-systems/>APT-GET 命令</a> 或 <a href=https://www.2daygeek.com/apt-command-examples-manage-packages-debian-ubuntu-systems/>APT 命令</a> 来安装 HTTPie。</p><pre tabindex=0><code>$ sudo apt install httpie
+</code></pre><p>基于 Arch Linux 的系统，使用 <a href=https://www.2daygeek.com/pacman-command-examples-manage-packages-arch-linux-system/>Pacman 命令</a> 来安装 HTTPie。</p><pre tabindex=0><code>$ sudo pacman -S httpie
+</code></pre><p>RHEL/CentOS 的系统，使用 <a href=https://www.2daygeek.com/yum-command-examples-manage-packages-rhel-centos-systems/>YUM 命令</a> 来安装 HTTPie。</p><pre tabindex=0><code>$ sudo yum install httpie
+</code></pre><p>openSUSE Leap 系统，使用 <a href=https://www.2daygeek.com/zypper-command-examples-manage-packages-opensuse-system/>Zypper 命令</a> 来安装 HTTPie。</p><pre tabindex=0><code>$ sudo zypper install httpie
+</code></pre><h3 id=用法>用法</h3><h4 id=如何使用-httpie-请求-url>如何使用 HTTPie 请求 URL？</h4><p>HTTPie 的基本用法是将网站的 URL 作为参数。</p><pre tabindex=0><code># http 2daygeek.com
+HTTP/1.1 301 Moved Permanently
+CF-RAY: 4c4a618d0c02ce6d-LHR
+Cache-Control: max-age=3600
+Connection: keep-alive
+Date: Tue, 09 Apr 2019 06:21:28 GMT
+Expires: Tue, 09 Apr 2019 07:21:28 GMT
+Location: https://2daygeek.com/
+Server: cloudflare
+Transfer-Encoding: chunked
+Vary: Accept-Encoding
+</code></pre><h4 id=如何使用-httpie-下载文件>如何使用 HTTPie 下载文件</h4><p>你可以使用带 <code>--download</code> 参数的 HTTPie 命令下载文件。类似于 <code>wget</code> 命令。</p><pre tabindex=0><code># http --download https://www.2daygeek.com/wp-content/uploads/2019/04/Anbox-Easy-Way-To-Run-Android-Apps-On-Linux.png
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+CF-Cache-Status: HIT
+CF-RAY: 4c4a65d5ca360a66-LHR
+Cache-Control: public, max-age=7200
+Connection: keep-alive
+Content-Length: 32066
+Content-Type: image/png
+Date: Tue, 09 Apr 2019 06:24:23 GMT
+Expect-CT: max-age=604800, report-uri=&#34;https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct&#34;
+Expires: Tue, 09 Apr 2019 08:24:23 GMT
+Last-Modified: Mon, 08 Apr 2019 04:54:25 GMT
+Server: cloudflare
+Set-Cookie: __cfduid=dd2034b2f95ae42047e082f59f2b964f71554791063; expires=Wed, 08-Apr-20 06:24:23 GMT; path=/; domain=.2daygeek.com; HttpOnly; Secure
+Vary: Accept-Encoding
+
+Downloading 31.31 kB to &#34;Anbox-Easy-Way-To-Run-Android-Apps-On-Linux.png&#34;
+Done. 31.31 kB in 0.01187s (2.58 MB/s)
+</code></pre><p>你还可以使用 <code>-o</code> 参数用不同的名称保存输出文件。</p><pre tabindex=0><code># http --download https://www.2daygeek.com/wp-content/uploads/2019/04/Anbox-Easy-Way-To-Run-Android-Apps-On-Linux.png -o Anbox-1.png
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+CF-Cache-Status: HIT
+CF-RAY: 4c4a68194daa0a66-LHR
+Cache-Control: public, max-age=7200
+Connection: keep-alive
+Content-Length: 32066
+Content-Type: image/png
+Date: Tue, 09 Apr 2019 06:25:56 GMT
+Expect-CT: max-age=604800, report-uri=&#34;https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct&#34;
+Expires: Tue, 09 Apr 2019 08:25:56 GMT
+Last-Modified: Mon, 08 Apr 2019 04:54:25 GMT
+Server: cloudflare
+Set-Cookie: __cfduid=d3eea753081690f9a2d36495a74407dd71554791156; expires=Wed, 08-Apr-20 06:25:56 GMT; path=/; domain=.2daygeek.com; HttpOnly; Secure
+Vary: Accept-Encoding
+
+Downloading 31.31 kB to &#34;Anbox-1.png&#34;
+Done. 31.31 kB in 0.01551s (1.97 MB/s)
+</code></pre><h4 id=如何使用-httpie-恢复部分下载>如何使用 HTTPie 恢复部分下载？</h4><p>你可以使用带 <code>-c</code> 参数的 HTTPie 继续下载。</p><pre tabindex=0><code># http --download --continue https://speed.hetzner.de/100MB.bin -o 100MB.bin
+HTTP/1.1 206 Partial Content
+Connection: keep-alive
+Content-Length: 100442112
+Content-Range: bytes 4415488-104857599/104857600
+Content-Type: application/octet-stream
+Date: Tue, 09 Apr 2019 06:32:52 GMT
+ETag: &#34;5253f0fd-6400000&#34;
+Last-Modified: Tue, 08 Oct 2013 11:48:13 GMT
+Server: nginx
+Strict-Transport-Security: max-age=15768000; includeSubDomains
+
+Downloading 100.00 MB to &#34;100MB.bin&#34;
+ |  24.14 %   24.14 MB    1.12 MB/s  0:01:07 ETA^C
+</code></pre><p>你根据下面的输出验证是否同一个文件：</p><pre tabindex=0><code>[email protected]:/var/log# ls -lhtr 100MB.bin
+-rw-r--r-- 1 root root 25M Apr  9 01:33 100MB.bin
+</code></pre><h4 id=如何使用-httpie-上传文件>如何使用 HTTPie 上传文件？</h4><p>你可以通过使用带有小于号 <code>&lt;</code> 的 HTTPie 命令上传文件</p><pre tabindex=0><code>$ http https://transfer.sh &lt; Anbox-1.png
+</code></pre><h4 id=如何使用带有重定向符号--下载文件>如何使用带有重定向符号 > 下载文件？</h4><p>你可以使用带有重定向 <code>></code> 符号的 HTTPie 命令下载文件。</p><pre tabindex=0><code># http https://www.2daygeek.com/wp-content/uploads/2019/03/How-To-Install-And-Enable-Flatpak-Support-On-Linux-1.png &gt; Flatpak.png
+
+# ls -ltrh Flatpak.png
+-rw-r--r-- 1 root root 47K Apr  9 01:44 Flatpak.png
+</code></pre><h4 id=发送一个-http-get-请求>发送一个 HTTP GET 请求？</h4><p>您可以在请求中发送 HTTP GET 方法。GET 方法会使用给定的 URI，从给定服务器检索信息。</p><pre tabindex=0><code># http GET httpie.org
+HTTP/1.1 301 Moved Permanently
+CF-RAY: 4c4a83a3f90dcbe6-SIN
+Cache-Control: max-age=3600
+Connection: keep-alive
+Date: Tue, 09 Apr 2019 06:44:44 GMT
+Expires: Tue, 09 Apr 2019 07:44:44 GMT
+Location: https://httpie.org/
+Server: cloudflare
+Transfer-Encoding: chunked
+Vary: Accept-Encoding
+</code></pre><h4 id=提交表单>提交表单?</h4><p>使用以下格式提交表单。POST 请求用于向服务器发送数据，例如客户信息、文件上传等。要使用 HTML 表单。</p><pre tabindex=0><code># http -f POST Ubuntu18.2daygeek.com hello=&#39;World&#39;
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Connection: Keep-Alive
+Content-Encoding: gzip
+Content-Length: 3138
+Content-Type: text/html
+Date: Tue, 09 Apr 2019 06:48:12 GMT
+ETag: &#34;2aa6-5844bf1b047fc-gzip&#34;
+Keep-Alive: timeout=5, max=100
+Last-Modified: Sun, 17 Mar 2019 15:29:55 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Vary: Accept-Encoding
+</code></pre><p>运行下面的指令以查看正在发送的请求。</p><pre tabindex=0><code># http -v Ubuntu18.2daygeek.com
+GET / HTTP/1.1
+Accept: */*
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Host: ubuntu18.2daygeek.com
+User-Agent: HTTPie/0.9.8
+
+hello=World
+
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Connection: Keep-Alive
+Content-Encoding: gzip
+Content-Length: 3138
+Content-Type: text/html
+Date: Tue, 09 Apr 2019 06:48:30 GMT
+ETag: &#34;2aa6-5844bf1b047fc-gzip&#34;
+Keep-Alive: timeout=5, max=100
+Last-Modified: Sun, 17 Mar 2019 15:29:55 GMT
+Server: Apache/2.4.29 (Ubuntu)
+Vary: Accept-Encoding
+</code></pre><h4 id=http-认证>HTTP 认证？</h4><p>当前支持的身份验证认证方案是基本认证（Basic）和摘要验证（Digest）。</p><p>基本认证：</p><pre tabindex=0><code>$ http -a username:password example.org
+</code></pre><p>摘要验证：</p><pre tabindex=0><code>$ http -A digest -a username:password example.org
+</code></pre><p>提示输入密码：</p><pre tabindex=0><code>$ http -a username example.org
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/httpie-curl-wget-alternative-http-client-linux/>https://www.2daygeek.com/httpie-curl-wget-alternative-http-client-linux/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/zgj1024>zgj1024</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/httpie/ rel=tag>HTTPie</a></li><li class=tags__item><a class="tags__link btn" href=/tags/curl/ rel=tag>curl</a></li><li class=tags__item><a class="tags__link btn" href=/tags/wget/ rel=tag>wget</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,92 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何使用 dig - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何使用 dig"><meta property="og:description" content="在这篇文章中，我打算不谈 dig 的大部分选项，只谈我实际使用的选项。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14051-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-12-05T19:26:00+00:00"><meta property="article:modified_time" content="2021-12-05T19:26:00+00:00"><meta itemprop=name content="如何使用 dig"><meta itemprop=description content="在这篇文章中，我打算不谈 dig 的大部分选项，只谈我实际使用的选项。"><meta itemprop=datePublished content="2021-12-05T19:26:00+00:00"><meta itemprop=dateModified content="2021-12-05T19:26:00+00:00"><meta itemprop=wordCount content="641"><meta itemprop=keywords content="DNS,dig,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何使用 dig</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-12-05T19:26:00Z>December 05, 2021</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202112/05/192530gj36ttdwz16azu6w.jpg alt></p><p>你好！最近我和几个朋友聊天，他们提到希望知道如何使用 <code>dig</code> 来进行 DNS 查询，所以这是一篇关于它的速读博文。</p><p>当我第一次使用 <code>dig</code> 时，我发现它有点吓人 —— 有这么多的选项！我打算把大部分的选项省略。在这篇文章中，我打算不谈 <code>dig</code> 的大部分选项，只谈我实际使用的选项。</p><p>我最近还了解到，你可以设置一个 <code>.digrc</code> 配置文件，让它的输出更容易阅读，这让它的使用变得更加轻松。</p><p>几年前我还画了一个关于 <code>dig</code> 的 <a href=https://wizardzines.com/comics/dig/>zine 页</a>，但我想写这篇文章来包括更多的信息。</p><h3 id=两种类型的-dig-参数查询和格式化>两种类型的 dig 参数：查询和格式化</h3><p>有两种主要的参数可以传递给 <code>dig</code>：</p><ol><li>告诉 <code>dig</code> <strong>要进行什么 DNS 查询的参数</strong>。</li><li>告诉 <code>dig</code> 如何 <strong>格式化响应的参数</strong>。</li></ol><p>首先，让我们看一下查询选项。</p><h3 id=主要的查询选项>主要的查询选项</h3><p>你通常想控制 DNS 查询的 3 件事是：</p><ol><li><strong>名称</strong>（如 <code>jvns.ca</code>）。默认情况下，查询的是空名称（<code>.</code>）。</li><li><strong>DNS 查询类型</strong>（如 <code>A</code> 或 <code>CNAME</code>）。默认是 <code>A</code>。</li><li>发送查询的 <strong>服务器</strong>（如 <code>8.8.8.8</code>）。默认是 <code>/etc/resolv.conf</code> 中的内容。</li></ol><p>其格式是：</p><pre tabindex=0><code>dig @server name type
+</code></pre><p>这里有几个例子：</p><ul><li><code>dig @8.8.8.8 jvns.ca</code> 向谷歌的公共 DNS 服务器（<code>8.8.8.8</code>）查询 <code>jvns.ca</code>。</li><li><code>dig ns jvns.ca</code> 对 <code>jvns.ca</code> 进行类型为 <code>NS</code> 的查询。</li></ul><h3 id=-x进行反向-dns-查询><code>-x</code>：进行反向 DNS 查询</h3><p>我偶尔使用的另一个查询选项是 <code>-x</code>，用于进行反向 DNS 查询。下面是输出结果的样子。</p><pre tabindex=0><code>$ dig -x 172.217.13.174
+174.13.217.172.in-addr.arpa. 72888 IN PTR yul03s04-in-f14.1e100.net。
+</code></pre><p><code>-x</code> 不是魔术。<code>dig -x 172.217.13.174</code> 只是对 <code>174.13.217.172.in-addr.arpa.</code> 做了一个 <code>PTR</code> 查询。下面是如何在不使用 `-x’ 的情况下进行完全相同的反向 DNS 查询。</p><pre tabindex=0><code>$ dig ptr 174.13.217.172.in-addr.arpa.
+174.13.217.172.in-addr.arpa. 72888 IN PTR yul03s04-in-f14.1e100.net。
+</code></pre><p>我总是使用 <code>-x</code>，因为它可以减少输入。</p><h3 id=格式化响应的选项>格式化响应的选项</h3><p>现在，让我们讨论一下你可以用来格式化响应的参数。</p><p>我发现 <code>dig</code> 默认格式化 DNS 响应的方式对初学者来说是很难接受的。下面是输出结果的样子：</p><pre tabindex=0><code>; &lt;&lt;&gt;&gt; DiG 9.16.20 &lt;&lt;&gt;&gt; -r jvns.ca
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 28629
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+; COOKIE: d87fc3022c0604d60100000061ab74857110b908b274494d (good)
+;; QUESTION SECTION:
+;jvns.ca.           IN  A
+
+;; ANSWER SECTION:
+jvns.ca.        276 IN  A   172.64.80.1
+
+;; Query time: 9 msec
+;; SERVER: 192.168.1.1#53(192.168.1.1)
+;; WHEN: Sat Dec 04 09:00:37 EST 2021
+;; MSG SIZE  rcvd: 80
+</code></pre><p>如果你不习惯看这个，你可能需要花点时间来筛选，找到你要找的 IP 地址。而且大多数时候，你只对这个响应中的一行感兴趣（<code>jvns.ca. 180 IN A 172.64.80.1</code>）。</p><p>下面是我最喜欢的两种方法，可以使 <code>dig</code> 的输出更容易管理：</p><h4 id=方式-1--noall-answer>方式 1 : +noall +answer</h4><p>这告诉 <code>dig</code> 只打印 DNS 响应中的“答案”部分的内容。下面是一个查询 <code>google.com</code> 的 <code>NS</code> 记录的例子：</p><pre tabindex=0><code>$ dig +noall +answer ns google.com
+google.com.     158564  IN  NS  ns4.google.com.
+google.com.     158564  IN  NS  ns1.google.com.
+google.com.     158564  IN  NS  ns2.google.com.
+google.com.     158564  IN  NS  ns3.google.com.
+</code></pre><p>这里的格式是：</p><pre tabindex=0><code>NAME         TTL            TYPE   CONTENT
+google.com   158564   IN    NS     ns3.google.com.
+</code></pre><p>顺便说一下：如果你曾经想知道 <code>IN</code> 是什么意思，它是指“查询类”，代表“ 互联网 internet ”。它基本上只是上世纪 80、90 年代的遗物，当时还有其他网络与互联网竞争，如“ 混沌网络 chaosnet ”。</p><h4 id=方式-2short>方式 2：+short</h4><p>这就像 <code>dig +noall +answer</code>，但更短：它只显示每条记录的内容。比如说：</p><pre tabindex=0><code>$ dig +short ns google.com
+ns2.google.com.
+ns1.google.com.
+ns4.google.com.
+ns3.google.com.
+</code></pre><h3 id=你可以在-digrc-中设置格式化选项>你可以在 <code>digrc</code> 中设置格式化选项</h3><p>如果你不喜欢 <code>dig</code> 的默认格式（我就不喜欢！），你可以在你的主目录下创建一个 <code>.digrc</code> 文件，告诉它默认使用不同的格式。</p><p>我非常喜欢 <code>+noall +answer</code> 格式，所以我把 <code>+noall +answer</code> 放在我的 <code>~/.digrc</code> 中。下面是我使用该配置文件运行 <code>dig jvns.ca</code> 时的情况。</p><pre tabindex=0><code>$ dig jvns.ca
+jvns.ca.        255在172.64.80.1中
+</code></pre><p>这样读起来就容易多了！</p><p>如果我想回到所有输出的长格式（我有时会这样做，通常是因为我想看响应的权威部分的记录），我可以通过运行再次得到一个长答案。</p><pre tabindex=0><code>$ dig +all jvns.ca
+</code></pre><h3 id=dig-trace>dig +trace</h3><p>我使用的最后一个 <code>dig</code> 选项是 <code>+trace</code>。<code>dig +trace</code> 模仿 DNS 解析器在查找域名时的做法 —— 它从根域名服务器开始，然后查询下一级域名服务器（如 <code>.com</code>），以此类推，直到到达该域名的权威域名服务器。因此，它将进行大约 30 次 DNS 查询。（我用 <code>tcpdump</code> 检查了一下，对于每个根域名服务器的 <code>A</code> / <code>AAAA</code> 记录它似乎要进行 2 次查询，所以这已经是 26 次查询了。我不太清楚它为什么这样做，因为它应该已经有了这些 IP 的硬编码，但它确实如此。）</p><p>我发现这对了解 DNS 的工作原理很有用，但我不认为我用它解决过问题。</p><h3 id=为什么要用-dig>为什么要用 dig</h3><p>尽管有一些更简单的工具来进行 DNS 查询（如 <code>dog</code> 和 <code>host</code>），我发现自己还是坚持使用 <code>dig</code>。</p><p>我喜欢 <code>dig</code> 的地方实际上也是我 <strong>不喜欢</strong> <code>dig</code> 的地方 —— 它显示了大量的细节！</p><p>我知道，如果我运行 <code>dig +all</code>，它将显示 DNS 响应的所有部分。例如，让我们查询 <code>jvns.ca</code> 的一个根名称服务器。响应有 3 个部分，我可能会关心：回答部分、权威部分和附加部分。</p><pre tabindex=0><code>$ dig @h.root-servers.net. jvns.ca +all
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 18229
+;; flags: qr rd; QUERY: 1, ANSWER: 0, AUTHORITY: 4, ADDITIONAL: 9
+;; WARNING: recursion requested but not available
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;jvns.ca.           IN  A
+
+;; AUTHORITY SECTION:
+ca.         172800  IN  NS  c.ca-servers.ca.
+ca.         172800  IN  NS  j.ca-servers.ca.
+ca.         172800  IN  NS  x.ca-servers.ca.
+ca.         172800  IN  NS  any.ca-servers.ca.
+
+;; ADDITIONAL SECTION:
+c.ca-servers.ca.    172800  IN  A   185.159.196.2
+j.ca-servers.ca.    172800  IN  A   198.182.167.1
+x.ca-servers.ca.    172800  IN  A   199.253.250.68
+any.ca-servers.ca.  172800  IN  A   199.4.144.2
+c.ca-servers.ca.    172800  IN  AAAA    2620:10a:8053::2
+j.ca-servers.ca.    172800  IN  AAAA    2001:500:83::1
+x.ca-servers.ca.    172800  IN  AAAA    2620:10a:80ba::68
+any.ca-servers.ca.  172800  IN  AAAA    2001:500:a7::2
+
+;; Query time: 103 msec
+;; SERVER: 198.97.190.53#53(198.97.190.53)
+;; WHEN: Sat Dec 04 11:23:32 EST 2021
+;; MSG SIZE  rcvd: 289
+</code></pre><p><code>dog</code> 也显示了 “附加” 部分的记录，但它没有明确指出哪个是哪个（我猜 <code>+</code> 意味着它在附加部分？） ，但它似乎没有显示“权威”部分的记录。</p><pre tabindex=0><code>$ dog @h.root-servers.net. jvns.ca 
+  NS ca.                2d0h00m00s A &#34;c.ca-servers.ca.&#34;
+  NS ca.                2d0h00m00s A &#34;j.ca-servers.ca.&#34;
+  NS ca.                2d0h00m00s A &#34;x.ca-servers.ca.&#34;
+  NS ca.                2d0h00m00s A &#34;any.ca-servers.ca.&#34;
+   A c.ca-servers.ca.   2d0h00m00s + 185.159.196.2
+   A j.ca-servers.ca.   2d0h00m00s + 198.182.167.1
+   A x.ca-servers.ca.   2d0h00m00s + 199.253.250.68
+   A any.ca-servers.ca. 2d0h00m00s + 199.4.144.2
+AAAA c.ca-servers.ca.   2d0h00m00s + 2620:10a:8053::2
+AAAA j.ca-servers.ca.   2d0h00m00s + 2001:500:83::1
+AAAA x.ca-servers.ca.   2d0h00m00s + 2620:10a:80ba::68
+AAAA any.ca-servers.ca. 2d0h00m00s + 2001:500:a7::2
+</code></pre><p>而 <code>host</code> 似乎只显示“答案”部分的记录（在这种情况下没有得到记录）：</p><pre tabindex=0><code>$ host jvns.ca h.root-servers.net
+Using domain server:
+Name: h.root-servers.net
+Address: 198.97.190.53#53
+Aliases:
+</code></pre><p>总之，我认为这些更简单的 DNS 工具很好（我甚至自己做了一个 <a href=https://dns-lookup.jvns.ca/>简单的网络 DNS 工具</a>），如果你觉得它们更容易，你绝对应该使用它们，但这就是为什么我坚持使用 <code>dig</code> 的原因。<code>drill</code> 的输出格式似乎与 <code>dig</code> 的非常相似，也许 <code>drill</code> 更好！但我还没有真正试过它。</p><h3 id=就这些了>就这些了</h3><p>我最近才知道 <code>.digrc</code>，我非常喜欢使用它，所以我希望它能帮助你们中的一些人花更少的时间来整理 <code>dig</code> 的输出！</p><p>有人在 Twitter 上指出，如果有办法让 <code>dig</code> 显示响应的简短版本，其中也包括响应的状态（如 <code>NOERROR</code>、<code>NXDOMAIN</code>、<code>SERVFAIL</code> 等），那就更好了！我同意这个观点！不过我在手册中没有找到这样的选项。</p><hr><p>via: <a href=https://jvns.ca/blog/2021/12/04/how-to-use-dig/>https://jvns.ca/blog/2021/12/04/how-to-use-dig/</a></p><p>作者：<a href=https://jvns.ca/>Julia Evans</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/dns/ rel=tag>DNS</a></li><li class=tags__item><a class="tags__link btn" href=/tags/dig/ rel=tag>dig</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,73 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>网络启动一个 Fedora Live CD - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="网络启动一个 Fedora Live CD"><meta property="og:description" content="这个指南向你展示如何加载你的 Live CD 镜像到一个 ISCSI 服务器上，并使用 iPXE 启动加载程序来访问它们。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11708-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-12-23T22:48:43+00:00"><meta property="article:modified_time" content="2019-12-23T22:48:43+00:00"><meta itemprop=name content="网络启动一个 Fedora Live CD"><meta itemprop=description content="这个指南向你展示如何加载你的 Live CD 镜像到一个 ISCSI 服务器上，并使用 iPXE 启动加载程序来访问它们。"><meta itemprop=datePublished content="2019-12-23T22:48:43+00:00"><meta itemprop=dateModified content="2019-12-23T22:48:43+00:00"><meta itemprop=wordCount content="585"><meta itemprop=keywords content="iPXE,远程启动,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>网络启动一个 Fedora Live CD</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-12-23T22:48:43Z>December 23, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201912/23/224848yaa09am9i3svmxxs.jpg alt></p><p><a href=https://en.wikipedia.org/wiki/Live_CD>Live CD</a> 对于很多任务是很有用的，例如:</p><ul><li>将操作系统安装到一个硬盘驱动器</li><li>修复一个启动加载程序或执行其它救援模式操作</li><li>为 Web 浏览提供一个相适应的最小环境</li><li>…以及<a href=https://en.wikipedia.org/wiki/Live_CD#Uses>更多的东西</a>。</li></ul><p>作为使用 DVD 和 USB 驱动器来存储你的 Live CD 镜像是一个替代方案，你可以上传它们到一个不太可能丢失或损坏的 <a href=https://en.wikipedia.org/wiki/ISCSI>iSCSI</a> 服务器中。这个指南向你展示如何加载你的 Live CD 镜像到一个 ISCSI 服务器上，并使用 <a href=https://ipxe.org/>iPXE</a> 启动加载程序来访问它们。</p><h3 id=下载一个-live-cd-镜像>下载一个 Live CD 镜像</h3><pre tabindex=0><code>$ MY_RLSE=27
+$ MY_LIVE=$(wget -q -O - https://dl.fedoraproject.org/pub/archive/fedora/linux/releases/$MY_RLSE/Workstation/x86_64/iso | perl -ne &#39;/(Fedora[^ ]*?-Live-[^ ]*?\.iso)(?{print $^N})/;&#39;)
+$ MY_NAME=fc$MY_RLSE 
+$ wget -O $MY_NAME.iso https://dl.fedoraproject.org/pub/archive/fedora/linux/releases/$MY_RLSE/Workstation/x86_64/iso/$MY_LIVE
+</code></pre><p>上面的命令下载 <code>Fedora-Workstation-Live-x86_64-27-1.6.iso</code> Fedora Live 镜像，并保存为 <code>fc27.iso</code>。更改 <code>MY_RLSE</code> 的值来下载其它档案版本。或者，你可以浏览 <a href=https://getfedora.org/>https://getfedora.org/</a> 来下载最新的 Fedora live 镜像。在 21 之前的版本使用不同的命名约定，必需<a href=https://dl.fedoraproject.org/pub/archive/fedora/linux/releases/https://dl.fedoraproject.org/pub/archive/fedora/linux/releases/>在这里手动下载</a>。如果你手动下载一个 Live CD 镜像，设置 <code>MY_NAME</code> 变量为不带有扩展名的文件的基本名称。用此方法，下面部分中命令将引用正确的文件。</p><h3 id=转换-live-cd-镜像>转换 Live CD 镜像</h3><p>使用 <code>livecd-iso-to-disk</code> 工具来转换 ISO 文件为一个磁盘镜像，并添加 <code>netroot</code> 参数到嵌入的内核命令行：</p><pre tabindex=0><code>$ sudo dnf install -y livecd-tools
+$ MY_SIZE=$(du -ms $MY_NAME.iso | cut -f 1)
+$ dd if=/dev/zero of=$MY_NAME.img bs=1MiB count=0 seek=$(($MY_SIZE+512)) 
+$ MY_SRVR=server-01.example.edu 
+$ MY_RVRS=$(echo $MY_SRVR | tr &#39;.&#39; &#34;\n&#34; | tac | tr &#34;\n&#34; &#39;.&#39; | cut -b -${#MY_SRVR}) 
+$ MY_LOOP=$(sudo losetup --show --nooverlap --find $MY_NAME.img) 
+$ sudo livecd-iso-to-disk --format --extra-kernel-args netroot=iscsi:$MY_SRVR:::1:iqn.$MY_RVRS:$MY_NAME $MY_NAME.iso $MY_LOOP 
+$ sudo losetup -d $MY_LOOP
+</code></pre><h3 id=上传-live-镜像到你的服务器>上传 Live 镜像到你的服务器</h3><p>在你的 ISCSI 服务器上创建一个目录来存储你的 live 镜像，随后上传你修改的镜像到其中。</p><p>对于 21 及更高发布版本：</p><pre tabindex=0><code>$ MY_FLDR=/images 
+$ scp $MY_NAME.img $MY_SRVR:$MY_FLDR/
+</code></pre><p>对于 21 以前发布版本：</p><pre tabindex=0><code>$ MY_FLDR=/images 
+$ MY_LOOP=$(sudo losetup --show --nooverlap --find --partscan $MY_NAME.img) 
+$ sudo tune2fs -O ^has_journal ${MY_LOOP}p1 
+$ sudo e2fsck ${MY_LOOP}p1 
+$ sudo dd status=none if=${MY_LOOP}p1 | ssh $MY_SRVR &#34;dd of=$MY_FLDR/$MY_NAME.img&#34; 
+$ sudo losetup -d $MY_LOOP
+</code></pre><h3 id=定义-iscsi-目标>定义 iSCSI 目标</h3><p>在你的 iSCSI 服务器上运行下面的命令：</p><pre tabindex=0><code>$ sudo -i 
+# MY_NAME=fc27 
+# MY_FLDR=/images 
+# MY_SRVR=`hostname` 
+# MY_RVRS=$(echo $MY_SRVR | tr &#39;.&#39; &#34;\n&#34; | tac | tr &#34;\n&#34; &#39;.&#39; | cut -b -${#MY_SRVR}) 
+# cat &lt;&lt; END &gt; /etc/tgt/conf.d/$MY_NAME.conf 
+&lt;target iqn.$MY_RVRS:$MY_NAME&gt;
+    backing-store $MY_FLDR/$MY_NAME.img
+    readonly 1
+    allow-in-use yes 
+&lt;/target&gt; 
+END 
+# tgt-admin --update ALL
+</code></pre><h3 id=创建一个可启动-usb-驱动器>创建一个可启动 USB 驱动器</h3><p><a href=https://ipxe.org/>iPXE</a> 启动加载程序有一个 <a href=http://ipxe.org/cmd/sanboot/>sanboot</a> 命令，你可以使用它来连接并启动托管于你 ISCSI 服务器上运行的 live 镜像。它可以以很多不同的<a href=https://ipxe.org/appnote/buildtargets#boot_type>格式</a>编译。最好的工作格式依赖于你正在运行的硬件。例如，下面的说明向你展示如何在一个 USB 驱动器上从 <a href="https://www.syslinux.org/wiki/index.php?title=SYSLINUX">syslinux</a> 中 <a href=https://en.wikipedia.org/wiki/Chain_loading>链式加载</a> iPXE。</p><p>首先，下载 iPXE，并以它的 lkrn 格式构建。这应该作为一个工作站上的普通用户完成：</p><pre tabindex=0><code>$ sudo dnf install -y git 
+$ git clone http://git.ipxe.org/ipxe.git $HOME/ipxe 
+$ sudo dnf groupinstall -y &#34;C Development Tools and Libraries&#34;
+$ cd $HOME/ipxe/src 
+$ make clean 
+$ make bin/ipxe.lkrn 
+$ cp bin/ipxe.lkrn /tmp
+</code></pre><p>接下来，准备一个带有一个 MSDOS 分区表和一个 FAT32 文件系统的 USB 驱动器。下面的命令假设你已经连接将要格式化的 USB 驱动器。<strong>注意：你要格式正确的驱动器！</strong></p><pre tabindex=0><code>$ sudo -i 
+# dnf install -y parted util-linux dosfstools 
+# echo; find /dev/disk/by-id ! -regex &#39;.*-part.*&#39; -name &#39;usb-*&#39; -exec readlink -f {} \; | xargs -i bash -c &#34;parted -s {} unit MiB print | perl -0 -ne &#39;/^Model: ([^(]*).*\n.*?([0-9]*MiB)/i &amp;&amp; print \&#34;Found: {} = \$2 \$1\n\&#34;&#39;&#34;; echo; read -e -i &#34;$(find /dev/disk/by-id ! -regex &#39;.*-part.*&#39; -name &#39;usb-*&#39; -exec readlink -f {} \; -quit)&#34; -p &#34;Drive to format: &#34; MY_USB
+# umount $MY_USB? 
+# wipefs -a $MY_USB 
+# parted -s $MY_USB mklabel msdos mkpart primary fat32 1MiB 100% set 1 boot on 
+# mkfs -t vfat -F 32 ${MY_USB}1
+</code></pre><p>最后，在 USB 驱动器上安装并配置 syslinux ，来链式加载 iPXE：</p><pre tabindex=0><code># dnf install -y syslinux-nonlinux 
+# syslinux -i ${MY_USB}1 
+# dd if=/usr/share/syslinux/mbr.bin of=${MY_USB} 
+# MY_MNT=$(mktemp -d) 
+# mount ${MY_USB}1 $MY_MNT 
+# MY_NAME=fc27 
+# MY_SRVR=server-01.example.edu 
+# MY_RVRS=$(echo $MY_SRVR | tr &#39;.&#39; &#34;\n&#34; | tac | tr &#34;\n&#34; &#39;.&#39; | cut -b -${#MY_SRVR}) 
+# cat &lt;&lt; END &gt; $MY_MNT/syslinux.cfg
+ui menu.c32
+default $MY_NAME
+timeout 100
+menu title SYSLINUX
+label $MY_NAME
+    menu label ${MY_NAME^^}
+    kernel ipxe.lkrn
+    append dhcp &amp;&amp; sanboot iscsi:$MY_SRVR:::1:iqn.$MY_RVRS:$MY_NAME
+END 
+# cp /usr/share/syslinux/menu.c32 $MY_MNT 
+# cp /usr/share/syslinux/libutil.c32 $MY_MNT 
+# cp /tmp/ipxe.lkrn $MY_MNT 
+# umount ${MY_USB}1
+</code></pre><p>通过简单地编辑 <code>syslinux.cfg</code> 文件，并添加附加的菜单项，你应该能够使用这同一个 USB 驱动器来网络启动附加的 ISCSI 目标。</p><p>这仅是加载 IPXE 的一种方法。你可以直接在你的工作站上安装 syslinux 。再一种选项是编译 iPXE 为一个 EFI 可执行文件，并直接放置它到你的 <a href=https://en.wikipedia.org/wiki/EFI_system_partition>ESP</a> 中。又一种选项是编译 iPXE 为一个 PXE 加载器，并放置它到你的能够被 DHCP 引用的 TFTP 服务器。最佳的选项依赖于的环境</p><h3 id=最后说明>最后说明</h3><ul><li>如果你以 IPXE 的 EFI 格式编译 IPXE ，你可能想添加 <code>–filename \EFI\BOOT\grubx64.efi</code> 参数到 <code>sanboot</code> 命令。</li><li>能够创建自定义 live 镜像。更多信息参考<a href=https://docs.fedoraproject.org/en-US/quick-docs/creating-and-using-a-live-installation-image/#proc_creating-and-using-live-cd>创建和使用 live CD</a>。</li><li>可以添加 <code>–overlay-size-mb</code> 和 <code>–home-size-mb</code> 参数到 <code>livecd-iso-to-disk</code> 命令来创建永久存储的 live 镜像。然而，如果你有多个并发用户，你将需要设置你的 ISCSI 服务器来管理独立的每个用户的可写覆盖。这与 “<a href=https://fedoramagazine.org/how-to-build-a-netboot-server-part-4/>如何构建一个网络启动服务器，部分 4</a>” 一文所示类似。</li><li>Live 镜像在它们的内核命令行中支持一个 <code>persistenthome</code> 选项（例如， <code>persistenthome=LABEL=HOME</code>）。与经过 CHAP 身份验证的 iSCSI 目标一起使用，对于中心控制主目录，<code>persistenthome</code> 选项为 NFS 提供一个有趣的替代方案。</li></ul><hr><p>via: <a href=https://fedoramagazine.org/netboot-a-fedora-live-cd/>https://fedoramagazine.org/netboot-a-fedora-live-cd/</a></p><p>作者：<a href=https://fedoramagazine.org/author/glb/>Gregory Bartholomew</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/robsean>robsean</a> 校对：<a href=https://github.com/wxys>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ipxe/ rel=tag>iPXE</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BF%9C%E7%A8%8B%E5%90%AF%E5%8A%A8/ rel=tag>远程启动</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

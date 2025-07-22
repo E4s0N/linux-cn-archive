@@ -1,0 +1,98 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 中分割和重组文件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 中分割和重组文件"><meta property="og:description" content="csplit 是这些有趣的小命令中的一个，它永远伴你左右，一旦开始用它就离不开了。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8818-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-08-29T07:59:14+00:00"><meta property="article:modified_time" content="2017-08-29T07:59:14+00:00"><meta itemprop=name content="在 Linux 中分割和重组文件"><meta itemprop=description content="csplit 是这些有趣的小命令中的一个，它永远伴你左右，一旦开始用它就离不开了。"><meta itemprop=datePublished content="2017-08-29T07:59:14+00:00"><meta itemprop=dateModified content="2017-08-29T07:59:14+00:00"><meta itemprop=wordCount content="327"><meta itemprop=keywords content="csplit,split,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 中分割和重组文件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-08-29T07:59:14Z>August 29, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201708/29/075907u54worafhr14m7yt.jpg alt></p><blockquote><p>非常有用的 <code>csplit</code> 命令可以将单个文件分割成多个文件。Carla Schroder 解释说。</p></blockquote><p>Linux 有几个用于分割文件的工具程序。那么你为什么要分割文件呢？一个用例是将大文件分割成更小的尺寸，以便它适用于比较小的存储介质，比如 U 盘。当您遇到 FAT32（最大文件大小为 4GB），且您的文件大于此时，通过 U 盘传输文件也是一个很好的技巧。另一个用例是加速网络文件传输，因为小文件的并行传输通常更快。</p><p>我们将学习如何使用 <code>csplit</code>，<code>split</code> 和 <code>cat</code> 来重新整理文件，然后再将文件合并在一起。这些操作在任何文件类型下都有用：文本、图片、音频文件、ISO 镜像文件等。</p><h3 id=使用-csplit-分割文件>使用 csplit 分割文件</h3><p><code>csplit</code> 是这些有趣的小命令中的一个，它永远伴你左右，一旦开始用它就离不开了。<code>csplit</code> 将单个文件分割成多个文件。这个示例演示了最简单的使用方法，它将文件 foo.txt 分为三个文件，以行号 17 和 33 作为分割点：</p><pre tabindex=0><code>$ csplit foo.txt 17 33
+2591
+3889
+2359
+</code></pre><p><code>csplit</code> 在当前目录下创建了三个新文件，并以字节为单位打印出新文件的大小。默认情况下，每个新文件名为 <code>xx_nn</code>：</p><pre tabindex=0><code>$ ls
+xx00
+xx01
+xx02
+</code></pre><p>您可以使用 <code>head</code> 命令查看每个新文件的前十行：</p><pre tabindex=0><code>$ head xx*
+
+==&gt; xx00 &lt;==
+Foo File
+by Carla Schroder
+
+Foo text
+
+Foo subheading
+
+More foo text
+
+==&gt; xx01 &lt;==
+Foo text
+
+Foo subheading
+
+More foo text
+
+==&gt; xx02 &lt;==
+Foo text
+
+Foo subheading
+
+More foo text
+</code></pre><p>如果要将文件分割成包含相同行数的多个文件怎么办？可以指定行数，然后将重复次数放在在花括号中。此示例重复分割 4 次，并将剩下的转储到最后一个文件中：</p><pre tabindex=0><code>$ csplit foo.txt 5 {4}
+57
+1488
+249
+1866
+3798
+</code></pre><p>您可以使用星号通配符来告诉 <code>csplit</code> 尽可能多地重复分割。这听起来很酷，但是如果文件不能等分，则可能会失败（LCTT 译注：低版本的 <code>csplit</code> 不支持此参数）：</p><pre tabindex=0><code>$ csplit foo.txt 10 {*}
+1545
+2115
+1848
+1901
+csplit: &#39;10&#39;: line number out of range on repetition 4
+1430
+</code></pre><p>默认的行为是删除发生错误时的输出文件。你可以用 <code>-k</code> 选项来解决这个问题，当有错误时，它就不会删除输出文件。另一个行为是每次运行 <code>csplit</code> 时，它将覆盖之前创建的文件，所以你需要使用新的文件名来分别保存它们。使用 <code>--prefix= _prefix_</code> 来设置一个不同的文件前缀：</p><pre tabindex=0><code>$ csplit -k --prefix=mine foo.txt 5 {*}  
+57
+1488
+249
+1866
+993
+csplit: &#39;5&#39;: line number out of range on repetition 9
+437
+
+$ ls
+mine00
+mine01
+mine02
+mine03 
+mine04
+mine05
+</code></pre><p>选项 <code>-n</code> 可用于改变对文件进行编号的数字位数（默认是 2 位）：</p><pre tabindex=0><code>$ csplit -n 3 --prefix=mine foo.txt 5 {4}
+57
+1488
+249
+1866
+1381
+3798
+
+$ ls
+mine000
+mine001
+mine002
+mine003
+mine004
+mine005
+</code></pre><p><code>csplit</code> 中的 “c” 是上下文（context）的意思。这意味着你可以根据任意匹配的方式或者巧妙的正则表达式来分割文件。下面的例子将文件分为两部分。第一个文件在包含第一次出现 “fie” 的前一行处结束，第二个文件则以包含 “fie” 的行开头。</p><pre tabindex=0><code>$ csplit foo.txt /fie/ 
+</code></pre><p>在每次出现 “fie” 时分割文件：</p><pre tabindex=0><code>$ csplit foo.txt /fie/ {*}
+</code></pre><p>在 “fie” 前五次出现的地方分割文件：</p><pre tabindex=0><code>$ csplit foo.txt /fie/ {5}
+</code></pre><p>仅当内容以包含 “fie” 的行开始时才复制，并且省略前面的所有内容：</p><pre tabindex=0><code>$ csplit myfile %fie% 
+</code></pre><h3 id=将文件分割成不同大小>将文件分割成不同大小</h3><p><code>split</code> 与 <code>csplit</code> 类似。它将文件分割成特定的大小，当您将大文件分割成小的多媒体文件或者使用网络传送时，这就非常棒了。默认的大小为 1000 行：</p><pre tabindex=0><code>$ split foo.mv
+$ ls -hl
+266K Aug 21 16:58 xaa
+267K Aug 21 16:58 xab
+315K Aug 21 16:58 xac
+[...]
+</code></pre><p>它们分割出来的大小相似，但你可以指定任何你想要的大小。这个例子中是 20M 字节：</p><pre tabindex=0><code>$ split -b 20M foo.mv
+</code></pre><p>尺寸单位缩写为 K，M，G，T，P，E，Z，Y（1024 的幂）或者 KB，MB，GB 等等（1000 的幂）。</p><p>为文件名选择你自己的前缀和后缀：</p><pre tabindex=0><code>$ split -a 3 --numeric-suffixes=9 --additional-suffix=mine foo.mv SB
+240K Aug 21 17:44 SB009mine
+214K Aug 21 17:44 SB010mine
+220K Aug 21 17:44 SB011mine
+</code></pre><p><code>-a</code> 选项控制编号的数字位置。<code>--numeric-suffixes</code> 设置编号的开始值。默认前缀为 <code>x</code>，你也可以通过在文件名后输入它来设置一个不同的前缀。</p><h3 id=将分割后的文件合并>将分割后的文件合并</h3><p>你可能想在某个时候重组你的文件。常用的 <code>cat</code> 命令就用在这里：</p><pre tabindex=0><code>$ cat SB0* &gt; foo2.txt
+</code></pre><p>示例中的星号通配符将匹配到所有以 SB0 开头的文件，这可能不会得到您想要的结果。您可以使用问号通配符进行更精确的匹配，每个字符使用一个问号：</p><pre tabindex=0><code>$ cat SB0?????? &gt; foo2.txt
+</code></pre><p>和往常一样，请查阅相关的手册和信息页面以获取完整的命令选项。</p><hr><p>via: <a href=https://www.linux.com/learn/intro-to-linux/2017/8/splitting-and-re-assembling-files-linux>https://www.linux.com/learn/intro-to-linux/2017/8/splitting-and-re-assembling-files-linux</a></p><p>作者：<a href=https://www.linux.com/users/cschroder>CARLA SCHRODER</a> 译者：<a href=https://github.com/firmianay>firmianay</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/csplit/ rel=tag>csplit</a></li><li class=tags__item><a class="tags__link btn" href=/tags/split/ rel=tag>split</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

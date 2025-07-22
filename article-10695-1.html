@@ -1,0 +1,67 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 中使用 bd 命令快速返回到特定的父目录 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 中使用 bd 命令快速返回到特定的父目录"><meta property="og:description" content="如果你想从第九级目录回到第三级目录，那么使用 cd 命令是很糟糕的。
+有什么解决方案呢？"><meta property="og:type" content="article"><meta property="og:url" content="/article-10695-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-04-08T12:28:03+00:00"><meta property="article:modified_time" content="2019-04-08T12:28:03+00:00"><meta itemprop=name content="在 Linux 中使用 bd 命令快速返回到特定的父目录"><meta itemprop=description content="如果你想从第九级目录回到第三级目录，那么使用 cd 命令是很糟糕的。
+有什么解决方案呢？"><meta itemprop=datePublished content="2019-04-08T12:28:03+00:00"><meta itemprop=dateModified content="2019-04-08T12:28:03+00:00"><meta itemprop=wordCount content="394"><meta itemprop=keywords content="目录,bd,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 中使用 bd 命令快速返回到特定的父目录</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-04-08T12:28:03Z>April 08, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201904/08/122757lz0ymwzjpius4t4d.jpg alt></p><p>两天前我们写了一篇关于 <code>autocd</code> 的文章，它是一个内置的 shell 变量，可以帮助我们在<a href=https://www.2daygeek.com/navigate-switch-directory-without-using-cd-command-in-linux/>没有 cd 命令的情况下导航到目录中</a>。</p><p>如果你想回到上一级目录，那么你需要输入 <code>cd ..</code>。</p><p>如果你想回到上两级目录，那么你需要输入 <code>cd ../..</code>。</p><p>这在 Linux 中是正常的，但如果你想从第九级目录回到第三级目录，那么使用 <code>cd</code> 命令是很糟糕的。</p><p>有什么解决方案呢？</p><p>是的，在 Linux 中有一个解决方案。我们可以使用 <code>bd</code> 命令来轻松应对这种情况。</p><h3 id=什么是-bd-命令>什么是 bd 命令？</h3><p><code>bd</code> 命令允许用户快速返回 Linux 中的父目录，而不是反复输入 <code>cd ../../..</code>。</p><p>你可以列出给定目录的内容，而不用提供完整路径 ls <code>bd Directory_Name</code>。它支持以下其它命令，如 <code>ls</code>、<code>ln</code>、<code>echo</code>、<code>zip</code>、<code>tar</code> 等。</p><p>另外，它还允许我们执行 shell 文件而不用提供完整路径 bd p<code>/shell_file.sh</code>。</p><h3 id=如何在-linux-中安装-bd-命令>如何在 Linux 中安装 bd 命令？</h3><p>除了 Debian/Ubuntu 之外，<code>bd</code> 没有官方发行包。因此，我们需要手动执行方法。</p><p>对于 Debian/Ubuntu 系统，使用 <a href=https://www.2daygeek.com/apt-get-apt-cache-command-examples-manage-packages-debian-ubuntu-systems/>APT-GET 命令</a>或<a href=https://www.2daygeek.com/apt-command-examples-manage-packages-debian-ubuntu-systems/>APT 命令</a>来安装 <code>bd</code>。</p><pre tabindex=0><code>$ sudo apt install bd
+</code></pre><p>对于其它 Linux 发行版，使用 <a href=https://www.2daygeek.com/wget-command-line-download-utility-tool/>wget 命令</a>下载 <code>bd</code> 可执行二进制文件。</p><pre tabindex=0><code>$ sudo wget --no-check-certificate -O /usr/local/bin/bd https://raw.github.com/vigneshwaranr/bd/master/bd
+</code></pre><p>设置 <code>bd</code> 二进制文件的可执行权限。</p><pre tabindex=0><code>$ sudo chmod +rx /usr/local/bin/bd
+</code></pre><p>在 <code>.bashrc</code> 文件中添加以下值。</p><pre tabindex=0><code>$ echo &#39;alias bd=&#34;. bd -si&#34;&#39; &gt;&gt; ~/.bashrc
+</code></pre><p>运行以下命令以使更改生效。</p><pre tabindex=0><code>$ source ~/.bashrc
+</code></pre><p>要启用自动完成，执行以下两个步骤。</p><pre tabindex=0><code>$ sudo wget -O /etc/bash_completion.d/bd https://raw.github.com/vigneshwaranr/bd/master/bash_completion.d/bd  
+$ sudo source /etc/bash_completion.d/bd
+</code></pre><p>我们已经在系统上成功安装并配置了 <code>bd</code> 实用程序，现在是时候测试一下了。</p><p>我将使用下面的目录路径进行测试。</p><p>运行 <code>pwd</code> 命令或 <code>dirs</code> 命令，亦或是 <code>tree</code> 命令来了解你当前的路径。</p><pre tabindex=0><code>daygeek@Ubuntu18:/usr/share/icons/Adwaita/256x256/apps$ pwd
+或
+daygeek@Ubuntu18:/usr/share/icons/Adwaita/256x256/apps$ dirs
+
+/usr/share/icons/Adwaita/256x256/apps
+</code></pre><p>我现在在 <code>/usr/share/icons/Adwaita/256x256/apps</code> 目录，如果我想快速跳转到 <code>icons</code> 目录，那么只需输入以下命令即可。</p><pre tabindex=0><code>daygeek@Ubuntu18:/usr/share/icons/Adwaita/256x256/apps$ bd icons
+/usr/share/icons/
+daygeek@Ubuntu18:/usr/share/icons$
+</code></pre><p>甚至，你不需要输入完整的目录名称，也可以输入几个字母。</p><pre tabindex=0><code>daygeek@Ubuntu18:/usr/share/icons/Adwaita/256x256/apps$ bd i
+/usr/share/icons/
+daygeek@Ubuntu18:/usr/share/icons$ 
+</code></pre><p>注意：如果层次结构中有多个同名的目录，<code>bd</code> 会将你带到最近的目录。（不考虑直接的父目录）</p><p>如果要列出给定的目录内容，使用以下格式。它会打印出 <code>/usr/share/icons/</code> 的内容。</p><pre tabindex=0><code>$ ls -lh `bd icons`
+或
+daygeek@Ubuntu18:/usr/share/icons/Adwaita/256x256/apps$ ls -lh `bd i`
+total 64K
+drwxr-xr-x 12 root root 4.0K Jul 25  2018 Adwaita
+lrwxrwxrwx  1 root root   51 Feb 25 14:32 communitheme -&gt; /snap/communitheme/current/share/icons/communitheme
+drwxr-xr-x  2 root root 4.0K Jul 25  2018 default
+drwxr-xr-x  3 root root 4.0K Jul 25  2018 DMZ-Black
+drwxr-xr-x  3 root root 4.0K Jul 25  2018 DMZ-White
+drwxr-xr-x  9 root root 4.0K Jul 25  2018 gnome
+drwxr-xr-x  3 root root 4.0K Jul 25  2018 handhelds
+drwxr-xr-x 20 root root 4.0K Mar  9 14:52 hicolor
+drwxr-xr-x  9 root root 4.0K Jul 25  2018 HighContrast
+drwxr-xr-x 12 root root 4.0K Jul 25  2018 Humanity
+drwxr-xr-x  7 root root 4.0K Jul 25  2018 Humanity-Dark
+drwxr-xr-x  4 root root 4.0K Jul 25  2018 locolor
+drwxr-xr-x  3 root root 4.0K Feb 25 15:46 LoginIcons
+drwxr-xr-x  3 root root 4.0K Jul 25  2018 redglass
+drwxr-xr-x 10 root root 4.0K Feb 25 15:46 ubuntu-mono-dark
+drwxr-xr-x 10 root root 4.0K Feb 25 15:46 ubuntu-mono-light
+drwxr-xr-x  3 root root 4.0K Jul 25  2018 whiteglass
+</code></pre><p>如果要在父目录中的某个位置执行文件，使用以下格式。它将运行 shell 文件 <code>/usr/share/icons/users-list.sh</code>。</p><pre tabindex=0><code>$ `bd i`/users-list.sh
+或
+daygeek@Ubuntu18:/usr/share/icons/Adwaita/256x256/apps$ `bd icon`/users-list.sh
+daygeek
+thanu
+renu
+2gadmin
+testuser
+demouser
+sudha
+suresh
+user1
+user2
+user3
+</code></pre><p>如果你位于 <code>/usr/share/icons/Adwaita/256x256/apps</code> 中，想要导航到不同的父目录，使用以下格式。以下命令将导航到 <code>/usr/share/icons/gnome</code> 目录。</p><pre tabindex=0><code>$ cd `bd i`/gnome
+或
+daygeek@Ubuntu18:/usr/share/icons/Adwaita/256x256/apps$ cd `bd icon`/gnome
+daygeek@Ubuntu18:/usr/share/icons/gnome$ 
+</code></pre><p>如果你位于 <code>/usr/share/icons/Adwaita/256x256/apps</code> ，你想在 <code>/usr/share/icons/</code> 下创建一个新目录，使用以下格式。</p><pre tabindex=0><code>$ daygeek@Ubuntu18:/usr/share/icons/Adwaita/256x256/apps$ sudo mkdir `bd icons`/2g
+
+daygeek@Ubuntu18:/usr/share/icons/Adwaita/256x256/apps$ ls -ld `bd icon`/2g
+drwxr-xr-x 2 root root 4096 Mar 16 05:44 /usr/share/icons//2g
+</code></pre><p>本教程允许你快速返回到特定的父目录，但没有快速前进的选项。</p><p>我们有另一个解决方案，很快就会提出，请保持关注。</p><hr><p>via: <a href=https://www.2daygeek.com/bd-quickly-go-back-to-a-specific-parent-directory-in-linux/>https://www.2daygeek.com/bd-quickly-go-back-to-a-specific-parent-directory-in-linux/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%9B%AE%E5%BD%95/ rel=tag>目录</a></li><li class=tags__item><a class="tags__link btn" href=/tags/bd/ rel=tag>bd</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

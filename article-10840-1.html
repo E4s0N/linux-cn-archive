@@ -1,0 +1,157 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 OpenStack Designate 构建一个 DNS 即服务（DNSaaS） - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 OpenStack Designate 构建一个 DNS 即服务（DNSaaS）"><meta property="og:description" content="学习如何安装和配置 Designate，这是一个 OpenStack 的多租户 DNS 即服务（DNSaaS）。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10840-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-05-11T11:09:00+00:00"><meta property="article:modified_time" content="2019-05-11T11:09:00+00:00"><meta itemprop=name content="用 OpenStack Designate 构建一个 DNS 即服务（DNSaaS）"><meta itemprop=description content="学习如何安装和配置 Designate，这是一个 OpenStack 的多租户 DNS 即服务（DNSaaS）。"><meta itemprop=datePublished content="2019-05-11T11:09:00+00:00"><meta itemprop=dateModified content="2019-05-11T11:09:00+00:00"><meta itemprop=wordCount content="945"><meta itemprop=keywords content="DNS,OpenStack,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 OpenStack Designate 构建一个 DNS 即服务（DNSaaS）</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-05-11T11:09:00Z>May 11, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>学习如何安装和配置 Designate，这是一个 OpenStack 的多租户 DNS 即服务（DNSaaS）。</p></blockquote><p><img src=/data/attachment/album/201905/11/110822rjub9wtwtwtmccet.jpg alt></p><p><a href=https://docs.openstack.org/designate/latest/>Designate</a> 是一个多租户的 DNS 即服务，它包括一个用于域名和记录管理的 REST API 和集成了 <a href=https://opensource.com/article/19/3/openstack-neutron>Neutron</a> 的框架，并支持 Bind9。</p><p>DNSaaS 可以提供：</p><ul><li>一个管理区域和记录的干净利落的 REST API</li><li>自动生成记录（集成 OpenStack）</li><li>支持多个授权名字服务器</li><li>可以托管多个项目/组织</li></ul><p><img src=/data/attachment/album/201905/11/110945ruqt808b9bkk9tsu.png alt="Designate&rsquo;s architecture" title="Designate's architecture"></p><p>这篇文章解释了如何在 CentOS 和 RHEL 上手动安装和配置 Designate 的最新版本，但是同样的配置也可以用在其它发行版上。</p><h3 id=在-openstack-上安装-designate>在 OpenStack 上安装 Designate</h3><p>在我的 <a href=https://github.com/ayaseen/designate>GitHub 仓库</a>里，我已经放了 Ansible 的 bind 和 Designate 角色的示范设置。</p><p>这个设置假定 bing 服务是安装 OpenStack 控制器节点之外（即使你可以在本地安装 bind）。</p><p>1、在 OpenStack 控制节点上安装 Designate 和 bind 软件包：</p><pre tabindex=0><code># yum install openstack-designate-* bind bind-utils -y
+</code></pre><p>2、创建 Designate 数据库和用户：</p><pre tabindex=0><code>MariaDB [(none)]&gt; CREATE DATABASE designate CHARACTER SET utf8 COLLATE utf8_general_ci;
+       
+MariaDB [(none)]&gt; GRANT ALL PRIVILEGES ON designate.* TO \
+&#39;designate&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;rhlab123&#39;;
+
+MariaDB [(none)]&gt; GRANT ALL PRIVILEGES ON designate.* TO &#39;designate&#39;@&#39;%&#39; \
+IDENTIFIED BY &#39;rhlab123&#39;;
+</code></pre><p>注意：bind 包必须安装在控制节点之外才能使 远程名字服务控制 Remote Name Daemon Control （RNDC）功能正常。</p><h3 id=配置-binddns-服务器>配置 bind（DNS 服务器）</h3><p>1、生成 RNDC 文件：</p><pre tabindex=0><code>rndc-confgen -a -k designate -c /etc/rndc.key -r /dev/urandom
+
+cat &lt;&lt;EOF&gt; etcrndc.conf
+include &#34;/etc/rndc.key&#34;;
+options {
+  default-key &#34;designate&#34;;
+  default-server {{ DNS_SERVER_IP }};
+  default-port 953;
+};
+EOF
+</code></pre><p>2、将下列配置添加到 <code>named.conf</code>：</p><pre tabindex=0><code>include &#34;/etc/rndc.key&#34;; 
+controls {
+  inet {{ DNS_SERVER_IP }} allow { localhost;{{ CONTROLLER_SERVER_IP }}; } keys { &#34;designate&#34;; };
+};
+</code></pre><p>在 <code>option</code> 节中，添加：</p><pre tabindex=0><code>options {
+  ...
+  allow-new-zones yes;
+  request-ixfr no;
+  listen-on port 53 { any; };
+  recursion no;
+  allow-query { 127.0.0.1; {{ CONTROLLER_SERVER_IP }}; };
+};
+</code></pre><p>添加正确的权限：</p><pre tabindex=0><code>chown named:named /etc/rndc.key
+chown named:named /etc/rndc.conf
+chmod 600 /etc/rndc.key
+chown -v root:named /etc/named.conf
+chmod g+w /var/named
+
+# systemctl restart named
+# setsebool named_write_master_zones 1
+</code></pre><p>3、把 <code>rndc.key</code> 和 <code>rndc.conf</code> 推入 OpenStack 控制节点：</p><pre tabindex=0><code># scp -r /etc/rndc* {{ CONTROLLER_SERVER_IP }}:/etc/
+</code></pre><h3 id=创建-openstack-designate-服务和端点>创建 OpenStack Designate 服务和端点</h3><p>输入：</p><pre tabindex=0><code># openstack user create --domain default --password-prompt designate
+# openstack role add --project services --user designate admin
+# openstack service create --name designate --description &#34;DNS&#34; dns
+
+# openstack endpoint create --region RegionOne dns public http://{{ CONTROLLER_SERVER_IP }}:9001/
+# openstack endpoint create --region RegionOne dns internal http://{{ CONTROLLER_SERVER_IP }}:9001/  
+# openstack endpoint create --region RegionOne dns admin http://{{ CONTROLLER_SERVER_IP }}:9001/
+</code></pre><h3 id=配置-designate-服务>配置 Designate 服务</h3><p>1、编辑 <code>/etc/designate/designate.conf</code>：</p><p>在 <code>[service:api]</code> 节配置 <code>auth_strategy</code>：</p><pre tabindex=0><code>[service:api]
+listen = 0.0.0.0:9001
+auth_strategy = keystone
+api_base_uri = http://{{ CONTROLLER_SERVER_IP }}:9001/
+enable_api_v2 = True
+enabled_extensions_v2 = quotas, reports
+</code></pre><p>在 <code>[keystone_authtoken]</code> 节配置下列选项：</p><pre tabindex=0><code>[keystone_authtoken]
+auth_type = password
+username = designate
+password = rhlab123
+project_name = service
+project_domain_name = Default
+user_domain_name = Default
+www_authenticate_uri = http://{{ CONTROLLER_SERVER_IP }}:5000/
+auth_url = http://{{ CONTROLLER_SERVER_IP }}:5000/ 
+</code></pre><p>在 <code>[service:worker]</code> 节，启用 worker 模型：</p><pre tabindex=0><code>enabled = True
+notify = True
+</code></pre><p>在 <code>[storage:sqlalchemy]</code> 节，配置数据库访问：</p><pre tabindex=0><code>[storage:sqlalchemy]
+connection = mysql+pymysql://designate:rhlab123@{{ CONTROLLER_SERVER_IP }}/designate
+</code></pre><p>填充 Designate 数据库：</p><pre tabindex=0><code># su -s /bin/sh -c &#34;designate-manage database sync&#34; designate
+</code></pre><p>2、 创建 Designate 的 <code>pools.yaml</code> 文件（包含 target 和 bind 细节）：</p><p>编辑 <code>/etc/designate/pools.yaml</code>：</p><pre tabindex=0><code>- name: default
+  # The name is immutable. There will be no option to change the name after
+  # creation and the only way will to change it will be to delete it
+  # (and all zones associated with it) and recreate it.
+  description: Default Pool
+
+  attributes: {}
+
+  # List out the NS records for zones hosted within this pool
+  # This should be a record that is created outside of designate, that
+  # points to the public IP of the controller node.
+  ns_records:
+    - hostname: {{Controller_FQDN}}. # Thisis mDNS
+      priority: 1
+
+  # List out the nameservers for this pool. These are the actual BIND servers.
+  # We use these to verify changes have propagated to all nameservers.
+  nameservers:
+    - host: {{ DNS_SERVER_IP }}
+      port: 53
+
+  # List out the targets for this pool. For BIND there will be one
+  # entry for each BIND server, as we have to run rndc command on each server
+  targets:
+    - type: bind9
+      description: BIND9 Server 1
+
+      # List out the designate-mdns servers from which BIND servers should
+      # request zone transfers (AXFRs) from.
+      # This should be the IP of the controller node.
+      # If you have multiple controllers you can add multiple masters
+      # by running designate-mdns on them, and adding them here.
+      masters:
+        - host: {{ CONTROLLER_SERVER_IP }}
+          port: 5354
+
+      # BIND Configuration options
+      options:
+        host: {{ DNS_SERVER_IP }}
+        port: 53
+        rndc_host: {{ DNS_SERVER_IP }}
+        rndc_port: 953
+        rndc_key_file: /etc/rndc.key
+        rndc_config_file: /etc/rndc.conf
+</code></pre><p>填充 Designate 池：</p><pre tabindex=0><code>su -s /bin/sh -c &#34;designate-manage pool update&#34; designate
+</code></pre><p>3、启动 Designate 中心和 API 服务：</p><pre tabindex=0><code>systemctl enable --now designate-central designate-api
+</code></pre><p>4、验证 Designate 服务运行：</p><pre tabindex=0><code># openstack dns service list
+
++--------------+--------+-------+--------------+
+| service_name | status | stats | capabilities |
++--------------+--------+-------+--------------+
+| central      | UP     | -     | -            |
+| api          | UP     | -     | -            |
+| mdns         | UP     | -     | -            |
+| worker       | UP     | -     | -            |
+| producer     | UP     | -     | -            |
++--------------+--------+-------+--------------+
+</code></pre><h3 id=用外部-dns-配置-openstack-neutron>用外部 DNS 配置 OpenStack Neutron</h3><p>1、为 Designate 服务配置 iptables：</p><pre tabindex=0><code># iptables -I INPUT -p tcp -m multiport --dports 9001 -m comment --comment &#34;designate incoming&#34; -j ACCEPT
+       
+# iptables -I INPUT -p tcp -m multiport --dports 5354 -m comment --comment &#34;Designate mdns incoming&#34; -j ACCEPT
+       
+# iptables -I INPUT -p tcp -m multiport --dports 53 -m comment --comment &#34;bind incoming&#34; -j ACCEPT
+        
+# iptables -I INPUT -p udp -m multiport --dports 53 -m comment --comment &#34;bind/powerdns incoming&#34; -j ACCEPT
+       
+# iptables -I INPUT -p tcp -m multiport --dports 953 -m comment --comment &#34;rndc incoming - bind only&#34; -j ACCEPT
+       
+# service iptables save; service iptables restart
+# setsebool named_write_master_zones 1
+</code></pre><p>2、 编辑 <code>/etc/neutron/neutron.conf</code> 的 <code>[default]</code> 节：</p><pre tabindex=0><code>external_dns_driver = designate
+</code></pre><p>3、 在 <code>/etc/neutron/neutron.conf</code> 中添加 <code>[designate]</code> 节：</p><pre tabindex=0><code>[designate]
+url = http://{{ CONTROLLER_SERVER_IP }}:9001/v2 ## This end point of designate
+auth_type = password
+auth_url = http://{{ CONTROLLER_SERVER_IP }}:5000
+username = designate
+password = rhlab123
+project_name = services
+project_domain_name = Default
+user_domain_name = Default
+allow_reverse_dns_lookup = True
+ipv4_ptr_zone_prefix_size = 24
+ipv6_ptr_zone_prefix_size = 116 
+</code></pre><p>4、编辑 <code>neutron.conf</code> 的 <code>dns_domain</code>：</p><pre tabindex=0><code>dns_domain = rhlab.dev.
+</code></pre><p>重启：</p><pre tabindex=0><code># systemctl restart neutron-*
+</code></pre><p>5、在 <code>/etc/neutron/plugins/ml2/ml2_conf.ini</code> 中的组成层 2（ML2）中添加 <code>dns</code>：</p><pre tabindex=0><code>extension_drivers=port_security,qos,dns
+</code></pre><p>6、在 Designate 中添加区域：</p><pre tabindex=0><code># openstack zone create –email=admin@rhlab.dev rhlab.dev.
+</code></pre><p>在 <code>rhlab.dev</code> 区域中添加记录：</p><pre tabindex=0><code># openstack recordset create --record &#39;192.168.1.230&#39; --type A rhlab.dev. Test
+</code></pre><p>Designate 现在就安装和配置好了。</p><hr><p>via: <a href=https://opensource.com/article/19/4/getting-started-openstack-designate>https://opensource.com/article/19/4/getting-started-openstack-designate</a></p><p>作者：<a href=https://opensource.com/users/ayaseen>Amjad Yaseen</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/dns/ rel=tag>DNS</a></li><li class=tags__item><a class="tags__link btn" href=/tags/openstack/ rel=tag>OpenStack</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

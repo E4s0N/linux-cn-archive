@@ -1,0 +1,45 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何设置 GNOME 显示自定义幻灯片 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何设置 GNOME 显示自定义幻灯片"><meta property="og:description" content="使用一个简单的 XML，你就可以设置 GNOME 能够在桌面上显示一个幻灯片。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9571-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-04-23T18:53:00+00:00"><meta property="article:modified_time" content="2018-04-23T18:53:00+00:00"><meta itemprop=name content="如何设置 GNOME 显示自定义幻灯片"><meta itemprop=description content="使用一个简单的 XML，你就可以设置 GNOME 能够在桌面上显示一个幻灯片。"><meta itemprop=datePublished content="2018-04-23T18:53:00+00:00"><meta itemprop=dateModified content="2018-04-23T18:53:00+00:00"><meta itemprop=wordCount content="223"><meta itemprop=keywords content="墙纸,GNOME,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何设置 GNOME 显示自定义幻灯片</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-04-23T18:53:00Z>April 23, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>使用一个简单的 XML，你就可以设置 GNOME 能够在桌面上显示一个幻灯片。</p></blockquote><p><img src=/data/attachment/album/201804/23/185426i2wml624wwnsowd3.jpg alt></p><p>在 GNOME 中，一个非常酷、但却鲜为人知的特性是它能够将幻灯片显示为墙纸。你可以从 <a href=http://manpages.ubuntu.com/manpages/xenial/man1/gnome-control-center.1.html>GNOME 控制中心</a>的 “背景设置” 面板中选择墙纸幻灯片。在预览的右下角显示一个小时钟标志，可以将幻灯片的墙纸与静态墙纸区别开来。</p><p>一些发行版带有预装的幻灯片壁纸。 例如，Ubuntu 包含了库存的 GNOME 定时壁纸幻灯片，以及 Ubuntu 壁纸大赛胜出的墙纸。</p><p>如果你想创建自己的自定义幻灯片用作壁纸怎么办？虽然 GNOME 没有为此提供一个用户界面，但是在你的主目录中使用一些简单的 XML 文件来创建一个是非常容易的。 幸运的是，GNOME 控制中心的背景选择支持一些常见的目录路径，这样就可以轻松创建幻灯片，而不必编辑你的发行版所提供的任何内容。</p><h3 id=开始>开始</h3><p>使用你最喜欢的文本编辑器在 <code>$HOME/.local/share/gnome-background-properties/</code> 创建一个 XML 文件。 虽然文件名不重要，但目录名称很重要（你可能需要创建该目录）。 举个例子，我创建了带有以下内容的 <code>/home/ken/.local/share/gnome-background-properties/osdc-wallpapers.xml</code>：</p><pre tabindex=0><code>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;
+&lt;!DOCTYPE wallpapers SYSTEM &#34;gnome-wp-list.dtd&#34;&gt;
+&lt;wallpapers&gt;
+ &lt;wallpaper deleted=&#34;false&#34;&gt;
+   &lt;name&gt;Opensource.com Wallpapers&lt;/name&gt;
+   &lt;filename&gt;/home/ken/Pictures/Wallpapers/osdc/osdc.xml&lt;/filename&gt;
+   &lt;options&gt;zoom&lt;/options&gt;
+ &lt;/wallpaper&gt;
+&lt;/wallpapers&gt;
+</code></pre><p>每一个你需要包含在 GNOME 控制中心的 “背景面板”中的每个幻灯片或静态壁纸，你都要在上面的 XML 文件需要为其增加一个 <code>&lt;wallpaper></code> 节点。</p><p>在这个例子中，我的 <code>osdc.xml</code> 文件看起来是这样的：</p><pre tabindex=0><code>&lt;?xml version=&#34;1.0&#34; ?&gt;
+&lt;background&gt;
+  &lt;static&gt;
+    &lt;!-- Duration in seconds to display the background --&gt;
+    &lt;duration&gt;30.0&lt;/duration&gt;
+    &lt;file&gt;/home/ken/Pictures/Wallpapers/osdc/osdc_2.png&lt;/file&gt;
+  &lt;/static&gt;
+  &lt;transition&gt;
+    &lt;!-- Duration of the transition in seconds, default is 2 seconds --&gt;
+    &lt;duration&gt;0.5&lt;/duration&gt;
+    &lt;from&gt;/home/ken/Pictures/Wallpapers/osdc/osdc_2.png&lt;/from&gt;
+    &lt;to&gt;/home/ken/Pictures/Wallpapers/osdc/osdc_1.png&lt;/to&gt;
+  &lt;/transition&gt;
+  &lt;static&gt;
+    &lt;duration&gt;30.0&lt;/duration&gt;
+    &lt;file&gt;/home/ken/Pictures/Wallpapers/osdc/osdc_1.png&lt;/file&gt;
+  &lt;/static&gt;
+  &lt;transition&gt;
+    &lt;duration&gt;0.5&lt;/duration&gt;
+    &lt;from&gt;/home/ken/Pictures/Wallpapers/osdc/osdc_1.png&lt;/from&gt;
+    &lt;to&gt;/home/ken/Pictures/Wallpapers/osdc/osdc_2.png&lt;/to&gt;
+  &lt;/transition&gt;
+&lt;/background&gt;
+</code></pre><p>上面的 XML 中有几个重要的部分。 XML 中的 <code>&lt;background></code> 节点是你的外部节点。 每个背景都支持多个 <code>&lt;static></code> 和 <code>&lt;transition></code> 节点。</p><p><code>&lt;static></code> 节点定义用 <code>&lt;file></code> 节点要显示的图像以及用 <code>&lt;duration></code> 显示它的持续时间。</p><p><code>&lt;transition></code> 节点定义 <code>&lt;duration></code>（变换时长），<code>&lt;from></code> 和 <code>&lt;to></code> 定义了起止的图像。</p><h3 id=全天更换壁纸>全天更换壁纸</h3><p>另一个很酷的 GNOME 功能是基于时间的幻灯片。 你可以定义幻灯片的开始时间，GNOME 将根据它计算时间。 这对于根据一天中的时间设置不同的壁纸很有用。 例如，你可以将开始时间设置为 06:00，并在 12:00 之前显示一张墙纸，然后在下午和 18:00 再次更改。</p><p>这是通过在 XML 中定义 <code>&lt;starttime></code> 来完成的，如下所示：</p><pre tabindex=0><code>&lt;starttime&gt;
+    &lt;!-- A start time in the past is fine --&gt;
+    &lt;year&gt;2017&lt;/year&gt;
+    &lt;month&gt;11&lt;/month&gt;
+    &lt;day&gt;21&lt;/day&gt;
+    &lt;hour&gt;6&lt;/hour&gt;
+    &lt;minute&gt;00&lt;/minute&gt;
+    &lt;second&gt;00&lt;/second&gt;
+&lt;/starttime&gt;
+</code></pre><p>上述 XML 文件定义于 2017 年 11 月 21 日 06:00 开始动画，时长为 21,600.00，相当于六个小时。 这段时间将显示你的早晨壁纸直到 12:00，12:00 时它会更改为你的下一张壁纸。 你可以继续以这种方式每隔一段时间更换一次壁纸，但确保所有持续时间的总计为 86,400 秒（等于 24 小时）。</p><p>GNOME 将计算开始时间和当前时间之间的增量，并显示当前时间的正确墙纸。 例如，如果你在 16:00 选择新壁纸，则GNOME 将在 06:00 开始时间之后显示 36,000 秒的适当壁纸。</p><p>有关完整示例，请参阅大多数发行版中由 gnome-backgrounds 包提供的 adwaita-timed 幻灯片。 它通常位于 <code>/usr/share/backgrounds/gnome/adwaita-timed.xml</code> 中。</p><h3 id=了解更多信息>了解更多信息</h3><p>希望这可以鼓励你深入了解创建自己的幻灯片壁纸。 如果你想下载本文中引用的文件的完整版本，那么你可以在 <a href=https://github.com/kenvandine/misc/tree/master/articles/osdc/gnome/slide-show-backgrounds/osdc>GitHub</a> 上找到它们。</p><p>如果你对用于生成 XML 文件的实用程序脚本感兴趣，你可以在互联网上搜索 <code>gnome-backearth-generator</code>。</p><hr><p>via: <a href=https://opensource.com/article/17/12/create-your-own-wallpaper-slideshow-gnome>https://opensource.com/article/17/12/create-your-own-wallpaper-slideshow-gnome</a></p><p>作者：<a href=https://opensource.com/users/kenvandine>Ken Vandine</a> 译者：<a href=https://github.com/Auk7F7>Auk7F7</a> 校对： <a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%A2%99%E7%BA%B8/ rel=tag>墙纸</a></li><li class=tags__item><a class="tags__link btn" href=/tags/gnome/ rel=tag>GNOME</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

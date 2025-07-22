@@ -1,0 +1,120 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 zsh 提高生产力的 5 个技巧 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 zsh 提高生产力的 5 个技巧"><meta property="og:description" content="zsh 提供了数之不尽的功能和特性，这里有五个可以让你在命令行效率暴增的方法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10047-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-09-25T15:49:44+00:00"><meta property="article:modified_time" content="2018-09-25T15:49:44+00:00"><meta itemprop=name content="用 zsh 提高生产力的 5 个技巧"><meta itemprop=description content="zsh 提供了数之不尽的功能和特性，这里有五个可以让你在命令行效率暴增的方法。"><meta itemprop=datePublished content="2018-09-25T15:49:44+00:00"><meta itemprop=dateModified content="2018-09-25T15:49:44+00:00"><meta itemprop=wordCount content="740"><meta itemprop=keywords content="zsh,命令行,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 zsh 提高生产力的 5 个技巧</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-09-25T15:49:44Z>September 25, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>zsh 提供了数之不尽的功能和特性，这里有五个可以让你在命令行效率暴增的方法。</p></blockquote><p><img src=/data/attachment/album/201809/25/154936kfd8qtouc0nccn8z.jpg alt></p><p>Z shell（<a href=http://www.zsh.org/>zsh</a>）是 Linux 和类 Unix 系统中的一个<a href=https://en.wikipedia.org/wiki/Shell_(computing)>命令解析器</a>。 它跟 sh (Bourne shell) 家族的其它解析器（如 bash 和 ksh）有着相似的特点，但它还提供了大量的高级特性以及强大的命令行编辑功能，如增强版 Tab 补全。</p><p>在这里不可能涉及到 zsh 的所有功能，<a href=http://zsh.sourceforge.net/Doc/Release/zsh_toc.html>描述</a>它的特性需要好几百页。在本文中，我会列出 5 个技巧，让你通过在命令行使用 zsh 来提高你的生产力。</p><h3 id=1主题和插件>1、主题和插件</h3><p>多年来，开源社区已经为 zsh 开发了数不清的主题和插件。主题是一个预定义提示符的配置，而插件则是一组常用的别名命令和函数，可以让你更方便的使用一种特定的命令或者编程语言。</p><p>如果你现在想开始用 zsh 的主题和插件，那么使用一种 zsh 的配置框架是你最快的入门方式。在众多的配置框架中，最受欢迎的则是 <a href=https://ohmyz.sh/>Oh My Zsh</a>。在默认配置中，它就已经为 zsh 启用了一些合理的配置，同时它也自带上百个主题和插件。</p><p>主题会在你的命令行提示符之前添加一些有用的信息，比如你 Git 仓库的状态，或者是当前使用的 Python 虚拟环境，所以它会让你的工作更高效。只需要看到这些信息，你就不用再敲命令去重新获取它们，而且这些提示也相当酷炫。下图就是我选用的主题 <a href=https://github.com/bhilburn/powerlevel9k>Powerlevel9k</a>：</p><p><img src=/data/attachment/album/201809/25/154952x525g5pg5dd5x5s1.png alt="zsh Powerlevel9K theme" title="zsh Powerlevel9K theme"></p><p><em>zsh 主题 Powerlevel9k</em></p><p>除了主题，Oh my Zsh 还自带了大量常用的 zsh 插件。比如，通过启用 Git 插件，你可以用一组简便的命令别名操作 Git， 比如</p><pre tabindex=0><code>$ alias | grep -i git | sort -R | head -10
+g=git
+ga=&#39;git add&#39;
+gapa=&#39;git add --patch&#39;
+gap=&#39;git apply&#39;
+gdt=&#39;git diff-tree --no-commit-id --name-only -r&#39;
+gau=&#39;git add --update&#39;
+gstp=&#39;git stash pop&#39;
+gbda=&#39;git branch --no-color --merged | command grep -vE &#34;^(\*|\s*(master|develop|dev)\s*$)&#34; | command xargs -n 1 git branch -d&#39;
+gcs=&#39;git commit -S&#39;
+glg=&#39;git log --stat&#39;
+</code></pre><p>zsh 还有许多插件可以用于许多编程语言、打包系统和一些平时在命令行中常用的工具。以下是我 Ferdora 工作站中用到的插件表：</p><pre tabindex=0><code>git golang fedora docker oc sudo vi-mode virtualenvwrapper
+</code></pre><h3 id=2智能的命令别名>2、智能的命令别名</h3><p>命令别名在 zsh 中十分有用。为你常用的命令定义别名可以节省你的打字时间。Oh My Zsh 默认配置了一些常用的命令别名，包括目录导航命令别名，为常用的命令添加额外的选项，比如：</p><pre tabindex=0><code>ls=&#39;ls --color=tty&#39;
+grep=&#39;grep  --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn}&#39;
+</code></pre><p>除了命令别名以外， zsh 还自带两种额外常用的别名类型：后缀别名和全局别名。</p><p>后缀别名可以让你基于文件后缀，在命令行中利用指定程序打开这个文件。比如，要用 vim 打开 YAML 文件，可以定义以下命令行别名：</p><pre tabindex=0><code>alias -s {yml,yaml}=vim
+</code></pre><p>现在，如果你在命令行中输入任何后缀名为 <code>yml</code> 或 <code>yaml</code> 文件， zsh 都会用 vim 打开这个文件。</p><pre tabindex=0><code>$ playbook.yml
+# Opens file playbook.yml using vim
+</code></pre><p>全局别名可以让你创建一个可在命令行的任何地方展开的别名，而不仅仅是在命令开始的时候。这个在你想替换常用文件名或者管道命令的时候就显得非常有用了。比如：</p><pre tabindex=0><code>alias -g G=&#39;| grep -i&#39;
+</code></pre><p>要使用这个别名，只要你在想用管道命令的时候输入 <code>G</code> 就好了：</p><pre tabindex=0><code>$ ls -l G do
+drwxr-xr-x.  5 rgerardi rgerardi 4096 Aug  7 14:08 Documents
+drwxr-xr-x.  6 rgerardi rgerardi 4096 Aug 24 14:51 Downloads
+</code></pre><p>接着，我们就来看看 zsh 是如何导航文件系统的。</p><h3 id=3便捷的目录导航>3、便捷的目录导航</h3><p>当你使用命令行的时候，在不同的目录之间切换访问是最常见的工作了。 zsh 提供了一些十分有用的目录导航功能来简化这个操作。这些功能已经集成到 Oh My Zsh 中了， 而你可以用以下命令来启用它</p><pre tabindex=0><code>setopt  autocd autopushd \ pushdignoredups
+</code></pre><p>使用了上面的配置后，你就不用输入 <code>cd</code> 来切换目录了，只需要输入目录名称，zsh 就会自动切换到这个目录中：</p><pre tabindex=0><code>$ pwd
+/home/rgerardi
+$ /tmp
+$ pwd
+/tmp
+</code></pre><p>如果想要回退，只要输入 <code>-</code>:</p><p>zsh 会记录你访问过的目录，这样下次你就可以快速切换到这些目录中。如果想要看这个目录列表，只要输入 <code>dirs -v</code>：</p><pre tabindex=0><code>$ dirs -v
+0       ~
+1       /var/log
+2       /var/opt
+3       /usr/bin
+4       /usr/local
+5       /usr/lib
+6       /tmp
+7       ~/Projects/Opensource.com/zsh-5tips
+8       ~/Projects
+9       ~/Projects/ansible
+10      ~/Documents
+</code></pre><p>如果想要切换到这个列表中的其中一个目录，只需输入 <code>~#</code> （<code>#</code> 代表目录在列表中的序号）就可以了。比如</p><pre tabindex=0><code>$ pwd
+/home/rgerardi
+$ ~4
+$ pwd
+/usr/local
+</code></pre><p>你甚至可以用别名组合这些命令，这样切换起来就变得更简单：</p><pre tabindex=0><code>d=&#39;dirs -v | head -10&#39;
+1=&#39;cd -&#39;
+2=&#39;cd -2&#39;
+3=&#39;cd -3&#39;
+4=&#39;cd -4&#39;
+5=&#39;cd -5&#39;
+6=&#39;cd -6&#39;
+7=&#39;cd -7&#39;
+8=&#39;cd -8&#39;
+9=&#39;cd -9&#39;
+</code></pre><p>现在你可以通过输入 <code>d</code> 来查看这个目录列表的前10个，然后用目录的序号来进行切换：</p><pre tabindex=0><code>$ d
+0       /usr/local
+1       ~
+2       /var/log
+3       /var/opt
+4       /usr/bin
+5       /usr/lib
+6       /tmp
+7       ~/Projects/Opensource.com/zsh-5tips
+8       ~/Projects
+9       ~/Projects/ansible
+$ pwd
+/usr/local
+$ 6
+/tmp
+$ pwd
+/tmp
+</code></pre><p>最后，你可以在 zsh 中利用 Tab 来自动补全目录名称。你可以先输入目录的首字母，然后按 <code>TAB</code> 键来补全它们：</p><pre tabindex=0><code>$ pwd
+/home/rgerardi
+$ p/o/z (TAB)
+$ Projects/Opensource.com/zsh-5tips/
+</code></pre><p>以上仅仅是 zsh 强大的 Tab 补全系统中的一个功能。接来下我们来探索它更多的功能。</p><h3 id=4先进的-tab-补全>4、先进的 Tab 补全</h3><p>zsh 强大的补全系统是它的卖点之一。为了简便起见，我称它为 Tab 补全，然而在系统底层，它起到了几个作用。这里通常包括展开以及命令补全，我会在这里用讨论它们。如果想了解更多，详见 <a href=http://zsh.sourceforge.net/Guide/zshguide06.html#l144>用户手册</a>。</p><p>在 Oh My Zsh 中，命令补全是默认启用的。要启用它，你只要在 <code>.zshrc</code> 文件中添加以下命令：</p><pre tabindex=0><code>autoload -U compinit
+compinit
+</code></pre><p>zsh 的补全系统非常智能。它会尝试唯一提示可用在当前上下文环境中的项目 —— 比如，你输入了 <code>cd</code> 和 <code>TAB</code>，zsh 只会为你提示目录名，因为它知道其它的项目放在 <code>cd</code> 后面没用。</p><p>反之，如果你使用与用户相关的命令便会提示用户名，而 <code>ssh</code> 或者 <code>ping</code> 这类则会提示主机名。</p><p>zsh 拥有一个巨大而又完整的库，因此它能识别许多不同的命令。比如，如果你使用 <code>tar</code> 命令， 你可以按 <code>TAB</code> 键，它会为你展示一个可以用于解压的文件列表：</p><pre tabindex=0><code>$ tar -xzvf test1.tar.gz test1/file1 (TAB)
+file1 file2
+</code></pre><p>如果使用 <code>git</code> 的话，这里有个更高级的示例。在这个示例中，当你按 <code>TAB</code> 键， zsh 会自动补全当前库可以操作的文件：</p><pre tabindex=0><code>$ ls
+original  plan.txt  zsh-5tips.md  zsh_theme_small.png
+$ git status
+On branch master
+Your branch is up to date with &#39;origin/master&#39;.
+
+Changes not staged for commit:
+  (use &#34;git add &lt;file&gt;...&#34; to update what will be committed)
+  (use &#34;git checkout -- &lt;file&gt;...&#34; to discard changes in working directory)
+
+        modified:   zsh-5tips.md
+
+no changes added to commit (use &#34;git add&#34; and/or &#34;git commit -a&#34;)
+$ git add (TAB)
+$ git add zsh-5tips.md
+</code></pre><p>zsh 还能识别命令行选项，同时它只会提示与选中子命令相关的命令列表：</p><pre tabindex=0><code>$ git commit - (TAB)
+--all                  -a       -- stage all modified and deleted paths
+--allow-empty                   -- allow recording an empty commit
+--allow-empty-message           -- allow recording a commit with an empty message
+--amend                         -- amend the tip of the current branch
+--author                        -- override the author name used in the commit
+--branch                        -- show branch information
+--cleanup                       -- specify how the commit message should be cleaned up
+--date                          -- override the author date used in the commit
+--dry-run                       -- only show the list of paths that are to be committed or not, and any untracked
+--edit                 -e       -- edit the commit message before committing
+--file                 -F       -- read commit message from given file
+--gpg-sign             -S       -- GPG-sign the commit
+--include              -i       -- update the given files and commit the whole index
+--interactive                   -- interactively update paths in the index file
+--message              -m       -- use the given message as the commit message
+... TRUNCATED ...
+</code></pre><p>在按 <code>TAB</code> 键之后，你可以使用方向键来选择你想用的命令。现在你就不用记住所有的 <code>git</code> 命令项了。</p><p>zsh 还有很多有用的功能。当你用它的时候，你就知道哪些对你才是最有用的。</p><h3 id=5命令行编辑与历史记录>5、命令行编辑与历史记录</h3><p>zsh 的命令行编辑功能也十分有用。默认条件下，它是模拟 emacs 编辑器的。如果你是跟我一样更喜欢用 vi/vim，你可以用以下命令启用 vi 的键绑定。</p><pre tabindex=0><code>$ bindkey -v
+</code></pre><p>如果你使用 Oh My Zsh，<code>vi-mode</code> 插件可以启用额外的绑定，同时会在你的命令提示符上增加 vi 的模式提示 —— 这个非常有用。</p><p>当启用 vi 的绑定后，你可以在命令行中使用 vi 命令进行编辑。比如，输入 <code>ESC+/</code> 来查找命令行记录。在查找的时候，输入 <code>n</code> 来找下一个匹配行，输入 <code>N</code> 来找上一个。输入 <code>ESC</code> 后，常用的 vi 命令都可以使用，如输入 <code>0</code> 跳转到行首，输入 <code>$</code> 跳转到行尾，输入 <code>i</code> 来插入文本，输入 <code>a</code> 来追加文本等等，即使是跟随的命令也同样有效，比如输入 <code>cw</code> 来修改单词。</p><p>除了命令行编辑，如果你想修改或重新执行之前使用过的命令，zsh 还提供几个常用的命令行历史功能。比如，你打错了一个命令，输入 <code>fc</code>，你可以在你偏好的编辑器中修复最后一条命令。使用哪个编辑是参照 <code>$EDITOR</code> 变量的，而默认是使用 vi。</p><p>另外一个有用的命令是 <code>r</code>， 它会重新执行上一条命令；而 <code>r &lt;WORD></code> 则会执行上一条包含 <code>WORD</code> 的命令。</p><p>最后，输入两个感叹号（<code>!!</code>），可以在命令行中回溯最后一条命令。这个十分有用，比如，当你忘记使用 <code>sudo</code> 去执行需要权限的命令时：</p><pre tabindex=0><code>$ less /var/log/dnf.log
+/var/log/dnf.log: Permission denied
+$ sudo !!
+$ sudo less /var/log/dnf.log
+</code></pre><p>这个功能让查找并且重新执行之前命令的操作更加方便。</p><h3 id=下一步呢>下一步呢？</h3><p>这里仅仅介绍了几个可以让你提高生产率的 zsh 特性；其实还有更多功能有待你的发掘；想知道更多的信息，你可以访问以下的资源：</p><ul><li><a href=http://zsh.sourceforge.net/Intro/intro_toc.html>An Introduction to the Z Shell</a></li><li><a href=http://zsh.sourceforge.net/Guide/>A User’s Guide to ZSH</a></li><li><a href=https://wiki.archlinux.org/index.php/zsh>Archlinux Wiki</a></li><li><a href=https://grml.org/zsh/>zsh-lovers</a></li></ul><p>你有使用 zsh 提高生产力的技巧可以分享吗？我很乐意在下方评论中看到它们。</p><hr><p>via: <a href=https://opensource.com/article/18/9/tips-productivity-zsh>https://opensource.com/article/18/9/tips-productivity-zsh</a></p><p>作者：<a href=https://opensource.com/users/rgerardi>Ricardo Gerardi</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/tnuoccalanosrep>tnuoccalanosrep</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/zsh/ rel=tag>zsh</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/ rel=tag>命令行</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

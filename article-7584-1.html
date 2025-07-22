@@ -1,0 +1,126 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 Python、 RabbitMQ 和 Nameko 实现微服务 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 Python、 RabbitMQ 和 Nameko 实现微服务"><meta property="og:description" content="&#34;微服务是一股新浪潮&#34; - 现如今，将项目拆分成多个独立的、可扩展的服务是保障代码演变的最好选择。在 Python 的世界里，有个叫做 “Nameko” 的框架，它将微服务的实现变得简单并且强大。"><meta property="og:type" content="article"><meta property="og:url" content="/article-7584-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-07-17T16:45:30+00:00"><meta property="article:modified_time" content="2016-07-17T16:45:30+00:00"><meta itemprop=name content="用 Python、 RabbitMQ 和 Nameko 实现微服务"><meta itemprop=description content="&#34;微服务是一股新浪潮&#34; - 现如今，将项目拆分成多个独立的、可扩展的服务是保障代码演变的最好选择。在 Python 的世界里，有个叫做 “Nameko” 的框架，它将微服务的实现变得简单并且强大。"><meta itemprop=datePublished content="2016-07-17T16:45:30+00:00"><meta itemprop=dateModified content="2016-07-17T16:45:30+00:00"><meta itemprop=wordCount content="586"><meta itemprop=keywords content="微服务,Nameko,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 Python、 RabbitMQ 和 Nameko 实现微服务</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-07-17T16:45:30Z>July 17, 2016</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201607/17/164459b44yymryj4lby4yd.jpg alt></p><blockquote><p>&ldquo;微服务是一股新浪潮&rdquo; - 现如今，将项目拆分成多个独立的、可扩展的服务是保障代码演变的最好选择。在 Python 的世界里，有个叫做 “Nameko” 的框架，它将微服务的实现变得简单并且强大。</p></blockquote><h3 id=微服务>微服务</h3><blockquote><p>在最近的几年里，“微服务架构”如雨后春笋般涌现。它用于描述一种特定的软件应用设计方式，这种方式使得应用可以由多个独立部署的服务以服务套件的形式组成。 - M. Fowler</p></blockquote><p>推荐各位读一下 <a href=http://martinfowler.com/articles/microservices.html>Fowler 的文章</a> 以理解它背后的原理。</p><h4 id=好吧那它究竟意味着什么呢>好吧，那它究竟意味着什么呢？</h4><p>简单来说，<strong>微服务架构</strong>可以将你的系统拆分成多个负责不同任务的小的（单一上下文内） 功能块 （ responsibilities blocks ） ，它们彼此互无感知，各自只提供用于通讯的 通用指向 （ common point ） 。这个指向通常是已经将通讯协议和接口定义好的消息队列。</p><h4 id=这里给大家提供一个真实案例>这里给大家提供一个真实案例</h4><blockquote><p>案例的代码可以通过 github: <a href=http://github.com/rochacbruno/nameko-example>http://github.com/rochacbruno/nameko-example</a> 访问，查看 service 和 api 文件夹可以获取更多信息。</p></blockquote><p>想象一下，你有一个 REST API ，这个 API 有一个端点（LCTT 译注：REST 风格的 API 可以有多个端点用于处理对同一资源的不同类型的请求）用来接受数据，并且你需要将接收到的数据进行一些运算工作。那么相比阻塞接口调用者的请求来说，异步实现此接口是一个更好的选择。你可以先给用户返回一个 &ldquo;OK - 你的请求稍后会处理&rdquo; 的状态，然后在后台任务中完成运算。</p><p>同样，如果你想要在不阻塞主进程的前提下，在计算完成后发送一封提醒邮件，那么将“邮件发送”委托给其他服务去做会更好一些。</p><h4 id=场景描述>场景描述</h4><p><img src=https://img.linux.net.cn/data/attachment/album/201607/17/164533rqf9duf9ymu9ho4w.png alt></p><h3 id=用代码说话>用代码说话</h3><p>让我们将系统创建起来，在实践中理解它：</p><h4 id=环境>环境</h4><p>我们需要的环境：</p><ul><li>运行良好的 RabbitMQ（LCTT 译注：<a href=http://rabbitmq.mr-ping.com/description.html>RabbitMQ</a> 是一个流行的消息队列实现）</li><li>由 VirtualEnv 提供的 Services 虚拟环境</li><li>由 VirtualEnv 提供的 API　虚拟环境</li></ul><h4 id=rabbit>Rabbit</h4><p>在开发环境中使用 RabbitMQ 最简单的方式就是运行其官方的 docker 容器。在你已经拥有 Docker 的情况下，运行：</p><pre tabindex=0><code>docker run -d --hostname my-rabbit --name some-rabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+</code></pre><p>在浏览器中访问 <a href=http://localhost:15672>http://localhost:15672</a> ，如果能够使用 guest:guest 验证信息登录 RabbitMQ 的控制面板，说明它已经在你的开发环境中运行起来了。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201607/17/164533km4xtu88qnqkqu48.png alt></p><h4 id=服务环境>服务环境</h4><p>现在让我们创建微服务来满足我们的任务需要。其中一个服务用来执行计算任务，另一个用来发送邮件。按以下步骤执行：</p><p>在 Shell 中创建项目的根目录</p><pre tabindex=0><code>$ mkdir myproject
+$ cd myproject
+</code></pre><p>用 virtualenv 工具创建并且激活一个虚拟环境（你也可以使用 virtualenv-wrapper）</p><pre tabindex=0><code>$ virtualenv service_env
+$ source service_env/bin/activate
+</code></pre><p>安装 nameko 框架和 yagmail</p><pre tabindex=0><code>(service_env)$ pip install nameko
+(service_env)$ pip install yagmail
+</code></pre><h4 id=服务的代码>服务的代码</h4><p>现在我们已经准备好了 virtualenv 所提供的虚拟环境（可以想象成我们的服务是运行在一个独立服务器上的，而我们的 API 运行在另一个服务器上），接下来让我们编码，实现 nameko 的 RPC 服务。</p><p>我们会将这两个服务放在同一个 python 模块中，当然如果你乐意，也可以把它们放在单独的模块里并且当成不同的服务运行：</p><p>在名为 <code>service.py</code> 的文件中</p><pre tabindex=0><code>import yagmail
+from nameko.rpc import rpc, RpcProxy
+
+class Mail(object):
+    name = &#34;mail&#34;
+
+    @rpc
+    def send(self, to, subject, contents):
+        yag = yagmail.SMTP(&#39;myname@gmail.com&#39;, &#39;mypassword&#39;)
+        # 以上的验证信息请从安全的地方进行读取
+        # 贴士: 可以去看看 Dynaconf 设置模块
+        yag.send(to=to.encode(&#39;utf-8), 
+                 subject=subject.encode(&#39;utf-8), 
+                 contents=[contents.encode(&#39;utf-8)])
+
+class Compute(object):
+    name = &#34;compute&#34;
+    mail = RpcProxy(&#39;mail&#39;)    
+
+    @rpc
+    def compute(self, operation, value, other, email):
+        operations = {&#39;sum&#39;: lambda x, y: int(x) + int(y),
+                      &#39;mul&#39;: lambda x, y: int(x) * int(y),
+                      &#39;div&#39;: lambda x, y: int(x) / int(y),
+                      &#39;sub&#39;: lambda x, y: int(x) - int(y)}
+        try:
+            result = operations[operation](value, other)
+        except Exception as e:
+            self.mail.send.async(email, &#34;An error occurred&#34;, str(e))
+            raise
+        else:
+            self.mail.send.async(
+                email, 
+                &#34;Your operation is complete!&#34;, 
+                &#34;The result is: %s&#34; % result
+            )
+            return result
+</code></pre><p>现在我们已经用以上代码定义好了两个服务，下面让我们将 Nameko RPC service 运行起来。</p><blockquote><p>注意：我们会在控制台中启动并运行它。但在生产环境中，建议大家使用 supervisord 替代控制台命令。</p></blockquote><p>在 Shell 中启动并运行服务</p><pre tabindex=0><code>(service_env)$ nameko run service --broker amqp://guest:guest@localhost
+starting services: mail, compute
+Connected to amqp://guest:**@127.0.0.1:5672//
+Connected to amqp://guest:**@127.0.0.1:5672//
+</code></pre><h4 id=测试>测试</h4><p>在另外一个 Shell 中（使用相同的虚拟环境），用 nameko shell 进行测试：</p><pre tabindex=0><code>(service_env)$ nameko shell --broker amqp://guest:guest@localhost
+Nameko Python 2.7.9 (default, Apr  2 2015, 15:33:21) 
+[GCC 4.9.2] shell on linux2
+Broker: amqp://guest:guest@localhost
+&gt;&gt;&gt;
+</code></pre><p>现在你已经处在 RPC 客户端中了，Shell 的测试工作是通过 n.rpc 对象来进行的，它的使用方法如下：</p><pre tabindex=0><code>&gt;&gt;&gt; n.rpc.mail.send(&#34;name@email.com&#34;, &#34;testing&#34;, &#34;Just testing&#34;)
+</code></pre><p>上边的代码会发送一封邮件，我们同样可以调用计算服务对其进行测试。需要注意的是，此测试还会附带进行异步的邮件发送。</p><pre tabindex=0><code>&gt;&gt;&gt; n.rpc.compute.compute(&#39;sum&#39;, 30, 10, &#34;name@email.com&#34;)
+40
+&gt;&gt;&gt; n.rpc.compute.compute(&#39;sub&#39;, 30, 10, &#34;name@email.com&#34;)
+20
+&gt;&gt;&gt; n.rpc.compute.compute(&#39;mul&#39;, 30, 10, &#34;name@email.com&#34;)
+300
+&gt;&gt;&gt; n.rpc.compute.compute(&#39;div&#39;, 30, 10, &#34;name@email.com&#34;)
+3
+</code></pre><h3 id=在-api-中调用微服务>在 API 中调用微服务</h3><p>在另外一个 Shell 中（甚至可以是另外一台服务器上），准备好 API 环境。</p><p>用 virtualenv 工具创建并且激活一个虚拟环境（你也可以使用 virtualenv-wrapper）</p><pre tabindex=0><code>$ virtualenv api_env
+$ source api_env/bin/activate
+</code></pre><p>安装 Nameko、 Flask 和 Flasgger</p><pre tabindex=0><code>(api_env)$ pip install nameko
+(api_env)$ pip install flask
+(api_env)$ pip install flasgger
+</code></pre><blockquote><p>注意： 在 API 中并不需要 yagmail ，因为在这里，处理邮件是服务的职责</p></blockquote><p>创建含有以下内容的 <code>api.py</code> 文件：</p><pre tabindex=0><code>from flask import Flask, request
+from flasgger import Swagger
+from nameko.standalone.rpc import ClusterRpcProxy
+
+app = Flask(__name__)
+Swagger(app)
+CONFIG = {&#39;AMQP_URI&#39;: &#34;amqp://guest:guest@localhost&#34;}
+
+
+@app.route(&#39;/compute&#39;, methods=[&#39;POST&#39;])
+def compute():
+    &#34;&#34;&#34;
+    Micro Service Based Compute and Mail API
+    This API is made with Flask, Flasgger and Nameko
+    ---
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          id: data
+          properties:
+            operation:
+              type: string
+              enum:
+                - sum
+                - mul
+                - sub
+                - div
+            email:
+              type: string
+            value:
+              type: integer
+            other:
+              type: integer
+    responses:
+      200:
+        description: Please wait the calculation, you&#39;ll receive an email with results
+    &#34;&#34;&#34;
+    operation = request.json.get(&#39;operation&#39;)
+    value = request.json.get(&#39;value&#39;)
+    other = request.json.get(&#39;other&#39;)
+    email = request.json.get(&#39;email&#39;)
+    msg = &#34;Please wait the calculation, you&#39;ll receive an email with results&#34;
+    subject = &#34;API Notification&#34;
+    with ClusterRpcProxy(CONFIG) as rpc:
+        # asynchronously spawning and email notification
+        rpc.mail.send.async(email, subject, msg)
+        # asynchronously spawning the compute task
+        result = rpc.compute.compute.async(operation, value, other, email)
+        return msg, 200
+
+app.run(debug=True)
+</code></pre><p>在其他的 shell 或者服务器上运行此文件</p><pre tabindex=0><code>(api_env) $ python api.py 
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+</code></pre><p>然后访问 <a href=http://localhost:5000/apidocs/index.html>http://localhost:5000/apidocs/index.html</a> 这个 url，就可以看到 Flasgger 的界面了，利用它可以进行 API 的交互并可以发布任务到队列以供服务进行消费。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201607/17/164534o2b9o5zdemrornzg.png alt></p><blockquote><p>注意： 你可以在 shell 中查看到服务的运行日志，打印信息和错误信息。也可以访问 RabbitMQ 控制面板来查看消息在队列中的处理情况。</p></blockquote><p>Nameko 框架还为我们提供了很多高级特性，你可以从 <a href=https://nameko.readthedocs.org/en/stable/>https://nameko.readthedocs.org/en/stable/</a> 获取更多的信息。</p><p>别光看了，撸起袖子来，实现微服务!</p><hr><p>via: <a href=http://brunorocha.org/python/microservices-with-python-rabbitmq-and-nameko.html>http://brunorocha.org/python/microservices-with-python-rabbitmq-and-nameko.html</a></p><p>作者: <a href=http://facebook.com/rochacbruno>Bruno Rocha</a> 译者: <a href=http://www.mr-ping.com>mr-ping</a> 校对: <a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/ rel=tag>微服务</a></li><li class=tags__item><a class="tags__link btn" href=/tags/nameko/ rel=tag>Nameko</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

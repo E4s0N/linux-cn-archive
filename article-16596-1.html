@@ -1,0 +1,55 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 RHEL 上通过绑定配置 VLAN 标记 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 RHEL 上通过绑定配置 VLAN 标记"><meta property="og:description" content="在 Linux 中，你可以根据自己的需要创建高级网络设置，如网络绑定或网卡聚合、VLAN 标记和桥接。"><meta property="og:type" content="article"><meta property="og:url" content="/article-16596-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-01-30T15:47:31+00:00"><meta property="article:modified_time" content="2024-01-30T15:47:31+00:00"><meta itemprop=name content="如何在 RHEL 上通过绑定配置 VLAN 标记"><meta itemprop=description content="在 Linux 中，你可以根据自己的需要创建高级网络设置，如网络绑定或网卡聚合、VLAN 标记和桥接。"><meta itemprop=datePublished content="2024-01-30T15:47:31+00:00"><meta itemprop=dateModified content="2024-01-30T15:47:31+00:00"><meta itemprop=wordCount content="242"><meta itemprop=keywords content="网络绑定,VLAN,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 RHEL 上通过绑定配置 VLAN 标记</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2024-01-30T15:47:31Z>January 30, 2024</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202401/30/154618igt5zj2dwgfax2th.jpg alt></p><p>在 Linux 中，你可以根据自己的需要创建高级网络设置，如 网络绑定 Network Bonding 或 网卡聚合 NIC teaming 、VLAN 标记和桥接。这些高级功能可以提高网络连接的效率和可靠性。</p><p>你可以在以太网、绑定、聚合或桥接设备等其他接口上创建 VLAN 接口。</p><p>在本文中，我们将学习如何在 RHEL 系统中通过网络绑定配置 VLAN 标记，它允许来自不同网络的流量共享共同的物理链接。</p><h3 id=通过绑定对-vlan-进行标记的先决条件>通过绑定对 VLAN 进行标记的先决条件</h3><ul><li>网络聚合需要在网络交换机端口上启用 LACP（802.3ad），以聚合链路。</li><li>网络聚合需要将网络端口配置为中继端口，这样可以在同一端口上添加多个 VLAN。此外，还要从它们那里获取 VLAN ID，以便在操作系统层面进行配置。</li><li>Linux 系统应该有两个接口。</li><li>如果是物理服务器，我们建议在板载接口和 PCI 接口之间配置绑定，以避免主机端的网卡出现单点故障。</li></ul><h4 id=绑定内核模块>绑定内核模块</h4><p>使用 <code>lsmod</code> 命令检查 Linux 系统是否已加载绑定模块。</p><pre tabindex=0><code>lsmod | grep -i bonding
+bonding 12451 0
+</code></pre><p>默认情况下已加载。否则，请使用 <code>modprobe</code> 命令加载它。</p><pre tabindex=0><code>modprobe bonding
+</code></pre><h3 id=1-lacp-绑定配置>1) LACP 绑定配置</h3><p>我们将配置基于 LACP（Mode 4 – 802.3ad）的链路聚合绑定，通过组合名为 <code>em1</code> 和 <code>p7p1</code> 的两个接口，为绑定接口提供更大的带宽。</p><h4 id=1a-创建-bond-接口>1a) 创建 Bond 接口</h4><p>在目录 <code>/etc/sysconfig/network-scripts/</code> 下创建绑定接口文件 <code>ifcfg-bond0</code>。</p><pre tabindex=0><code>vi /etc/sysconfig/network-scripts/ifcfg-bond0
+
+TYPE=Bond
+DEVICE=bond0
+NAME=bond0
+BONDING_MASTER=yes
+BOOTPROTO=none
+ONBOOT=yes
+BONDING_OPTS=&#34;mode=4 miimon=100 lacp_rate=1&#34;
+NM_CONTROLLED=no
+</code></pre><h4 id=1b-配置第一个从接口>1b) 配置第一个从接口</h4><p>配置你想要进行绑定的第一个从属接口 <code>em1</code>。请根据你的环境使用正确的接口名称。</p><pre tabindex=0><code>vi /etc/sysconfig/network-scripts/ifcfg-em1
+
+TYPE=Ethernet
+BOOTPROTO=none
+DEVICE=em1
+ONBOOT=yes
+MASTER=bond0
+SLAVE=yes
+</code></pre><h4 id=1c-配置第二个从接口>1c) 配置第二个从接口</h4><p>配置你想要进行绑定的第二个从属接口 <code>p7p1</code>。 请根据你的环境使用正确的接口名称。</p><pre tabindex=0><code>vi /etc/sysconfig/network-scripts/ifcfg-p7p1
+
+TYPE=Ethernet
+BOOTPROTO=none
+DEVICE=p7p1
+ONBOOT=yes
+MASTER=bond0
+SLAVE=yes
+</code></pre><h4 id=重启网络服务>重启网络服务</h4><p>重启网络服务以启用绑定接口或使用 <code>ifup</code> 命令启动它们。</p><pre tabindex=0><code>systemctl restart network
+</code></pre><h3 id=2-通过绑定接口进行-vlan-标记>2) 通过绑定接口进行 VLAN 标记</h3><p>LACP 绑定配置已完成，所有接口现已启动并运行。让我们按照以下步骤配置绑定接口上的 VLAN 标记。</p><p>正如先决条件中所讨论的，以下是映射到相应以太网卡端口（<code>em1</code> 和 <code>p7p1</code>）和网络交换机端口的 VLAN。</p><ul><li>VLAN ID (221), VLAN N/W = 192.168.10.0/24</li><li>VLAN ID (331), VLAN N/W = 192.168.20.0/24</li></ul><h4 id=2a-将-vlan-221-配置到-bond0>2a) 将 VLAN 221 配置到 Bond0</h4><p>为 VLAN id 221 创建标记接口文件 <code>/etc/sysconfig/network-scripts/ifcfg-bond0.221</code> 并添加以下内容。</p><pre tabindex=0><code>vi /etc/sysconfig/network-scripts/ifcfg-bond0.221
+
+DEVICE=bond0.221
+BOOTPROTO=none
+ONBOOT=yes
+IPADDR=192.168.10.100
+NETMASK=255.255.255.0
+GATEWAY=192.168.10.1
+VLAN=yes
+NM_CONTROLLED=no
+</code></pre><h4 id=2b-将-vlan-331-配置到-bond0>2b) 将 VLAN 331 配置到 Bond0</h4><p>为 VLAN id 331 创建标记接口文件 <code>/etc/sysconfig/network-scripts/ifcfg-bond0.331</code> 并添加以下内容。</p><pre tabindex=0><code>vi /etc/sysconfig/network-scripts/ifcfg-bond0.331
+
+DEVICE=bond0.331
+BOOTPROTO=none
+ONBOOT=yes
+IPADDR=192.168.20.100
+NETMASK=255.255.255.0
+GATEWAY=192.168.20.1
+VLAN=yes
+NM_CONTROLLED=no
+</code></pre><h4 id=重启网络服务-1>重启网络服务</h4><p>重启网络服务以启用绑定接口或使用 <code>ifup</code> 命令启动它们。</p><pre tabindex=0><code>systemctl restart network
+</code></pre><h3 id=验证-vlan-标记配置>验证 VLAN 标记配置</h3><p>最后使用 <a href=https://www.2daygeek.com/linux-ip-command-configure-network-interface/>ip 命令</a> 验证 VLAN 标记接口是否已配置并启动和运行。</p><p>是的，我可以看到 <code>bondo.221@bond0</code> 和 <code>bon0.331@bond0</code> 有两个不同的 IP，并且能够通过 ssh 访问系统，没有任何问题。因此，VLAN 标记按预期工作。</p><p><img src=/data/attachment/album/202401/30/154732hmbzbnmrs1u2a11a.jpg alt></p><h3 id=结论>结论</h3><p>恭喜，你已经了解了如何在 RHEL 系统上通过 LACP 绑定配置 VLAN 标记，该系统监听两个 VLAN。VLAN 标记不限于两个 VLAN，支持多个 VLAN，你可以根据该 VLAN 的网络配置添加 VLAN 标记。</p><p><em>（题图：DA/2854516d-4d19-4008-a421-05f9a2a78368）</em></p><hr><p>via: <a href=https://www.2daygeek.com/configure-vlan-tagging-over-network-bonding-rhel/>https://www.2daygeek.com/configure-vlan-tagging-over-network-bonding-rhel/</a></p><p>作者：<a href=https://www.2daygeek.com/author/jayabal/>Jayabal Thiyagarajan</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%BD%91%E7%BB%9C%E7%BB%91%E5%AE%9A/ rel=tag>网络绑定</a></li><li class=tags__item><a class="tags__link btn" href=/tags/vlan/ rel=tag>VLAN</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

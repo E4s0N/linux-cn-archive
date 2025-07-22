@@ -1,0 +1,103 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>精通 Linux 的 ls 命令 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="精通 Linux 的 ls 命令"><meta property="og:description" content="Linux 的 ls 命令拥有数量惊人的选项，可以提供有关文件的重要信息。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11159-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-07-29T10:58:33+00:00"><meta property="article:modified_time" content="2019-07-29T10:58:33+00:00"><meta itemprop=name content="精通 Linux 的 ls 命令"><meta itemprop=description content="Linux 的 ls 命令拥有数量惊人的选项，可以提供有关文件的重要信息。"><meta itemprop=datePublished content="2019-07-29T10:58:33+00:00"><meta itemprop=dateModified content="2019-07-29T10:58:33+00:00"><meta itemprop=wordCount content="692"><meta itemprop=keywords content="ls,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>精通 Linux 的 ls 命令</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-07-29T10:58:33Z>July 29, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>Linux 的 ls 命令拥有数量惊人的选项，可以提供有关文件的重要信息。</p></blockquote><p><img src=/data/attachment/album/201907/29/105754ii3874q2ww7lo882.jpg alt></p><p><code>ls</code> 命令可以列出一个 <a href=https://opensource.com/article/19/7/what-posix-richard-stallman-explains>POSIX</a> 系统上的文件。这是一个简单的命令，但它经常被低估，不是它能做什么（因为它确实只做了一件事），而是你该如何优化对它的使用。</p><p>要知道在最重要的 10 个终端命令中，这个简单的 <code>ls</code> 命令可以排进前三，因为 <code>ls</code> 不会<em>只是</em>列出文件，它还会告诉你有关它们的重要信息。它会告诉你诸如拥有文件或目录的人、每个文件修改的时间、甚至是什么类型的文件。它的附带功能能让你了解你在哪里、附近有些什么，以及你可以用它们做什么。</p><p>如果你对 <code>ls</code> 的体验仅限于你的发行版在 <code>.bashrc</code> 中的别名，那么你可能错失了它。</p><h3 id=gnu-还是-bsd>GNU 还是 BSD？</h3><p>在了解 <code>ls</code> 的隐藏能力之前，你必须确定你正在运行哪个 <code>ls</code> 命令。有两个最流行的版本：包含在 GNU coreutils 包中的 GNU 版本，以及 BSD 版本。如果你正在运行 Linux，那么你很可能已经安装了 GNU 版本的 <code>ls</code>（LCTT 译注：几乎可以完全确定）。如果你正在运行 BSD 或 MacOS，那么你有的是 BSD 版本。本文会介绍它们的不同之处。</p><p>你可以使用 <code>--version</code> 选项找出你计算机上的版本：</p><pre tabindex=0><code>$ ls --version
+</code></pre><p>如果它返回有关 GNU coreutils 的信息，那么你拥有的是 GNU 版本。如果它返回一个错误，你可能正在运行的是 BSD 版本（运行 <code>man ls | head</code> 以确定）。</p><p>你还应该调查你的发行版可能具有哪些预设选项。终端命令的自定义通常放在 <code>$HOME/.bashrc</code> 或 <code>$HOME/.bash_aliases</code> 或 <code>$HOME/.profile</code> 中，它们是通过将 <code>ls</code> 别名化为更复杂的 <code>ls</code> 命令来完成的。例如：</p><pre tabindex=0><code>alias ls=&#39;ls --color&#39;
+</code></pre><p>发行版提供的预设非常有用，但它们确实很难分辨出哪些是 <code>ls</code> 本身的特性，哪些是它的附加选项提供的。你要是想要运行 <code>ls</code> 命令本身而不是它的别名，你可以用反斜杠“转义”命令：</p><pre tabindex=0><code>$ \ls
+</code></pre><h3 id=分类>分类</h3><p>单独运行 <code>ls</code> 会以适合你终端的列数列出文件：</p><pre tabindex=0><code>$ ls ~/example
+bunko        jdk-10.0.2
+chapterize   otf2ttf.ff
+despacer     overtar.sh
+estimate.sh  pandoc-2.7.1
+fop-2.3      safe_yaml
+games        tt
+</code></pre><p>这是有用的信息，但所有这些文件看起来基本相同，没有方便的图标来快速表示出哪个是目录、文本文件或图像等等。</p><p>使用 <code>-F</code>（或 GNU 上的长选项 <code>--classify</code>）以在每个条目之后显示标识文件类型的指示符：</p><pre tabindex=0><code>$ ls ~/example
+bunko         jdk-10.0.2/
+chapterize*   otf2ttf.ff*
+despacer*     overtar.sh*
+estimate.sh   pandoc@
+fop-2.3/      pandoc-2.7.1/
+games/        tt*
+</code></pre><p>使用此选项，终端中列出的项目使用简写符号来按文件类型分类：</p><ul><li>斜杠（<code>/</code>）表示目录（或“文件夹”）。</li><li>星号（<code>*</code>）表示可执行文件。这包括二进制文件（编译代码）以及脚本（具有<a href=https://opensource.com/article/19/6/understanding-linux-permissions>可执行权限</a>的文本文件）。</li><li>符号（<code>@</code>）表示符号链接（或“别名”）。</li><li>等号（<code>=</code>）表示套接字。</li><li>在 BSD 上，百分号（<code>%</code>）表示 涂改 whiteout （某些文件系统上的文件删除方法）。</li><li>在 GNU 上，尖括号（<code>></code>）表示 门 door （<a href=https://www.illumos.org/>Illumos</a> 和 Solaris上的进程间通信）。</li><li>竖线（<code>|</code>）表示 <a href=https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics)>FIFO</a> 管道。 这个选项的一个更简单的版本是 <code>-p</code>，它只区分文件和目录。</li></ul><p>（LCTT 译注：在支持彩色的终端上，使用 <code>--color</code> 选项可以以不同的颜色来区分文件类型，但要注意如果将输出导入到管道中，则颜色消失。）</p><h3 id=长列表>长列表</h3><p>从 <code>ls</code> 获取“长列表”的做法是如此常见，以至于许多发行版将 <code>ll</code> 别名为 <code>ls -l</code>。长列表提供了许多重要的文件属性，例如权限、拥有每个文件的用户、文件所属的组、文件大小（以字节为单位）以及文件上次更改的日期：</p><pre tabindex=0><code>$ ls -l
+-rwxrwx---. 1 seth users         455 Mar  2  2017 estimate.sh
+-rwxrwxr-x. 1 seth users         662 Apr 29 22:27 factorial
+-rwxrwx---. 1 seth users    20697793 Jun 29  2018 fop-2.3-bin.tar.gz
+-rwxrwxr-x. 1 seth users        6210 May 22 10:22 geteltorito
+-rwxrwx---. 1 seth users         177 Nov 12  2018 html4mutt.sh
+[...]
+</code></pre><p>如果你不想以字节为单位，请添加 <code>-h</code> 标志（或 GNU 中的 <code>--human</code>）以将文件大小转换为更加人性化的表示方法：</p><pre tabindex=0><code>$ ls --human
+-rwxrwx---. 1 seth users    455 Mar  2  2017 estimate.sh
+-rwxrwxr-x. 1 seth seth     662 Apr 29 22:27 factorial
+-rwxrwx---. 1 seth users    20M Jun 29  2018 fop-2.3-bin.tar.gz
+-rwxrwxr-x. 1 seth seth    6.1K May 22 10:22 geteltorito
+-rwxrwx---. 1 seth users    177 Nov 12  2018 html4mutt.sh
+</code></pre><p>要看到更少的信息，你可以带有 <code>-o</code> 选项只显示所有者的列，或带有 <code>-g</code> 选项只显示所属组的列：</p><pre tabindex=0><code>$ ls -o
+-rwxrwx---. 1 seth    455 Mar  2  2017 estimate.sh
+-rwxrwxr-x. 1 seth    662 Apr 29 22:27 factorial
+-rwxrwx---. 1 seth    20M Jun 29  2018 fop-2.3-bin.tar.gz
+-rwxrwxr-x. 1 seth   6.1K May 22 10:22 geteltorito
+-rwxrwx---. 1 seth    177 Nov 12  2018 html4mutt.sh
+</code></pre><p>也可以将两个选项组合使用以显示两者。</p><h3 id=时间和日期格式>时间和日期格式</h3><p><code>ls</code> 的长列表格式通常如下所示：</p><pre tabindex=0><code>-rwxrwx---. 1 seth users         455 Mar  2  2017 estimate.sh
+-rwxrwxr-x. 1 seth users         662 Apr 29 22:27 factorial
+-rwxrwx---. 1 seth users    20697793 Jun 29  2018 fop-2.3-bin.tar.gz
+-rwxrwxr-x. 1 seth users        6210 May 22 10:22 geteltorito
+-rwxrwx---. 1 seth users         177 Nov 12  2018 html4mutt.sh
+</code></pre><p>月份的名字不便于排序，无论是通过计算还是识别（取决于你的大脑是否倾向于喜欢字符串或整数）。你可以使用 <code>--time-style</code> 选项和格式名称更改时间戳的格式。可用格式为：</p><ul><li><code>full-iso</code>：ISO 完整格式（1970-01-01 21:12:00）</li><li><code>long-iso</code>：ISO 长格式（1970-01-01 21:12）</li><li><code>iso</code>：iso 格式（01-01 21:12）</li><li><code>locale</code>：本地化格式（使用你的区域设置）</li><li><code>posix-STYLE</code>：POSIX 风格（用区域设置定义替换 <code>STYLE</code>）</li></ul><p>你还可以使用 <code>date</code> 命令的正式表示法创建自定义样式。</p><h3 id=按时间排序>按时间排序</h3><p>通常，<code>ls</code> 命令按字母顺序排序。你可以使用 <code>-t</code> 选项根据文件的最近更改的时间（最新的文件最先列出）进行排序。</p><p>例如：</p><pre tabindex=0><code>$ touch foo bar baz
+$ ls
+bar  baz  foo
+$ touch foo
+$ ls -t
+foo bar baz
+</code></pre><h3 id=列出方式>列出方式</h3><p><code>ls</code> 的标准输出平衡了可读性和空间效率，但有时你需要按照特定方式排列的文件列表。</p><p>要以逗号分隔文件列表，请使用 <code>-m</code>：</p><pre tabindex=0><code>ls -m ~/example
+bar, baz, foo
+</code></pre><p>要强制每行一个文件，请使用 <code>-1</code> 选项（这是数字 1，而不是小写的 L）：</p><pre tabindex=0><code>$ ls -1 ~/bin/
+bar
+baz
+foo
+</code></pre><p>要按文件扩展名而不是文件名对条目进行排序，请使用 <code>-X</code>（这是大写 X）：</p><pre tabindex=0><code>$ ls
+bar.xfc  baz.txt  foo.asc
+$ ls -X
+foo.asc  baz.txt  bar.xfc
+</code></pre><h3 id=隐藏杂项>隐藏杂项</h3><p>在某些 <code>ls</code> 列表中有一些你可能不关心的条目。例如，元字符 <code>.</code> 和 <code>..</code> 分别代表“本目录”和“父目录”。如果你熟悉在终端中如何切换目录，你可能已经知道每个目录都将自己称为 <code>.</code>，并将其父目录称为 <code>..</code>，因此当你使用 <code>-a</code> 选项显示隐藏文件时并不需要它经常提醒你。</p><p>要显示几乎所有隐藏文件（<code>.</code> 和 <code>..</code> 除外），请使用 <code>-A</code> 选项：</p><pre tabindex=0><code>$ ls -a
+.
+..
+.android
+.atom
+.bash_aliases
+[...]
+$ ls -A
+.android
+.atom
+.bash_aliases
+[...]
+</code></pre><p>有许多优秀的 Unix 工具有保存备份文件的传统，它们会在保存文件的名称后附加一些特殊字符作为备份文件。例如，在 Vim 中，备份会以在文件名后附加 <code>~</code> 字符的文件名保存。</p><p>这些类型的备份文件已经多次使我免于愚蠢的错误，但是经过多年享受它们提供的安全感后，我觉得不需要用视觉证据来证明它们存在。我相信 Linux 应用程序可以生成备份文件（如果它们声称这样做的话），我很乐意相信它们存在 —— 而不用必须看到它们。</p><p>要隐藏备份文件，请使用 <code>-B</code> 或 <code>--ignore-backups</code> 隐藏常用备份格式（此选项在 BSD 的 <code>ls</code> 中不可用）：</p><pre tabindex=0><code>$ ls
+bar.xfc  baz.txt  foo.asc~  foo.asc
+$ ls -B
+bar.xfc  baz.txt  foo.asc
+</code></pre><p>当然，备份文件仍然存在；它只是过滤掉了，你不必看到它。</p><p>除非另有配置，GNU Emacs 在文件名的开头和结尾添加哈希字符（<code>＃</code>）来保存备份文件（<code>#file＃</code>）。其他应用程序可能使用不同的样式。使用什么模式并不重要，因为你可以使用 <code>--hide</code> 选项创建自己的排除项：</p><pre tabindex=0><code>$ ls
+bar.xfc  baz.txt  #foo.asc#  foo.asc
+$ ls --hide=&#34;#*#&#34;
+bar.xfc  baz.txt  foo.asc
+</code></pre><h3 id=递归地列出目录>递归地列出目录</h3><p>除非你在指定目录上运行 <code>ls</code>，否则子目录的内容不会与 <code>ls</code> 命令一起列出：</p><pre tabindex=0><code>$ ls -F
+example/  quux*  xyz.txt
+$ ls -R
+quux  xyz.txt
+
+./example:
+bar.xfc  baz.txt  #foo.asc#  foo.asc
+</code></pre><h3 id=使用别名使其永久化>使用别名使其永久化</h3><p><code>ls</code> 命令可能是 shell 会话期间最常使用的命令。这是你的眼睛和耳朵，为你提供上下文信息和确认命令的结果。虽然有很多选项很有用，但 <code>ls</code> 之美的一部分就是简洁：两个字符和回车键，你就知道你到底在哪里以及附近有什么。如果你不得不停下思考（更不用说输入）几个不同的选项，它会变得不那么方便，所以通常情况下，即使最有用的选项也不会用了。</p><p>解决方案是为你的 <code>ls</code> 命令添加别名，以便在使用它时，你可以获得最关心的信息。</p><p>要在 Bash shell 中为命令创建别名，请在主目录中创建名为 <code>.bash_aliases</code> 的文件（必须在开头包含 <code>.</code>）。 在此文件中，列出要创建的别名，然后是要为其创建别名的命令。例如：</p><pre tabindex=0><code>alias ls=&#39;ls -A -F -B --human --color&#39;
+</code></pre><p>这一行导致你的 Bash shell 将 <code>ls</code> 命令解释为 <code>ls -A -F -B --human --color</code>。</p><p>你不必仅限于重新定义现有命令，还可以创建自己的别名：</p><pre tabindex=0><code>alias ll=&#39;ls -l&#39;
+alias la=&#39;ls -A&#39;
+alias lh=&#39;ls -h&#39;
+</code></pre><p>要使别名起作用，shell 必须知道 <code>.bash_aliases</code> 配置文件存在。在编辑器中打开 <code>.bashrc</code> 文件（如果它不存在则创建它），并包含以下代码块：</p><pre tabindex=0><code>if [ -e $HOME/.bash_aliases ]; then
+    source $HOME/.bash_aliases
+fi
+</code></pre><p>每次加载 <code>.bashrc</code>（这是一个新的 Bash shell 启动的时候），Bash 会将 <code>.bash_aliases</code> 加载到你的环境中。你可以关闭并重新启动 Bash 会话，或者直接强制它执行此操作：</p><pre tabindex=0><code>$ source ~/.bashrc
+</code></pre><p>如果你忘了你是否有别名命令，<code>which</code> 命令可以告诉你：</p><pre tabindex=0><code>$ which ls
+alias ls=&#39;ls -A -F -B --human --color&#39;
+        /usr/bin/ls
+</code></pre><p>如果你将 <code>ls</code> 命令别名为带有选项的 <code>ls</code> 命令，则可以通过将反斜杠前缀到 <code>ls</code> 前来覆盖你的别名。例如，在示例别名中，使用 <code>-B</code> 选项隐藏备份文件，这意味着无法使用 <code>ls</code> 命令显示备份文件。 可以覆盖该别名以查看备份文件：</p><pre tabindex=0><code>$ ls
+bar  baz  foo
+$ \ls
+bar  baz  baz~  foo
+</code></pre><h3 id=做一件事把它做好>做一件事，把它做好</h3><p><code>ls</code> 命令有很多选项，其中许多是特定用途的或高度依赖于你所使用的终端。在 GNU 系统上查看 <code>info ls</code>，或在 GNU 或 BSD 系统上查看 <code>man ls</code> 以了解更多选项。</p><p>你可能会觉得奇怪的是，一个以每个工具“做一件事，把它做好”的前提而闻名的系统会让其最常见的命令背负 50 个选项。但是 <code>ls</code> 只做一件事：它列出文件，而这 50 个选项允许你控制接收列表的方式，<code>ls</code> 的这项工作做得非常、<em>非常</em>好。</p><hr><p>via: <a href=https://opensource.com/article/19/7/master-ls-command>https://opensource.com/article/19/7/master-ls-command</a></p><p>作者：<a href=https://opensource.com/users/sethhttps://opensource.com/users/sambocettahttps://opensource.com/users/scottnesbitthttps://opensource.com/users/sethhttps://opensource.com/users/marcobravohttps://opensource.com/users/sethhttps://opensource.com/users/don-watkinshttps://opensource.com/users/sethhttps://opensource.com/users/jamesfhttps://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ls/ rel=tag>ls</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

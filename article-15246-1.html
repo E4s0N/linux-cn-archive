@@ -1,0 +1,69 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用这个多功能的 Linux 命令转换音频文件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用这个多功能的 Linux 命令转换音频文件"><meta property="og:description" content="SoX Sound Exchange 甚至可以为你的音频文件添加特效。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15246-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-11-13T10:43:18+00:00"><meta property="article:modified_time" content="2022-11-13T10:43:18+00:00"><meta itemprop=name content="使用这个多功能的 Linux 命令转换音频文件"><meta itemprop=description content="SoX Sound Exchange 甚至可以为你的音频文件添加特效。"><meta itemprop=datePublished content="2022-11-13T10:43:18+00:00"><meta itemprop=dateModified content="2022-11-13T10:43:18+00:00"><meta itemprop=wordCount content="441"><meta itemprop=keywords content="音频,SoX,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用这个多功能的 Linux 命令转换音频文件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-11-13T10:43:18Z>November 13, 2022</time></div></div></header><div class="content post__content clearfix"><blockquote><p>SoX Sound Exchange 甚至可以为你的音频文件添加特效。</p></blockquote><p><img src=/data/attachment/album/202211/13/104314skttlizoioyeaw3w.jpg alt title="HiFi vintage stereo"></p><p>我工作需要使用音视频媒体，不管你处理哪种媒体，你肯定知道标准化是一种有价值的工具。就像你不会试图把一个分数加到一个小数上而不转换其中一个一样，我已经知道，把不同格式的媒体组合起来并不理想。为了方便用户，大多数爱好者级应用程序使转换过程不可见。然而，对于那些需要控制媒体细节的用户的灵活软件，会通常让你自己提前将媒体转换为所需的格式。我有一些最喜欢的音频转换工具，其中之一就是号称“音频的瑞士军刀” —— <a href=http://sox.sourceforge.net/sox.html>SoX</a>。</p><h3 id=安装>安装</h3><p>在 Linux 或 BSD 上，可以从软件存储库或 Ports 树中安装 <code>sox</code> 命令（，以及一些有用的符号链接）。</p><p>你也可以从 <a href=http://sox.sourceforge.net>Sourceforge.net</a> 上安装 SoX。它不经常发布，但它的代码库往往是稳定的，所以如果你想要最新的功能（如 Opus 支持），构建它是容易和安全的。</p><p>SoX 主要提供了 <code>sox</code> 命令，但是创建了一些有用的符号链接：<code>play</code>、<code>rec</code> 和 <code>soxi</code>。</p><h3 id=使用-sox-获取文件信息>使用 SoX 获取文件信息</h3><p>SoX 可以读取和重写音频数据。它是否存储重写的音频数据取决于你。在有些情况下，你不需要存储转换后的数据，例如，当你将输出直接发送到扬声器进行回放时。然而，在进行任何转换之前，最好首先确定要处理的是什么。</p><p>使用 <code>soxi</code> 命令也可以收集音频文件信息。<code>soxi</code> 会符号链接到 <code>soxi --info</code>。</p><pre tabindex=0><code>$ soxi countdown.mp3
+Input File（输入文件）    : &#39;/home/tux/countdown.mp3&#39;
+Channels（通道数）       : 1
+Sample Rate（采样率）    : 44100
+Precision（数据精度）      : 16-bit（16 比特）
+Duration（时长）       : 00:00:11.21 = 494185 samples...（11.21 秒 = 494185 采样点）
+File Size（文件大小）      : 179k
+Bit Rate（比特率）       : 128k
+Sample Encoding（编码格式）: MPEG audio (layer I, II or III)
+</code></pre><p>这个输出可以让你很好地了解音频文件的编码方式、文件长度、文件大小、采样率和通道数。其中一些你可能<em>认为</em>你已经知道了，但当客户把媒体带到我面前时，我从不相信这些假设。使用 <code>soxi</code> 验证媒体属性。</p><h3 id=转换文件>转换文件</h3><p>在本例中，，一个游戏节目倒计时的音频是以MP3文件的形式提供的。虽然几乎所有的编辑应用程序都接受压缩音频，但它们并不是在压缩的数据上进行编辑。转换是在某个地方发生的，可能是一个秘密的后台任务，也可能提示让你保存一份副本。我通常喜欢自己提前完成转换。这样，我可以控制使用的格式。我可以在夜间批量处理大量的媒体，而不是浪费宝贵的制作时间，等待编辑应用程序按需处理它们。</p><p><code>sox</code> 命令用于转换音频文件。在 <code>sox</code> 流程中有几个阶段：</p><ul><li>输入</li><li>合并</li><li>特效</li><li>输出</li></ul><p>但在命令语法中，特效步骤令人困惑地放到了<em>最后一步</em>。这意味着 <code>sox</code> 流程是这样组成的:</p><pre tabindex=0><code>输入 → 合并 → 输出 → 特效
+</code></pre><h3 id=编码>编码</h3><p>最简单的转换命令只涉及一个输入文件和一个输出文件。下面是转换 MP3 文件为无损 FLAC 文件的命令：</p><pre tabindex=0><code>$ sox countdown.mp3 output.flac
+$ soxi output.flac
+
+Input File（输入文件）     : &#39;output.flac&#39;
+Channels（通道数）       : 1
+Sample Rate（采样率）    : 44100
+Precision（数据精度）      : 16-bit（16 比特）
+Duration（时长）       : 00:00:11.18 = 493056 samples...（11.18 秒 = 493056 采样点）
+File Size（文件大小）      : 545k
+Bit Rate（比特率）       : 390k
+Sample Encoding（编码格式）: 16-bit FLAC
+Comment（注释）        : &#39;Comment=Processed by SoX&#39;
+</code></pre><h4 id=特效>特效</h4><p>特效可以在命令末尾指定。它可以在将数据发送到最终目的地之前更改音频。例如，有时声音太大会在转换过程中造成问题：</p><pre tabindex=0><code>$ sox bad.wav bad.ogg
+sox WARN sox: `bad.ogg&#39; output clipped 126 samples; decrease volume?
+</code></pre><p>应用<strong>增益</strong>（<code>gain</code>）效果通常可以解决此问题：</p><pre tabindex=0><code>$ sox bad.wav bad.ogg gain -1
+</code></pre><h4 id=淡入淡出>淡入淡出</h4><p>另一个常用的效果是<strong>淡入淡出</strong>（<code>fade</code>）。此效果允许你定义淡入或淡出的类型，以及你希望淡入淡出效果持续的时间。</p><p>下面是一个使用倒抛物线的 6 秒淡入示例：</p><pre tabindex=0><code>$ sox intro.ogg intro.flac fade p 6
+</code></pre><p>这将对音频的头部应用 3 秒的淡入，并从 8 秒标记开始淡出（这段音乐只有 11 秒，因此在这种情况下淡出也是 3 秒）：</p><pre tabindex=0><code>$ sox intro.ogg intro.flac fade p 3 8
+</code></pre><p><code>sox</code> 手册页中列出了不同类型的淡入淡出（正弦、线性、倒抛物线等）以及淡入淡出提供的选项。</p><h4 id=特效语法>特效语法</h4><p>每个特效插件都有自己的语法，因此请参阅手册页了解如何调用每个特效插件的详细信息。</p><p>效果可以在一个命令中以菊花链的方式进行，至少在你想组合它们的范围内是如此。换句话说，没有语法可以只在六秒钟的淡出期间应用一个镶边效果。对于如此精确的东西，你需要一个图形声波编辑器或数字音频工作站，例如 <a href=https://opensource.com/life/16/2/linux-multimedia-studio>LMMS</a> 或 <a href=https://opensource.com/article/18/3/make-sweet-music-digital-audio-workstation-rosegarden>Rosegarden</a>。但是，如果你只想应用一次特效，可以在同一命令中将它们一起列出。</p><p>此命令应用了一个 -1 的<strong>增益</strong>效果、1.35 的节奏<strong>拉伸</strong>和<strong>淡出</strong>：</p><pre tabindex=0><code>$ sox intro.ogg output.flac gain -1 stretch 1.35 fade p 0 6
+$ soxi output.flac
+
+Input File（输入文件）     : &#39;output.flac&#39;
+Channels（通道数）       : 1
+Sample Rate（采样率）    : 44100
+Precision（数据精度）      : 16-bit（16 比特）
+Duration（时长）        : 00:00:15.10 = 665808 samples...（15.10 秒 = 665808 采样点）
+File Size（文件大小）      : 712k
+Bit Rate（比特率）       : 377k
+Sample Encoding（编码格式）: 16-bit FLAC
+Comment（注释）        : &#39;Comment=Processed by SoX&#39;
+</code></pre><h3 id=组合音频>组合音频</h3><p>SoX 还可以通过连接或混合音频文件来组合音频文件。</p><p>要连接（或者说<em>拼接</em>）文件合并为一个文件，请在命令中提供多个输入文件：</p><pre tabindex=0><code>$ sox countdown.mp3 intro.ogg output.flac
+</code></pre><p>在本例中，<code>output.flac</code> 现在包含 <code>countdown.mp3</code> 音频，紧接着是 <code>intro.ogg</code> 音乐。</p><p>但是，如果你希望两首曲目同时播放，可以使用 <code>--combine mix</code> 选项：</p><pre tabindex=0><code>$ sox --combine mix countdown.mp3 intro.ogg output.flac
+</code></pre><p>然而，想象一下，这两个输入文件的不同之处不仅仅在于它们的编解码器。人声音轨用单声道（一个声道）录制并不少见，但音乐至少要用立体声（至少两个声道）来录制。SoX 不会给出默认的解决方案，因此你必须首先自己标准化这两个文件的格式。</p><h4 id=更改音频文件>更改音频文件</h4><p>选项与后面列出文件名有关。例如，此命令中的 <code>--channels</code> 选项将<em>仅仅</em>应用于 <code>input.wav</code>，而<em>不被</em>应用于 <code>example.ogg</code> 和 <strong>output.flac</strong>：</p><pre tabindex=0><code>$ sox --channels 2 input.wav example.ogg output.flac
+</code></pre><p>这意味着在 SoX 中，选项的位置非常重要。如果你在命令开始时指定一个选项，那么实际上只会覆盖 SoX 自己从输入文件中收集的内容。然而，在<em>输出文件</em>名前的选项决定了 SoX 如何写入音频数据。</p><p>要解决前面的通道不兼容问题，你可以首先标准化输入，然后混合：</p><pre tabindex=0><code>$ sox countdown.mp3 --channels 2 countdown-stereo.flac gain -1
+$ soxi countdown-stereo.flac
+
+Input File（输入文件）     : &#39;countdown-stereo.flac&#39;
+Channels（通道数）       : 2
+Sample Rate（采样率）    : 44100
+Precision（数据精度）      : 16-bit（16 比特）
+Duration（时长）       : 00:00:11.18 = 493056 samples...（11.18 秒 = 493056 采样点）
+File Size（文件大小）      : 545k
+Bit Rate（比特率）       : 390k
+Sample Encoding（编码格式）: 16-bit FLAC
+Comment（注释）        : &#39;Comment=Processed by SoX&#39;
+
+$ sox --combine mix \
+  countdown-stereo.flac \
+  intro.ogg \
+  output.flac
+</code></pre><p>SoX 绝对需要多个命令来执行复杂的操作，因此根据需要创建几个临时和中间文件是正常的。</p><h3 id=多通道音频>多通道音频</h3><p>当然，并非所有音频都被限制在一个或两个声道。如果你想将多个音频通道组合成一个文件，可以使用 SoX 的 <code>--combine merge</code> 选项：</p><pre tabindex=0><code>$ sox --combine merge countdown.mp3 intro.ogg output.flac
+$ soxi output.flac
+
+Input File     : &#39;output.flac&#39;
+Channels       : 3
+[...]
+</code></pre><h3 id=简单的音频操作>简单的音频操作</h3><p>在没有视觉界面的情况下操作音频似乎很奇怪，而且对于某些任务来说，SoX 绝对不是最好的工具。然而，对于许多任务，SoX 提供了一个简单而轻量级的工具包。SoX 是一个具有强大潜力的简单命令。有了它，你可以转换音频，操纵通道和波形，甚至生成自己的声音。本文仅简要概述了其功能，因此请阅读其手册页或 <a href=http://sox.sourceforge.net/sox.html>在线文档</a>，然后看看你能创造什么。</p><hr><p>via: <a href=https://opensource.com/article/20/2/linux-sox>https://opensource.com/article/20/2/linux-sox</a></p><p>作者：<a href=https://opensource.com/users/klaatu>Klaatu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/FYJNEVERFOLLOWS>FYJNEVERFOLLOWS</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E9%9F%B3%E9%A2%91/ rel=tag>音频</a></li><li class=tags__item><a class="tags__link btn" href=/tags/sox/ rel=tag>SoX</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

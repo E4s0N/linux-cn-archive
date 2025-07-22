@@ -1,0 +1,47 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>5 种在 Ubuntu 上释放空间的简单方法 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="5 种在 Ubuntu 上释放空间的简单方法"><meta property="og:description" content="在这篇文章中，我将向你展示一些最容易的或简单的方法来清理你的 Ubuntu 系统，获得更多空间。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11051-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-07-03T16:58:00+00:00"><meta property="article:modified_time" content="2019-07-03T16:58:00+00:00"><meta itemprop=name content="5 种在 Ubuntu 上释放空间的简单方法"><meta itemprop=description content="在这篇文章中，我将向你展示一些最容易的或简单的方法来清理你的 Ubuntu 系统，获得更多空间。"><meta itemprop=datePublished content="2019-07-03T16:58:00+00:00"><meta itemprop=dateModified content="2019-07-03T16:58:00+00:00"><meta itemprop=wordCount content="309"><meta itemprop=keywords content="清理,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>5 种在 Ubuntu 上释放空间的简单方法</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-07-03T16:58:00Z>July 03, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201907/03/165641h0xy91x9109wz19w.jpg alt></p><p>大多数人可能在系统磁盘存储不足的情况下执行释放空间这个操作，也可能在 Linux 系统磁盘存储满了的情况下执行这个操作。</p><p>它应该被经常执行，来为安装一个新的应用程序和处理其它文件弥补磁盘存储空间。保持可用空间是 Linux 管理员的一个日常任务，以允许磁盘利用率维持在阈值之下。</p><p>这里有一些我们可以清理我们系统空间的方法。</p><p>当你有 TB 级存储容量时，可能不需要清理你的系统。但是，如果你空间有限，那么释放磁盘空间就变的不可避免。</p><p>在这篇文章中，我将向你展示一些最容易的或简单的方法来清理你的 Ubuntu 系统，获得更多空间。</p><h3 id=在-ubuntu-系统上如何检查可用的空间>在 Ubuntu 系统上如何检查可用的空间？</h3><p>在你的系统上使用 <a href=https://www.2daygeek.com/how-to-check-disk-space-usage-using-df-command/>df 命令</a> 来检查当前磁盘利用率。</p><pre tabindex=0><code>$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+udev            975M     0  975M   0% /dev
+tmpfs           200M  1.7M  198M   1% /run
+/dev/sda1        30G   16G   13G  55% /
+tmpfs           997M     0  997M   0% /dev/shm
+tmpfs           5.0M  4.0K  5.0M   1% /run/lock
+tmpfs           997M     0  997M   0% /sys/fs/cgroup
+</code></pre><p>图形界面用户可以使用“磁盘利用率分析器工具”来查看当前利用率。</p><p><img src=/data/attachment/album/201907/03/165839ze2w4dww5webx322.jpg alt></p><h4 id=1-移除不再需要的软件包>1) 移除不再需要的软件包</h4><p>下面的命令移除系统不再需要的依赖库和软件包。这些软件包是自动安装的，以使一个安装的软件包满足依赖关系。同样，它也会移除安装在系统中的 Linux 旧内核。它会移除不再被系统需要的孤儿软件包，但是不会清除它们。</p><pre tabindex=0><code>$ sudo apt-get autoremove
+[sudo] password for daygeek:
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following packages will be REMOVED:
+  apache2-bin apache2-data apache2-utils galera-3 libaio1 libapr1 libaprutil1
+  libaprutil1-dbd-sqlite3 libaprutil1-ldap libconfig-inifiles-perl libdbd-mysql-perl
+  libdbi-perl libjemalloc1 liblua5.2-0 libmysqlclient20 libopts25
+  libterm-readkey-perl mariadb-client-10.1 mariadb-client-core-10.1 mariadb-common
+  mariadb-server-10.1 mariadb-server-core-10.1 mysql-common sntp socat
+0 upgraded, 0 newly installed, 25 to remove and 23 not upgraded.
+After this operation, 189 MB disk space will be freed.
+Do you want to continue? [Y/n]
+</code></pre><p>为清除它们，可以与命令一起使用 <code>--purge</code> 选项。</p><pre tabindex=0><code>$ sudo apt-get autoremove --purge
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following packages will be REMOVED:
+  apache2-bin* apache2-data* apache2-utils* galera-3* libaio1* libapr1* libaprutil1*
+  libaprutil1-dbd-sqlite3* libaprutil1-ldap* libconfig-inifiles-perl*
+  libdbd-mysql-perl* libdbi-perl* libjemalloc1* liblua5.2-0* libmysqlclient20*
+  libopts25* libterm-readkey-perl* mariadb-client-10.1* mariadb-client-core-10.1*
+  mariadb-common* mariadb-server-10.1* mariadb-server-core-10.1* mysql-common* sntp*
+  socat*
+0 upgraded, 0 newly installed, 25 to remove and 23 not upgraded.
+After this operation, 189 MB disk space will be freed.
+Do you want to continue? [Y/n]
+</code></pre><h4 id=2-清空回收站>2) 清空回收站</h4><p>有可能你的回收站里面有大量的无用数据。它会占用你的系统空间。最好解决方法之一是在你的系统上清理这些无用的数据，以获取一些可用的空间。</p><p>为清理这些，简单地使用文件管理器来清空你的回收站。</p><p><img src=/data/attachment/album/201907/03/165840f5pzorzodkysr5l5.jpg alt></p><h4 id=3-清理-apt-缓存文件>3) 清理 APT 缓存文件</h4><p>Ubuntu 使用 <a href=https://www.2daygeek.com/apt-command-examples-manage-packages-debian-ubuntu-systems/>APT 命令</a>（高级软件包工具）用于软件包管理，如：安装、移除、搜索等等。</p><p>一般 Linux 操作系统会在各自的目录下保留下载和安装的软件包的缓冲文件。</p><p>Ubuntu 也一样，它在你的磁盘上以缓冲的形式保留它下载和安装的每次更新。Ubuntu 在 <code>/var/cache/apt/archives</code> 目录中保留 DEB 软件包的缓冲文件。随着时间推移，这些缓存可能快速增长，并在你的系统上占有很多空间。</p><p>运行下面的命令来检查当前 APT 缓存文件的使用率。</p><pre tabindex=0><code>$ sudo du -sh /var/cache/apt
+147M    /var/cache/apt
+</code></pre><p>下面的命令会清理过时的 deb 软件包。我想说，一点都清理不干净。</p><pre tabindex=0><code>$ sudo apt-get autoclean
+</code></pre><p>下面的命令会移除所有在 apt 缓存中的软件包。</p><pre tabindex=0><code>$ sudo apt-get clean
+</code></pre><h4 id=4-卸载不使用的应用程序>4) 卸载不使用的应用程序</h4><p>这需要你来检查在你的系统上安装的软件包和游戏，删除它们，如果你很少使用的话。</p><p>这可以通过 “Ubuntu 软件中心” 简单地做到。</p><p><img src=/data/attachment/album/201907/03/165841tt6tx399okq688qi.jpg alt></p><h4 id=5-清理缩略图缓存>5) 清理缩略图缓存</h4><p>缓存文件夹是程序存储它们可能再次需要的数据的地方，它是为速度保留的，而不是必需保留的。它可以被再次生成或再次下载。假如它真的填满了你的硬盘，那么你可以删除一些东西而不用担心。</p><p>运行下面的命令来检查当前 APT 缓存的利用率。</p><pre tabindex=0><code>$ du -sh ~/.cache/thumbnails/
+412K    /home/daygeek/.cache/thumbnails/
+</code></pre><p>运行下面的命令来从你的系统中永久地删除它们。</p><pre tabindex=0><code>$ rm -rf ~/.cache/thumbnails/*
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/linux-remove-delete-unwanted-junk-files-free-up-space-ubuntu-mint-debian/>https://www.2daygeek.com/linux-remove-delete-unwanted-junk-files-free-up-space-ubuntu-mint-debian/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/robsean>robsean</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%B8%85%E7%90%86/ rel=tag>清理</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

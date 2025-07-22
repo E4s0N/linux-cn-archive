@@ -1,0 +1,52 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在Ubuntu 13.10 下安装支持SSL的Apache - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在Ubuntu 13.10 下安装支持SSL的Apache"><meta property="og:description" content="通过这个简短的教程，让我来指导你如何安装支持SSL的Apache。以下是我的试验机的详细说明:
+系统信息
+root@ubuntu-unixmen:~# ifconfig
+eth0 Link encap:Ethernet HWaddr 08:00:27:b8:b4:87
+inet addr:10.1.1.110 Bca &mldr;"><meta property="og:type" content="article"><meta property="og:url" content="/article-2202-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2013-11-02T20:36:00+00:00"><meta property="article:modified_time" content="2013-11-02T20:36:00+00:00"><meta itemprop=name content="在Ubuntu 13.10 下安装支持SSL的Apache"><meta itemprop=description content="通过这个简短的教程，让我来指导你如何安装支持SSL的Apache。以下是我的试验机的详细说明:
+系统信息
+root@ubuntu-unixmen:~# ifconfig
+eth0 Link encap:Ethernet HWaddr 08:00:27:b8:b4:87
+inet addr:10.1.1.110 Bca &mldr;"><meta itemprop=datePublished content="2013-11-02T20:36:00+00:00"><meta itemprop=dateModified content="2013-11-02T20:36:00+00:00"><meta itemprop=wordCount content="268"><meta itemprop=keywords content="Linux,Ubuntu,安装,SSL,Apache,技巧,教程,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在Ubuntu 13.10 下安装支持SSL的Apache</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2013-11-02T20:36:00Z>November 02, 2013</time></div></div></header><div class="content post__content clearfix"><p>通过这个简短的教程，让我来指导你如何安装支持SSL的Apache。以下是我的试验机的详细说明:</p><h3 id=系统信息><strong>系统信息</strong></h3><pre tabindex=0><code>root@ubuntu-unixmen:~# ifconfig
+eth0 Link encap:Ethernet HWaddr 08:00:27:b8:b4:87
+inet addr:10.1.1.110 Bcast:10.1.1.255 Mask:255.255.255.0
+inet6 addr: fe80::a00:27ff:feb8:b487/64 Scope:Link
+UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1
+RX packets:1738 errors:0 dropped:0 overruns:0 frame:0
+TX packets:69 errors:0 dropped:0 overruns:0 carrier:0
+collisions:0 txqueuelen:1000
+RX bytes:168845 (168.8 KB) TX bytes:9767 (9.7 KB)
+</code></pre><ul><li></li></ul><pre tabindex=0><code>root@ubuntu-unixmen:~# cat /etc/issue
+Ubuntu 13.10 \n \l
+</code></pre><h3 id=安装apache><strong>安装apache</strong></h3><p>运行如下命令：</p><pre tabindex=0><code>$ sudo apt-get install apache2 apache2-doc apache2-utils
+Reading package lists... Done
+Building dependency tree 
+Reading state information... Done
+The following extra packages will be installed:
+apache2-bin apache2-data libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap ssl-cert
+</code></pre><h3 id=apache测试页面><strong>apache测试页面</strong></h3><p>打开浏览器,转到http://你的测试机的IP地址/。你应该会看到类似以下的信息。</p><p><img src=http://180016988.r.cdn77.net/wp-content/uploads/2013/10/apache2-ubuntu.png alt></p><h3 id=创建目录><strong>创建目录</strong></h3><p>创建一个名为<strong>ssl</strong>的目录</p><pre tabindex=0><code>$ sudo mkdir /etc/apache2/ssl
+</code></pre><h3 id=创建一个自签名凭证><strong>创建一个自签名凭证</strong></h3><pre tabindex=0><code>$ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/apache.key -out /etc/apache2/ssl/apache.crt
+
+Generating a 2048 bit RSA private key.......................................................................................+++....................................+++writing new private key to &#39;/etc/apache2/ssl/apache.key&#39;-----You are about to be asked to enter information that will be incorporatedinto your certificate request.What you are about to enter is what is called a Distinguished Name or a DN.There are quite a few fields but you can leave some blankFor some fields there will be a default value,If you enter &#39;.&#39;, the field will be left blank.-----Country Name (2 letter code) [AU]:
+</code></pre><h3 id=开启apache-ssl模块><strong>开启Apache SSL模块</strong></h3><p>运行以下命令开启ssl模块</p><pre tabindex=0><code>$ a2enmod ssl
+Considering dependency setenvif for ssl:
+Module setenvif already enabled
+Considering dependency mime for ssl:
+Module mime already enabled
+Considering dependency socache_shmcb for ssl:
+Enabling module socache_shmcb.
+Enabling module ssl
+</code></pre><p>编辑 <strong>/etc/apache2/sites-enabled/default-ssl.conf</strong> 文件，</p><pre tabindex=0><code>ServerAdmin webmaster@localhost
+ServerName www.unixmen.com:443
+
+SSLEngine on
+SSLCertificateFile /etc/apache2/ssl/apache.crt
+SSLCertificateKeyFile /etc/apache2/ssl/apache.key
+</code></pre><h3 id=启用apache缺省的ssl虚拟主机><strong>启用Apache缺省的SSL虚拟主机:</strong></h3><pre tabindex=0><code>$ a2ensite default-ssl
+Enabling site default-ssl.
+To activate the new configuration, you need to run:
+service apache2 reload
+</code></pre><h3 id=重启apache><strong>重启Apache:</strong></h3><pre tabindex=0><code>$ sudo service apache2 restart
+</code></pre><h3 id=测试ssl连接><strong>测试SSL连接</strong></h3><p>打开浏览器，转到<strong>https://你的测试机IP</strong>。</p><p><img src=https://img.linux.net.cn/data/attachment/album/201311/02/190707rmnzorkgktmonhoi.png alt></p><p>安装完成，尽情享用！</p><p>via: <a href=http://www.unixmen.com/install-apache-ssl-ubuntu-13-10/>http://www.unixmen.com/install-apache-ssl-ubuntu-13-10/</a></p><p>译者：<a href=https://github.com/Luoxcat>Luoxcat</a> 校对：<a href=https://github.com/carolinewuyan>Caroline</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/linux/ rel=tag>Linux</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ubuntu/ rel=tag>Ubuntu</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%89%E8%A3%85/ rel=tag>安装</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ssl/ rel=tag>SSL</a></li><li class=tags__item><a class="tags__link btn" href=/tags/apache/ rel=tag>Apache</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8A%80%E5%B7%A7/ rel=tag>技巧</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%95%99%E7%A8%8B/ rel=tag>教程</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

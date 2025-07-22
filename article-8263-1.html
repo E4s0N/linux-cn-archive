@@ -1,0 +1,198 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>LXD 2.0 系列（九）：实时迁移 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="LXD 2.0 系列（九）：实时迁移"><meta property="og:description" content="简单地说，检查点/恢复意味着正在运行的容器状态可以被序列化到磁盘，要么可以作为同一主机上的有状态快照，要么放到另一主机上相当于实时迁移。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8263-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-03-04T10:17:00+00:00"><meta property="article:modified_time" content="2017-03-04T10:17:00+00:00"><meta itemprop=name content="LXD 2.0 系列（九）：实时迁移"><meta itemprop=description content="简单地说，检查点/恢复意味着正在运行的容器状态可以被序列化到磁盘，要么可以作为同一主机上的有状态快照，要么放到另一主机上相当于实时迁移。"><meta itemprop=datePublished content="2017-03-04T10:17:00+00:00"><meta itemprop=dateModified content="2017-03-04T10:17:00+00:00"><meta itemprop=wordCount content="665"><meta itemprop=keywords content="LXD,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>LXD 2.0 系列（九）：实时迁移</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-03-04T10:17:00Z>March 04, 2017</time></div></div></header><div class="content post__content clearfix"><p>这是 LXD 2.0 系列介绍文章的第九篇。</p><ol><li><a href=/article-7618-1.html>LXD 入门</a></li><li><a href=/article-7687-1.html>安装与配置</a></li><li><a href=/article-7706-1.html>你的第一个 LXD 容器</a></li><li><a href=/article-8072-1.html>资源控制</a></li><li><a href=/article-8107-1.html>镜像管理</a></li><li><a href=/article-8169-1.html>远程主机及容器迁移</a></li><li><a href=/article-8235-1.html>LXD 中的 Docker</a></li><li><a href=/article-8257-1.html>LXD 中的 LXD</a></li><li><a href=/article-8263-1.html>实时迁移</a></li><li><a href=/article-8273-1.html>LXD 和 Juju</a></li><li><a href=/article-8274-1.html>LXD 和 OpenStack</a></li><li><a href=/article-8282-1.html>调试，及给 LXD 做贡献</a></li></ol><p><img src=/data/attachment/album/201703/04/101550m3kxz4fjxpoyo6pn.jpg alt></p><h3 id=介绍>介绍</h3><p>LXD 2.0 中的有一个尽管是实验性质的但非常令人兴奋的功能，那就是支持容器检查点和恢复。</p><p>简单地说，检查点/恢复意味着正在运行的容器状态可以被序列化到磁盘，要么可以作为同一主机上的有状态快照，要么放到另一主机上相当于实时迁移。</p><h3 id=要求>要求</h3><p>要使用容器实时迁移和有状态快照，你需要以下条件：</p><ul><li>一个非常新的 Linux 内核，4.4 或更高版本。</li><li>CRIU 2.0，可能需要一些 cherry-pick 的提交，具体取决于你确切的内核配置。</li><li>直接在主机上运行 LXD。 不能在容器嵌套下使用这些功能。</li><li>对于迁移，目标主机必须至少实现源主机的指令集，目标主机内核必须至少提供与源主机相同的系统调用，并且在源主机上挂载的任何内核文件系统也必须可挂载到目标主机上。</li></ul><p>Ubuntu 16.04 LTS 已经提供了所有需要的依赖，在这种情况下，您只需要安装 CRIU 本身：</p><pre tabindex=0><code>apt install criu
+</code></pre><h3 id=使用-criu>使用 CRIU</h3><h4 id=有状态快照>有状态快照</h4><p>一个普通的快照看上去像这样：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc snapshot c1 first
+stgraber@dakara:~$ lxc info c1 | grep first
+ first (taken at 2016/04/25 19:35 UTC) (stateless)
+</code></pre><p>一个有状态快照看上去像这样：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc snapshot c1 second --stateful
+stgraber@dakara:~$ lxc info c1 | grep second
+ second (taken at 2016/04/25 19:36 UTC) (stateful)
+</code></pre><p>这意味着所有容器运行时状态都被序列化到磁盘并且作为了快照的一部分。可以像你还原无状态快照那样还原一个有状态快照：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc restore c1 second
+stgraber@dakara:~$
+</code></pre><h4 id=有状态快照的停止启动>有状态快照的停止/启动</h4><p>比方说你由于升级内核或者其他类似的维护而需要重启机器。与其等待重启后启动所有的容器，你可以：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc stop c1 --stateful
+</code></pre><p>容器状态将会写入到磁盘，会在下次启动时读取。</p><p>你甚至可以看到像下面那样的状态：</p><pre tabindex=0><code>root@dakara:~# tree /var/lib/lxd/containers/c1/rootfs/state/
+/var/lib/lxd/containers/c1/rootfs/state/
+├── cgroup.img
+├── core-101.img
+├── core-102.img
+├── core-107.img
+├── core-108.img
+├── core-109.img
+├── core-113.img
+├── core-114.img
+├── core-122.img
+├── core-125.img
+├── core-126.img
+├── core-127.img
+├── core-183.img
+├── core-1.img
+├── core-245.img
+├── core-246.img
+├── core-50.img
+├── core-52.img
+├── core-95.img
+├── core-96.img
+├── core-97.img
+├── core-98.img
+├── dump.log
+├── eventfd.img
+├── eventpoll.img
+├── fdinfo-10.img
+├── fdinfo-11.img
+├── fdinfo-12.img
+├── fdinfo-13.img
+├── fdinfo-14.img
+├── fdinfo-2.img
+├── fdinfo-3.img
+├── fdinfo-4.img
+├── fdinfo-5.img
+├── fdinfo-6.img
+├── fdinfo-7.img
+├── fdinfo-8.img
+├── fdinfo-9.img
+├── fifo-data.img
+├── fifo.img
+├── filelocks.img
+├── fs-101.img
+├── fs-113.img
+├── fs-122.img
+├── fs-183.img
+├── fs-1.img
+├── fs-245.img
+├── fs-246.img
+├── fs-50.img
+├── fs-52.img
+├── fs-95.img
+├── fs-96.img
+├── fs-97.img
+├── fs-98.img
+├── ids-101.img
+├── ids-113.img
+├── ids-122.img
+├── ids-183.img
+├── ids-1.img
+├── ids-245.img
+├── ids-246.img
+├── ids-50.img
+├── ids-52.img
+├── ids-95.img
+├── ids-96.img
+├── ids-97.img
+├── ids-98.img
+├── ifaddr-9.img
+├── inetsk.img
+├── inotify.img
+├── inventory.img
+├── ip6tables-9.img
+├── ipcns-var-10.img
+├── iptables-9.img
+├── mm-101.img
+├── mm-113.img
+├── mm-122.img
+├── mm-183.img
+├── mm-1.img
+├── mm-245.img
+├── mm-246.img
+├── mm-50.img
+├── mm-52.img
+├── mm-95.img
+├── mm-96.img
+├── mm-97.img
+├── mm-98.img
+├── mountpoints-12.img
+├── netdev-9.img
+├── netlinksk.img
+├── netns-9.img
+├── netns-ct-9.img
+├── netns-exp-9.img
+├── packetsk.img
+├── pagemap-101.img
+├── pagemap-113.img
+├── pagemap-122.img
+├── pagemap-183.img
+├── pagemap-1.img
+├── pagemap-245.img
+├── pagemap-246.img
+├── pagemap-50.img
+├── pagemap-52.img
+├── pagemap-95.img
+├── pagemap-96.img
+├── pagemap-97.img
+├── pagemap-98.img
+├── pages-10.img
+├── pages-11.img
+├── pages-12.img
+├── pages-13.img
+├── pages-1.img
+├── pages-2.img
+├── pages-3.img
+├── pages-4.img
+├── pages-5.img
+├── pages-6.img
+├── pages-7.img
+├── pages-8.img
+├── pages-9.img
+├── pipes-data.img
+├── pipes.img
+├── pstree.img
+├── reg-files.img
+├── remap-fpath.img
+├── route6-9.img
+├── route-9.img
+├── rule-9.img
+├── seccomp.img
+├── sigacts-101.img
+├── sigacts-113.img
+├── sigacts-122.img
+├── sigacts-183.img
+├── sigacts-1.img
+├── sigacts-245.img
+├── sigacts-246.img
+├── sigacts-50.img
+├── sigacts-52.img
+├── sigacts-95.img
+├── sigacts-96.img
+├── sigacts-97.img
+├── sigacts-98.img
+├── signalfd.img
+├── stats-dump
+├── timerfd.img
+├── tmpfs-dev-104.tar.gz.img
+├── tmpfs-dev-109.tar.gz.img
+├── tmpfs-dev-110.tar.gz.img
+├── tmpfs-dev-112.tar.gz.img
+├── tmpfs-dev-114.tar.gz.img
+├── tty.info
+├── unixsk.img
+├── userns-13.img
+└── utsns-11.img
+
+0 directories, 154 files
+</code></pre><p>还原容器也很简单：</p><pre tabindex=0><code>stgraber@dakara:~$ lxc start c1
+</code></pre><h3 id=实时迁移>实时迁移</h3><p>实时迁移基本上与上面的有状态快照的停止/启动相同，除了容器目录和配置被移动到另一台机器上。</p><pre tabindex=0><code>stgraber@dakara:~$ lxc list c1
++------+---------+-----------------------+----------------------------------------------+------------+-----------+
+| NAME |  STATE  |          IPV4         |                     IPV6                     |    TYPE    | SNAPSHOTS |
++------+---------+-----------------------+----------------------------------------------+------------+-----------+
+| c1   | RUNNING | 10.178.150.197 (eth0) | 2001:470:b368:4242:216:3eff:fe19:27b0 (eth0) | PERSISTENT | 2         |
++------+---------+-----------------------+----------------------------------------------+------------+-----------+
+
+stgraber@dakara:~$ lxc list s-tollana:
++------+-------+------+------+------+-----------+
+| NAME | STATE | IPV4 | IPV6 | TYPE | SNAPSHOTS |
++------+-------+------+------+------+-----------+
+
+stgraber@dakara:~$ lxc move c1 s-tollana:
+
+stgraber@dakara:~$ lxc list c1
++------+-------+------+------+------+-----------+
+| NAME | STATE | IPV4 | IPV6 | TYPE | SNAPSHOTS |
++------+-------+------+------+------+-----------+
+
+stgraber@dakara:~$ lxc list s-tollana:
++------+---------+-----------------------+----------------------------------------------+------------+-----------+
+| NAME |  STATE  |          IPV4         |                     IPV6                     |    TYPE    | SNAPSHOTS |
++------+---------+-----------------------+----------------------------------------------+------------+-----------+
+| c1   | RUNNING | 10.178.150.197 (eth0) | 2001:470:b368:4242:216:3eff:fe19:27b0 (eth0) | PERSISTENT | 2         |
++------+---------+-----------------------+----------------------------------------------+------------+-----------+
+</code></pre><h3 id=限制>限制</h3><p>正如我之前说的，容器的检查点/恢复还是非常新的功能，我们还在努力地开发这个功能、修复已知的问题。我们确实需要更多的人来尝试这个功能，并给我们反馈，但我不建议在生产中使用这个功能。</p><p>我们跟踪的问题列表在 <a href=https://bugs.launchpad.net/ubuntu/+source/criu/+bugs>Launchpad上</a>。</p><p>我们估计在带有 CRIU 的 Ubuntu 16.04 上带有几个服务的基本的 Ubuntu 容器能够正常工作。然而在更复杂的容器、使用了设备直通、复杂的网络服务或特殊的存储配置下可能会失败。</p><p>要是有问题，CRIU 会尽可能地在转储时失败，而不是在恢复时。在这种情况下，源容器将继续运行，快照或迁移将会失败，并生成一个日志文件用于调试。</p><p>在极少数情况下，CRIU 无法恢复容器，在这种情况下，源容器仍然存在但将被停止，并且必须手动重新启动。</p><h3 id=发送-bug-报告>发送 bug 报告</h3><p>我们正在跟踪 Launchpad 上关于 CRIU Ubuntu 软件包的检查点/恢复相关的错误。大多数修复 bug 工作是在上游的 CRIU 或 Linux 内核上进行，但是这种方式我们更容易跟踪。</p><p>要提交新的 bug 报告，请看这里。</p><p>请务必包括：</p><ul><li>你运行的命令和显示给你的错误消息</li><li><code>lxc info</code> 的输出（*）</li><li><code>lxc info &lt;container name></code>的输出</li><li><code>lxc config show -expanded &lt;container name></code> 的输出</li><li><code>dmesg</code>（*）的输出</li><li><code>/proc/self/mountinfo</code> 的输出（*）</li><li><code>lxc exec &lt;container name> - cat /proc/self/mountinfo</code> 的输出</li><li><code>uname -a</code>（*）的输出</li><li><code>/var/log/lxd.log</code>（*）的内容</li><li><code>/etc/default/lxd-bridge</code>（*）的内容</li><li><code>/var/log/lxd/&lt;container name>/</code> 的 tarball（*）</li></ul><p>如果报告迁移错误，而不是状态快照或有状态停止的错误，请将上面所有含有（*）标记的源与目标主机的信息发来。</p><h3 id=额外信息>额外信息</h3><p>CRIU 的网站在： <a href=https://criu.org>https://criu.org</a></p><p>LXD 的主站在： <a href=https://linuxcontainers.org/lxd>https://linuxcontainers.org/lxd</a></p><p>LXD 的 GitHub 仓库： <a href=https://github.com/lxc/lxd>https://github.com/lxc/lxd</a></p><p>LXD 的邮件列表： <a href=https://lists.linuxcontainers.org>https://lists.linuxcontainers.org</a></p><p>LXD 的 IRC 频道： #lxcontainers on irc.freenode.net</p><hr><p>作者简介：我是 Stéphane Graber。我是 LXC 和 LXD 项目的领导者，目前在加拿大魁北克蒙特利尔的家所在的Canonical 有限公司担任 LXD 的技术主管。</p><hr><p>via: <a href=https://stgraber.org/2016/04/25/lxd-2-0-live-migration-912/>https://stgraber.org/2016/04/25/lxd-2-0-live-migration-912/</a></p><p>作者：<a href=https://www.stgraber.org/author/stgraber/>Stéphane Graber</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 组织翻译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/lxd/ rel=tag>LXD</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

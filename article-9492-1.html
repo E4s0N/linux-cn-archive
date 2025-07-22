@@ -1,0 +1,46 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Debian Linux 上设置和配置网桥 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Debian Linux 上设置和配置网桥"><meta property="og:description" content="那么我该如何在 Debian Linux 9.x 服务器上的 /etc/network/interfaces 中设置桥接网络呢？"><meta property="og:type" content="article"><meta property="og:url" content="/article-9492-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-03-29T10:52:00+00:00"><meta property="article:modified_time" content="2018-03-29T10:52:00+00:00"><meta itemprop=name content="如何在 Debian Linux 上设置和配置网桥"><meta itemprop=description content="那么我该如何在 Debian Linux 9.x 服务器上的 /etc/network/interfaces 中设置桥接网络呢？"><meta itemprop=datePublished content="2018-03-29T10:52:00+00:00"><meta itemprop=dateModified content="2018-03-29T10:52:00+00:00"><meta itemprop=wordCount content="335"><meta itemprop=keywords content="网桥,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Debian Linux 上设置和配置网桥</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-03-29T10:52:00Z>March 29, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201803/29/105144rpqdvttdtyzvpdwy.jpg alt></p><p>Q：我是一个新 Debian Linux 用户，我想为 Debian Linux 上运行的虚拟化环境（KVM）设置网桥。那么我该如何在 Debian Linux 9.x 服务器上的 <code>/etc/network/interfaces</code> 中设置桥接网络呢？</p><p>如何你想为你的虚拟机分配 IP 地址并使其可从你的局域网访问，则需要设置网络桥接器。默认情况下，虚拟机使用 KVM 创建的专用网桥。但你需要手动设置接口，避免与网络管理员发生冲突。</p><h3 id=怎样安装-brctl>怎样安装 brctl</h3><p>输入以下 <a href=https://www.cyberciti.biz/tips/linux-debian-package-management-cheat-sheet.html title="See Linux/Unix apt-get command examples for more info">apt-get 命令</a>：</p><pre tabindex=0><code>$ sudo apt install bridge-utils
+</code></pre><h3 id=怎样在-debian-linux-上设置网桥>怎样在 Debian Linux 上设置网桥</h3><p>你需要编辑 <code>/etc/network/interface</code> 文件。不过，我建议在 <code>/etc/network/interface.d/</code> 目录下放置一个全新的配置。在 Debian Linux 配置网桥的过程如下：</p><h4 id=步骤-1---找出你的物理接口>步骤 1 - 找出你的物理接口</h4><p>使用 <a href=https://www.cyberciti.biz/faq/linux-ip-command-examples-usage-syntax/ title="See Linux/Unix ip command examples for more info">ip 命令</a>：</p><pre tabindex=0><code>$ ip -f inet a s
+</code></pre><p>示例输出如下：</p><pre tabindex=0><code>2: eno1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+ inet 192.168.2.23/24 brd 192.168.2.255 scope global eno1
+ valid_lft forever preferred_lft forever
+</code></pre><p><code>eno1</code> 是我的物理网卡。</p><h4 id=步骤-2---更新-etcnetworkinterface-文件>步骤 2 - 更新 /etc/network/interface 文件</h4><p>确保只有 <code>lo</code>（loopback 在 <code>/etc/network/interface</code> 中处于活动状态）。（LCTT 译注：loopback 指本地环回接口，也称为回送地址）删除与 <code>eno1</code> 相关的任何配置。这是我使用 <a href=https://www.cyberciti.biz/faq/linux-unix-appleosx-bsd-cat-command-examples/ title="See Linux/Unix cat command examples for more info">cat 命令</a> 打印的配置文件：</p><pre tabindex=0><code>$ cat /etc/network/interface
+</code></pre><pre tabindex=0><code># This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+ 
+source /etc/network/interfaces.d/*
+ 
+# The loopback network interface
+auto lo
+iface lo inet loopback
+</code></pre><h4 id=步骤-3---在-etcnetworkinterfacesdbr0-中配置网桥br0>步骤 3 - 在 /etc/network/interfaces.d/br0 中配置网桥（br0）</h4><p>使用文本编辑器创建一个文本文件，比如 <code>vi</code> 命令：</p><pre tabindex=0><code>$ sudo vi /etc/network/interfaces.d/br0
+</code></pre><p>在其中添加配置：</p><pre tabindex=0><code>## static ip config file for br0 ##
+auto br0
+iface br0 inet static
+    address 192.168.2.23
+    broadcast 192.168.2.255
+    netmask 255.255.255.0
+    gateway 192.168.2.254
+    # If the resolvconf package is installed, you should not edit
+    # the resolv.conf configuration file manually. Set name server here
+    #dns-nameservers 192.168.2.254
+    # If you have muliple interfaces such as eth0 and eth1
+    # bridge_ports eth0 eth1
+    bridge_ports eno1
+    bridge_stp off # disable Spanning Tree Protocol
+    bridge_waitport 0 # no delay before a port becomes available
+    bridge_fd 0 # no forwarding delay
+</code></pre><p>如果你想使用 DHCP 来获得 IP 地址：</p><pre tabindex=0><code>## DHCP ip config file for br0 ##
+auto br0
+ 
+# Bridge setup
+ iface br0 inet dhcp
+  bridge_ports eno1
+</code></pre><p><a href=https://www.cyberciti.biz/faq/linux-unix-vim-save-and-quit-command/>在 vi/vim 中保存并关闭文件</a>。</p><h4 id=步骤-4---重新启动网络服务>步骤 4 - 重新启动网络服务</h4><p>在重新启动网络服务之前，请确保防火墙已关闭。防火墙可能会引用较老的接口，例如 <code>eno1</code>。一旦服务重新启动，你必须更新 <code>br0</code> 接口的防火墙规则。键入以下命令重新启动防火墙：</p><pre tabindex=0><code>$ sudo systemctl restart network-manager
+</code></pre><p>确认服务已经重新启动：</p><pre tabindex=0><code>$ systemctl status network-manager
+</code></pre><p>借助 <a href=https://www.cyberciti.biz/faq/linux-ip-command-examples-usage-syntax/ title="See Linux/Unix ip command examples for more info">ip 命令</a>寻找新的 <code>br0</code> 接口和路由表：</p><pre tabindex=0><code>$ ip a s $ ip r $ ping -c 2 cyberciti.biz
+</code></pre><p>示例输出：</p><p><img src=/data/attachment/album/201803/29/105202u3nw17u7wxw7zblj.jpg alt></p><p>你可以使用 brctl 命令查看网桥有关信息：</p><pre tabindex=0><code>$ brctl show
+</code></pre><p>显示当前网桥：</p><pre tabindex=0><code>$ bridge link
+</code></pre><p><img src=/data/attachment/album/201803/29/105202scefig9g99cr1gid.jpg alt></p><h3 id=关于作者>关于作者</h3><p>作者是 nixCraft 的创建者，也是经验丰富的系统管理员，DevOps 工程师以及 Linux 操作系统/ Unix shell 脚本的培训师。通过订阅 <a href=https://www.cyberciti.biz/atom/atom.xml>RSS/XML 流</a> 或者 <a href=https://www.cyberciti.biz/subscribe-to-weekly-linux-unix-newsletter-for-sysadmin/>每周邮件推送</a>获得关于 SysAdmin, Linux/Unix 和开源主题的最新教程。</p><hr><p>via: <a href=https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/>https://www.cyberciti.biz/faq/how-to-configuring-bridging-in-debian-linux/</a></p><p>作者：<a href=https://www.cyberciti.biz/>Vivek GIte</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%BD%91%E6%A1%A5/ rel=tag>网桥</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

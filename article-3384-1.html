@@ -1,0 +1,114 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在Ubuntu下如何创建远程&amp;quot;.deb&amp;quot;包仓库 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在Ubuntu下如何创建远程&amp;quot;.deb&amp;quot;包仓库"><meta property="og:description" content="Reprepro是一款小巧的命令行工具来方便地创建并管理.deb仓库。今天我们会展示给你如何使用reprepro简单地创建一个Debian包仓库，并使用rsync上传到Sourceforge.net。  步骤 1: 安装Reprepro并生成key 首先，安装所有需要的包，使用下面的apt-get命令。 $ sudo apt-get install reprepro gnupg  现在你需要使用gnupg生成一个gpg key，这里使用下面的命令。 $ gpg &ndash;gen-key  它会询问你一些问题，比如你想要哪种key、key的有效期、如果你不知道如何回答，只需点击回车 来选择默认选项（建议） 当然，它会询问你用户名和密码，在脑海中记住"><meta property="og:type" content="article"><meta property="og:url" content="/article-3384-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-07-14T13:00:00+00:00"><meta property="article:modified_time" content="2014-07-14T13:00:00+00:00"><meta itemprop=name content="在Ubuntu下如何创建远程&amp;quot;.deb&amp;quot;包仓库"><meta itemprop=description content="Reprepro是一款小巧的命令行工具来方便地创建并管理.deb仓库。今天我们会展示给你如何使用reprepro简单地创建一个Debian包仓库，并使用rsync上传到Sourceforge.net。  步骤 1: 安装Reprepro并生成key 首先，安装所有需要的包，使用下面的apt-get命令。 $ sudo apt-get install reprepro gnupg  现在你需要使用gnupg生成一个gpg key，这里使用下面的命令。 $ gpg &ndash;gen-key  它会询问你一些问题，比如你想要哪种key、key的有效期、如果你不知道如何回答，只需点击回车 来选择默认选项（建议） 当然，它会询问你用户名和密码，在脑海中记住"><meta itemprop=datePublished content="2014-07-14T13:00:00+00:00"><meta itemprop=dateModified content="2014-07-14T13:00:00+00:00"><meta itemprop=wordCount content="595"><meta itemprop=keywords content="Deb,软件仓库,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在Ubuntu下如何创建远程&amp;quot;.deb&amp;quot;包仓库</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-07-14T13:00:00Z>July 14, 2014</time></div></div></header><div class="content post__content clearfix"><p><strong>Reprepro</strong>是一款小巧的命令行工具来方便地创建并管理**.deb<strong>仓库。今天我们会展示给你如何使用reprepro简单地创建一个Debian包仓库，并使用</strong>rsync**上传到Sourceforge.net。</p><p><img src=/data/attachment/album/201407/14/111724i8hhpn1a9chp5tp7.png alt></p><h3 id=步骤-1-安装reprepro并生成key>步骤 1: 安装Reprepro并生成key</h3><p>首先，安装所有需要的包，使用下面的apt-get命令。</p><pre tabindex=0><code>$ sudo apt-get install reprepro gnupg
+</code></pre><p>现在你需要使用gnupg生成一个gpg key，这里使用下面的命令。</p><pre tabindex=0><code>$ gpg --gen-key
+</code></pre><p>它会询问你一些问题，比如你想要哪种key、key的有效期、如果你不知道如何回答，只需点击<strong>回车</strong> 来选择默认选项（建议）</p><p>当然，它会询问你用户名和密码，在脑海中记住这些，因为我们会在之后需要它。</p><pre tabindex=0><code>gpg (GnuPG) 1.4.14; Copyright (C) 2013 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Please select what kind of key you want:
+   (1) RSA and RSA (default)
+   (2) DSA and Elgamal
+   (3) DSA (sign only)
+   (4) RSA (sign only)
+Your selection? 
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048) 
+Requested keysize is 2048 bits
+Please specify how long the key should be valid.
+         0 = key does not expire
+        = key expires in n days
+      w = key expires in n weeks
+      m = key expires in n months
+      y = key expires in n years
+Key is valid for? (0) 
+Key does not expire at all
+Is this correct? (y/N) Y
+
+You need a user ID to identify your key; the software constructs the user ID
+from the Real Name, Comment and Email Address in this form:
+    &#34;Heinrich Heine (Der Dichter) &lt;heinrichh@duesseldorf.de&gt;&#34;
+
+Real name: ravisaive
+Email address: tecmint.com@gmail.com
+Comment: tecmint
+You selected this USER-ID:
+    &#34;Ravi Saive (tecmint) &lt;tecmint.com@gmail.com&gt;&#34;
+
+Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O
+You need a Passphrase to protect your secret key.
+
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+
++++++
+gpg: key 2EB446DD marked as ultimately trusted
+public and secret key created and signed.
+
+gpg: checking the trustdb
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+pub   2048R/2EB446DD 2014-06-24
+      Key fingerprint = D222 B1C9 342E 5911 02B1  9147 3BD6 7918 2EB4 46DD
+uid                  Ravi Saive (tecmint) &lt;tecmint.com@gmail.com&gt;
+sub   2048R/7EF2F750 2014-06-24
+</code></pre><p>现在你的key已经生成了，要检查一下，用root权限运行这条命令。</p><pre tabindex=0><code>$ sudo gpg --list-keys
+</code></pre><h4 id=示例输出>示例输出</h4><pre tabindex=0><code>/home/ravisaive/.gnupg/pubring.gpg
+----------------------------------
+pub   2048R/2EB446DD 2014-06-24
+uid                  ravisaive (tecmint) &lt;tecmint.com@gmail.com&gt;
+sub   2048R/7EF2F750 2014-06-24
+</code></pre><h3 id=步骤-2-创建一个包仓库并导出key>步骤 2: 创建一个包仓库并导出key</h3><p>我们现在要开始创建仓库，首先你需要创建一些文件夹，我们的仓库会放在**/var/www/apt**目录，让我们先创建这些目录。</p><pre tabindex=0><code>$ sudo su
+# cd /var/www
+# mkdir apt
+# mkdir -p ./apt/incoming 
+# mkdir -p ./apt/conf
+# mkdir -p ./apt/key
+</code></pre><p>你现在需要将key导出到仓库文件夹，运行：</p><pre tabindex=0><code># gpg --armor --export username yourmail@mail.com &gt;&gt; /var/www/apt/key/deb.gpg.key
+</code></pre><p>注意：用你之前步骤中输入的用户名代替username，用你的email代替上面的<a href=mailto:yourmail@mail.com>yourmail@mail.com</a>。</p><p>我们需要在**/var/www/apt/conf**创建一个文件“<strong>distributions</strong>”。</p><pre tabindex=0><code># touch /var/www/apt/conf/distributions
+</code></pre><p>加入下面这几行到distributions这个文件中并保存。</p><pre tabindex=0><code>Origin: (你的名字)
+Label: (库的名字)
+Suite: (stable 或 unstable)
+Codename: (发布的代码名，比如  trusty)
+Version: (发布的版本，比如 14.04)
+Architectures: (软件包所支持的架构， 比如 i386 或 amd64)
+Components: (包含的部件，比如 main restricted universe multiverse)
+Description: (描述)
+SignWith: yes
+</code></pre><p>接下来我们会创建仓库树，运行这些命令：</p><pre tabindex=0><code># reprepro --ask-passphrase -Vb /var/www/apt export
+</code></pre><h4 id=示例输出-1>示例输出</h4><pre tabindex=0><code>Created directory &#34;/var/www/apt/db&#34;
+Exporting Trusty...
+Created directory &#34;/var/www/apt/dists&#34;
+Created directory &#34;/var/www/apt/dists/Trusty&#34;
+Created directory &#34;/var/www/apt/dists/Trusty/universe&#34;
+Created directory &#34;/var/www/apt/dists/Trusty/universe/binary-i386&#34;
+FF5097B479C8220C ravisaive (tecmint) &lt;tecmint.com@gmail.com&gt; needs a passphrase
+Please enter passphrase:
+Successfully created &#39;/var/www/apt/dists/Trusty/Release.gpg.new&#39;
+FF5097B479C8220C ravisaive (tecmint) &lt;tecmint.com@gmail.com&gt; needs a passphrase
+Please enter passphrase:
+Successfully created &#39;/var/www/apt/dists/Trusty/InRelease.new&#39;
+</code></pre><h3 id=步骤-3-在新创建的仓库中加入包>步骤 3: 在新创建的仓库中加入包</h3><p>现在准备你的**.deb**包来加入到仓库中。进入 <strong>/var/www/apt</strong>目录，你每次要加包的时候都必须这么做。</p><pre tabindex=0><code># cd /var/www/apt
+# reprepro --ask-passphrase -Vb . includedeb Trusty /home/ravisaive/packages.deb
+</code></pre><p><strong>注意</strong>:用你在distributions文件中输入的仓库代号来代替<strong>trusty</strong> ，并且用包的路径替换**/home/username/package.deb**，你会被要求输入密码。</p><h4 id=示例输出-2>示例输出</h4><pre tabindex=0><code>/home/ravisaive/packages.deb : component guessed as &#39;universe&#39;
+Created directory &#34;./pool&#34;
+Created directory &#34;./pool/universe&#34;
+Created directory &#34;./pool/universe/o&#34;
+Created directory &#34;./pool/universe/o/ojuba-personal-lock&#34;
+Exporting indices...
+FF5097B479C8220C ravisaive (tecmint) &lt;tecmint.com@gmail.com&gt; needs a passphrase
+Please enter passphrase:
+Successfully created &#39;./dists/Trusty/Release.gpg.new&#39;
+FF5097B479C8220C ravisaive (tecmint) &lt;tecmint.com@gmail.com&gt; needs a passphrase
+Please enter passphrase:
+Successfully created &#39;./dists/Trusty/InRelease.new&#39;
+</code></pre><p>你的包已经加入了仓库，如果要移除它的话采用如下命令：</p><pre tabindex=0><code># reprepro --ask-passphrase -Vb /var/www/apt remove trusty package.deb
+</code></pre><p>当然你需要用你的包名与仓库代号来修改命令。</p><h3 id=步骤-4-上传仓库到sourceforgenet>步骤 4: 上传仓库到Sourceforge.net</h3><p>要上传仓库到<strong>Sourceforge.net</strong>，你当然需要一个可用的账号与一个可用的项目，让我假设你想要上传仓库到**<a href=http://sourceforge.net/projects/myfoo/testrepository>http://sourceforge.net/projects/myfoo/testrepository</a>**，这里的myfoo是项目名（UNIX上的名称，不是URL，不是标题），testrepository是你想要上传文件到这上面的目录，这里我们会使用<a href=http://www.tecmint.com/rsync-local-remote-file-synchronization-commands/>rsync 命令</a>。（LCTT译注：当然你也可以上传到其它的支持Http/Rsync的服务器上，以提供远程软件库的服务。）</p><pre tabindex=0><code># rsync -avP -e ssh /var/www/apt/ username@frs.sourceforge.net:/home/frs/project/myfoo/testrepository/
+</code></pre><p><strong>注意</strong>：用你在sourceforge.net上的用户名代替username，用你的项目的UNIX名称代替myfoo，用你想要存储的文件夹代替testrepository。</p><p>现在你的仓库（包括设置和key等等）上传到了**<a href=http://sourceforge.net/projects/myfoo/testrepository>http://sourceforge.net/projects/myfoo/testrepository</a>**。</p><p>要把它加入到一个已装好的系统，首先你需要导入仓库key，它实际上就是**/var/www/apt/key/deb.gpg.key**，但是这是一个本地路径，使用你的仓库的其它用户不能添加到他们的系统中，这就是为什么我们要导入来自sourceforge.net的key的原因。</p><pre tabindex=0><code>$ sudo su
+# wget -O - http://sourceforge.net/projects/myfoo/testrepository/apt/key/deb.gpg.key | apt-key add -
+</code></pre><p>你现在可以非常轻松地把仓库加入到系统中了，打开**/etc/apt/sources.list**，并加入下面这行：</p><pre tabindex=0><code>deb http://sourceforge.net/projects/myfoo/testrepository/apt/key/deb.gpg.key trusty main
+</code></pre><p><strong>Note</strong>：用你的项目的UNIX类型名称代替myfoo，用你的仓库代码代替trusty，用你上传存储的文件夹代替testrepository，用你在distributionsj加入的仓库组件代替main。</p><p>接下来，运行下面的命令来更新仓库列表。</p><pre tabindex=0><code>$ sudo apt-get update
+</code></pre><p><strong>祝贺你</strong>! 你的软件仓库已经激活了！你现在可以非常简单地在你需要的时候安装包了。</p><hr><p>via: <a href=http://www.tecmint.com/create-deb-pacakge-repository-in-ubuntu/>http://www.tecmint.com/create-deb-pacakge-repository-in-ubuntu/</a></p><p>译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/deb/ rel=tag>Deb</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BD%AF%E4%BB%B6%E4%BB%93%E5%BA%93/ rel=tag>软件仓库</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

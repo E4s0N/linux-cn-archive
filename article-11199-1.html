@@ -1,0 +1,39 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在系统创建新用户时发送邮件的 Bash 脚本 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在系统创建新用户时发送邮件的 Bash 脚本"><meta property="og:description" content="目前市场上有许多开源监测工具可用于监控 Linux 系统的性能。当系统到达指定的阈值时，它将发送邮件提醒。但我不认为它们可以选择监控新用户创建活动，并发送提醒。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11199-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-08-07T23:28:00+00:00"><meta property="article:modified_time" content="2019-08-07T23:28:00+00:00"><meta itemprop=name content="在系统创建新用户时发送邮件的 Bash 脚本"><meta itemprop=description content="目前市场上有许多开源监测工具可用于监控 Linux 系统的性能。当系统到达指定的阈值时，它将发送邮件提醒。但我不认为它们可以选择监控新用户创建活动，并发送提醒。"><meta itemprop=datePublished content="2019-08-07T23:28:00+00:00"><meta itemprop=dateModified content="2019-08-07T23:28:00+00:00"><meta itemprop=wordCount content="218"><meta itemprop=keywords content="用户,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在系统创建新用户时发送邮件的 Bash 脚本</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-08-07T23:28:00Z>August 07, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201908/07/232807l7x4j7y77555j1j5.jpg alt></p><p>目前市场上有许多开源监测工具可用于监控 Linux 系统的性能。当系统到达指定的阈值时，它将发送邮件提醒。</p><p>它会监控 CPU 利用率、内存利用率、交换内存利用率、磁盘空间利用率等所有内容。但我不认为它们可以选择监控新用户创建活动，并发送提醒。</p><p>如果没有，这并不重要，因为我们可以编写自己的 bash 脚本来实现这一点。</p><p>我们过去写了许多有用的 shell 脚本。如果要查看它们，请点击以下链接。</p><ul><li><a href=https://www.2daygeek.com/category/shell-script/>如何使用 shell 脚本自动化执行日常任务？</a></li></ul><p>这个脚本做了什么？它监测 <code>/var/log/secure</code> 文件，并在系统创建新帐户时提醒管理员。</p><p>我们不会经常运行此脚本，因为创建用户不经常发生。但是，我打算一天运行一次这个脚本。因此，我们可以获得有关用户创建的综合报告。</p><p>如果在昨天的 <code>/var/log/secure</code> 中找到了 “useradd” 字符串，那么该脚本将向指定的邮箱发送邮件提醒，其中包含了新用户的详细信息。</p><p>**注意：**你需要更改邮箱而不是使用我们的邮箱。</p><pre tabindex=0><code># vi /opt/scripts/new-user.sh
+</code></pre><pre tabindex=0><code>#!/bin/bash
+
+#Set the variable which equal to zero
+prev_count=0
+count=$(grep -i &#34;`date --date=&#39;yesterday&#39; &#39;+%b %e&#39;`&#34; /var/log/secure | egrep -wi &#39;useradd&#39; | wc -l)
+
+if [ &#34;$prev_count&#34; -lt &#34;$count&#34; ] ; then
+  # Send a mail to given email id when errors found in log
+  SUBJECT=&#34;ATTENTION: New User Account is created on server : `date --date=&#39;yesterday&#39; &#39;+%b %e&#39;`&#34;
+  # This is a temp file, which is created to store the email message.
+  MESSAGE=&#34;/tmp/new-user-logs.txt&#34;
+  TO=&#34;2daygeek@gmail.com&#34;
+  echo  &#34;Hostname: `hostname`&#34; &gt;&gt; $MESSAGE
+  echo -e &#34;\n&#34; &gt;&gt; $MESSAGE
+  echo &#34;The New User Details are below.&#34; &gt;&gt; $MESSAGE
+  echo &#34;+------------------------------+&#34; &gt;&gt; $MESSAGE
+  grep -i &#34;`date --date=&#39;yesterday&#39; &#39;+%b %e&#39;`&#34; /var/log/secure | egrep -wi &#39;useradd&#39; | grep -v &#39;failed adding&#39;| awk &#39;{print $4,$8}&#39; | uniq | sed &#39;s/,/ /&#39; &gt;&gt;  $MESSAGE
+  echo &#34;+------------------------------+&#34; &gt;&gt; $MESSAGE
+  mail -s &#34;$SUBJECT&#34; &#34;$TO&#34; &lt; $MESSAGE
+  rm $MESSAGE
+fi
+</code></pre><p>给 <code>new-user.sh</code> 添加可执行权限。</p><pre tabindex=0><code>$ chmod +x /opt/scripts/new-user.sh
+</code></pre><p>最后添加一个 cron 任务来自动化执行它。它会在每天 7 点运行。</p><pre tabindex=0><code># crontab -e
+
+0 7 * * * /bin/bash /opt/scripts/new-user.sh
+</code></pre><p>注意：你将在每天 7 点收到一封邮件提醒，但这是昨天的日志。</p><p>你将会看到类似下面的邮件提醒。</p><pre tabindex=0><code># cat /tmp/logs.txt
+
+Hostname: 2g.server10.com
+
+The New User Details are below.
++------------------------------+
+2g.server10.com name=magesh
+2g.server10.com name=daygeek
++------------------------------+
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/linux-bash-script-to-monitor-user-creation-send-email/>https://www.2daygeek.com/linux-bash-script-to-monitor-user-creation-send-email/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%94%A8%E6%88%B7/ rel=tag>用户</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,98 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 CentOS 8 上安装和配置 Postfix 邮件服务器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 CentOS 8 上安装和配置 Postfix 邮件服务器"><meta property="og:description" content="Postfix 是一个自由开源的 MTA（邮件传输代理），用于在 Linux 系统上路由或传递电子邮件。在本指南中，你将学习如何在 CentOS 8 上安装和配置 Postfix。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11597-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-11-21T07:28:53+00:00"><meta property="article:modified_time" content="2019-11-21T07:28:53+00:00"><meta itemprop=name content="如何在 CentOS 8 上安装和配置 Postfix 邮件服务器"><meta itemprop=description content="Postfix 是一个自由开源的 MTA（邮件传输代理），用于在 Linux 系统上路由或传递电子邮件。在本指南中，你将学习如何在 CentOS 8 上安装和配置 Postfix。"><meta itemprop=datePublished content="2019-11-21T07:28:53+00:00"><meta itemprop=dateModified content="2019-11-21T07:28:53+00:00"><meta itemprop=wordCount content="546"><meta itemprop=keywords content="Postfix,邮件,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 CentOS 8 上安装和配置 Postfix 邮件服务器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-11-21T07:28:53Z>November 21, 2019</time></div></div></header><div class="content post__content clearfix"><p>Postfix 是一个自由开源的 MTA（邮件传输代理），用于在 Linux 系统上路由或传递电子邮件。在本指南中，你将学习如何在 CentOS 8 上安装和配置 Postfix。</p><p><img src=/data/attachment/album/201911/21/072857e9bvnzrbqayraxva.jpg alt=Install-configure-Postfx-Server-CentOS8></p><p>实验室设置：</p><ul><li>系统：CentOS 8 服务器</li><li>IP 地址：192.168.1.13</li><li>主机名：server1.crazytechgeek.info（确保域名指向服务器的 IP）</li></ul><h3 id=步骤-1更新系统>步骤 1）更新系统</h3><p>第一步是确保系统软件包是最新的。为此，请按如下所示更新系统：</p><pre tabindex=0><code># dnf update
+</code></pre><p>继续之前，还请确保不存在其他 MTA（如 Sendmail），因为这将导致与 Postfix 配置冲突。例如，要删除 Sendmail，请运行以下命令：</p><pre tabindex=0><code># dnf remove sendmail
+</code></pre><h3 id=步骤-2设置主机名并更新-etchosts>步骤 2）设置主机名并更新 /etc/hosts</h3><p>使用下面的 <code>hostnamectl</code> 命令在系统上设置主机名：</p><pre tabindex=0><code># hostnamectl set-hostname server1.crazytechgeek.info
+# exec bash
+</code></pre><p>此外，你需要在 <code>/etc/hosts</code> 中添加系统的主机名和 IP：</p><pre tabindex=0><code># vim /etc/hosts
+192.168.1.13   server1.crazytechgeek.info
+</code></pre><p>保存并退出文件。</p><h3 id=步骤-3安装-postfix-邮件服务器>步骤 3）安装 Postfix 邮件服务器</h3><p>验证系统上没有其他 MTA 在运行后，运行以下命令安装 Postfix：</p><pre tabindex=0><code># dnf install postfix
+</code></pre><p><img src=/data/attachment/album/201911/21/072858z06i6mz66qil576w.png alt=Install-Postfix-Centos8></p><h3 id=步骤-4启动并启用-postfix-服务>步骤 4）启动并启用 Postfix 服务</h3><p>成功安装 Postfix 后，运行以下命令启动并启用 Postfix 服务：</p><pre tabindex=0><code># systemctl start postfix
+# systemctl enable postfix
+</code></pre><p>要检查 Postfix 状态，请运行以下 <code>systemctl</code> 命令：</p><pre tabindex=0><code># systemctl status postfix
+</code></pre><p><img src=/data/attachment/album/201911/21/072900e6thztbhncn6ulk5.png alt=Start-Postfix-check-status-centos8></p><p>太好了，我们已经验证了 Postfix 已启动并正在运行。接下来，我们将配置 Postfix 从本地发送邮件到我们的服务器。</p><h3 id=步骤-5安装-mailx-邮件客户端>步骤 5）安装 mailx 邮件客户端</h3><p>在配置 Postfix 服务器之前，我们需要安装 <code>mailx</code>，要安装它，请运行以下命令：</p><pre tabindex=0><code># dnf install mailx
+</code></pre><p><img src=/data/attachment/album/201911/21/072901e9vhlvwiz1cw1ixv.png alt=Install-Mailx-CentOS8></p><h3 id=步骤-6配置-postfix-邮件服务器>步骤 6）配置 Postfix 邮件服务器</h3><p>Postfix 的配置文件位于 <code>/etc/postfix/main.cf</code> 中。我们需要对配置文件进行一些修改，因此请使用你喜欢的文本编辑器将其打开：</p><pre tabindex=0><code># vi /etc/postfix/main.cf
+</code></pre><p>更改以下几行：</p><pre tabindex=0><code>myhostname = server1.crazytechgeek.info
+mydomain = crazytechgeek.info
+myorigin = $mydomain
+## 取消注释并将 inet_interfaces 设置为 all##
+inet_interfaces = all
+## 更改为 all ##
+inet_protocols = all
+## 注释 ##
+#mydestination = $myhostname, localhost.$mydomain, localhost
+## 取消注释 ##
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+## 取消注释并添加 IP 范围 ##
+mynetworks = 192.168.1.0/24, 127.0.0.0/8
+## 取消注释 ##
+home_mailbox = Maildir/
+</code></pre><p>完成后，保存并退出配置文件。重新启动 postfix 服务以使更改生效：</p><pre tabindex=0><code># systemctl restart postfix
+</code></pre><h3 id=步骤-7测试-postfix-邮件服务器>步骤 7）测试 Postfix 邮件服务器</h3><p>测试我们的配置是否有效，首先，创建一个测试用户。</p><pre tabindex=0><code># useradd postfixuser
+# passwd postfixuser
+</code></pre><p>接下来，运行以下命令，从本地用户 <code>pkumar</code> 发送邮件到另一个用户 <code>postfixuser</code>。</p><pre tabindex=0><code># telnet localhost smtp
+或者
+# telnet localhost 25
+</code></pre><p>如果未安装 telnet 服务，那么可以使用以下命令进行安装：</p><pre tabindex=0><code># dnf install telnet -y
+</code></pre><p>如前所述运行命令时，应获得如下输出：</p><pre tabindex=0><code>[root@linuxtechi ~]# telnet localhost 25
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is &#39;^]&#39;.
+220 server1.crazytechgeek.info ESMTP Postfix
+</code></pre><p>上面的结果确认与 postfix 邮件服务器的连接正常。接下来，输入命令：</p><pre tabindex=0><code># ehlo localhost
+</code></pre><p>输出看上去像这样：</p><pre tabindex=0><code>250-server1.crazytechgeek.info
+250-PIPELINING
+250-SIZE 10240000
+250-VRFY
+250-ETRN
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250 SMTPUTF8
+</code></pre><p>接下来，运行橙色高亮的命令，例如 <code>mail from</code>、<code>rcpt to</code>、<code>data</code>，最后输入 <code>quit</code>：</p><pre tabindex=0><code>mail from:&lt;pkumar&gt;
+250 2.1.0 Ok
+rcpt to:&lt;postfixuser&gt;
+250 2.1.5 Ok
+data
+354 End data with &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt;
+Hello, Welcome to my mailserver (Postfix)
+.
+250 2.0.0 Ok: queued as B56BF1189BEC
+quit
+221 2.0.0 Bye
+Connection closed by foreign host
+</code></pre><p>完成 <code>telnet</code> 命令可从本地用户 <code>pkumar</code> 发送邮件到另一个本地用户 <code>postfixuser</code>，如下所示：</p><p><img src=/data/attachment/album/201911/21/072901f78s7ht7bzmkk747.png alt=Send-email-with-telnet-centos8></p><p>如果一切都按计划进行，那么你应该可以在新用户的家目录中查看发送的邮件：</p><pre tabindex=0><code># ls /home/postfixuser/Maildir/new
+1573580091.Vfd02I20050b8M635437.server1.crazytechgeek.info
+#
+</code></pre><p>要阅读邮件，只需使用 cat 命令，如下所示：</p><pre tabindex=0><code># cat /home/postfixuser/Maildir/new/1573580091.Vfd02I20050b8M635437.server1.crazytechgeek.info
+</code></pre><p><img src=/data/attachment/album/201911/21/072903kpvvrg53bmcbmx5u.png alt=Read-postfix-email-linux></p><h3 id=postfix-邮件服务器日志>Postfix 邮件服务器日志</h3><p>Postfix 邮件服务器邮件日志保存在文件 <code>/var/log/maillog</code> 中，使用以下命令查看实时日志，</p><pre tabindex=0><code># tail -f /var/log/maillog
+</code></pre><p><img src=/data/attachment/album/201911/21/072905l7zsofxsoocmxxpr.png alt=postfix-maillogs-centos8></p><h3 id=保护-postfix-邮件服务器>保护 Postfix 邮件服务器</h3><p>建议始终确保客户端和 Postfix 服务器之间的通信安全，这可以使用 SSL 证书来实现，它们可以来自受信任的权威机构或自签名证书。在本教程中，我们将使用 <code>openssl</code> 命令生成用于 Postfix 的自签名证书，</p><p>我假设 <code>openssl</code> 已经安装在你的系统上，如果未安装，请使用以下 <code>dnf</code> 命令：</p><pre tabindex=0><code># dnf install openssl -y
+</code></pre><p>使用下面的 <code>openssl</code> 命令生成私钥和 CSR（证书签名请求）：</p><pre tabindex=0><code># openssl req -nodes -newkey rsa:2048 -keyout mail.key -out mail.csr
+</code></pre><p><img src=/data/attachment/album/201911/21/072906uugozol5vr5rdsur.png alt=Postfix-Key-CSR-CentOS8></p><p>现在，使用以下 openssl 命令生成自签名证书：</p><pre tabindex=0><code># openssl x509 -req -days 365 -in mail.csr -signkey mail.key -out mail.crt
+Signature ok
+subject=C = IN, ST = New Delhi, L = New Delhi, O = IT, OU = IT, CN = server1.crazytechgeek.info, emailAddress = root@linuxtechi
+Getting Private key
+#
+</code></pre><p>现在将私钥和证书文件复制到 <code>/etc/postfix</code> 目录下：</p><pre tabindex=0><code># cp mail.key mail.crt /etc/postfix
+</code></pre><p>在 Postfix 配置文件中更新私钥和证书文件的路径：</p><pre tabindex=0><code># vi /etc/postfix/main.cf
+………
+smtpd_use_tls = yes
+smtpd_tls_cert_file = /etc/postfix/mail.crt
+smtpd_tls_key_file = /etc/postfix/mail.key
+smtpd_tls_security_level = may
+………
+</code></pre><p>重启 Postfix 服务以使上述更改生效：</p><pre tabindex=0><code># systemctl restart postfix
+</code></pre><p>让我们尝试使用 <code>mailx</code> 客户端将邮件发送到内部本地域和外部域。</p><p>从 <code>pkumar</code> 发送内部本地邮件到 <code>postfixuser</code> 中：</p><pre tabindex=0><code># echo &#34;test email&#34; | mailx -s &#34;Test email from Postfix MailServer&#34; -r root@linuxtechi root@linuxtechi
+</code></pre><p>使用以下命令检查并阅读邮件：</p><pre tabindex=0><code># cd /home/postfixuser/Maildir/new/
+# ll
+total 8
+-rw-------. 1 postfixuser postfixuser 476 Nov 12 17:34 1573580091.Vfd02I20050b8M635437.server1.crazytechgeek.info
+-rw-------. 1 postfixuser postfixuser 612 Nov 13 02:40 1573612845.Vfd02I20050bbM466643.server1.crazytechgeek.info
+# cat 1573612845.Vfd02I20050bbM466643.server1.crazytechgeek.info
+</code></pre><p><img src=/data/attachment/album/201911/21/072908u11ytm69g69tdtfl.png alt=Read-Postfixuser-Email-CentOS8></p><p>从 <code>postfixuser</code> 发送邮件到外部域（<code>root@linuxtechi.com</code>）：</p><pre tabindex=0><code># echo &#34;External Test email&#34; | mailx -s &#34;Postfix MailServer&#34; -r root@linuxtechi root@linuxtechi
+</code></pre><p>注意：如果你的 IP 没有被任何地方列入黑名单，那么你发送到外部域的邮件将被发送，否则它将被退回，并提示你的 IP 被 spamhaus 之类的数据库列入黑名单。</p><h3 id=检查-postfix-邮件队列>检查 Postfix 邮件队列</h3><p>使用 <code>mailq</code> 命令列出队列中的邮件：</p><pre tabindex=0><code># mailq
+Mail queue is empty
+#
+</code></pre><p>完成！我们的 Postfix 配置正常工作了！目前就这样了。我们希望你觉得本教程有见地，并且你可以轻松地设置本地 Postfix 服务器。</p><hr><p>via: <a href=https://www.linuxtechi.com/install-configure-postfix-mailserver-centos-8/>https://www.linuxtechi.com/install-configure-postfix-mailserver-centos-8/</a></p><p>作者：<a href=https://www.linuxtechi.com/author/james/>James Kiarie</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/postfix/ rel=tag>Postfix</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E9%82%AE%E4%BB%B6/ rel=tag>邮件</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

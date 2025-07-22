@@ -1,0 +1,148 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何使用 bind 设置 DNS 服务器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何使用 bind 设置 DNS 服务器"><meta property="og:description" content="本指南将向你展示如何配置一个主 DNS 系统以及客户端。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11997-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-03-15T10:44:29+00:00"><meta property="article:modified_time" content="2020-03-15T10:44:29+00:00"><meta itemprop=name content="如何使用 bind 设置 DNS 服务器"><meta itemprop=description content="本指南将向你展示如何配置一个主 DNS 系统以及客户端。"><meta itemprop=datePublished content="2020-03-15T10:44:29+00:00"><meta itemprop=dateModified content="2020-03-15T10:44:29+00:00"><meta itemprop=wordCount content="737"><meta itemprop=keywords content="DNS,BIND,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何使用 bind 设置 DNS 服务器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-03-15T10:44:29Z>March 15, 2020</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202003/15/104435ty9y5757vgbqu6q9.png alt></p><p>域名系统 Domain Name System ，我们更通常称为 DNS 的系统，可以将域名翻译或转换为与该域关联的 IP 地址。DNS 是能够让你通过名称找到自己喜欢的网站而不是在浏览器中输入 IP 地址的原因。本指南将向你展示如何配置一个主 DNS 系统以及客户端。</p><p>以下是本文示例中使用的系统细节：</p><pre tabindex=0><code>dns01.fedora.local    （192.168.1.160）- 主 DNS 服务器
+client.fedora.local     （192.168.1.136）- 客户端
+</code></pre><h3 id=dns-服务器配置>DNS 服务器配置</h3><p>使用 <code>sudo</code> 安装 bind 包：</p><pre tabindex=0><code>$ sudo dnf install bind bind-utils -y
+</code></pre><p>bind 包提供了 <code>/etc/named.conf</code> 配置文件，来供你配置 DNS 服务器。</p><p>编辑 <code>/etc/named.conf</code> 文件：</p><pre tabindex=0><code>sudo vi /etc/named.conf
+</code></pre><p>查找以下行：</p><pre tabindex=0><code>listen-on port 53 { 127.0.0.1; };
+</code></pre><p>添加主 DNS 服务器的 IP 地址，如下所示：</p><pre tabindex=0><code>listen-on port 53 { 127.0.0.1; 192.168.1.160; };
+</code></pre><p>查找以下行：</p><pre tabindex=0><code>allow-query  { localhost; };
+</code></pre><p>添加本地网络范围。该示例系统使用的 IP 地址在 192.168.1.X 的范围内。指定如下：</p><pre tabindex=0><code>allow-query  { localhost; 192.168.1.0/24; };
+</code></pre><p>指定转发和反向区域。 区域文件 Zone file 就是具有系统上 DNS 信息（例如 IP 地址和主机名）的文本文件。 转发区域文件 forward zone file 使得将主机名转换为 IP 地址成为可能。 反向区域文件 reverse zone file 则相反。它允许远程系统将 IP 地址转换为主机名。</p><p>在 <code>/etc/named.conf</code> 文件的底部查找以下行：</p><pre tabindex=0><code>include &#34;/etc/named.rfc1912.zones&#34;;
+</code></pre><p>在此处，你将在<strong>该行的正上方</strong>指定区域文件信息，如下所示：</p><pre tabindex=0><code>zone &#34;dns01.fedora.local&#34; IN {
+  type master;
+  file &#34;forward.fedora.local&#34;;
+  allow-update { none; };
+};
+
+zone &#34;1.168.192.in-addr.arpa&#34; IN {
+  type master;
+  file &#34;reverse.fedora.local&#34;;
+  allow-update { none; };
+};
+</code></pre><p><code>forward.fedora.local</code> 和 <code>reverse.fedora.local</code> 文件是要创建的区域文件的名称。它们可以是任意名字。</p><p>保存并退出。</p><h4 id=创建区域文件>创建区域文件</h4><p>创建你在 <code>/etc/named.conf</code> 文件中指定的转发和反向区域文件：</p><pre tabindex=0><code>$ sudo vi /var/named/forward.fedora.local
+</code></pre><p>添加以下行：</p><pre tabindex=0><code>$TTL 86400
+@   IN  SOA     dns01.fedora.local. root.fedora.local. (
+        2011071001  ;Serial
+        3600        ;Refresh
+        1800        ;Retry
+        604800      ;Expire
+        86400       ;Minimum TTL
+)
+@       IN  NS          dns01.fedora.local.
+@       IN  A           192.168.1.160
+dns01           IN  A   192.168.1.160
+client          IN  A   192.168.1.136
+</code></pre><p>所有<strong>粗体</strong>（LCTT 译注：本译文中无法呈现粗体）内容都特定于你的环境。保存文件并退出。接下来，编辑 <code>reverse.fedora.local</code> 文件：</p><pre tabindex=0><code>$ sudo vi /var/named/reverse.fedora.local
+</code></pre><p>添加以下行：</p><pre tabindex=0><code>$TTL 86400
+@   IN  SOA     dns01.fedora.local. root.fedora.local. (
+        2011071001  ;Serial
+        3600        ;Refresh
+        1800        ;Retry
+        604800      ;Expire
+        86400       ;Minimum TTL
+)
+@       IN  NS          dns01.fedora.local.
+@       IN  PTR         fedora.local.
+dns01           IN  A   192.168.1.160
+client          IN  A   192.168.1.136
+160     IN  PTR         dns01.fedora.local.
+136     IN  PTR         client.fedora.local.
+</code></pre><p>所有<strong>粗体</strong>（LCTT 译注：本译文中无法呈现粗体）内容都特定于你的环境。保存文件并退出。</p><p>你还需要配置 SELinux 并为配置文件添加正确的所有权。</p><pre tabindex=0><code>sudo chgrp named -R /var/named
+sudo chown -v root:named /etc/named.conf
+sudo restorecon -rv /var/named
+sudo restorecon /etc/named.conf
+</code></pre><p>配置防火墙：</p><pre tabindex=0><code>sudo firewall-cmd --add-service=dns --perm
+sudo firewall-cmd --reload
+</code></pre><h4 id=检查配置是否存在语法错误>检查配置是否存在语法错误</h4><pre tabindex=0><code>sudo named-checkconf /etc/named.conf
+</code></pre><p>如果没有输出或返回错误，那么你的配置有效。</p><p>检查转发和反向区域文件。</p><pre tabindex=0><code>$ sudo named-checkzone forward.fedora.local /var/named/forward.fedora.local
+
+$ sudo named-checkzone reverse.fedora.local /var/named/reverse.fedora.local
+</code></pre><p>你应该看到 “OK” 的响应：</p><pre tabindex=0><code>zone forward.fedora.local/IN: loaded serial 2011071001
+OK
+
+zone reverse.fedora.local/IN: loaded serial 2011071001
+OK
+</code></pre><h4 id=启用并启动-dns-服务>启用并启动 DNS 服务</h4><pre tabindex=0><code>$ sudo systemctl enable named
+$ sudo systemctl start named
+</code></pre><h4 id=配置-resolvconf-文件>配置 resolv.conf 文件</h4><p>编辑 <code>/etc/resolv.conf</code> 文件：</p><pre tabindex=0><code>$ sudo vi /etc/resolv.conf
+</code></pre><p>查找你当前的 <code>nameserver</code> 行。在示例系统上，使用调制解调器/路由器充当名称服务器，因此当前看起来像这样：</p><pre tabindex=0><code>nameserver 192.168.1.1
+</code></pre><p>这需要更改为主 DNS 服务器的 IP 地址：</p><pre tabindex=0><code>nameserver 192.168.1.160
+</code></pre><p>保存更改并退出。</p><p>不幸的是需要注意一点。如果系统重启或网络重启，那么 NetworkManager 会覆盖 <code>/etc/resolv.conf</code> 文件。这意味着你将丢失所做的所有更改。</p><p>为了防止这种情况发生，请将 <code>/etc/resolv.conf</code> 设为不可变：</p><pre tabindex=0><code>$ sudo chattr +i /etc/resolv.conf
+</code></pre><p>如果要重新设置，就需要允许其再次被覆盖：</p><pre tabindex=0><code>$ sudo chattr -i /etc/resolv.conf
+</code></pre><h4 id=测试-dns-服务器>测试 DNS 服务器</h4><pre tabindex=0><code>$ dig fedoramagazine.org
+</code></pre><pre tabindex=0><code>; &lt;&lt;&gt;&gt; DiG 9.11.13-RedHat-9.11.13-2.fc30 &lt;&lt;&gt;&gt; fedoramagazine.org
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 8391
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 3, ADDITIONAL: 6
+
+;; OPT PSEUDOSECTION:
+ ; EDNS: version: 0, flags:; udp: 4096
+ ; COOKIE: c7350d07f8efaa1286c670ab5e13482d600f82274871195a (good)
+ ;; QUESTION SECTION:
+ ;fedoramagazine.org.        IN  A
+
+;; ANSWER SECTION:
+ fedoramagazine.org.    50  IN  A   35.197.52.145
+
+;; AUTHORITY SECTION:
+ fedoramagazine.org.    86150   IN  NS  ns05.fedoraproject.org.
+ fedoramagazine.org.    86150   IN  NS  ns02.fedoraproject.org.
+ fedoramagazine.org.    86150   IN  NS  ns04.fedoraproject.org.
+
+;; ADDITIONAL SECTION:
+ ns02.fedoraproject.org.    86150   IN  A   152.19.134.139
+ ns04.fedoraproject.org.    86150   IN  A   209.132.181.17
+ ns05.fedoraproject.org.    86150   IN  A   85.236.55.10
+ ns02.fedoraproject.org.    86150   IN  AAAA    2610:28:3090:3001:dead:beef:cafe:fed5
+ ns05.fedoraproject.org.    86150   IN  AAAA    2001:4178:2:1269:dead:beef:cafe:fed5
+
+ ;; Query time: 830 msec
+ ;; SERVER: 192.168.1.160#53(192.168.1.160)
+ ;; WHEN: Mon Jan 06 08:46:05 CST 2020
+ ;; MSG SIZE  rcvd: 266
+</code></pre><p>需要检查几件事以验证 DNS 服务器是否正常运行。显然，取得结果很重要，但这本身并不意味着 DNS 服务器实际上正常工作。</p><p>顶部的 <code>QUERY</code>、<code>ANSWER</code> 和 <code>AUTHORITY</code> 字段应显示为非零，如我们的示例所示：</p><pre tabindex=0><code>;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 3, ADDITIONAL: 6
+</code></pre><p>并且 <code>SERVER</code> 字段应有你的 DNS 服务器的 IP 地址：</p><pre tabindex=0><code>;; SERVER: 192.168.1.160#53(192.168.1.160)
+</code></pre><p>如果这是你第一次运行 <code>dig</code> 命令，请注意完成查询要花费 830 毫秒的时间：</p><pre tabindex=0><code>;; Query time: 830 msec
+</code></pre><p>如果再次运行它，查询将会更快：</p><pre tabindex=0><code>$ dig fedoramagazine.org
+</code></pre><pre tabindex=0><code>;; Query time: 0 msec
+;; SERVER: 192.168.1.160#53(192.168.1.160)
+</code></pre><h3 id=客户端配置>客户端配置</h3><p>客户端配置将简单得多。</p><p>安装 bind 程序：</p><pre tabindex=0><code>$ sudo dnf install bind-utils -y
+</code></pre><p>编辑 <code>/etc/resolv.conf</code> 文件，并将主 DNS 配置为唯一的名称服务器：</p><pre tabindex=0><code>$ sudo vi /etc/resolv.conf
+</code></pre><p>它看起来像这样：</p><pre tabindex=0><code>nameserver 192.168.1.160
+</code></pre><p>保存更改并退出。然后，使 <code>/etc/resolv.conf</code> 文件不可变，防止其被覆盖并变回默认设置：</p><pre tabindex=0><code>$ sudo chattr +i /etc/resolv.conf
+</code></pre><h4 id=测试客户端>测试客户端</h4><p>你应该获得与 DNS 服务器相同的结果：</p><pre tabindex=0><code>$ dig fedoramagazine.org
+</code></pre><pre tabindex=0><code>; &lt;&lt;&gt;&gt; DiG 9.11.13-RedHat-9.11.13-2.fc30 &lt;&lt;&gt;&gt; fedoramagazine.org
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 8391
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 3, ADDITIONAL: 6
+
+;; OPT PSEUDOSECTION:
+ ; EDNS: version: 0, flags:; udp: 4096
+ ; COOKIE: c7350d07f8efaa1286c670ab5e13482d600f82274871195a (good)
+ ;; QUESTION SECTION:
+ ;fedoramagazine.org.        IN  A
+
+;; ANSWER SECTION:
+ fedoramagazine.org.    50  IN  A   35.197.52.145
+
+;; AUTHORITY SECTION:
+ fedoramagazine.org.    86150   IN  NS  ns05.fedoraproject.org.
+ fedoramagazine.org.    86150   IN  NS  ns02.fedoraproject.org.
+ fedoramagazine.org.    86150   IN  NS  ns04.fedoraproject.org.
+
+;; ADDITIONAL SECTION:
+ ns02.fedoraproject.org.    86150   IN  A   152.19.134.139
+ ns04.fedoraproject.org.    86150   IN  A   209.132.181.17
+ ns05.fedoraproject.org.    86150   IN  A   85.236.55.10
+ ns02.fedoraproject.org.    86150   IN  AAAA    2610:28:3090:3001:dead:beef:cafe:fed5
+ ns05.fedoraproject.org.    86150   IN  AAAA    2001:4178:2:1269:dead:beef:cafe:fed5
+
+ ;; Query time: 1 msec
+ ;; SERVER: 192.168.1.160#53(192.168.1.160)
+ ;; WHEN: Mon Jan 06 08:46:05 CST 2020
+ ;; MSG SIZE  rcvd: 266
+</code></pre><p>确保 <code>SERVER</code> 输出的是你 DNS 服务器的 IP 地址。</p><p>你的 DNS 服务器设置完成了，现在所有来自客户端的请求都会经过你的 DNS 服务器了！</p><hr><p>via: <a href=https://fedoramagazine.org/how-to-setup-a-dns-server-with-bind/>https://fedoramagazine.org/how-to-setup-a-dns-server-with-bind/</a></p><p>作者：<a href=https://fedoramagazine.org/author/rcurtiswarfield/>Curt Warfield</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/dns/ rel=tag>DNS</a></li><li class=tags__item><a class="tags__link btn" href=/tags/bind/ rel=tag>BIND</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,87 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何使用 Sphinx 给 Python 代码写文档 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何使用 Sphinx 给 Python 代码写文档"><meta property="og:description" content="最好将文档作为开发过程的一部分。Sphinx 加上 Tox，让文档可以轻松书写，并且外观漂亮。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11624-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-11-29T16:38:00+00:00"><meta property="article:modified_time" content="2019-11-29T16:38:00+00:00"><meta itemprop=name content="如何使用 Sphinx 给 Python 代码写文档"><meta itemprop=description content="最好将文档作为开发过程的一部分。Sphinx 加上 Tox，让文档可以轻松书写，并且外观漂亮。"><meta itemprop=datePublished content="2019-11-29T16:38:00+00:00"><meta itemprop=dateModified content="2019-11-29T16:38:00+00:00"><meta itemprop=wordCount content="312"><meta itemprop=keywords content="Python,文档,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何使用 Sphinx 给 Python 代码写文档</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-11-29T16:38:00Z>November 29, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>最好将文档作为开发过程的一部分。Sphinx 加上 Tox，让文档可以轻松书写，并且外观漂亮。</p></blockquote><p><img src=/data/attachment/album/201911/29/163803d0a1ev3f40p4pk61.jpg alt="Python in a coffee cup." title="Python in a coffee cup."></p><p>Python 代码可以在源码中包含文档。这种方式默认依靠 <strong>docstring</strong>，它以三引号格式定义。虽然文档的价值是很大的，但是没有充足的文档的代码还是很常见。让我们演练一个场景，了解出色的文档的强大功能。</p><p>经历了太多在白板技术面试上要求你实现斐波那契数列，你已经受够了。你回家用 Python 写了一个可重用的斐波那契计算器，使用浮点技巧来实现 <code>O(1)</code> 复杂度。</p><p>代码很简单：</p><pre tabindex=0><code># fib.py
+import math
+
+_SQRT_5 = math.sqrt(5)
+_PHI = (1 + _SQRT_5) / 2
+
+def approx_fib(n):
+    return round(_PHI**(n+1) / _SQRT_5)
+</code></pre><p>（该斐波那契数列是四舍五入到最接近的整数的几何序列，这是我最喜欢的鲜为人知的数学事实之一。）</p><p>作为一个好人，你可以将代码开源，并将它放在 <a href=https://pypi.org/>PyPI</a> 上。<code>setup.py</code> 文件很简单：</p><pre tabindex=0><code>import setuptools
+
+setuptools.setup(
+    name=&#39;fib&#39;,
+    version=&#39;2019.1.0&#39;,
+    description=&#39;Fibonacci&#39;,
+    py_modules=[&#34;fib&#34;],
+)
+</code></pre><p>但是，没有文档的代码是没有用的。因此，你可以向函数添加 docstring。我最喜欢的 docstring 样式之一是 <a href=http://google.github.io/styleguide/pyguide.html#381-docstrings>“Google” 样式</a>。标记很轻量，当它放在源代码中时很好。</p><pre tabindex=0><code>def approx_fib(n):
+    &#34;&#34;&#34;
+    Approximate Fibonacci sequence
+
+    Args:
+        n (int): The place in Fibonacci sequence to approximate
+
+    Returns:
+        float: The approximate value in Fibonacci sequence
+    &#34;&#34;&#34;
+    # ...
+</code></pre><p>但是函数的文档只是成功的一半。普通文档对于情境化代码用法很重要。在这种情况下，情景是恼人的技术面试。</p><p>有一种添加更多文档的方式，专业 Python 人的方式通常是在 <code>docs/</code> 添加 rst 文件（ <a href=http://docutils.sourceforge.net/rst.html>reStructuredText</a> 的缩写）。因此 <code>docs/index.rst</code> 文件最终看起来像这样：</p><pre tabindex=0><code>Fibonacci
+=========
+
+Are you annoyed at tech interviewers asking you to implement
+the Fibonacci sequence?
+Do you want to have some fun with them?
+A simple
+:code:`pip install fib`
+is all it takes to tell them to,
+um,
+fib off.
+
+.. automodule:: fib
+   :members:
+</code></pre><p>我们完成了，对吧？我们已经将文本放在了文件中。人们应该会看的。</p><h3 id=使-python-文档更漂亮>使 Python 文档更漂亮</h3><p>为了使你的文档看起来更漂亮，你可以利用 <a href=http://www.sphinx-doc.org/en/master/>Sphinx</a>，它旨在制作漂亮的 Python 文档。这三个 Sphinx 扩展特别有用：</p><ul><li><code>sphinx.ext.autodoc</code>：从模块内部获取文档</li><li><code>sphinx.ext.napoleon</code>：支持 Google 样式的 docstring</li><li><code>sphinx.ext.viewcode</code>：将 ReStructured Text 源码与生成的文档打包在一起</li></ul><p>为了告诉 Sphinx 该生成什么以及如何生成，我们在 <code>docs/conf.py</code> 中配置一个辅助文件：</p><pre tabindex=0><code>extensions = [
+    &#39;sphinx.ext.autodoc&#39;,
+    &#39;sphinx.ext.napoleon&#39;,
+    &#39;sphinx.ext.viewcode&#39;,
+]
+# 该入口点的名称，没有 .rst 扩展名。
+# 惯例该名称是 index
+master_doc = &#34;index&#34;
+# 这些值全部用在生成的文档当中。
+# 通常，发布（release）与版本（version）是一样的，
+# 但是有时候我们会有带有 rc 标签的发布。
+project = &#34;Fib&#34;
+copyright = &#34;2019, Moshe Zadka&#34;
+author = &#34;Moshe Zadka&#34;
+version = release = &#34;2019.1.0&#34;
+</code></pre><p>此文件使我们可以使用所需的所有元数据来发布代码，并注意扩展名（上面的注释说明了方式）。最后，要确保生成我们想要的文档，请使用 <a href=https://tox.readthedocs.io/en/latest/>Tox</a> 管理虚拟环境以确保我们顺利生成文档：</p><pre tabindex=0><code>[tox]
+# 默认情况下，`.tox` 是该目录。
+# 将其放在非点文件中可以从
+# 文件管理器或浏览器的
+# 打开对话框中打开生成的文档，
+# 这些对话框有时会隐藏点文件。
+toxworkdir = {toxinidir}/build/tox
+
+[testenv:docs]
+# 从 `docs` 目录内运行 `sphinx`，
+# 以确保它不会拾取任何可能进入顶层目录下的
+# 虚拟环境或 `build/` 目录下的其他工件的杂散文件。
+changedir = docs
+# 唯一的依赖关系是 `sphinx`。
+# 如果我们使用的是单独打包的扩展程序，
+# 我们将在此处指定它们。
+# 更好的做法是指定特定版本的 sphinx。
+deps =
+    sphinx
+# 这是用于生成 HTML 的 `sphinx` 命令。
+# 在其他情况下，我们可能想生成 PDF 或电子书。
+commands =
+    sphinx-build -W -b html -d {envtmpdir}/doctrees . {envtmpdir}/html
+# 我们使用 Python 3.7。
+# Tox 有时会根据 testenv 的名称尝试自动检测它，
+# 但是 `docs` 没有给出有用的线索，因此我们必须明确它。
+basepython = python3.7
+</code></pre><p>现在，无论何时运行 Tox，它都会为你的 Python 代码生成漂亮的文档。</p><h3 id=在-python-中写文档很好>在 Python 中写文档很好</h3><p>作为 Python 开发人员，我们可以使用的工具链很棒。我们可以从 <strong>docstring</strong> 开始，添加 .rst 文件，然后添加 Sphinx 和 Tox 来为用户美化结果。</p><p>你对好的文档有何评价？你还有其他喜欢的方式么？请在评论中分享它们！</p><hr><p>via: <a href=https://opensource.com/article/19/11/document-python-sphinx>https://opensource.com/article/19/11/document-python-sphinx</a></p><p>作者：<a href=https://opensource.com/users/moshez>Moshe Zadka</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%96%87%E6%A1%A3/ rel=tag>文档</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

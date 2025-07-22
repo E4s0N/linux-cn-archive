@@ -1,0 +1,100 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Python Web 框架 Django 中使用序列化器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Python Web 框架 Django 中使用序列化器"><meta property="og:description" content="序列化用于将数据转换为方便存储或传输的格式，然后将其重新构建以供使用。DRF 是最具有知名的序列化器。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12900-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-12-08T22:09:09+00:00"><meta property="article:modified_time" content="2020-12-08T22:09:09+00:00"><meta itemprop=name content="如何在 Python Web 框架 Django 中使用序列化器"><meta itemprop=description content="序列化用于将数据转换为方便存储或传输的格式，然后将其重新构建以供使用。DRF 是最具有知名的序列化器。"><meta itemprop=datePublished content="2020-12-08T22:09:09+00:00"><meta itemprop=dateModified content="2020-12-08T22:09:09+00:00"><meta itemprop=wordCount content="361"><meta itemprop=keywords content="序列化,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Python Web 框架 Django 中使用序列化器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-12-08T22:09:09Z>December 08, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>序列化用于将数据转换为方便存储或传输的格式，然后将其重新构建以供使用。DRF 是最具有知名的序列化器。</p></blockquote><p><img src=/data/attachment/album/202012/08/220845q5tz7cfftze5oem5.jpg alt></p><p>序列化是将数据转换为可以存储或传输的格式，然后对其进行重新构建的过程。在开发应用程序或将数据存储在数据库、内存或将其转换为文件时，一直会用到它。</p><p>我最近帮助 <a href=http://www.labcodes.com.br>Labcodes</a> 的两名初级开发人员理解序列化器，我想也可以与诸位读者分享一下我的方法。</p><p>假设你正在编写一个电子商务网站，你有一个订单，该订单记录了某人在某个日期以某种价格购买了一个产品：</p><pre tabindex=0><code>class Order:
+    def __init__(self, product, customer, price, date):
+        self.product = product
+        self.customer = customer
+        self.price = price
+        self.date = date
+</code></pre><p>现在，假设你想从一个键值数据库中存储和检索订单数据。幸运的是，它的接口可以接受和返回字典，因此你需要将对象转换成字典：</p><pre tabindex=0><code>def serialize_order(order):
+    return {
+        &#39;product&#39;: order.product,
+        &#39;customer&#39;: order.customer,
+        &#39;price&#39;: order.price,
+        &#39;date&#39;: order.date
+    }
+</code></pre><p>如果你想从数据库中获取一些数据，你可以获取字典数据并将其转换为订单对象（<code>Order</code>）：</p><pre tabindex=0><code>def deserialize_order(order_data):
+    return Order(
+        product=order_data[&#39;product&#39;],
+        customer=order_data[&#39;customer&#39;],
+        price=order_data[&#39;price&#39;],
+        date=order_data[&#39;date&#39;],
+    )
+</code></pre><p>这对于简单的数据非常直接了当，但是当你需要处理一些由复杂属性构成的复杂对象时，这种方法就无法很好地扩展。你还需要处理不同类型字段的验证，这需要手工完成大量工作。</p><p>此时框架的序列化可以很方便的派上用场。它们使你可以创建带有少量模板的序列化器，这将适用于复杂的情况。</p><p><a href=https://www.djangoproject.com/>Django</a> 提供了一个序列化模块，允许你将模型“转换”为其它格式：</p><pre tabindex=0><code>from django.core import serializers
+
+serializers.serialize(&#39;json&#39;, Order.objects.all())
+</code></pre><p>它涵盖了 Web 应用程序最常用的种类，例如 JSON、YAML 和 XML。但是你也可以使用第三方序列化器或创建自己的序列化器。你只需要在 <code>settings.py</code> 文件中注册它：</p><pre tabindex=0><code># settings.py
+SERIALIZATION_MODULES = {
+    &#39;my_format&#39;: appname.serializers.MyFormatSerializer,
+}
+</code></pre><p>要创建自己的 <code>MyFormatSerializer</code>，你需要实现 <code>.serialize()</code> 方法并接受一个查询集和其它选项作为参数：</p><pre tabindex=0><code>class MyFormatSerializer:
+    def serialize(self, queryset, **options):
+        # serious serialization happening
+</code></pre><p>现在，你可以将查询集序列化为新格式：</p><pre tabindex=0><code>from django.core import serializers
+
+serializers.serialize(&#39;my_format&#39;, Order.objects.all())
+</code></pre><p>你可以使用选项参数来定义序列化程序的行为。例如，如果要定义在处理 <code>ForeignKeys</code> 时要使用嵌套序列化，或者只希望数据返回其主键，你可以传递一个 <code>flat=True</code> 参数作为选项，并在方法中处理：</p><pre tabindex=0><code>class MyFormatSerializer:
+    def serializer(self, queryset, **options):
+        if options.get(&#39;flat&#39;, False):
+            # don&#39;t recursively serialize relationships
+        # recursively serialize relationships
+</code></pre><p>使用 Django 序列化的一种方法是使用 <code>loaddata</code> 和 <code>dumpdata</code> 管理命令。</p><h3 id=drf-序列化器>DRF 序列化器</h3><p>在 Django 社区中，<a href=https://www.django-rest-framework.org/>Django REST 框架</a>（DRF）提供了最著名的序列化器。尽管你可以使用 Django 的序列化器来构建将在 API 中响应的 JSON，但 REST 框架中的序列化器提供了更出色的功能，可以帮助你处理并轻松验证复杂的数据。</p><p>在订单的例子中，你可以像这样创建一个序列化器：</p><pre tabindex=0><code>from restframework import serializers
+
+class OrderSerializer(serializers.Serializer):
+    product = serializers.CharField(max_length=255)
+    customer = serializers.CharField(max_lenght=255)
+    price = serializers.DecimalField(max_digits=5, decimal_places=2)
+    date = serializers.DateField()
+</code></pre><p>轻松序列化其数据：</p><pre tabindex=0><code>order = Order(&#39;pen&#39;, &#39;renato&#39;, 10.50, date.today())
+serializer = OrderSerializer(order)
+
+serializer.data
+# {&#39;product&#39;: &#39;pen&#39;, &#39;customer&#39;: &#39;renato&#39;, &#39;price&#39;: &#39;10.50&#39;, &#39;date&#39;: &#39;2020-08-16&#39;}
+</code></pre><p>为了能够从数据返回实例，你需要实现两个方法：<code>create</code> 和 <code>update</code>：</p><pre tabindex=0><code>from rest_framework import serializers
+
+class OrderSerializer(serializers.Serializer):
+    product = serializers.CharField(max_length=255)
+    customer = serializers.CharField(max_length=255)
+    price = serializers.DecimalField(max_digits=5, decimal_places=2)
+    date = serializers.DateField()
+
+    def create(self, validated_data):
+        # 执行订单创建
+        return order
+
+    def update(self, instance, validated_data):
+       # 执行实例更新
+       return instance
+</code></pre><p>之后，你可以通过调用 <code>is_valid()</code> 来验证数据，并通过调用 <code>save()</code> 来创建或更新实例：</p><pre tabindex=0><code>serializer = OrderSerializer(**data)
+## 若要验证数据，在调用 save 之前必须执行
+serializer.is_valid()
+serializer.save()
+</code></pre><h3 id=模型序列化器>模型序列化器</h3><p>序列化数据时，通常需要从数据库（即你创建的模型）进行数据处理。<code>ModelSerializer</code> 与 <code>ModelForm</code> 一样，提供了一个 API，用于从模型创建序列化器。假设你有一个订单模型：</p><pre tabindex=0><code>from django.db import models
+
+class Order(models.Model):
+    product = models.CharField(max_length=255)
+    customer = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    date = models.DateField()    
+</code></pre><p>你可以像这样为它创建一个序列化器：</p><pre tabindex=0><code>from rest_framework import serializers
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = &#39;__all__&#39;
+</code></pre><p>Django 会自动在序列化器中包含所有模型字段，并创建 <code>create</code> 和 <code>udpate</code> 方法。</p><h3 id=在基于类的视图cbv中使用序列化器>在基于类的视图（CBV）中使用序列化器</h3><p>像 Django CBV 中的 <code>Forms</code> 一样，序列化器可以很好地与 DRF 集成。你可以设置 <code>serializer_class</code> 属性，方便序列化器用于视图：</p><pre tabindex=0><code>from rest_framework import generics
+
+class OrderListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+</code></pre><p>你也可以定义 <code>get_serializer_class()</code> 方法：</p><pre tabindex=0><code>from rest_framework import generics
+
+class OrderListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Order.objects.all()
+   
+    def get_serializer_class(self):
+        if is_free_order():
+            return FreeOrderSerializer
+        return OrderSerializer
+</code></pre><p>在 CBV 中还有其它与序列化器交互的方法。例如，<a href=http://www.cdrf.co/3.9/rest_framework.generics/CreateAPIView.html#get_serializer>get_serializer()</a> 返回一个已经实例化的序列化器，<a href=http://www.cdrf.co/3.9/rest_framework.generics/CreateAPIView.html#get_serializer_context>get_serializer_context()</a> 返回创建实例时传递给序列化器的参数。对于创建或更新数据的视图，有 <code>create</code> 和 <code>update</code>，它们使用 <code>is_valid</code> 方法验证数据，还有 <a href=http://www.cdrf.co/3.9/rest_framework.generics/CreateAPIView.html#perform_create>perform_create</a> 和 <a href=http://www.cdrf.co/3.9/rest_framework.generics/RetrieveUpdateAPIView.html#perform_update>perform_update</a> 调用序列化器的 <code>save</code> 方法。</p><h3 id=了解更多>了解更多</h3><p>要了解更多资源，参考我朋友 André Ericson 的<a href=http://www.cdrf.co/>经典 Django REST 框架</a>网站。它是一个<a href=https://ccbv.co.uk/>基于类的经典视图</a>的 REST 框架版本，可让你深入查看组成 DRF 的类。当然，官方<a href=https://www.django-rest-framework.org/api-guide/serializers/#serializers>文档</a>也是一个很棒的资源。</p><hr><p>via: <a href=https://opensource.com/article/20/11/django-rest-framework-serializers>https://opensource.com/article/20/11/django-rest-framework-serializers</a></p><p>作者：<a href=https://opensource.com/users/renato-oliveira>Renato Oliveira</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%BA%8F%E5%88%97%E5%8C%96/ rel=tag>序列化</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

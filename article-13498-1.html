@@ -1,0 +1,103 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>C++ 类成员函数指针语法的友好指南 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="C++ 类成员函数指针语法的友好指南"><meta property="og:description" content="一旦你理解了一般原则，C++ 类成员函数指针不再那么令人生畏。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13498-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-06-18T10:42:09+00:00"><meta property="article:modified_time" content="2021-06-18T10:42:09+00:00"><meta itemprop=name content="C++ 类成员函数指针语法的友好指南"><meta itemprop=description content="一旦你理解了一般原则，C++ 类成员函数指针不再那么令人生畏。"><meta itemprop=datePublished content="2021-06-18T10:42:09+00:00"><meta itemprop=dateModified content="2021-06-18T10:42:09+00:00"><meta itemprop=wordCount content="313"><meta itemprop=keywords content="指针,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>C++ 类成员函数指针语法的友好指南</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-06-18T10:42:09Z>June 18, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>一旦你理解了一般原则，C++ 类成员函数指针不再那么令人生畏。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202106/18/104200rm48h22eghehg2p3.jpg alt title="Person drinking a hot drink at the computer"></p><p>如果你正在寻找性能、复杂性或许多可能的解决方法来解决问题，那么在涉及到极端的情况下，<a href=https://en.wikipedia.org/wiki/C++>C++</a> 总是一个很好的选择。当然，功能通常伴随着复杂性，但是一些 C++ 的特性几乎难以分辨。根据我的观点，C++ 的 <a href=https://en.wikipedia.org/wiki/Function_pointer#Method_pointers>类成员函数指针</a> 也许是我接触过的最复杂的表达式，但是我会先从一些较简单的开始。</p><p>文章中的例子可以在我的 <a href=https://github.com/hANSIc99/worst_possible_syntax>Github 仓库</a> 里找到。</p><h3 id=c-语言函数指针>C 语言：函数指针</h3><p>让我们先从一些基础开始：假设你有一个函数接收两个整数作为参数返回一个整数：</p><pre tabindex=0><code>int sum(int a, int b) {
+    return a+b;
+}
+</code></pre><p>在纯 C 语言中，你可以创建一个指向这个函数的指针，将其分配给你的 <code>sum(...)</code> 函数，通过解引用来调用它。函数的签名（参数、返回类型）必须符合指针的签名。除此之外，一个函数指针表现和普通的指针相同：</p><pre tabindex=0><code>int (*funcPtrOne)(int, int);
+
+funcPtrOne = &amp;sum;
+
+int resultOne = funcPtrOne(2, 5);
+</code></pre><p>如果你使用指针作为参数并返回一个指针，这会显得很丑陋：</p><pre tabindex=0><code>int *next(int *arrayOfInt){
+    return ++arrayOfInt;
+}
+
+int *(*funcPtrTwo)(int *intPtr);
+
+funcPtrTwo = &amp;next;
+
+int resultTwo = *funcPtrTwo(&amp;array[0]);
+</code></pre><p>C 语言中的函数指针存储着子程序的地址。</p><h3 id=指向类成员函数的指针>指向类成员函数的指针</h3><p>让我们来进入 C++：好消息是你也许不需要使用类成员函数指针，除非在一个特别罕见的情况下，比如说接下来的例子。首先，你已经知道定义一个类和其中一个成员函数：</p><pre tabindex=0><code>class MyClass
+{
+public:
+
+    int sum(int a, int b) {
+        return a+b;
+    }
+
+};
+</code></pre><h4 id=1定义一个指针指向某一个类中一个成员函数>1、定义一个指针指向某一个类中一个成员函数</h4><p>声明一个指针指向 <code>MyClass</code> 类成员函数。在此时，你并不知道想调用的具体函数。你仅仅声明了一个指向 <code>MyClass</code> 类中任意成员函数的指针。当然，签名（参数、返回值类型）需要匹配你接下想要调用的 <code>sum(...)</code> 函数：</p><pre tabindex=0><code>int (MyClass::*methodPtrOne)(int, int);
+</code></pre><h4 id=2赋值给一个具体的函数>2、赋值给一个具体的函数</h4><p>为了和 C 语言（或者 <a href=https://en.wikipedia.org/wiki/Static_(keyword)#Static_method>静态成员函数</a>）对比，类成员函数指针不需要指向绝对地址。在 C++ 中，每一个类中都有一个虚拟函数表（vtable）用来储存每个成员函数的地址偏移量。一个类成员函数指针指向 vtable 中的某个条目，因此它也只存储偏移值。这样的原则使得 <a href=https://en.wikipedia.org/wiki/Dynamic_dispatch>多态</a> 变得可行。</p><p>因为 <code>sum(...)</code> 函数的签名和你的指针声明匹配，你可以赋值签名给它：</p><pre tabindex=0><code>methodPtrOne = &amp;MyClass::sum;
+</code></pre><h4 id=3调用成员函数>3、调用成员函数</h4><p>如果你想使用指针调用一个类成员函，你必须提供一个类的实例：</p><pre tabindex=0><code>MyClass clsInstance;
+int result = (clsInstance.*methodPtrOne)(2,3);
+</code></pre><p>你可以使用 <code>.</code> 操作符来访问，使用 <code>*</code> 对指针解引用，通过提供两个整数作为调用函数时的参数。这是丑陋的，对吧？但是你可以进一步应用。</p><h3 id=在类内使用类成员函数指针>在类内使用类成员函数指针</h3><p>假设你正在创建一个带有后端和前端的 <a href=https://en.wikipedia.org/wiki/Client%E2%80%93server_model>客户端/服务器</a> 原理架构的应用程序。你现在并不需要关心后端，相反的，你将基于 C++ 类的前端。前端依赖于后端提供的数据完成初始化，所以你需要一个额外的初始化机制。同时，你希望通用地实现此机制，以便将来可以使用其他初始化函数（可能是动态的）来拓展你的前端。</p><p>首先定义一个数据类型用来存储初始化函数（<code>init</code>）的指针，同时描述何时应调用此函数的信息（<code>ticks</code>）：</p><pre tabindex=0><code>template&lt;typename T&gt;
+struct DynamicInitCommand {
+    void (T::*init)();     // 指向额外的初始化函数
+    unsigned int ticks;    // 在 init() 调用后 ticks 的数量
+};
+</code></pre><p>下面一个 <code>Frontend</code> 类示例代码：</p><pre tabindex=0><code>class  Frontend
+{
+public:
+
+    Frontend(){
+        DynamicInitCommand&lt;Frontend&gt; init1, init2, init3;
+
+        init1 = { &amp;Frontend::dynamicInit1, 5};
+        init2 = { &amp;Frontend::dynamicInit2, 10};
+        init3 = { &amp;Frontend::dynamicInit3, 15};
+
+        m_dynamicInit.push_back(init1);
+        m_dynamicInit.push_back(init2);
+        m_dynamicInit.push_back(init3);
+    }
+   
+    void  tick(){
+        std::cout &lt;&lt; &#34;tick: &#34; &lt;&lt; ++m_ticks &lt;&lt; std::endl;
+       
+        /* 检查延迟初始化 */
+        std::vector&lt;DynamicInitCommand&lt;Frontend&gt;&gt;::iterator  it = m_dynamicInit.begin();
+
+        while (it != m_dynamicInit.end()){
+            if (it-&gt;ticks &lt; m_ticks){
+                 
+                if(it-&gt;init)
+                    ((*this).*(it-&gt;init))(); // 这里是具体调用
+
+                it = m_dynamicInit.erase(it);
+
+            } else {
+                it++;
+            }
+        }
+    }
+   
+    unsigned  int  m_ticks{0};
+   
+private:
+
+    void  dynamicInit1(){
+        std::cout &lt;&lt; &#34;dynamicInit1 called&#34; &lt;&lt; std::endl;
+    };
+
+    void  dynamicInit2(){
+        std::cout &lt;&lt; &#34;dynamicInit2 called&#34; &lt;&lt; std::endl;
+    }
+
+    void  dynamicInit3(){
+        std::cout &lt;&lt; &#34;dynamicInit3 called&#34; &lt;&lt; std::endl;
+    }
+
+    unsigned  int  m_initCnt{0};
+    std::vector&lt;DynamicInitCommand&lt;Frontend&gt; &gt; m_dynamicInit;
+};
+</code></pre><p>在 <code>Frontend</code> 完成实例化后，<code>tick()</code> 函数会被后端以固定的时间时间调用。例如，你可以每 200 毫秒调用一次：</p><pre tabindex=0><code>int  main(int  argc, char*  argv[]){
+    Frontend frontendInstance;
+
+    while(true){
+        frontendInstance.tick(); // 仅用于模拟目的
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+}
+</code></pre><p><code>Fronted</code> 有三个额外的初始化函数，它们必须根据 <code>m_ticks</code> 的值来选择调用哪个。在 ticks 等于何值调用哪个初始化函数的信息存储在数组 <code>m_dynamicInit</code> 中。在构造函数（<code>Frontend()</code>）中，将此信息附加到数组中，以便在 5、10 和 15 个 tick 后调用其他初始化函数。当后端调用 <code>tick()</code> 函数时，<code>m_ticks</code> 值会递增，同时遍历数组 <code>m_dynamicInit</code> 以检查是否必须调用初始化函数。</p><p>如果是这种情况，则必须通过引用 <code>this</code> 指针来取消引用成员函数指针：</p><pre tabindex=0><code>((*this).*(it-&gt;init))()
+</code></pre><h3 id=总结>总结</h3><p>如果你并不熟悉类成员函数指针，它们可能会显得有些复杂。我做了很多尝试和经历了很多错误，花了一些时间来找到正确的语法。然而，一旦你理解了一般原理后，方法指针就变得不那么可怕了。</p><p>这是迄今为止我在 C++ 中发现的最复杂的语法。 你还知道更糟糕的吗？ 在评论中发布你的观点！</p><hr><p>via: <a href=https://opensource.com/article/21/2/ccc-method-pointers>https://opensource.com/article/21/2/ccc-method-pointers</a></p><p>作者：<a href=https://opensource.com/users/hansic99>Stephan Avenwedde</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/mengxinayan>萌新阿岩</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8C%87%E9%92%88/ rel=tag>指针</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

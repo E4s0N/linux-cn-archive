@@ -1,0 +1,116 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>通过案例学习 xfs 文件系统相关命令 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="通过案例学习 xfs 文件系统相关命令"><meta property="og:description" content="本文我们来看一些常用的 xfs 管理命令。我们将会通过几个例子来讲解如何创建 xfs 文件系统，如何对 xfs 文件系统进行扩容，如何检测并修复 xfs 文件系统。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9336-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-02-11T23:23:02+00:00"><meta property="article:modified_time" content="2018-02-11T23:23:02+00:00"><meta itemprop=name content="通过案例学习 xfs 文件系统相关命令"><meta itemprop=description content="本文我们来看一些常用的 xfs 管理命令。我们将会通过几个例子来讲解如何创建 xfs 文件系统，如何对 xfs 文件系统进行扩容，如何检测并修复 xfs 文件系统。"><meta itemprop=datePublished content="2018-02-11T23:23:02+00:00"><meta itemprop=dateModified content="2018-02-11T23:23:02+00:00"><meta itemprop=wordCount content="739"><meta itemprop=keywords content="xfs,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>通过案例学习 xfs 文件系统相关命令</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-02-11T23:23:02Z>February 11, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201802/11/232306zk2462tz72sgl77l.png alt="Learn xfs commands with examples"></p><p>在我们另一篇文章中，我带您领略了一下<a href=https://kerneltalks.com/disk-management/xfs-filesystem-in-linux/>什么是 xfs，xfs 的相关特性等内容</a>。本文我们来看一些常用的 xfs 管理命令。我们将会通过几个例子来讲解如何创建 xfs 文件系统，如何对 xfs 文件系统进行扩容，如何检测并修复 xfs 文件系统。</p><h3 id=创建-xfs-文件系统>创建 XFS 文件系统</h3><p><code>mkfs.xfs</code> 命令用来创建 xfs 文件系统。无需任何特别的参数，其输出如下：</p><pre tabindex=0><code>root@kerneltalks # mkfs.xfs /dev/xvdf
+meta-data=/dev/xvdf              isize=512    agcount=4, agsize=1310720 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=5242880, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+</code></pre><blockquote><p>注意：一旦 XFS 文件系统创建完毕就不能在缩容而只能进行扩容了。</p></blockquote><h3 id=调整-xfs-文件系统容量>调整 XFS 文件系统容量</h3><p>你只能对 XFS 进行扩容而不能缩容。我们使用 <code>xfs_growfs</code> 来进行扩容。你需要使用 <code>-D</code> 参数指定挂载点的新容量。<code>-D</code> 接受一个数字的参数，指定文件系统块的数量。若你没有提供 <code>-D</code> 参数，则 <code>xfs_growfs</code> 会将文件系统扩到最大。</p><pre tabindex=0><code>root@kerneltalks # xfs_growfs /dev/xvdf -D 256
+meta-data=/dev/xvdf              isize=512    agcount=4, agsize=720896 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0 spinodes=0
+data     =                       bsize=4096   blocks=2883584, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal               bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+data size 256 too small, old size is 2883584
+</code></pre><p>观察上面的输出中的最后一行。由于我分配的容量要小于现在的容量。它告诉你不能缩减 XFS 文件系统。你只能对它进行扩展。</p><pre tabindex=0><code>root@kerneltalks #  xfs_growfs /dev/xvdf -D 2883840
+meta-data=/dev/xvdf              isize=512    agcount=4, agsize=720896 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0 spinodes=0
+data     =                       bsize=4096   blocks=2883584, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal               bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+data blocks changed from 2883584 to 2883840
+</code></pre><p>现在我多分配了 1GB 的空间，而且也成功地扩增了容量。</p><p><strong>1GB 块的计算方式：</strong></p><p>当前文件系统 bsize 为 4096，意思是块的大小为 4MB。我们需要 1GB，也就是 256 个块。因此在当前块数，2883584 上加上 256 得到 2883840。因此我为 <code>-D</code> 传递参数 2883840。</p><h3 id=修复-xfs-文件系统>修复 XFS 文件系统</h3><p>可以使用 <code>xfs_repair</code> 命令进行文件系统一致性检查和修复。使用 <code>-n</code> 参数则并不对文件系统做出什么实质性的修改。它只会搜索并报告要做哪些修改。若不带 <code>-n</code> 参数，则会修改文件系统以保证文件系统的纯净。</p><p>请注意，在检查之前，你需要先卸载 XFS 文件系统。否则会报错。</p><pre tabindex=0><code>root@kerneltalks # xfs_repair -n /dev/xvdf
+xfs_repair: /dev/xvdf contains a mounted filesystem
+xfs_repair: /dev/xvdf contains a mounted and writable filesystem
+
+fatal error -- couldn&#39;t initialize XFS library
+</code></pre><p>卸载后运行检查命令。</p><pre tabindex=0><code>root@kerneltalks # xfs_repair -n /dev/xvdf
+Phase 1 - find and verify superblock...
+Phase 2 - using internal log
+        - zero log...
+        - scan filesystem freespace and inode maps...
+        - found root inode chunk
+Phase 3 - for each AG...
+        - scan (but don&#39;t clear) agi unlinked lists...
+        - process known inodes and perform inode discovery...
+        - agno = 0
+        - agno = 1
+        - agno = 2
+        - agno = 3
+        - agno = 4
+        - process newly discovered inodes...
+Phase 4 - check for duplicate blocks...
+        - setting up duplicate extent list...
+        - check for inodes claiming duplicate blocks...
+        - agno = 0
+        - agno = 1
+        - agno = 2
+        - agno = 3
+        - agno = 4
+No modify flag set, skipping phase 5
+Phase 6 - check inode connectivity...
+        - traversing filesystem ...
+        - traversal finished ...
+        - moving disconnected inodes to lost+found ...
+Phase 7 - verify link counts...
+No modify flag set, skipping filesystem flush and exiting.
+</code></pre><p>你可以看到，命令在每个阶段都显示出了为了文件系统变得健康可能做出的修改。若你希望命令在扫描时实际应用这些修改，则不带任何参数运行命令即可。</p><pre tabindex=0><code>root @ kerneltalks # xfs_repair /dev/xvdf
+
+Phase 1 - find and verify superblock . . .
+Phase 2 - using internal log
+        - zero log . . .
+        - scan filesystem freespace and inode maps . . .
+        - found root inode chunk
+Phase 3 - for each AG . . . 
+        - scan and clear agi unlinked lists . . .
+        - process known inodes and perform inode discovery . . .
+        - agno = 0 
+        - agno = 1
+        - agno = 2
+        - agno = 3
+        - agno = 4
+        - process newly discovered inodes . . . 
+Phase 4 - check for duplicate blocks . . .
+        - setting up duplicate extent list . . .
+        - check for inodes claiming duplicate blocks . . .
+        - agno = 0
+        - agno = 1
+        - agno = 2
+        - agno = 3
+        - agno = 4 
+Phase 5 - rebuild AG headers and trees . . .
+        - reset superblock . . .
+Phase 6 - check inode connectivity . . .
+        - resetting contents of realtime bitmap and summary inodes
+        - traversing filesystem . . .
+        - traversal finished . . .
+        - moving disconnected inodes to lost + found . . .
+Phase 7 - verify and correct link counts . . . 
+done
+</code></pre><p>你会发现 <code>xfs_repair</code> 命令对文件系统做出了修改让其变得健康。</p><h3 id=查看-xfs-版本以及它的详细信息>查看 XFS 版本以及它的详细信息</h3><p>查看 xfs 文件系统版本很简单。使用 <code>-V</code> 参数运行 <code>xfs_info</code> 再加上挂载点就行了。</p><pre tabindex=0><code>root@kerneltalks # xfs_info -V /shrikant
+xfs_info version 4.5.0
+</code></pre><p>若要查看 XFS 文件系统的详细信息，比如想计算扩容 XFS 文件系统时要新增多少个块，需要了解块大小，块的个数等信息，则不带任何选项运行 <code>xfs_info</code> 加上挂载点。</p><pre tabindex=0><code>root@kerneltalks # xfs_info /shrikant
+meta-data=/dev/xvdf              isize=512    agcount=5, agsize=720896 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0 spinodes=0
+data     =                       bsize=4096   blocks=2883840, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal               bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+</code></pre><p>则会显示 XFS 文件系统的所有详细信息，就跟创建 XFS 文件系统时显示的信息一样。</p><p>此外还有一些 XFS 文件系统管理命令可以修改并管理 XFS 的元数据。我们将在另一篇文章中来讲解。</p><hr><p>via: <a href=https://kerneltalks.com/commands/xfs-file-system-commands-with-examples/>https://kerneltalks.com/commands/xfs-file-system-commands-with-examples/</a></p><p>作者：<a href=https://kerneltalks.com>kerneltalks</a> 译者：<a href=https://github.com/lujun9972>lujun9972</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/xfs/ rel=tag>xfs</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,77 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Kubernetes 网络策略基础 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Kubernetes 网络策略基础"><meta property="og:description" content="在你通过 Kubernetes 部署一个应用之前，了解 Kubernetes 的网络策略是一个基本的要求。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14005-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-11-21T13:02:25+00:00"><meta property="article:modified_time" content="2021-11-21T13:02:25+00:00"><meta itemprop=name content="Kubernetes 网络策略基础"><meta itemprop=description content="在你通过 Kubernetes 部署一个应用之前，了解 Kubernetes 的网络策略是一个基本的要求。"><meta itemprop=datePublished content="2021-11-21T13:02:25+00:00"><meta itemprop=dateModified content="2021-11-21T13:02:25+00:00"><meta itemprop=wordCount content="305"><meta itemprop=keywords content="Kubernetes,防火墙,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Kubernetes 网络策略基础</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-11-21T13:02:25Z>November 21, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>在你通过 Kubernetes 部署一个应用之前，了解 Kubernetes 的网络策略是一个基本的要求。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202111/21/130217ocykri3zbv37i6ou.jpg alt title="Parts, modules, containers for software"></p><p>随着越来越多的云原生应用程序通过 Kubernetes 部署到生产环境，安全性是你必须在早期就需要考虑的一个重要检查项。在设计云原生应用程序时，预先嵌入安全策略非常重要。不这样做会导致后续的安全问题，从而导致项目延迟，并最终给你带来不必要的压力和金钱投入。</p><p>这么多年来，人们总是把安全留到最后，直到他们的部署即将发布到生产环境时才考虑安全。这种做法会导致项目交付的延迟，因为每个组织都有要遵守的安全标准，这些规定被绕过或不遵守，并承受大量的风险才得以实现可交付成果。</p><p>对于刚开始学习 Kubernetes 实施的人来说，理解 Kubernetes 网络策略 NetworkPolicy 可能会令人生畏。但这是在将应用程序部署到 Kubernetes 集群之前必须了解的基本要求之一。在学习 Kubernetes 和云原生应用程序时，请把“不要把安全抛在脑后！”定为你的口号。</p><h3 id=networkpolicy-概念>NetworkPolicy 概念</h3><p>网络策略 NetworkPolicy 取代了你所知道的数据中心环境中的防火墙设备 —— 如 吊舱 Pod 之于计算实例、网络插件之于路由器和交换机，以及卷之于存储区域网络（SAN）。</p><p>默认情况下，Kubernetes 网络策略允许 吊舱 Pod 从任何地方接收流量。如果你不担心吊舱的安全性，那么这可能没问题。但是，如果你正在运行关键工作负载，则需要保护吊舱。控制集群内的流量（包括入口和出口流量），可以通过网络策略来实现。</p><p>要启用网络策略，你需要一个支持网络策略的网络插件。否则，你应用的任何规则都将变得毫无用处。</p><p><a href=https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/>Kubernetes.io</a> 上列出了不同的网络插件：</p><ul><li>CNI 插件：遵循 容器网络接口 Container Network Interface （CNI）规范，旨在实现互操作性。<ul><li>Kubernetes 遵循 CNI 规范的 <a href=https://github.com/containernetworking/cni/blob/spec-v0.4.0/SPEC.md>v0.4.0</a> 版本。</li></ul></li><li>Kubernetes 插件：使用桥接器和主机本地 CNI 插件实现基本的 <code>cbr0</code>。</li></ul><h3 id=应用网络策略>应用网络策略</h3><p>要应用网络策略，你需要一个工作中的 Kubernetes 集群，并有支持网络策略的网络插件。</p><p>但首先，你需要了解如何在 Kubernetes 的环境使用网络策略。Kubernetes 网络策略允许 <a href=https://kubernetes.io/docs/concepts/workloads/pods/>吊舱</a> 从任何地方接收流量。这并不是理想情况。为了吊舱安全，你必须了解吊舱是可以在 Kubernetes 架构内进行通信的端点。</p><p>1、使用 <code>podSelector</code> 进行吊舱间的通信：</p><pre tabindex=0><code> - namespaceSelector:
+    matchLabels:
+      project: myproject 
+</code></pre><p>2、使用 <code>namespaceSelector</code> 和/或 <code>podSelector</code> 和 <code>namespaceSelector</code> 的组合进行命名空间之间的通信和命名空间到吊舱的通信。：</p><pre tabindex=0><code> - namespaceSelector:
+    matchLabels:
+      project: myproject
+ - podSelector:
+    matchLabels:
+      role: frontend 
+</code></pre><p>3、对于吊舱的 IP 块通信，使用 <code>ipBlock</code> 定义哪些 IP CIDR 块决定源和目的。</p><pre tabindex=0><code> - ipBlock:
+        cidr: 172.17.0.0/16
+        except:
+        - 172.17.1.0/24 
+</code></pre><p>注意吊舱、命名空间和基于 IP 的策略之间的区别。对于基于吊舱和命名空间的网络策略，使用选择器来控制流量，而对基于 IP 的网络策略，使用 IP 块（CIDR 范围）来定义控制。</p><p>把它们放在一起，一个网络策略应如下所示：</p><pre tabindex=0><code>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 172.17.0.0/16
+        except:
+        - 192.168.1.0/24
+    - namespaceSelector:
+        matchLabels:
+          project: myproject
+    - podSelector:
+        matchLabels:
+          role: frontend
+    ports:
+    - protocol: TCP
+      port: 6379
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/24
+    ports:
+    - protocol: TCP
+      port: 5978
+</code></pre><p>参考上面的网络策略，请注意 <code>spec</code> 部分。在此部分下，带有标签 <code>app=backend</code> 的 <code>podSelector</code> 是我们的网络策略的目标。简而言之，网络策略保护给定命名空间内称为 <code>backend</code> 的应用程序。</p><p>此部分也有 <code>policyTypes</code> 定义。此字段指示给定策略是否适用于选定吊舱的入口流量、选定吊舱的出口流量，或两者皆有。</p><pre tabindex=0><code>spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  - Egress
+</code></pre><p>现在，请看 <code>Ingress</code>（入口）和 <code>Egress</code>（出口）部分。该定义规定了网络策略的控制。</p><p>首先，检查 <code>ingress from</code> 部分。</p><p>此实例中，网络策略允许从以下位置进行吊舱连接：</p><ul><li><code>ipBlock</code><ul><li>允许 172.17.0.0/16</li><li>拒绝 192.168.1.0/24</li></ul></li><li><code>namespaceSelector</code><ul><li><code>myproject</code>: 允许来自此命名空间并具有相同标签 project=myproject 的所有吊舱。</li></ul></li><li><code>podSelector</code><ul><li><code>frontend</code>: 允许与标签 <code>role=frontend</code> 匹配的吊舱。</li></ul></li></ul><pre tabindex=0><code>ingress:
+ - from:
+  - ipBlock:
+      cidr: 172.17.0.0/16
+      except:
+      - 192.168.1.0/24
+  - namespaceSelector:
+      matchLabels:
+        project: myproject
+  - podSelector:
+      matchLabels:
+        role: frontend
+</code></pre><p>现在，检查 <code>egress to</code> 部分。这决定了从吊舱出去的连接：</p><ul><li><code>ipBlock</code><ul><li>10.0.0.0/24: 允许连接到此 CIDR</li><li>Ports: 允许使用 TCP 和端口 5978 进行连接</li></ul></li></ul><pre tabindex=0><code>egress:
+ - to:
+  - ipBlock:
+      cidr: 10.0.0.0/24
+  ports:
+  - protocol: TCP
+    port: 5978
+</code></pre><h3 id=网络策略的限制>网络策略的限制</h3><p>仅靠网络策略无法完全保护你的 Kubernetes 集群。你可以使用操作系统组件或 7 层网络技术来克服已知限制。你需要记住，网络策略只能解决 IP 地址和端口级别的安全问题 —— 即开放系统互联（OSI）中的第 3 层或第 4 层。</p><p>为了解决网络策略无法处理的安全要求，你需要使用其它安全解决方案。以下是你需要知道的一些 <a href=https://kubernetes.io/docs/concepts/services-networking/network-policies/#what-you-can-t-do-with-network-policies-at-least-not-yet>用例</a>，在这些用例中，网络策略需要其他技术的增强。</p><h3 id=总结>总结</h3><p>了解 Kubernetes 的网络策略很重要，因为它是实现（但不是替代）你通常在数据中心设置中使用的防火墙角色的一种方式，但适用于 Kubernetes。将此视为容器安全的第一层，仅仅依靠网络策略并不是一个完整的安全解决方案。</p><p>网络策略使用选择器和标签在吊舱和命名空间上实现安全性。此外，网络策略还可以通过 IP 范围实施安全性。</p><p>充分理解网络策略是在 Kubernetes 环境中安全采用容器化的一项重要技能。</p><hr><p>via: <a href=https://opensource.com/article/21/10/kubernetes-networkpolicy>https://opensource.com/article/21/10/kubernetes-networkpolicy</a></p><p>作者：<a href=https://opensource.com/users/mcalizo>Mike Calizo</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/perfiffer>perfiffer</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/kubernetes/ rel=tag>Kubernetes</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E9%98%B2%E7%81%AB%E5%A2%99/ rel=tag>防火墙</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>五个你可能不了解的killall选项 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="五个你可能不了解的killall选项"><meta property="og:description" content="Linux的命令行提供很多命令来杀死进程。比如，你可以向kill命传递一个PID来杀死进程；pkill命令使用一个正则表达式作为输入，所以和该模式匹配的进程都被杀死。 但是还有一个命令叫killall，默认情况下，它精确地匹配参数名，然后杀死匹配进程。在这篇文章中，我们将讨论有关这个命令的实际应用。  Linux 的 killall 命令 killall命令可以用来给一个特定的进程发送一个信号。这个信号默认情况下是SIGTERM，但也可以由killall命令使用参数来指定其它信号。 现在让我们通过一些实际的例子来看看这个命令的实际用法。 1. 基本示例 在这个例子"><meta property="og:type" content="article"><meta property="og:url" content="/article-2973-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-05-05T22:28:00+00:00"><meta property="article:modified_time" content="2014-05-05T22:28:00+00:00"><meta itemprop=name content="五个你可能不了解的killall选项"><meta itemprop=description content="Linux的命令行提供很多命令来杀死进程。比如，你可以向kill命传递一个PID来杀死进程；pkill命令使用一个正则表达式作为输入，所以和该模式匹配的进程都被杀死。 但是还有一个命令叫killall，默认情况下，它精确地匹配参数名，然后杀死匹配进程。在这篇文章中，我们将讨论有关这个命令的实际应用。  Linux 的 killall 命令 killall命令可以用来给一个特定的进程发送一个信号。这个信号默认情况下是SIGTERM，但也可以由killall命令使用参数来指定其它信号。 现在让我们通过一些实际的例子来看看这个命令的实际用法。 1. 基本示例 在这个例子"><meta itemprop=datePublished content="2014-05-05T22:28:00+00:00"><meta itemprop=dateModified content="2014-05-05T22:28:00+00:00"><meta itemprop=wordCount content="375"><meta itemprop=keywords content="killall,进程,kill,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>五个你可能不了解的killall选项</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-05-05T22:28:00Z>May 05, 2014</time></div></div></header><div class="content post__content clearfix"><p>Linux的命令行提供很多命令来杀死进程。比如，你可以向“kill”命传递一个PID来杀死进程；“pkill”命令使用一个正则表达式作为输入，所以和该模式匹配的进程都被杀死。</p><p>但是还有一个命令叫“killall”，默认情况下，它精确地匹配参数名，然后杀死匹配进程。在这篇文章中，我们将讨论有关这个命令的实际应用。</p><p><img src=/data/attachment/album/201405/05/222833xhkahy6yhklyhvaw.png alt></p><h3 id=linux-的-killall-命令>Linux 的 killall 命令</h3><p>killall命令可以用来给一个特定的进程发送一个信号。这个信号默认情况下是SIGTERM，但也可以由killall命令使用参数来指定其它信号。</p><p>现在让我们通过一些实际的例子来看看这个命令的实际用法。</p><h4 id=1-基本示例>1. 基本示例</h4><p>在这个例子中，我们将使用killall来杀死特定进程。假如，有两个开头字符相同的进程：</p><pre tabindex=0><code>$ ps -aef | grep “test”
+himanshu 3969 2811 0 14:14 pts/0 00:00:00 ./test
+himanshu 3970 2811 0 14:14 pts/0 00:00:00 ./test_again
+</code></pre><p>如何杀死“test_again”进程呢？</p><pre tabindex=0><code>$ killall test_again
+[2]+ Terminated ./test_again
+</code></pre><p>如你所见，killall命令终止了“test_again”进程。你可以通过ps命令来确认这个事实：</p><pre tabindex=0><code>$ ps -aef | grep “test”
+himanshu 3969 2811 0 14:14 pts/0 00:00:00 ./test
+</code></pre><p>你可以观察到“test_again”没有被显示出来，因为它已经被杀死了。</p><h4 id=2-使用--i-选项忽略大小写>2. 使用 -I 选项忽略大小写</h4><p>默认情况下，killall命令是大小写敏感的。例如：</p><pre tabindex=0><code>$ ps -aef | grep “test”
+himanshu 4177 3161 0 14:54 pts/3 00:00:00 ./test
+himanshu 4178 3161 0 14:54 pts/3 00:00:00 ./test_again
+himanshu 4180 3161 0 14:54 pts/3 00:00:00 grep --color=auto test
+
+$ killall TEST
+TEST: no process found
+</code></pre><p>你可以看到，killall命令找不到叫做“TEST”的进程，但是“test”进程是确确实实的在运行的。</p><p>来让killall命令忽略大小写，可以使用-I选项（大写i）。例如：</p><pre tabindex=0><code>$ killall -I TEST
+[1]- Terminated ./test
+</code></pre><p>你可以观察到，现在你成功的终止了“test”进程。</p><h4 id=3-使用--i-选项交互式的终止进程>3. 使用 -i 选项交互式的终止进程</h4><p>killall命令可以用来终止多个进程。</p><pre tabindex=0><code>$ killall test test_again
+[2]- Terminated ./test_again
+[3]+ Terminated ./test
+</code></pre><p>但是，如果你想要killall交互式地来终止进程，你可以使用-i选项。</p><p>这里是例子：</p><pre tabindex=0><code>$ killall -i test test_again
+Kill test(4201) ? (y/N) y
+Kill test_again(4202) ? (y/N) y
+[1]- Terminated ./test
+[2]+ Terminated ./test_again
+</code></pre><p>你可以看到，用这种方式，在同时终止多个进程时，用户可以控制是否终止某一个进程。</p><h4 id=4-使用--q-选项关闭命令执行回显>4. 使用 -q 选项关闭命令执行回显</h4><p>有些时候，当killall找不到指定的进程时，它就会像下面这样输出错误信息。</p><pre tabindex=0><code>$ killall TEST
+TEST: no process found
+</code></pre><p>但是，当你想要killall执行地安安静静的话，你就可以使用-q选项：</p><pre tabindex=0><code>$ killall -q TEST
+$
+</code></pre><p>如你所见，-q选项被使用之后，killall命令的输出信息就被抑制了。</p><h4 id=5-使用-l选项列出所有支持的信号signal>5. 使用-l选项列出所有支持的信号（signal)</h4><p>如之前描述的一样，killall向进程发送信号。</p><p>你可以使用-s选项（后面跟一个信号名）来向一个进程发送特殊信号。</p><p>想要知道所有可以发送的信号，可以使用-l选项（小写L）来获取：</p><pre tabindex=0><code>$ killall -l
+HUP INT QUIT ILL TRAP ABRT IOT BUS FPE KILL USR1 SEGV USR2 PIPE ALRM TERM
+STKFLT CHLD CONT STOP TSTP TTIN TTOU URG XCPU XFSZ VTALRM PROF WINCH IO PWR SYS
+UNUSED
+</code></pre><p>killall支持上面的所有信号。</p><p>看着这些信号的名字，可能你心里就会嘀咕：这些信号都是干什么的？</p><p>译者注：使用下面的命令来获取所有信号的说明：</p><p>$ man 7 signal</p><h3 id=我需要和大家讨论一件事情>我需要和大家讨论一件事情</h3><p>killall命令的man说：假如进程的名字的长度小于等于15，默认情况下就会以完整名称匹配。</p><p>比如，假设有两个名字很长的进程：</p><pre tabindex=0><code>$ ps -aef | grep “test”
+himanshu 4021 3161 0 14:27 pts/3 00:00:00 ./test_abcdefghij
+himanshu 4035 3161 0 14:27 pts/3 00:00:00 ./test_abcdefgh
+</code></pre><p>第一个进程的名字有15个字符。现在，让我们试着使用killall杀死这个进程：</p><pre tabindex=0><code>$ killall test_abcdefghij
+[1]- Terminated ./test_abcdefghij
+</code></pre><p>如你所见，killall命令成功杀死了这个进程。</p><p>假如，两个进程的名字都超过15个字符，根据man，killall将把两个进程全部杀死。比如：</p><pre tabindex=0><code>$ ps -aef | grep “test”
+himanshu 4114 3161 0 14:40 pts/3 00:00:00 ./test_abcdefghijklmnopqrstuvwx
+himanshu 4141 3161 0 14:46 pts/3 00:00:00 ./test_abcdefghijklmnopqrstuvwxyz
+himanshu 4143 3161 0 14:46 pts/3 00:00:00 grep --color=auto test
+</code></pre><p>你可以观察到，两个进程的名字都超过15个字符。现在，当我使用killall试着杀死第二个进程时：</p><pre tabindex=0><code>$ killall test_abcdefghijklmnopqrstuvwxyz
+[6]+ Terminated ./test_abcdefghijklmnopqrstuvwxyz
+</code></pre><p>它只杀死了指定的进程，另一个则没有被杀死。</p><pre tabindex=0><code>$ ps -aef | grep “test”
+himanshu 4114 3161 0 14:40 pts/3 00:00:00 ./test_abcdefghijklmnopqrstuvwx
+himanshu 4146 3161 0 14:47 pts/3 00:00:00 grep --color=auto test
+</code></pre><p>我不太确定，是我进行的尝试中有不对的地方，还是这是killall的一个bug。假如你在评论中写上你的观点，我会非常感激。</p><p>顺便说一下，这是我机器上killall命令的版本信息：</p><pre tabindex=0><code>$ killall --version
+killall (PSmisc) 22.20
+Copyright (C) 1993-2012 Werner Almesberger and Craig Small
+
+PSmisc comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to redistribute it under
+the terms of the GNU General Public License.
+For more information about these matters, see the files named COPYING.
+</code></pre><hr><p>via: <a href=http://linoxide.com/linux-command/linux-killall-my-options/>http://linoxide.com/linux-command/linux-killall-my-options/</a></p><p>译者：<a href=https://github.com/intermerlin>intermerlin</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/killall/ rel=tag>killall</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BF%9B%E7%A8%8B/ rel=tag>进程</a></li><li class=tags__item><a class="tags__link btn" href=/tags/kill/ rel=tag>kill</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

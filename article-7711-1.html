@@ -1,0 +1,85 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Docker Swarm 部署可扩展的 Python3 应用 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Docker Swarm 部署可扩展的 Python3 应用"><meta property="og:description" content="你可能会惊讶，使用 Docker Swarm 部署（复制）一个 Python（Java、Go 都一样）应用是如此的简单。"><meta property="og:type" content="article"><meta property="og:url" content="/article-7711-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-08-24T09:00:00+00:00"><meta property="article:modified_time" content="2016-08-24T09:00:00+00:00"><meta itemprop=name content="使用 Docker Swarm 部署可扩展的 Python3 应用"><meta itemprop=description content="你可能会惊讶，使用 Docker Swarm 部署（复制）一个 Python（Java、Go 都一样）应用是如此的简单。"><meta itemprop=datePublished content="2016-08-24T09:00:00+00:00"><meta itemprop=dateModified content="2016-08-24T09:00:00+00:00"><meta itemprop=wordCount content="533"><meta itemprop=keywords content="Docker,Swarm,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Docker Swarm 部署可扩展的 Python3 应用</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-08-24T09:00:00Z>August 24, 2016</time></div></div></header><div class="content post__content clearfix"><p><a href=https://blog.docker.com/author/bfirshman/>Ben Firshman</a> 最近在 <a href=http://dockercon.com/>Dockercon</a> 做了一个关于使用 Docker 构建无服务应用的演讲，你可以在<a href=https://blog.docker.com/author/bfirshman/>这里查看详情</a>（还有视频）。之后，我写了一篇关于如何使用 <a href=https://aws.amazon.com/lambda/>AWS Lambda</a> 构建微服务系统的<a href="http://www.giantflyingsaucer.com/blog/?p=5730">文章</a>。</p><p><img src=/data/attachment/album/201608/24/085955kwrcach76z1zrncc.jpg alt></p><p>今天，我想展示给你的就是如何使用 <a href=https://docs.docker.com/swarm/>Docker Swarm</a> 部署一个简单的 Python Falcon REST 应用。这里我不会使用<a href=https://github.com/bfirsh/dockerrun>dockerrun</a> 或者是其他无服务特性，你可能会惊讶，使用 Docker Swarm 部署（复制）一个 Python（Java、Go 都一样）应用是如此的简单。</p><p>注意：这展示的部分步骤是截取自 <a href=https://docs.docker.com/engine/swarm/swarm-tutorial/>Swarm Tutorial</a>，我已经修改了部分内容，并且<a href=https://github.com/chadlung/vagrant-docker-swarm>增加了一个 Vagrant Helper 的仓库</a>来启动一个可以让 Docker Swarm 工作起来的本地测试环境。请确保你使用的是 1.12 或以上版本的 Docker Engine。我写这篇文章的时候，使用的是 1.12RC2 版本。注意的是，这只是一个测试版本，可能还会有修改。</p><p>你要做的第一件事，就是如果你想本地运行的话，你要保证 <a href=https://www.vagrantup.com/>Vagrant</a> 已经正确的安装和运行了。你也可以按如下步骤使用你最喜欢的云服务提供商部署 Docker Swarm 虚拟机系统。</p><p>我们将会使用这三台 VM：一个简单的 Docker Swarm 管理平台和两台 worker。</p><p>安全注意事项：Vagrantfile 代码中包含了部分位于 Docker 测试服务器上的 shell 脚本。这是一个潜在的安全问题，它会运行你不能控制的脚本，所以请确保你会在运行代码之前<a href=https://test.docker.com/>审查过这部分的脚本</a>。</p><pre tabindex=0><code>$ git clone https://github.com/chadlung/vagrant-docker-swarm
+$ cd vagrant-docker-swarm
+$ vagrant plugin install vagrant-vbguest
+$ vagrant up
+</code></pre><p>Vagrant up 命令需要一些时间才能完成。</p><p>SSH 登录进入 manager1 虚拟机：</p><pre tabindex=0><code>$ vagrant ssh manager1
+</code></pre><p>在 manager1 的 ssh 终端会话中执行如下命令：</p><pre tabindex=0><code>$ sudo docker swarm init --listen-addr 192.168.99.100:2377
+</code></pre><p>现在还没有 worker 注册上来：</p><pre tabindex=0><code>$ sudo docker node ls
+</code></pre><p>让我们注册两个新的 worker，请打开两个新的终端会话（保持 manager1 会话继续运行）：</p><pre tabindex=0><code>$ vagrant ssh worker1
+</code></pre><p>在 worker1 的 ssh 终端会话上执行如下命令：</p><pre tabindex=0><code>$ sudo docker swarm join 192.168.99.100:2377
+</code></pre><p>在 worker2 的 ssh 终端会话上重复这些命令。</p><p>在 manager1 终端上执行如下命令：</p><pre tabindex=0><code>$ docker node ls
+</code></pre><p>你将会看到：</p><p><img src=/data/attachment/album/201608/24/100853ey7a897wz1raw0aa.png alt></p><p>在 manager1 的终端里部署一个简单的服务。</p><pre tabindex=0><code>sudo docker service create --replicas 1 --name pinger alpine ping google.com
+</code></pre><p>这个命令将会部署一个服务，它会从 worker 之一 ping google.com。（或者 manager，manager 也可以运行服务，不过如果你只是想 worker 运行容器的话，<a href=https://docs.docker.com/engine/reference/commandline/swarm_init/>也可以禁用这一点</a>）。可以使用如下命令，查看哪些节点正在执行服务:</p><pre tabindex=0><code>$ sudo docker service tasks pinger
+</code></pre><p>结果会和这个比较类似：</p><p><img src=/data/attachment/album/201608/24/100927l9c02c8zmcl62yyq.png alt></p><p>所以，我们知道了服务正跑在 worker1 上。我们可以回到 worker1 的会话里，然后进入正在运行的容器：</p><pre tabindex=0><code>$ sudo docker ps
+</code></pre><p><img src=/data/attachment/album/201608/24/100956x0u0ze9neibb124u.png alt></p><p>你可以看到容器的 id 是: ae56769b9d4d，在我的例子中，我运行如下的代码：</p><pre tabindex=0><code>$ sudo docker attach ae56769b9d4d
+</code></pre><p><img src=/data/attachment/album/201608/24/101022ktqizbgbpnntsbpo.png alt></p><p>你可以按下 CTRL-C 来停止服务。</p><p>回到 manager1，然后移除这个 pinger 服务。</p><pre tabindex=0><code>$ sudo docker service rm pinger
+</code></pre><p>现在，我们将会部署可复制的 Python 应用。注意，为了保持文章的简洁，而且容易复制，所以部署的是一个简单的应用。</p><p>你需要做的第一件事就是将镜像放到 <a href=https://hub.docker.com/>Docker Hub</a>上，或者使用我<a href=https://hub.docker.com/r/chadlung/hello-app/>已经上传的一个</a>。这是一个简单的 Python 3 Falcon REST 应用。它有一个简单的入口: /hello 带一个 value 参数。</p><p>放在 <a href=https://hub.docker.com/r/chadlung/hello-app/>chadlung/hello-app</a> 上的 Python 代码看起来像这样：</p><pre tabindex=0><code>import json
+from wsgiref import simple_server
+
+import falcon
+
+
+class HelloResource(object):
+    def on_get(self, req, resp):
+        try:
+            value = req.get_param(&#39;value&#39;)
+
+            resp.content_type = &#39;application/json&#39;
+            resp.status = falcon.HTTP_200
+            resp.body = json.dumps({&#39;message&#39;: str(value)})
+        except Exception as ex:
+            resp.status = falcon.HTTP_500
+            resp.body = str(ex)
+
+
+if __name__ == &#39;__main__&#39;:
+    app = falcon.API()
+    hello_resource = HelloResource()
+    app.add_route(&#39;/hello&#39;, hello_resource)
+    httpd = simple_server.make_server(&#39;0.0.0.0&#39;, 8080, app)
+    httpd.serve_forever()
+</code></pre><p>Dockerfile 很简单：</p><pre tabindex=0><code>FROM python:3.4.4
+
+RUN pip install -U pip
+RUN pip install -U falcon
+
+EXPOSE 8080
+
+COPY . /hello-app
+WORKDIR /hello-app
+
+CMD [&#34;python&#34;, &#34;app.py&#34;]
+</code></pre><p>上面表示的意思很简单，如果你想，你可以在本地运行该进行来访问这个入口： <a href="http://127.0.0.1:8080/hello?value=Fred">http://127.0.0.1:8080/hello?value=Fred</a></p><p>这将返回如下结果：</p><pre tabindex=0><code>{&#34;message&#34;: &#34;Fred&#34;}
+</code></pre><p>在 Docker Hub 上构建和部署这个 hello-app（修改成你自己的 Docker Hub 仓库或者<a href=https://hub.docker.com/r/chadlung/hello-app/>使用这个</a>）：</p><pre tabindex=0><code>$ sudo docker build . -t chadlung/hello-app:2
+$ sudo docker push chadlung/hello-app:2
+</code></pre><p>现在，我们可以将应用部署到之前的 Docker Swarm 了。登录 manager1 的 ssh 终端会话，并且执行：</p><pre tabindex=0><code>$ sudo docker service create -p 8080:8080 --replicas 2 --name hello-app chadlung/hello-app:2
+$ sudo docker service inspect --pretty hello-app
+$ sudo docker service tasks hello-app
+</code></pre><p>现在，我们已经可以测试了。使用任何一个 Swarm 节点的 IP 来访问 /hello 入口。在本例中，我在 manager1 的终端里使用 curl 命令：</p><p>注意，Swarm 中的所有的 IP 都可以，不管这个服务是运行在一台还是更多的节点上。</p><pre tabindex=0><code>$ curl -v -X GET &#34;http://192.168.99.100:8080/hello?value=Chad&#34;
+$ curl -v -X GET &#34;http://192.168.99.101:8080/hello?value=Test&#34;
+$ curl -v -X GET &#34;http://192.168.99.102:8080/hello?value=Docker&#34;
+</code></pre><p>结果：</p><pre tabindex=0><code>* Hostname was NOT found in DNS cache
+*   Trying 192.168.99.101...
+* Connected to 192.168.99.101 (192.168.99.101) port 8080 (#0)
+&gt; GET /hello?value=Chad HTTP/1.1
+&gt; User-Agent: curl/7.35.0
+&gt; Host: 192.168.99.101:8080
+&gt; Accept: */*
+&gt; 
+* HTTP 1.0, assume close after body
+&lt; HTTP/1.0 200 OK
+&lt; Date: Tue, 28 Jun 2016 23:52:55 GMT
+&lt; Server: WSGIServer/0.2 CPython/3.4.4
+&lt; content-type: application/json
+&lt; content-length: 19
+&lt; 
+{&#34;message&#34;: &#34;Chad&#34;}
+</code></pre><p>从浏览器中访问其他节点：</p><p><img src=/data/attachment/album/201608/24/101056s9l9yqtoyll69jh9.png alt></p><p>如果你想看运行的所有服务，你可以在 manager1 节点上运行如下代码：</p><pre tabindex=0><code>$ sudo docker service ls
+</code></pre><p>如果你想添加可视化控制平台，你可以安装 <a href=https://github.com/ManoMarks/docker-swarm-visualizer>Docker Swarm Visualizer</a>（这对于展示非常方便）。在 manager1 的终端中执行如下代码：</p><pre tabindex=0><code>$ sudo docker run -it -d -p 5000:5000 -e HOST=192.168.99.100 -e PORT=5000 -v /var/run/docker.sock:/var/run/docker.sock manomarks/visualizer
+</code></pre><p>打开你的浏览器，并且访问： <a href=http://192.168.99.100:5000/>http://192.168.99.100:5000/</a></p><p>结果如下（假设已经运行了两个 Docker Swarm 服务）：</p><p><img src=/data/attachment/album/201608/24/101143ry1518zi0p1gpwcy.png alt></p><p>要停止运行 hello-app（已经在两个节点上运行了），可以在 manager1 上执行这个代码：</p><pre tabindex=0><code>$ sudo docker service rm hello-app
+</code></pre><p>如果想停止 Visualizer， 那么在 manager1 的终端中执行：</p><pre tabindex=0><code>$ sudo docker ps
+</code></pre><p>获得容器的 ID，这里是： f71fec0d3ce1，从 manager1 的终端会话中执行这个代码：</p><pre tabindex=0><code>$ sudo docker stop f71fec0d3ce1
+</code></pre><p>祝你成功使用 Docker Swarm。这篇文章主要是以 1.12 版本来进行描述的。</p><hr><p>via: <a href="http://www.giantflyingsaucer.com/blog/?p=5923">http://www.giantflyingsaucer.com/blog/?p=5923</a></p><p>作者：<a href="http://www.giantflyingsaucer.com/blog/?author=2">Chad Lung</a> 译者：<a href=https://github.com/MikeCoder>MikeCoder</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/docker/ rel=tag>Docker</a></li><li class=tags__item><a class="tags__link btn" href=/tags/swarm/ rel=tag>Swarm</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

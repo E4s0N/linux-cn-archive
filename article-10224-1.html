@@ -1,0 +1,107 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Bash 脚本中如何使用 here 文档将数据写入文件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Bash 脚本中如何使用 here 文档将数据写入文件"><meta property="og:description" content="here 文档不是什么特殊的东西，只是一种 I/O 重定向方式，它告诉 bash shell 从当前源读取输入，直到读取到只有分隔符的行。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10224-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-11-12T09:51:20+00:00"><meta property="article:modified_time" content="2018-11-12T09:51:20+00:00"><meta itemprop=name content="Bash 脚本中如何使用 here 文档将数据写入文件"><meta itemprop=description content="here 文档不是什么特殊的东西，只是一种 I/O 重定向方式，它告诉 bash shell 从当前源读取输入，直到读取到只有分隔符的行。"><meta itemprop=datePublished content="2018-11-12T09:51:20+00:00"><meta itemprop=dateModified content="2018-11-12T09:51:20+00:00"><meta itemprop=wordCount content="392"><meta itemprop=keywords content="here,bash,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Bash 脚本中如何使用 here 文档将数据写入文件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-11-12T09:51:20Z>November 12, 2018</time></div></div></header><div class="content post__content clearfix"><p>here 文档 here document （LCTT 译注：here 文档又称作 heredoc ）不是什么特殊的东西，只是一种 I/O 重定向方式，它告诉 bash shell 从当前源读取输入，直到读取到只有分隔符的行。</p><p><img src=/data/attachment/album/201811/12/095122pd5k2kwhkkj22k2s.jpg alt="redirect output of here document to a text file"></p><p>这对于向 ftp、cat、echo、ssh 和许多其他有用的 Linux/Unix 命令提供指令很有用。 此功能适用于 bash 也适用于 Bourne、Korn、POSIX 这三种 shell。</p><h3 id=here-文档语法>here 文档语法</h3><p>语法是：</p><pre tabindex=0><code>command &lt;&lt;EOF
+cmd1
+cmd2 arg1
+EOF
+</code></pre><p>或者允许 shell 脚本中的 here 文档使用 <code>EOF&lt;&lt;-</code> 以自然的方式缩进：</p><pre tabindex=0><code>command &lt;&lt;-EOF
+  msg1
+  msg2 
+  $var on line 
+EOF
+</code></pre><p>或者</p><pre tabindex=0><code>command &lt;&lt;&#39;EOF&#39;
+ cmd1
+ cmd2 arg1
+ $var won&#39;t expand as parameter substitution turned off
+ by single quoting
+EOF
+</code></pre><p>或者 <strong>重定向并将其覆盖</strong> 到名为 <code>my_output_file.txt</code> 的文件中：</p><pre tabindex=0><code>command &lt;&lt;EOF &gt; my_output_file.txt
+ mesg1
+ msg2
+ msg3
+ $var on $foo
+EOF
+</code></pre><p>或<strong>重定向并将其追加</strong>到名为 <code>my_output_file.txt</code> 的文件中：</p><pre tabindex=0><code>command &lt;&lt;EOF &gt;&gt; my_output_file.txt
+ mesg1
+ msg2
+ msg3
+ $var on $foo
+EOF
+</code></pre><h3 id=示例>示例</h3><p>以下脚本将所需内容写入名为 <code>/tmp/output.txt</code> 的文件中：</p><pre tabindex=0><code>#!/bin/bash
+OUT=/tmp/output.txt
+
+echo &#34;Starting my script...&#34;
+echo &#34;Doing something...&#34;
+
+cat &lt;&lt;EOF &gt;$OUT
+  Status of backup as on $(date)
+  Backing up files $HOME and /etc/
+EOF
+
+echo &#34;Starting backup using rsync...&#34;
+</code></pre><p>你可以使用<a href=https//www.cyberciti.biz/faq/linux-unix-appleosx-bsd-cat-command-examples/>cat命令</a>查看/tmp/output.txt文件：</p><pre tabindex=0><code>$ cat /tmp/output.txt
+</code></pre><p>示例输出：</p><pre tabindex=0><code> Status of backup as on Thu Nov 16 17:00:21 IST 2017
+ Backing up files /home/vivek and /etc/
+</code></pre><h3 id=禁用路径名参数变量扩展命令替换算术扩展>禁用路径名/参数/变量扩展、命令替换、算术扩展</h3><p>像 <code>$HOME</code> 这类变量和像 <code>$(date)</code> 这类命令在脚本中会被解释为替换。 要禁用它，请使用带有 <code>'EOF'</code> 这样带有单引号的形式，如下所示：</p><pre tabindex=0><code>#!/bin/bash
+OUT=/tmp/output.txt
+
+echo &#34;Starting my script...&#34;
+echo &#34;Doing something...&#34;
+# No parameter and variable expansion, command substitution, arithmetic expansion, or pathname expansion is performed on word.  
+# If any part of word is quoted, the delimiter  is  the  result  of  quote removal  on word, and the lines in the here-document 
+# are not expanded. So EOF is quoted as follows
+cat &lt;&lt;&#39;EOF&#39; &gt;$OUT
+  Status of backup as on $(date)
+  Backing up files $HOME and /etc/
+EOF
+
+echo &#34;Starting backup using rsync...&#34;
+</code></pre><p>你可以使用 <a href=https//www.cyberciti.biz/faq/linux-unix-appleosx-bsd-cat-command-examples/>cat 命令</a>查看 <code>/tmp/output.txt</code> 文件：</p><pre tabindex=0><code>$ cat /tmp/output.txt
+</code></pre><p>示例输出：</p><pre tabindex=0><code> Status of backup as on $(date)
+ Backing up files $HOME and /etc/
+</code></pre><h3 id=关于-tee-命令的使用>关于 tee 命令的使用</h3><p>语法是：</p><pre tabindex=0><code>tee /tmp/filename &lt;&lt;EOF &gt;/dev/null
+line 1
+line 2
+line 3
+$(cmd)
+$var on $foo
+EOF
+</code></pre><p>或者通过在单引号中引用 <code>EOF</code> 来禁用变量替换和命令替换：</p><pre tabindex=0><code>tee /tmp/filename &lt;&lt;&#39;EOF&#39; &gt;/dev/null
+line 1
+line 2
+line 3
+$(cmd)
+$var on $foo
+EOF
+</code></pre><p>这是我更新的脚本：</p><pre tabindex=0><code>#!/bin/bash
+OUT=/tmp/output.txt
+
+echo &#34;Starting my script...&#34;
+echo &#34;Doing something...&#34;
+
+tee $OUT &lt;&lt;EOF &gt;/dev/null
+  Status of backup as on $(date)
+  Backing up files $HOME and /etc/
+EOF
+
+echo &#34;Starting backup using rsync...&#34;
+</code></pre><h3 id=关于内存-here-文档的使用>关于内存 here 文档的使用</h3><p>这是我更新的脚本：</p><pre tabindex=0><code>#!/bin/bash
+OUT=/tmp/output.txt
+
+## in memory here docs 
+## thanks https://twitter.com/freebsdfrau
+exec 9&lt;&lt;EOF
+  Status of backup as on $(date)
+  Backing up files $HOME and /etc/
+EOF
+
+## continue
+echo &#34;Starting my script...&#34;
+echo &#34;Doing something...&#34;
+
+## do it
+cat &lt;&amp;9 &gt;$OUT
+
+echo &#34;Starting backup using rsync...&#34;
+</code></pre><hr><p>via: <a href=https://www.cyberciti.biz/faq/using-heredoc-rediection-in-bash-shell-script-to-write-to-file/>https://www.cyberciti.biz/faq/using-heredoc-rediection-in-bash-shell-script-to-write-to-file/</a></p><p>作者：<a href=https://www.cyberciti.biz>Vivek Gite</a> 译者：<a href=https://github.com/Flowsnow>Flowsnow</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/here/ rel=tag>here</a></li><li class=tags__item><a class="tags__link btn" href=/tags/bash/ rel=tag>bash</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

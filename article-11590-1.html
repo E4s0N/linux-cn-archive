@@ -1,0 +1,57 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何修复使用 Python ORM 工具 SQLAlchemy 时的常见陷阱 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何修复使用 Python ORM 工具 SQLAlchemy 时的常见陷阱"><meta property="og:description" content="在使用 SQLAlchemy 时，那些看似很小的选择可能对这种对象关系映射工具包的性能产生重要影响。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11590-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-11-19T09:32:35+00:00"><meta property="article:modified_time" content="2019-11-19T09:32:35+00:00"><meta itemprop=name content="如何修复使用 Python ORM 工具 SQLAlchemy 时的常见陷阱"><meta itemprop=description content="在使用 SQLAlchemy 时，那些看似很小的选择可能对这种对象关系映射工具包的性能产生重要影响。"><meta itemprop=datePublished content="2019-11-19T09:32:35+00:00"><meta itemprop=dateModified content="2019-11-19T09:32:35+00:00"><meta itemprop=wordCount content="275"><meta itemprop=keywords content="ORM,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何修复使用 Python ORM 工具 SQLAlchemy 时的常见陷阱</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-11-19T09:32:35Z>November 19, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>在使用 SQLAlchemy 时，那些看似很小的选择可能对这种对象关系映射工具包的性能产生重要影响。</p></blockquote><p><img src=/data/attachment/album/201911/19/093238t4z4zmrj736mzx2x.jpg alt="A python with a package." title="A python with a package."></p><p>对象关系映射 Object-relational mapping （<a href=https://en.wikipedia.org/wiki/Object-relational_mapping>ORM</a>）使应用程序开发人员的工作更轻松，在很大程度是因为它允许你使用你可能知道的语言（例如 Python）与数据库交互，而不是使用原始 SQL 语句查询。<a href=https://www.sqlalchemy.org/>SQLAlchemy</a> 是一个 Python ORM 工具包，它提供使用 Python 访问 SQL 数据库的功能。它是一个成熟的 ORM 工具，增加了模型关系、强大的查询构造范式、简单的序列化等优点。然而，它的易用性使得人们很容易忘记其背后发生了什么。使用 SQLAlchemy 时做出的看似很小的选择可能产生非常大的性能影响。</p><p>本文解释了开发人员在使用 SQLAlchemy 时遇到的一些最重要的性能问题，以及如何解决这些问题。</p><h3 id=只需要计数但检索整个结果集>只需要计数但检索整个结果集</h3><p>有时开发人员只需要一个结果计数，但是没有使用数据库计数功能，而是获取了所有结果，然后使用 Python 中的 <code>len</code> 完成计数。</p><pre tabindex=0><code>count = len(User.query.filter_by(acct_active=True).all())
+</code></pre><p>相反，使用 SQLAlchemy 的 <code>count</code> 方法将在服务器端执行计数，从而减少发送到客户端的数据。在前面的例子中调用 <code>all()</code> 也会导致模型对象的实例化，如果有很多数据，那么时间代价可能会非常昂贵。</p><p>除非还需要做其他的事情，否则只需使用 <code>count</code> 方法：</p><pre tabindex=0><code>count = User.query.filter_by(acct_active=True).count()
+</code></pre><h3 id=只需要几列时检索整个模型>只需要几列时检索整个模型</h3><p>在许多情况下，发出查询时只需要几列数据。SQLAlchemy 可以只获取你想要的列，而不是返回整个模型实例。这不仅减少了发送的数据量，还避免了实例化整个对象。使用列数据的元组而不是模型可以快得多。</p><pre tabindex=0><code>result = User.query.all()
+for user in result:
+    print(user.name, user.email)
+</code></pre><p>反之，使用 <code>with_entities</code> 方法只选择所需要的内容：</p><pre tabindex=0><code>result = User.query.with_entities(User.name, User.email).all()
+for (username, email) in result:
+    print(username, email)
+</code></pre><h3 id=每次循环都更新一个对象>每次循环都更新一个对象</h3><p>避免使用循环来单独更新集合。虽然数据库可以非常快地执行单个更新，但应用程序和数据库服务器之间的往返时间将快速累加。通常，在合理的情况下争取更少的查询。</p><pre tabindex=0><code>for user in users_to_update:
+  user.acct_active = True
+  db.session.add(user)
+</code></pre><p>改用批量更新方法：</p><pre tabindex=0><code>query = User.query.filter(user.id.in_([user.id for user in users_to_update]))
+query.update({&#34;acct_active&#34;: True}, synchronize_session=False)
+</code></pre><h3 id=触发级联删除>触发级联删除</h3><p>ORM 允许在模型关系上进行简单的配置，但是有一些微妙的行为可能会令人吃惊。大多数数据库通过外键和各种级联选项维护关系完整性。SQLAlchemy 允许你使用外键和级联选项定义模型，但是 ORM 具有自己的级联逻辑，可以取代数据库。</p><p>考虑以下模型：</p><pre tabindex=0><code>class Artist(Base):
+    __tablename__ = &#34;artist&#34;
+
+    id = Column(Integer, primary_key=True)
+    songs = relationship(&#34;Song&#34;, cascade=&#34;all, delete&#34;)
+
+
+class Song(Base):
+    __tablename__ = &#34;song&#34;
+
+    id = Column(Integer, primary_key=True)
+    artist_id = Column(Integer, ForeignKey(&#34;artist.id&#34;, ondelete=&#34;CASCADE&#34;))
+</code></pre><p>删除歌手将导致 ORM 在 <code>song</code> 表上发出 <code>delete</code> 查询，从而防止由于外键导致的删除操作。这种行为可能会成为复杂关系和大量记录的瓶颈。</p><p>请包含 <code>passive_deletes</code> 选项，以确保让数据库来管理关系。但是，请确保你的数据库具有此功能。例如，SQLite 默认情况下不管理外键。</p><pre tabindex=0><code>songs = relationship(&#34;Song&#34;, cascade  all, delete&#34;, passive_deletes=True)
+</code></pre><h3 id=当要使用贪婪加载时应使用延迟加载>当要使用贪婪加载时，应使用延迟加载</h3><p>延迟加载是 SQLAlchemy 处理关系的默认方法。从上一个例子构建来看，加载一个歌手时不会同时加载他或她的歌曲。这通常是一个好主意，但是如果总是需要加载某些关系，单独的查询可能会造成浪费。</p><p>如果允许以延迟方式加载关系，像 <a href=https://marshmallow.readthedocs.io/en/stable/>Marshmallow</a> 这样流行的序列化框架可以触发级联查询。</p><p>有几种方法可以控制此行为。最简单的方法是通过 relationship 函数本身。</p><pre tabindex=0><code>songs = relationship(&#34;Song&#34;, lazy=&#34;joined&#34;, cascade=&#34;all, delete&#34;)
+</code></pre><p>这将导致一个左连接被添加到任何歌手的查询中，因此，<code>songs</code> 集合将立即可用。尽管有更多数据返回给客户端，但往返次数可能会少得多。</p><p>SQLAlchemy 为无法采用这种综合方法的情况提供了更细粒度的控制，可以使用 <code>joinedload()</code> 函数在每个查询的基础上切换连接的加载。</p><pre tabindex=0><code>from sqlalchemy.orm import joinedload
+
+artists = Artist.query.options(joinedload(Artist.songs))
+print(artists.songs) # Does not incur a roundtrip to load
+</code></pre><h3 id=使用-orm-进行批量记录导入>使用 ORM 进行批量记录导入</h3><p>导入成千上万条记录时，构建完整模型实例的开销会成为主要瓶颈。想象一下，从一个文件中加载数千首歌曲记录，其中每首歌曲都先被转换为字典。</p><pre tabindex=0><code>for song in songs:
+    db.session.add(Song(`song))
+</code></pre><p>相反，绕过 ORM，只使用核心的 SQLAlchemy 参数绑定功能。</p><pre tabindex=0><code>batch = []
+insert_stmt = Song.__table__.insert()
+for song in songs:
+    if len(batch) &amp;gt; 1000:
+       db.session.execute(insert_stmt, batch)
+       batch.clear()
+    batch.append(song)
+if batch:
+    db.session.execute(insert_stmt, batch)
+</code></pre><p>请记住，此方法会自然而然地跳过你可能依赖的任何客户端 ORM 逻辑，例如基于 Python 的列默认值。尽管此方法比将对象加载为完整的模型实例要快，但是你的数据库可能具有更快的批量加载方法。例如，PostgreSQL 的 <code>COPY</code> 命令为加载大量记录提供了最佳性能。</p><h3 id=过早调用提交或刷新>过早调用提交或刷新</h3><p>在很多情况下，你需要将子记录与其父记录相关联，反之亦然。一种显然的方法是刷新会话，以便为有问题的记录分配一个 ID。</p><pre tabindex=0><code>artist = Artist(name=&#34;Bob Dylan&#34;)
+song = Song(title=&#34;Mr. Tambourine Man&#34;)
+
+db.session.add(artist)
+db.session.flush()
+
+song.artist_id = artist.id
+</code></pre><p>对于每个请求，多次提交或刷新通常是不必要的，也是不可取的。数据库刷新涉及强制在数据库服务器上进行磁盘写入，在大多数情况下，客户端将阻塞，直到服务器确认已写入数据为止。</p><p>SQLAlchemy 可以在幕后跟踪关系和管理相关键。</p><pre tabindex=0><code>artist = Artist(name=&#34;Bob Dylan&#34;)
+song = Song(title=&#34;Mr. Tambourine Man&#34;)
+
+artist.songs.append(song)
+</code></pre><h3 id=总结>总结</h3><p>我希望这一系列常见的陷阱可以帮助你避免这些问题，并使你的应用平稳运行。通常，在诊断性能问题时，测量是关键。大多数数据库都提供性能诊断功能，可以帮助你定位问题，例如 PostgreSQL 的 <code>pg_stat_statements</code> 模块。</p><hr><p>via: <a href=https://opensource.com/article/19/9/common-pitfalls-python>https://opensource.com/article/19/9/common-pitfalls-python</a></p><p>作者：<a href=https://opensource.com/users/zchtoddhttps://opensource.com/users/lauren-pritchetthttps://opensource.com/users/liranhaimovitchhttps://opensource.com/users/moshez>Zach Todd</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/orm/ rel=tag>ORM</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

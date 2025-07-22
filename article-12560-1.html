@@ -1,0 +1,76 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>把 Linux 上的文件列表和排序玩出花来 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="把 Linux 上的文件列表和排序玩出花来"><meta property="og:description" content="Linux 命令可以提供文件的详细信息，也可以自定义显示的文件列表，甚至可以深入到文件系统的目录中，只要你愿意看。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12560-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-08-28T21:38:37+00:00"><meta property="article:modified_time" content="2020-08-28T21:38:37+00:00"><meta itemprop=name content="把 Linux 上的文件列表和排序玩出花来"><meta itemprop=description content="Linux 命令可以提供文件的详细信息，也可以自定义显示的文件列表，甚至可以深入到文件系统的目录中，只要你愿意看。"><meta itemprop=datePublished content="2020-08-28T21:38:37+00:00"><meta itemprop=dateModified content="2020-08-28T21:38:37+00:00"><meta itemprop=wordCount content="490"><meta itemprop=keywords content="ls,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>把 Linux 上的文件列表和排序玩出花来</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-08-28T21:38:37Z>August 28, 2020</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202008/28/213742y8cxnbnjpopzd5j0.jpg alt></p><blockquote><p>Linux 命令可以提供文件的详细信息，也可以自定义显示的文件列表，甚至可以深入到文件系统的目录中，只要你愿意看。</p></blockquote><p>在 Linux 系统上，有许多方法可以列出文件并显示它们的信息。这篇文章回顾了一些提供文件细节的命令，并提供了自定义文件列表的选项，以满足你的需求。</p><p>大多数命令都会列出单个目录中的文件，而其他命令则可以深入到文件系统的目录中，只要你愿意看。</p><p>当然，最主要的文件列表命令是 <code>ls</code>。然而，这个命令有大量的选项，可以只查找和列出你想看的文件。另外，还有 <code>find</code> 可以帮助你进行非常具体的文件搜索。</p><h3 id=按名称列出文件>按名称列出文件</h3><p>最简单的方法是使用 <code>ls</code> 命令按名称列出文件。毕竟，按名称（字母数字顺序）列出文件是默认的。你可以选择 <code>ls</code>（无细节）或 <code>ls -l</code>（大量细节）来决定你看到什么。</p><pre tabindex=0><code>$ ls | head -6
+8pgs.pdf
+Aesthetics_Thank_You.pdf
+alien.pdf
+Annual_Meeting_Agenda-20190602.pdf
+bigfile.bz2
+bin
+$ ls -l | head -6
+-rw-rw-r--  1 shs     shs      10886 Mar 22  2019 8pgs.pdf
+-rw-rw-r--  1 shs     shs     284003 May 11  2019 Aesthetics_Thank_You.pdf
+-rw-rw-r--  1 shs     shs      38282 Jan 24  2019 alien.pdf
+-rw-rw-r--  1 shs     shs      97358 May 19  2019 Annual_Meeting_20190602.pdf
+-rw-rw-r--  1 shs     shs   18115234 Apr 16 17:36 bigfile.bz2
+drwxrwxr-x  4 shs     shs    8052736 Jul 10 13:17 bin
+</code></pre><p>如果你想一次查看一屏的列表，可以将 <code>ls</code> 的输出用管道送到 <code>more</code> 命令中。</p><h3 id=按相反的名字顺序排列文件>按相反的名字顺序排列文件</h3><p>要按名称反转文件列表，请添加 <code>-r</code>（ 反转 Reverse ）选项。这就像把正常的列表倒过来一样。</p><pre tabindex=0><code>$ ls -r
+$ ls -lr
+</code></pre><h3 id=按文件扩展名列出文件>按文件扩展名列出文件</h3><p><code>ls</code> 命令不会按内容分析文件类型，它只会处理文件名。不过，有一个命令选项可以按扩展名列出文件。如果你添加了 <code>-X</code> （ 扩展名 eXtension ）选项，<code>ls</code> 将在每个扩展名类别中按名称对文件进行排序。例如，它将首先列出没有扩展名的文件（按字母数字顺序），然后是扩展名为 <code>.1</code>、<code>.bz2</code>、<code>.c</code> 等的文件。</p><h3 id=只列出目录>只列出目录</h3><p>默认情况下，<code>ls</code> 命令将同时显示文件和目录。如果你想只列出目录，你可以使用 <code>-d</code>（ 目录 Directory ）选项。你会得到一个像这样的列表：</p><pre tabindex=0><code>$ ls -d */
+1/     backups/     modules/       projects/     templates/
+2/     html/        patches/       public/       videos/
+bin/   new/         private/       save/
+</code></pre><h3 id=按大小排列文件>按大小排列文件</h3><p>如果你想按大小顺序列出文件，请添加 <code>-S</code>（ 大小 Size ）选项。但请注意，这实际上不会显示文件的大小（以及其他文件的细节），除非你还添加 <code>-l</code>（ 长列表 Long listing ）选项。当按大小列出文件时，一般来说，看到命令在按你的要求做事情是很有帮助的。注意，默认情况下是先显示最大的文件。添加 <code>-r</code> 选项可以反过来（即 <code>ls -lSr</code>）。</p><pre tabindex=0><code>$ ls -lS
+total 959492
+-rw-rw-r--  1 shs   shs  357679381 Sep 19  2019 sav-linux-free-9.tgz
+-rw-rw-r--  1 shs   shs  103270400 Apr 16 17:38 bigfile
+-rw-rw-r--  1 shs   shs   79117862 Oct  5  2019 Nessus-8.7.1-ubuntu1110_amd64.deb
+</code></pre><h3 id=按属主列出文件>按属主列出文件</h3><p>如果你想按属主列出文件（例如，在一个共享目录中），你可以把 <code>ls</code> 命令的输出传给 <code>sort</code>，并通过添加 <code>-k3</code> 来按第三个字段排序，从而挑出属主一栏。</p><pre tabindex=0><code>$ ls -l | sort -k3 | more
+total 56
+-rw-rw-r-- 1 dory  shs      0 Aug 23 12:27 tasklist
+drwx------ 2 gdm   gdm   4096 Aug 21 17:12 tracker-extract-files.121
+srwxr-xr-x 1 root  root     0 Aug 21 17:12 ntf_listenerc0c6b8b4567
+drwxr-xr-x 2 root  root  4096 Aug 21 17:12 hsperfdata_root
+              ^
+              |
+</code></pre><p>事实上，你可以用这种方式对任何字段进行排序（例如，年份）。只是要注意，如果你要对一个数字字段进行排序，则要加上一个 <code>n</code>，如 <code>-k5n</code>，否则你将按字母数字顺序进行排序。这种排序技术对于文件内容的排序也很有用，而不仅仅是用于列出文件。</p><h3 id=按年份排列文件>按年份排列文件</h3><p>使用 <code>-t</code>（ 修改时间 Time modified ）选项按年份顺序列出文件 —— 它们的新旧程度。添加 <code>-r</code> 选项，让最近更新的文件在列表中最后显示。我使用这个别名来显示我最近更新的文件列表。</p><pre tabindex=0><code>$ alias recent=&#39;ls -ltr | tail -8&#39;
+</code></pre><p>请注意，文件的更改时间和修改时间是不同的。<code>-c</code>（ 更改时间 time Changed ）和 <code>-t</code>（修改时间）选项的结果并不总是相同。如果你改变了一个文件的权限，而没有改变其他内容，<code>-c</code> 会把这个文件放在 <code>ls</code> 输出的顶部，而 <code>-t</code> 则不会。如果你想知道其中的区别，可以看看 <code>stat</code> 命令的输出。</p><pre tabindex=0><code>$ stat ckacct
+  File: ckacct
+  Size: 200             Blocks: 8          IO Block: 4096   regular file
+Device: 801h/2049d      Inode: 829041      Links: 1
+Access: (0750/-rwxr-x---)  Uid: ( 1000/     shs)   Gid: ( 1000/     shs)
+Access: 2020-08-20 16:10:11.063015008 -0400
+Modify: 2020-08-17 07:26:34.579922297 -0400 &lt;== content changes
+Change: 2020-08-24 09:36:51.699775940 -0400 &lt;== content or permissions changes
+ Birth: -
+</code></pre><h3 id=按组别列出文件>按组别列出文件</h3><p>要按关联的组别对文件进行排序，你可以将一个长列表的输出传给 <code>sort</code> 命令，并告诉它在第 4 列进行排序。</p><pre tabindex=0><code>$ ls -l | sort -k4
+</code></pre><h3 id=按访问日期列出文件>按访问日期列出文件</h3><p>要按访问日期（最近访问的日期在前）列出文件，使用 <code>-ltu</code> 选项。<code>u</code> 强制“按访问日期”排列顺序。</p><pre tabindex=0><code>$ ls -ltu
+total 959500
+-rwxr-x---  1 shs     shs        200 Aug 24 09:42 ckacct  &lt;== most recently used
+-rw-rw-r--  1 shs     shs       1335 Aug 23 17:45 lte
+</code></pre><h3 id=单行列出多个文件>单行列出多个文件</h3><p>有时，精简的文件列表更适合手头的任务。<code>ls</code> 命令甚至有这方面的选项。为了在尽可能少的行上列出文件，你可以使用 <code>--format=comma</code> 来用逗号分隔文件名，就像这个命令一样：</p><pre tabindex=0><code>$ ls --format=comma
+1, 10, 11, 12, 124, 13, 14, 15, 16pgs-landscape.pdf, 16pgs.pdf, 17, 18, 19,
+192.168.0.4, 2, 20, 2018-12-23_OoS_2.pdf, 2018-12-23_OoS.pdf, 20190512_OoS.pdf,
+&#39;2019_HOHO_application working.pdf&#39; …
+</code></pre><p>喜欢用空格？使用 <code>--format=across</code> 代替。</p><pre tabindex=0><code>$ ls --format=across z*
+z              zip            zipfiles      zipfiles1.bat   zipfiles2.bat
+zipfiles3.bat  zipfiles4.bat  zipfiles.bat  zoom_amd64.deb  zoomap.pdf
+zoom-mtg
+</code></pre><h3 id=增加搜索的深度>增加搜索的深度</h3><p>虽然 <code>ls</code> 一般只列出单个目录中的文件，但你可以选择使用 <code>-R</code> 选项（ 递归 Recursively ）地列出文件，深入到整个目录的深处。</p><pre tabindex=0><code>$ ls -R zzzzz | grep -v &#34;^$&#34;
+zzzzz:
+zzzz
+zzzzz/zzzz:
+zzz
+zzzzz/zzzz/zzz:
+zz
+zzzzz/zzzz/zzz/zz:
+z
+zzzzz/zzzz/zzz/zz/z:
+sleeping
+</code></pre><p>另外，你也可以使用 <code>find</code> 命令，对深度进行限制或不限制。在这个命令中，我们指示 <code>find</code> 命令只在三个层次的目录中查找：</p><pre tabindex=0><code>$ find zzzzz -maxdepth 3
+zzzzz
+zzzzz/zzzz
+zzzzz/zzzz/zzz
+zzzzz/zzzz/zzz/zz
+</code></pre><h3 id=选择-ls-还是-find>选择 ls 还是 find</h3><p>当你需要列出符合具体要求的文件时，<code>find</code> 命令可能是比 <code>ls</code> 更好的工具。</p><p>与 <code>ls</code> 不同的是，<code>find</code> 命令会尽可能地深入查找，除非你限制它。它还有许多其他选项和一个 <code>-exec</code> 子命令，允许在找到你要找的文件后采取一些特定的行动。</p><h3 id=总结>总结</h3><p><code>ls</code> 命令有很多用于列出文件的选项。了解一下它们。你可能会发现一些你会喜欢的选项。</p><hr><p>via: <a href=https://www.networkworld.com/article/3572590/11-ways-to-list-and-sort-files-on-linux.html>https://www.networkworld.com/article/3572590/11-ways-to-list-and-sort-files-on-linux.html</a></p><p>作者：<a href=https://www.networkworld.com/author/Sandra-Henry_Stocker/>Sandra Henry-Stocker</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ls/ rel=tag>ls</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

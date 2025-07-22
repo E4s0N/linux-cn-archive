@@ -1,0 +1,59 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>一些被忽略的 Git 知识 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="一些被忽略的 Git 知识"><meta property="og:description" content="尽管我曾认为自己对 Git 非常了解，但像往常一样，当我尝试解释某事的时候，我又学到一些新东西。"><meta property="og:type" content="article"><meta property="og:url" content="/article-16316-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-10-25T12:23:24+00:00"><meta property="article:modified_time" content="2023-10-25T12:23:24+00:00"><meta itemprop=name content="一些被忽略的 Git 知识"><meta itemprop=description content="尽管我曾认为自己对 Git 非常了解，但像往常一样，当我尝试解释某事的时候，我又学到一些新东西。"><meta itemprop=datePublished content="2023-10-25T12:23:24+00:00"><meta itemprop=dateModified content="2023-10-25T12:23:24+00:00"><meta itemprop=wordCount content="367"><meta itemprop=keywords content="Git,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>一些被忽略的 Git 知识</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-10-25T12:23:24Z>October 25, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202310/25/122259mfu0uowyppuyfdyo.jpg alt></p><p>我一直在慢慢地撰写关于 Git 工作原理的文章。尽管我曾认为自己对 Git 非常了解，但像往常一样，当我尝试解释某事的时候，我又学到一些新东西。</p><p>现在回想起来，这些事情都不算太令人吃惊，但我以前并没有清楚地思考过它们。</p><p>事实是:</p><ul><li>“索引”、“暂存区” 和 <code>-cached</code> 是一回事</li><li>隐匿文件就是一堆提交</li><li>并非所有引用都是分支或标签</li><li>合并提交不是空的</li></ul><p>下面我们来详细了解这些内容。</p><h3 id=索引暂存区-和--cached-是一回事>“索引”、“暂存区” 和 <code>-cached</code> 是一回事</h3><p>当你运行 <code>git add file.txt</code>，然后运行 <code>git status</code>，你会看到类似以下的输出：</p><pre tabindex=0><code>$ git add content/post/2023-10-20-some-miscellaneous-git-facts.markdown
+$ git status
+Changes to be committed:
+    (use &#34;git restore --staged &lt;file&gt;...&#34; to unstage)
+    new file:   content/post/2023-10-20-some-miscellaneous-git-facts.markdown
+</code></pre><p>人们通常称这个过程为“暂存文件”或“将文件添加到暂存区”。</p><p>当你使用 <code>git add</code> 命令来暂存文件时，Git 在后台将文件添加到其对象数据库（在 <code>.git/objects</code> 目录下），并更新一个名为 <code>.git/index</code> 的文件以引用新添加的文件。</p><p>Git 中的这个“暂存区”事实上有 3 种不同的名称，但它们都指的是同一个东西（即 <code>.git/index</code> 文件）：</p><ul><li><code>git diff --cached</code></li><li><code>git diff --staged</code></li><li><code>.git/index</code> 文件</li></ul><p>我觉得我早该早点认识到这一点，但我之前并没有，所以在这里提醒一下。</p><h3 id=隐匿文件就是一堆提交>隐匿文件就是一堆提交</h3><p>当我运行 <code>git stash</code> 命令来保存更改时，我一直对这些更改究竟去了哪里感到有些困惑。事实上，当你运行 <code>git stash</code> 命令时，Git 会根据你的更改创建一些提交，并用一个名为 <code>stash</code> 的引用来标记它们（在 <code>.git/refs/stash</code> 目录下）。</p><p>让我们将此博客文章隐匿起来，然后查看 <code>stash</code> 引用的日志：</p><pre tabindex=0><code>$ git log stash --oneline
+6cb983fe (refs/stash) WIP on main: c6ee55ed wip
+2ff2c273 index on main: c6ee55ed wip
+... some more stuff
+</code></pre><p>现在我们可以查看提交 <code>2ff2c273</code> 以查看其包含的内容：</p><pre tabindex=0><code>$ git show 2ff2c273  --stat
+commit 2ff2c273357c94a0087104f776a8dd28ee467769
+Author: Julia Evans &lt;julia@jvns.ca&gt;
+Date:   Fri Oct 20 14:49:20 2023 -0400
+
+    index on main: c6ee55ed wip
+
+    content/post/2023-10-20-some-miscellaneous-git-facts.markdown | 40 ++++++++++++++++++++++++++++++++++++++++
+</code></pre><p>毫不意外，它包含了这篇博客文章。这很合理！</p><p>实际上，<code>git stash</code> 会创建两个独立的提交：一个是索引提交，另一个是你尚未暂存的改动提交。这让我感到很振奋，因为我一直在开发一款工具，用于快照和恢复 Git 仓库的状态（也许永远不会发布），而我提出的设计与 Git 的隐匿实现非常相似，所以我对自己的选择感到满意。</p><p>显然 <code>stash</code> 中的旧提交存储在 reflog 中。</p><h3 id=并非所有引用都是分支或标签>并非所有引用都是分支或标签</h3><p>Git 文档中经常泛泛地提到 “引用”，这使得我有时觉得很困惑。就个人而言，我在 Git 中处理 “引用” 的 99% 时间是指分支或 HEAD，而剩下的 1% 时间是指标签。事实上，我以前完全不知道任何不是分支、标签或 <code>HEAD</code> 的引用示例。</p><p>但现在我知道了一个例子—— <code>stash</code> 是一种引用，而它既不是分支也不是标签！所以这太酷啦！</p><p>以下是我博客的 Git 仓库中的所有引用（除了 <code>HEAD</code>）：</p><pre tabindex=0><code>$ find .git/refs -type f
+.git/refs/heads/main
+.git/refs/remotes/origin/HEAD
+.git/refs/remotes/origin/main
+.git/refs/stash
+</code></pre><p>人们在本帖回复中提到的其他一些参考资料：</p><ul><li><code>refs/notes/*</code>，来自 <a href=https://tylercipriani.com/blog/2022/11/19/git-notes-gits-coolest-most-unloved-feature/><code>git notes</code></a></li><li><code>refs/pull/123/head</code> 和 <code>refs/pull/123/head`` 用于 GitHub 拉取请求（可通过</code> git fetch origin refs/pull/123/merge` 获取）</li><li><code>refs/bisect/*</code>，来自 <code>git bisect</code></li></ul><h3 id=合并提交不是空的>合并提交不是空的</h3><p>这是一个示例 Git 仓库，其中我创建了两个分支 <code>x</code> 和 <code>y</code>，每个分支都有一个文件（<code>x.txt</code> 和 <code>y.txt</code>），然后将它们合并。让我们看看合并提交。</p><pre tabindex=0><code>$ git log --oneline
+96a8afb (HEAD -&gt; y) Merge branch &#39;x&#39; into y
+0931e45 y
+1d8bd2d (x) x
+</code></pre><p>如果我运行 <code>git show 96a8afb</code>，合并提交看起来是“空的”：没有差异！</p><pre tabindex=0><code>git show 96a8afb
+commit 96a8afbf776c2cebccf8ec0dba7c6c765ea5d987 (HEAD -&gt; y)
+Merge: 0931e45 1d8bd2d
+Author: Julia Evans &lt;julia@jvns.ca&gt;
+Date:   Fri Oct 20 14:07:00 2023 -0400
+
+    Merge branch &#39;x&#39; into y
+</code></pre><p>但是，如果我单独比较合并提交与其两个父提交之间的差异，你会发现当然<strong>有</strong>差异：</p><pre tabindex=0><code>$ git diff 0931e45 96a8afb   --stat
+    x.txt | 1 +
+    1 file changed, 1 insertion(+)
+$ git diff 1d8bd2d 96a8afb   --stat
+    y.txt | 1 +
+    1 file changed, 1 insertion(+)
+</code></pre><p>现在回想起来，合并提交并不是实际上“空的”（它们是仓库当前状态的快照，就像任何其他提交一样），这一点似乎很明显，只是我以前从未思考为什么它们看起来为空。</p><p>显然，这些合并差异为空的原因是合并差异只显示<strong>冲突</strong> —— 如果我创建一个带有合并冲突的仓库（一个分支在同一文件中添加了 <code>x</code>，而另一个分支添加了 <code>y</code>），然后查看我解决冲突的合并提交，它看起来会像这样：</p><pre tabindex=0><code>$ git show HEAD
+commit 3bfe8311afa4da867426c0bf6343420217486594
+Merge: 782b3d5 ac7046d
+Author: Julia Evans &lt;julia@jvns.ca&gt;
+Date:   Fri Oct 20 15:29:06 2023 -0400
+
+    Merge branch &#39;x&#39; into y
+
+diff --cc file.txt
+index 975fbec,587be6b..b680253
+--- a/file.txt
++++ b/file.txt
+@@@ -1,1 -1,1 +1,1 @@@
+- y
+    -x
+++z
+</code></pre><p>这似乎是在告诉我，一个分支添加了 <code>x</code>，另一个分支添加了 <code>y</code>，合并提交通过将 <code>z</code> 替代冲突解决了它。但在前面的示例中，没有冲突，所以 Git 并未显示任何差异。</p><p>（感谢 Jordi 告诉我合并差异的工作原理）</p><h3 id=先这样吧>先这样吧</h3><p>些写到这里吧，也许我将在学到更多 Git 知识时撰写另一篇关于 Git 的知识的博客文章。</p><p><em>（题图：MJ/03bfecc3-944e-47a0-a4fd-575293d2ba92）</em></p><hr><p>via: <a href=https://jvns.ca/blog/2023/10/20/some-miscellaneous-git-facts/>https://jvns.ca/blog/2023/10/20/some-miscellaneous-git-facts/</a></p><p>作者：<a href=https://jvns.ca/>Julia Evans</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/KaguyaQiang>KaguyaQiang</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/git/ rel=tag>Git</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

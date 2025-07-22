@@ -1,0 +1,72 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>ZOMBIES：我的软件开发和测试简便指南（一） - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="ZOMBIES：我的软件开发和测试简便指南（一）"><meta property="og:description" content="编程过程有时候就像一场与丧尸群之间的战斗。在这个系列文章中，我将带你了解怎样将 ZOMBIES 方法应用到实际工作中。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15808-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-05-13T13:52:10+00:00"><meta property="article:modified_time" content="2023-05-13T13:52:10+00:00"><meta itemprop=name content="ZOMBIES：我的软件开发和测试简便指南（一）"><meta itemprop=description content="编程过程有时候就像一场与丧尸群之间的战斗。在这个系列文章中，我将带你了解怎样将 ZOMBIES 方法应用到实际工作中。"><meta itemprop=datePublished content="2023-05-13T13:52:10+00:00"><meta itemprop=dateModified content="2023-05-13T13:52:10+00:00"><meta itemprop=wordCount content="341"><meta itemprop=keywords content="软件测试,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>ZOMBIES：我的软件开发和测试简便指南（一）</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-05-13T13:52:10Z>May 13, 2023</time></div></div></header><div class="content post__content clearfix"><blockquote><p>编程过程有时候就像一场与丧尸群之间的战斗。在这个系列文章中，我将带你了解怎样将 ZOMBIES 方法应用到实际工作中。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202305/13/135130gn78t5b5kippl5nu.jpg alt title="Gears above purple clouds"></p><p>很久以前，在我还是一个萌新程序员的时候，我们曾经被分配一大批工作。我们每个人都被分配了一个编程任务，然后回到自己的小隔间里噼里啪啦地敲键盘。我记得团队里的成员在自己的小隔间里一呆就是几个小时，为打造无缺陷的程序而奋斗。当时流行的思想是：能一次性做得越多，能力越强。</p><p>对于我来说，能够长时间编写或者修改代码而不用中途停下来检验这些代码是否有效，就像荣誉勋章一样。那个时候我们都认为停下来检验代码是否工作是能力不足的表现，菜鸟才这么干。一个“真正的开发者”应该能一口气构建起整个程序，中途不用停下来检查任何东西！</p><p>然而事与愿违，当我停止在开发过程中测试自己的代码之后，来自现实的检验狠狠地打了我的脸。我的代码要么无法通过编译，要么构建失败，要么无法运行，或者不能按预期处理数据。我不得不在绝望中挣扎着解决这些烦人的问题。</p><h3 id=避开丧尸群>避开丧尸群</h3><p>如果你觉得旧的工作方式听起来很混乱，那是因为它确实是这样的。我们一次性处理所有的任务，在问题堆里左砍右杀，结果只是引出更多的问题。着就像是跟一大群丧尸间的战斗。</p><p>如今我们已经学会了避免一次性做太多的事情。在最初听到一些专家推崇避免大批量地开发的好处时，我觉得这很反直觉，但我已经从过去的犯错中吸取了教训。我使用被 <a href=https://www.agilealliance.org/resources/speakers/james-grenning/>James Grenning</a> 称为 <strong>ZOMBIES</strong> 的方法来指导我的软件开发工作。</p><h3 id=zombies-方法来救援>ZOMBIES 方法来救援!</h3><p>ZOMBIES 表示以下首字母缩写：</p><ul><li><strong>Z</strong> – 最简场景（Zero）</li><li><strong>O</strong> – 单元素场景（One）</li><li><strong>M</strong> – 多元素场景（Many or more complex）</li><li><strong>B</strong> – 边界行为（Boundary behaviors）</li><li><strong>I</strong> – 接口定义（Interface definition）</li><li><strong>E</strong> – 处理特殊行为（Exercise exceptional behavior）</li><li><strong>S</strong> – 简单场景用简单的解决方案（Simple scenarios, simple solutions）</li></ul><p>我将在本系列文章中对它们进行分析讲解。</p><h3 id=最简场景>最简场景</h3><p>最简场景指可能出现的最简单的情况。</p><p>人们倾向于最开始的时候使用硬编码值，因为这是最简单的方式。通过在编码活动中使用硬编码值，可以快速构建出一个能即时反馈的解决方案。不需要几分钟，更不用几个小时，使用硬编码值让你能够马上与正在构建的系统进行交互。如果你喜欢这个交互，就朝这个方向继续做下去。如果你发现不喜欢这种交互，你可以很容易抛弃它，根本没有什么可损失。</p><p>本系列文章将以构建一个简易的购物系统的后端 API 为例进行介绍。该服务提供的 API 允许用户创建购物筐、向购物筐添加商品、从购物筐移除商品、计算商品总价。</p><p>首先，创建项目的基本结构（将购物程序的代码和测试代码分别放到 <code>app</code> 和 <code>tests</code> 目录下）。我们的例子中使用开源的 <a href=https://xunit.net/>xUnit</a> 测试框架。</p><p>现在撸起你的袖子，在实践中了解最简场景吧！</p><pre tabindex=0><code>[Fact]
+public void NewlyCreatedBasketHas0Items() {    
+    var expectedNoOfItems = 0;
+    var actualNoOfItems = 1;
+    Assert.Equal(expectedNoOfItems, actualNoOfItems);
+}
+</code></pre><p>这是一个伪测试，它测试的是硬编码值。新创建的购物筐是空的，所以购物筐中预期的商品数是 0。通过比较期望值和实际值是否相等，这个预期被表示成一个测试（或者称为断言）。</p><p>运行该测试，输出结果如下：</p><pre tabindex=0><code>Starting test execution, please wait...
+
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.57] tests.UnitTest1.NewlyCreatedBasketHas0Items [FAIL]
+  X tests.UnitTest1.NewlyCreatedBasketHas0Items [4ms]
+  Error Message:
+   Assert.Equal() Failure
+Expected: 0
+Actual: 1
+[...]
+</code></pre><p>这个测试显然无法通过：期望商品数是 0，但是实际值被硬编码为了 1。</p><p>当然，你可以马上把硬编码的值从 1 改成 0，这样测试就能通过了：</p><pre tabindex=0><code>[Fact]
+public void NewlyCreatedBasketHas0Items() {
+    var expectedNoOfItems = 0;
+    var actualNoOfItems = 0;
+    Assert.Equal(expectedNoOfItems, actualNoOfItems);
+}
+</code></pre><p>与预想的一样，运行测试，测试通过：</p><pre tabindex=0><code>Starting test execution, please wait...
+
+A total of 1 test files matched the specified pattern.
+
+Test Run Successful.
+Total tests: 1
+     Passed: 1
+ Total time: 1.0950 Seconds
+</code></pre><p>你也许会认为执行一个被强迫失败的测试完全没有意义，但是不管一个测试多么简单，确保它的可失败性是绝对有必要的。只有这样才能够保证如果在后续工作中不小心破坏了程序的处理逻辑时该测试能够给你相应的警告。</p><p>现在停止伪造数据，将硬编码的值替换成从 API 中获取的值。我们已经构造了一个能够可靠地失败的测试，它期望一个空的购物筐中有 0 个商品，现在是时候编写一些应用程序代码了。</p><p>就跟常见的软件建模活动一样，我们先从构造一个简单的接口开始。在 <code>app</code> 目录下新建文件 <code>IShoppingAPI.cs</code>（习惯上接口名一般以大写 I 开头）。在该接口中声明一个名为 <code>NoOfItems()</code> 的方法，它以 <code>int</code> 类型返回商品的数量。下面是接口的代码：</p><pre tabindex=0><code>using System;
+
+namespace app {    
+    public interface IShoppingAPI {
+        int NoOfItems();
+    }
+}
+</code></pre><p>当然这个接口什么事也做不了，在你需要实现它。在 <code>app</code> 目录下创建另一个文件 <code>ShoppingAPI</code>。在其中将 <code>ShoppingAPI</code> 声明为一个实现了 <code>IShoppingAPI</code> 的公有类。在类中定义方法 <code>NoOfItems</code> 返回整数 1：</p><pre tabindex=0><code>using System;
+
+namespace app {
+    public class ShoppingAPI : IShoppingAPI {
+        public int NoOfItems() {
+            return 1;
+        }
+    }
+}
+</code></pre><p>从上面代码中你发现自己又在通过返回硬编码值 1 的方式来伪造代码逻辑。现阶段这是一件好事，因为你需要保持一切超级无敌简单。现在还不是仔细构想如何实现购物筐的处理逻辑时候。这些工作后续再做！到目前为止，你只是通过构建最简场景来检验自己是否满意现在的设计。</p><p>为了确定这一点，将硬编码值换成这个 API 在运行中收到请求时应该返回的值。你需要通过 <code>using app;</code> 声明来告诉测试你使用的购物逻辑代码在哪里。</p><p>接下来，你需要 实例化 instantiate <code>IShoppingAPI</code> 接口：</p><pre tabindex=0><code>IShoppingAPI shoppingAPI = new ShoppingAPI();
+</code></pre><p>这个实例用来发送请求并接收返回的值。</p><p>现在，代码变成了这样：</p><pre tabindex=0><code>using System;
+using Xunit;
+using app;
+
+namespace tests {
+    public class ShoppingAPITests {
+        IShoppingAPI shoppingAPI = [new][3] ShoppingAPI();
+ 
+        [Fact]        
+        public void NewlyCreatedBasketHas0Items() {
+            var expectedNoOfItems = 0;
+            var actualNoOfItems = shoppingAPI.NoOfItems();
+            Assert.Equal(expectedNoOfItems, actualNoOfItems);
+        }
+    }
+}
+</code></pre><p>显然执行这个测试的结果是失败，因为你硬编码了一个错误的返回值（期望值是 0，但是返回的是 1）。</p><p>同样的，你也可以通过将硬编码的值从 1 改成 0 来让测试通过，但是现在做这个是在浪费时间。现在设计的接口已经跟测试关联上了，你剩下的职责就是编写代码实现预期的行为逻辑。</p><p>在编写应用程序代码时，你得决定用来表示购物筐得数据结构。为了保持设计的简单，尽量选择 C# 中表示集合的最简单类型。第一个想到的就是 <code>ArrayList</code>。它非常适合目前的使用场景——可以保存不定个数的元素，并且易于遍历访问。</p><p>因为 <code>ArrayList</code> 是 <code>System.Collections</code> 包的一部分，在你的代码中需要声明：</p><pre tabindex=0><code>using System.Collections;
+</code></pre><p>然后 <code>basket</code> 的声明就变成这样了：</p><pre tabindex=0><code>ArrayList basket = new ArrayList();
+</code></pre><p>最后将 <code>NoOfItems()</code> 中的因编码值换成实际的代码：</p><pre tabindex=0><code>public int NoOfItems() {
+    return basket.Count;
+}
+</code></pre><p>这次测试能够通过了，因为最初购物筐是空的，<code>basket.Count</code> 返回 0。</p><p>这也是你的第一个最简场景测试要做的事情。</p><h3 id=更多案例>更多案例</h3><p>目前的课后作业是处理一个丧尸，也就是第 0 个丧尸。在下一篇文章中，我将带你了解单元素场景和多元素场景。不要错过哦！</p><p><em>（题图：MJ/7917bc47-5325-4c0f-a2dd-4e444f57a46c）</em></p><hr><p>via: <a href=https://opensource.com/article/21/2/development-guide>https://opensource.com/article/21/2/development-guide</a></p><p>作者：<a href=https://opensource.com/users/alex-bunardzic>Alex Bunardzic</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/toknow-gh>toknow-gh</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BD%AF%E4%BB%B6%E6%B5%8B%E8%AF%95/ rel=tag>软件测试</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

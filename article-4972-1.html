@@ -1,0 +1,56 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 iSCSI Target 服务器中使用LVM创建和设置LUN（二） - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 iSCSI Target 服务器中使用LVM创建和设置LUN（二）"><meta property="og:description" content="LUN是逻辑单元号，它与iSCSI存储服务器共享。iSCSI 目标器通过TCP/IP网络共享它的物理驱动器给发起程序（initiator）。这些来自一个大型存储（SAN：Storage Area Network）的驱动器集合称作LUN。在真实环境中LUN是在LVM中定义的，因为它可以按需扩展。  在目标器中使用 LVM 创建 LUN 为什么使用LUN？ LUN用于存储，SAN存储大多数由LUN的集群来组成存储池，LUN由目标器的几块物理驱动器组成。我们可以使用LUN作为系统物理驱动器来安装操作系统，LUN可以用在集群、虚拟服务器、SAN中。在虚拟服务器中使用LUN的主要用途是作为操作系统的存储"><meta property="og:type" content="article"><meta property="og:url" content="/article-4972-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-03-03T11:04:00+00:00"><meta property="article:modified_time" content="2015-03-03T11:04:00+00:00"><meta itemprop=name content="在 iSCSI Target 服务器中使用LVM创建和设置LUN（二）"><meta itemprop=description content="LUN是逻辑单元号，它与iSCSI存储服务器共享。iSCSI 目标器通过TCP/IP网络共享它的物理驱动器给发起程序（initiator）。这些来自一个大型存储（SAN：Storage Area Network）的驱动器集合称作LUN。在真实环境中LUN是在LVM中定义的，因为它可以按需扩展。  在目标器中使用 LVM 创建 LUN 为什么使用LUN？ LUN用于存储，SAN存储大多数由LUN的集群来组成存储池，LUN由目标器的几块物理驱动器组成。我们可以使用LUN作为系统物理驱动器来安装操作系统，LUN可以用在集群、虚拟服务器、SAN中。在虚拟服务器中使用LUN的主要用途是作为操作系统的存储"><meta itemprop=datePublished content="2015-03-03T11:04:00+00:00"><meta itemprop=dateModified content="2015-03-03T11:04:00+00:00"><meta itemprop=wordCount content="346"><meta itemprop=keywords content="iSCSI,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 iSCSI Target 服务器中使用LVM创建和设置LUN（二）</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-03-03T11:04:00Z>March 03, 2015</time></div></div></header><div class="content post__content clearfix"><p>LUN是逻辑单元号，它与iSCSI存储服务器共享。iSCSI 目标器通过TCP/IP网络共享它的物理驱动器给发起程序（initiator）。这些来自一个大型存储（SAN：Storage Area Network）的驱动器集合称作LUN。在真实环境中LUN是在LVM中定义的，因为它可以按需扩展。</p><p><img src=/data/attachment/album/201503/02/150705ykpxc1w66gawck8w.png alt="Create LUNS using LVM in Target Server"></p><p><em>在目标器中使用 LVM 创建 LUN</em></p><h3 id=为什么使用lun>为什么使用LUN？</h3><p>LUN用于存储，SAN存储大多数由LUN的集群来组成存储池，LUN由目标器的几块物理驱动器组成。我们可以使用LUN作为系统物理驱动器来安装操作系统，LUN可以用在集群、虚拟服务器、SAN中。在虚拟服务器中使用LUN的主要用途是作为操作系统的存储。LUN的性能和可靠性根据在创建目标存储服务器时所使用的驱动器决定。</p><h3 id=前置阅读>前置阅读</h3><p>要了解创建iSCSI 目标器，点击下面的链接。</p><ul><li><a href=http://linux.cn/article-4971-1.html>使用iSCSI Target创建集中式安全存储（一）</a></li></ul><h4 id=主服务器设置>主服务器设置</h4><p>系统信息和网络设置部分与前文的iSCSI 目标器相同 - 我们在相同的服务器上定义LUN。</p><ul><li>操作系统 – CentOS 6.5 (Final)</li><li>iSCSI 目标器 IP – 192.168.0.200</li><li>使用的端口 : TCP 860, 3260</li><li>配置文件 : /etc/tgt/targets.conf</li></ul><h3 id=在iscsi-目标器使用lvm创建lun>在iSCSI 目标器使用LVM创建LUN</h3><p>首先，用<strong>fdisk -l</strong>命令找出驱动器的列表，这会列出系统中所有分区的列表。</p><pre tabindex=0><code># fdisk -l
+</code></pre><p>上面的命令只会给出基本系统的驱动器信息。为了得到存储设备的信息，使用下面的命令来得到存储设备的列表。</p><pre tabindex=0><code># fdisk -l /dev/vda &amp;&amp; fdisk -l /dev/sda
+</code></pre><p><img src=/data/attachment/album/201503/02/150707zzgy6hz8dy4pq99g.jpg alt="List Storage Drives"></p><p><em>列出存储设备</em></p><p><strong>注意</strong>：这里<strong>vda</strong>是虚拟机硬盘，因为我使用的是虚拟机来用于演示，<strong>/dev/sda</strong> 是额外加入的存储。</p><h3 id=第一步-创建用于lun的lvm驱动器>第一步： 创建用于LUN的LVM驱动器</h3><p>我们使用**/dev/sda**驱动器来创建LVM。</p><pre tabindex=0><code># fdisk -l /dev/sda
+</code></pre><p><img src=/data/attachment/album/201503/02/150707zxt686bu6gg6zm78.jpg alt="List LVM Drive"></p><p><em>列出LVM驱动器</em></p><p>现在让我们使用如下fdisk命令列出驱动器分区。</p><pre tabindex=0><code># fdisk -cu /dev/sda
+</code></pre><ul><li>选项 ‘<strong>-c</strong>’ 关闭DOS兼容模式。</li><li>选项 ‘<strong>-u</strong>’ 用于列出分区表时给出扇区而不是柱面的大小。</li></ul><p>使用<strong>n</strong>创建新的分区。</p><pre tabindex=0><code>Command (m for help): n
+</code></pre><p>使用<strong>p</strong>创建主分区。</p><pre tabindex=0><code>Command action
+   e   extended
+   p   primary partition (1-4)
+</code></pre><p>给我们创建的分区一个分区号。</p><pre tabindex=0><code>Partition number (1-4): 1
+</code></pre><p>到这里，我们就要设置LVM驱动器了。因此，我们需要使用默认的设置来使用整个驱动器。</p><pre tabindex=0><code>First sector (2048-37748735, default 2048): 
+Using default value 2048
+Last sector, +sectors or +size{K,M,G} (2048-37748735, default 37748735): 
+Using default value 37748735
+</code></pre><p>选择分区的类型，这里我们要设置LVM，因此使用<strong>8e</strong>。使用<strong>l</strong>列出所有的类型。</p><pre tabindex=0><code>Command (m for help): t
+</code></pre><p>选择想要改变类型的分区。</p><pre tabindex=0><code>Selected partition 1
+Hex code (type L to list codes): 8e
+Changed system type of partition 1 to 8e (Linux LVM)
+</code></pre><p>在改变完类型之后，通过打印（<strong>p</strong>）选项来列出分区表。</p><pre tabindex=0><code>Command (m for help): p
+
+Disk /dev/sda: 19.3 GB, 19327352832 bytes
+255 heads, 63 sectors/track, 2349 cylinders, total 37748736 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x9fae99c8
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1            2048    37748735    18873344   8e  Linux LVM
+</code></pre><p>使用<strong>w</strong>写入设置并退出fdisk工具，重启系统使设置生效。</p><p>作为参考，我下面附上了截图来给你在创建LVM驱动器时一个明确的指导。</p><p><img src=/data/attachment/album/201503/02/150709odaevea9oavofppf.jpg alt="Create LVM Partition"></p><p><em>创建LVM分区</em></p><p>系统重启后，使用fdisk命令列出分区表。</p><pre tabindex=0><code># fdisk -l /dev/sda
+</code></pre><p><img src=/data/attachment/album/201503/02/150709zc1x0e238kxc3fsz.jpg alt="Verify LVM Partition"></p><p><em>验证LVM分区</em></p><h3 id=第二步-为lun创建逻辑卷>第二步： 为LUN创建逻辑卷</h3><p>现在我们使用‘pvcreate’命令创建物理卷。</p><pre tabindex=0><code># pvcreate /dev/sda1
+</code></pre><p>用iSCSI的名字创建卷组来区分这个卷组。</p><pre tabindex=0><code># vgcreate vg_iscsi /dev/sda1
+</code></pre><p>这里我定义了4个逻辑卷，因此在我的iSCSI target上就会有4个LUN。</p><pre tabindex=0><code># lvcreate -L 4G -n lv_iscsi vg_iscsi
+# lvcreate -L 4G -n lv_iscsi-1 vg_iscsi
+# lvcreate -L 4G -n lv_iscsi-2 vg_iscsi
+# lvcreate -L 4G -n lv_iscsi-3 vg_iscsi
+</code></pre><p>列出物理卷、卷组和逻辑卷确定。</p><pre tabindex=0><code># pvs &amp;&amp; vgs &amp;&amp; lvs
+# lvs
+</code></pre><p>为了更好地理解上面的命令，我在下面包含了截图作为参考。</p><p><img src=/data/attachment/album/201503/02/150711o7jh7p3qxi7cn3d3.jpg alt="Creating LVM Logical Volumes"></p><p><em>创建LVM逻辑卷</em></p><p><img src=/data/attachment/album/201503/02/150711iaoi6iprc4cuahuc.jpg alt="Verify LVM Logical Volumes"></p><p><em>验证LVM逻辑卷</em></p><h3 id=第三步-在目标器中定义lun>第三步: 在目标器中定义LUN</h3><p>我们已经创建了逻辑卷并准备使用LUN，现在我们在目标器配置中定义LUN，只有这样做它才能用在客户机中（发起程序）。</p><p>用你选择的编辑器打开位于‘/etc/tgt/targets.conf’的目标器配置文件。</p><pre tabindex=0><code># vim /etc/tgt/targets.conf
+</code></pre><p>追加下面的target配置文件中的定义。保存并关闭文件。</p><pre tabindex=0><code>&lt;target iqn.2014-07.com.tecmint:tgt1&gt;
+       backing-store /dev/vg_iscsi/lv_iscsi
+&lt;/target&gt;
+&lt;target iqn.2014-07.com.tecmint:tgt1&gt;
+       backing-store /dev/vg_iscsi/lv_iscsi-1
+&lt;/target&gt;
+&lt;target iqn.2014-07.com.tecmint:tgt1&gt;
+       backing-store /dev/vg_iscsi/lv_iscsi-2
+&lt;/target&gt;
+&lt;target iqn.2014-07.com.tecmint:tgt1&gt;
+       backing-store /dev/vg_iscsi/lv_iscsi-3
+&lt;/target
+</code></pre><p><img src=/data/attachment/album/201503/02/150712oszgor8gnwf2ys22.jpg alt="Configure LUNs in Target Server"></p><p><em>在target中配置LUN</em></p><p>上图的解释：</p><ol><li>iSCSI 采取限定名 (iqn.2014-07.com.tecmint:tgt1).</li><li>名称随便你</li><li>用于确定目标名， 这是这台服务器中的第一个目标</li><li>LVM共享特定的LUN。</li></ol><p>接下来使用下面的命令重载<strong>tgd</strong>服务配置。</p><pre tabindex=0><code># /etc/init.d/tgtd reload
+</code></pre><p><img src=/data/attachment/album/201503/02/150713pswssdkzj67j9yk6.jpg alt="Reload Configuration"></p><p><em>重载配置</em></p><p>接下来使用下面的命令验证可用的LUN。</p><pre tabindex=0><code># tgtadm --mode target --op show
+</code></pre><p><img src=/data/attachment/album/201503/02/150715pezn3zl2kkhrjkpr.jpg alt="List Available LUNs"></p><p><em>列出可用LUN</em></p><p><img src=/data/attachment/album/201503/02/150716mzwcnnbs4jxj6b4s.jpg alt="LUNs Information"></p><p><em>LUN信息</em></p><p>上面的命令会列出可用LUN的下面这些信息</p><ol><li>iSCSI 限定名</li><li>iSCSI 已经准备好</li><li>默认LUN 0被控制器所保留</li><li>LUN 1是我们定义的目标器</li><li>这里我为每个LUN都定义了4GB</li><li>在线： 是的，这就是可以使用的LUN</li></ol><p>现在我们已经使用LVM为目标器定义了LUN，这可扩展并且支持很多特性，如快照。我们将会在第三部分了解如何用目标器授权，并且本地挂载远程存储。</p><hr><p>via: <a href=http://www.tecmint.com/create-luns-using-lvm-in-iscsi-target/>http://www.tecmint.com/create-luns-using-lvm-in-iscsi-target/</a></p><p>作者：<a href=http://www.tecmint.com/author/babinlonston/>Babin Lonston</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/iscsi/ rel=tag>iSCSI</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

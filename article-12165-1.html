@@ -1,0 +1,85 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Linux 上检查网卡信息 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Linux 上检查网卡信息"><meta property="og:description" content="有时出于各种原因，你可能需要配置额外的网络接口。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12165-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-04-29T21:48:47+00:00"><meta property="article:modified_time" content="2020-04-29T21:48:47+00:00"><meta itemprop=name content="如何在 Linux 上检查网卡信息"><meta itemprop=description content="有时出于各种原因，你可能需要配置额外的网络接口。"><meta itemprop=datePublished content="2020-04-29T21:48:47+00:00"><meta itemprop=dateModified content="2020-04-29T21:48:47+00:00"><meta itemprop=wordCount content="348"><meta itemprop=keywords content="网卡,ip,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Linux 上检查网卡信息</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-04-29T21:48:47Z>April 29, 2020</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202004/29/214835m1ms3n00s6qbcycz.jpg alt></p><p>默认情况下，在设置服务器时你会配置主网络接口。这是每个人所做的构建工作的一部分。有时出于各种原因，你可能需要配置额外的网络接口。</p><p>这可以是通过网络 绑定 bonding / 协作 teaming 来提供高可用性，也可以是用于应用需求或备份的单独接口。</p><p>为此，你需要知道计算机有多少接口以及它们的速度来配置它们。</p><p>有许多命令可检查可用的网络接口，但是我们仅使用 <code>ip</code> 命令。以后，我们会另外写一篇文章来全部介绍这些工具。</p><p>在本教程中，我们将向你显示可用网络网卡（NIC）信息，例如接口名称、关联的 IP 地址、MAC 地址和接口速度。</p><h3 id=什么是-ip-命令>什么是 ip 命令</h3><p><a href=https://www.2daygeek.com/ip-command-configure-network-interface-usage-linux/>ip 命令</a> 类似于 <code>ifconfig</code>, 用于分配静态 IP 地址、路由和默认网关等。</p><pre tabindex=0><code># ip a
+
+1: lo: mtu 65536 qdisc noqueue state UNKNOWN
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eth0: mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether fa:16:3e:a0:7d:5a brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.101/24 brd 192.168.1.101 scope global eth0
+    inet6 fe80::f816:3eff:fea0:7d5a/64 scope link
+       valid_lft forever preferred_lft forever
+</code></pre><h3 id=什么是-ethtool-命令>什么是 ethtool 命令</h3><p><code>ethtool</code> 用于查询或控制网络驱动或硬件设置。</p><pre tabindex=0><code># ethtool eth0
+</code></pre><h3 id=1如何在-linux-上使用-ip-命令检查可用的网络接口>1）如何在 Linux 上使用 ip 命令检查可用的网络接口</h3><p>在不带任何参数的情况下运行 <code>ip</code> 命令时，它会提供大量信息，但是，如果仅需要可用的网络接口，请使用以下定制的 <code>ip</code> 命令。</p><pre tabindex=0><code># ip a |awk &#39;/state UP/{print $2}&#39;
+
+eth0:
+eth1:
+</code></pre><h3 id=2如何在-linux-上使用-ip-命令检查网络接口的-ip-地址>2）如何在 Linux 上使用 ip 命令检查网络接口的 IP 地址</h3><p>如果只想查看 IP 地址分配给了哪个接口，请使用以下定制的 <code>ip</code> 命令。</p><pre tabindex=0><code># ip -o a show | cut -d &#39; &#39; -f 2,7
+或
+ip a |grep -i inet | awk &#39;{print $7, $2}&#39;
+
+lo 127.0.0.1/8
+192.168.1.101/24
+192.168.1.102/24
+</code></pre><h3 id=3如何在-linux-上使用-ip-命令检查网卡的-mac-地址>3）如何在 Linux 上使用 ip 命令检查网卡的 MAC 地址</h3><p>如果只想查看网络接口名称和相应的 MAC 地址，请使用以下格式。</p><p>检查特定的网络接口的 MAC 地址：</p><pre tabindex=0><code># ip link show dev eth0 |awk &#39;/link/{print $2}&#39;
+00:00:00:55:43:5c
+</code></pre><p>检查所有网络接口的 MAC 地址，创建该脚本：</p><pre tabindex=0><code># vi /opt/scripts/mac-addresses.sh
+
+#!/bin/sh
+ip a |awk &#39;/state UP/{print $2}&#39; | sed &#39;s/://&#39; | while read output;
+do
+  echo $output:
+  ethtool -P $output
+done
+</code></pre><p>运行该脚本获取多个网络接口的 MAC 地址：</p><pre tabindex=0><code># sh /opt/scripts/mac-addresses.sh
+
+eth0:
+Permanent address: 00:00:00:55:43:5c
+eth1:
+Permanent address: 00:00:00:55:43:5d
+</code></pre><h3 id=4如何在-linux-上使用-ethtool-命令检查网络接口速度>4）如何在 Linux 上使用 ethtool 命令检查网络接口速度</h3><p>如果要在 Linux 上检查网络接口速度，请使用 <code>ethtool</code> 命令。</p><p>检查特定网络接口的速度：</p><pre tabindex=0><code># ethtool eth0 |grep &#34;Speed:&#34;
+
+Speed: 10000Mb/s
+</code></pre><p>检查所有网络接口速度，创建该脚本：</p><pre tabindex=0><code># vi /opt/scripts/port-speed.sh
+
+#!/bin/sh
+ip a |awk &#39;/state UP/{print $2}&#39; | sed &#39;s/://&#39; | while read output;
+do
+  echo $output:
+  ethtool $output |grep &#34;Speed:&#34;
+done
+</code></pre><p>运行该脚本获取多个网络接口速度：</p><pre tabindex=0><code># sh /opt/scripts/port-speed.sh
+
+eth0:
+Speed: 10000Mb/s
+eth1:
+Speed: 10000Mb/s
+</code></pre><h3 id=5验证网卡信息的-shell-脚本>5）验证网卡信息的 Shell 脚本</h3><p>通过此 shell 脚本你可以收集上述所有信息，例如网络接口名称、网络接口的 IP 地址，网络接口的 MAC 地址以及网络接口的速度。创建该脚本：</p><pre tabindex=0><code># vi /opt/scripts/nic-info.sh
+
+#!/bin/sh
+hostname
+echo &#34;-------------&#34;
+for iname in $(ip a |awk &#39;/state UP/{print $2}&#39;)
+do
+  echo &#34;$iname&#34;
+  ip a | grep -A2 $iname | awk &#39;/inet/{print $2}&#39;
+  ip a | grep -A2 $iname | awk &#39;/link/{print $2}&#39;
+  ethtool $iname |grep &#34;Speed:&#34;
+done
+</code></pre><p>运行该脚本检查网卡信息：</p><pre tabindex=0><code># sh /opt/scripts/nic-info.sh
+
+vps.2daygeek.com
+----------------
+eth0:
+192.168.1.101/24
+00:00:00:55:43:5c
+Speed: 10000Mb/s
+eth1:
+192.168.1.102/24
+00:00:00:55:43:5d
+Speed: 10000Mb/s
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/linux-unix-check-network-interfaces-names-nic-speed-ip-mac-address/>https://www.2daygeek.com/linux-unix-check-network-interfaces-names-nic-speed-ip-mac-address/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%BD%91%E5%8D%A1/ rel=tag>网卡</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ip/ rel=tag>ip</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

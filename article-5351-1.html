@@ -1,0 +1,67 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>安装完最小化 RHEL/CentOS 7 后需要做的 30 件事情（三） - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="安装完最小化 RHEL/CentOS 7 后需要做的 30 件事情（三）"><meta property="og:description" content="
+安装 Apache Tomcat Tomcat 是由 Apache 设计的用来运行 Java HTTP web 服务器的 servlet 容器。按照下面的方法安装 tomcat，但需要指出的是安装 tomcat 之前必须先安装 Java。 # yum install tomcat   安装 Apache Tomcat 安装完 tomcat 之后，启动 tomcat 服务。 # systemctl start tomcat  查看 tomcat 版本。 # /usr/sbin/tomcat version   查看 tomcat 版本 允许 tomcat 服务和默认端口(8080) 通过防火墙并重新加载设置。 # firewall-cmd zone=public add-port=8080/tcp &ndash;permanent # firewall-cmd reload  现在该保护 tomcat
+
+"><meta property="og:type" content="article"><meta property="og:url" content="/article-5351-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-04-29T08:02:00+00:00"><meta property="article:modified_time" content="2015-04-29T08:02:00+00:00"><meta itemprop=name content="安装完最小化 RHEL/CentOS 7 后需要做的 30 件事情（三）"><meta itemprop=description content="
+安装 Apache Tomcat Tomcat 是由 Apache 设计的用来运行 Java HTTP web 服务器的 servlet 容器。按照下面的方法安装 tomcat，但需要指出的是安装 tomcat 之前必须先安装 Java。 # yum install tomcat   安装 Apache Tomcat 安装完 tomcat 之后，启动 tomcat 服务。 # systemctl start tomcat  查看 tomcat 版本。 # /usr/sbin/tomcat version   查看 tomcat 版本 允许 tomcat 服务和默认端口(8080) 通过防火墙并重新加载设置。 # firewall-cmd zone=public add-port=8080/tcp &ndash;permanent # firewall-cmd reload  现在该保护 tomcat
+
+"><meta itemprop=datePublished content="2015-04-29T08:02:00+00:00"><meta itemprop=dateModified content="2015-04-29T08:02:00+00:00"><meta itemprop=wordCount content="403"><meta itemprop=keywords content="CentOS 7,RHEL 7,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>安装完最小化 RHEL/CentOS 7 后需要做的 30 件事情（三）</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-04-29T08:02:00Z>April 29, 2015</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201504/27/151948jz881a61rj66up58.png alt></p><h3 id=12-安装-apache-tomcat>12. 安装 Apache Tomcat</h3><p>Tomcat 是由 Apache 设计的用来运行 Java HTTP web 服务器的 servlet 容器。按照下面的方法安装 tomcat，但需要指出的是安装 tomcat 之前必须先安装 Java。</p><pre tabindex=0><code># yum install tomcat
+</code></pre><p><img src=/data/attachment/album/201504/28/210634gbaidi24e2zctcee.jpg alt="安装 Apache Tomcat"></p><p><em>安装 Apache Tomcat</em></p><p>安装完 tomcat 之后，启动 tomcat 服务。</p><pre tabindex=0><code># systemctl start tomcat
+</code></pre><p>查看 tomcat 版本。</p><pre tabindex=0><code># /usr/sbin/tomcat version
+</code></pre><p><img src=/data/attachment/album/201504/28/210635ojtqbbw8lr4qgqu4.jpg alt="查看 tomcat 版本"></p><p><em>查看 tomcat 版本</em></p><p>允许 tomcat 服务和默认端口(8080) 通过防火墙并重新加载设置。</p><pre tabindex=0><code># firewall-cmd –zone=public –add-port=8080/tcp --permanent
+# firewall-cmd –reload
+</code></pre><p>现在该保护 tomcat 服务器了，添加一个用于访问和管理的用户和密码。我们需要编辑文件 ‘/etc/tomcat/tomcat-users.xml’。查看类似下面的部分：</p><pre tabindex=0><code>&lt;tomcat-users&gt;
+....
+&lt;/tomcat-users&gt;
+
+
+ &lt;role rolename=&#34;manager-gui&#34;/&gt;
+ &lt;role rolename=&#34;manager-script&#34;/&gt;
+ &lt;role rolename=&#34;manager-jmx&#34;/&gt;
+ &lt;role rolename=&#34;manager-status&#34;/&gt;
+ &lt;role rolename=&#34;admin-gui&#34;/&gt;
+ &lt;role rolename=&#34;admin-script&#34;/&gt;
+ &lt;user username=&#34;tecmint&#34; password=&#34;tecmint&#34; roles=&#34;manager-gui,manager-script,manager-jmx,manager-status,admin-gui,admin-script&#34;/&gt;
+&lt;/tomcat-users&gt;
+</code></pre><p><img src=/data/attachment/album/201504/28/210637utcxicmabiiie7jj.jpg alt="保护 Tomcat"></p><p><em>保护 Tomcat</em></p><p>我们在这里添加用户 “tecmint” 到 tomcat 的管理员/管理组中，使用 “tecmint” 作为密码。先停止再启动 tomcat 服务以使更改生效，并添加 tomcat 服务到随系统启动。</p><pre tabindex=0><code># systemctl stop tomcat
+# systemctl start tomcat
+# systemctl enable tomcat.service
+</code></pre><p>请阅读: <a href=http://www.tecmint.com/install-apache-tomcat-in-centos/>在 RHEL/CentOS 7.0/6.x 中安装和配置 Apache Tomcat 8.0.9</a></p><h3 id=13-安装-nmap-监视开放端口>13. 安装 Nmap 监视开放端口</h3><p>Nmap 网络映射器用来分析网络，通过运行它可以发现网络的映射关系。nmap 并没有默认安装，你需要从库中安装它。</p><pre tabindex=0><code># yum install nmap
+</code></pre><p><img src=/data/attachment/album/201504/28/210640x5c1k5xk5rsosev2.jpg alt="安装 Nmap 监视工具"></p><p><em>安装 Nmap 监视工具</em></p><p>列出主机中所有的开放端口以及对应使用它们的服务。</p><pre tabindex=0><code># namp 127.0.01
+</code></pre><p>!监视开放端口](<a href=http://www.tecmint.com/wp-content/uploads/2015/04/Monitor-Open-Ports.jpeg>http://www.tecmint.com/wp-content/uploads/2015/04/Monitor-Open-Ports.jpeg</a>)</p><p><em>监视开放端口</em></p><p>你也可以使用 firewall-cmd 列出所有端口，但我发现 nmap 更有用。</p><pre tabindex=0><code># firewall-cmd –list-ports
+</code></pre><p><img src=/data/attachment/album/201504/28/210640jbgqeysretwtsc86.jpg alt=在防火墙中检查开放端口></p><p><em>在防火墙中检查开放端口</em></p><p>请阅读: <a href=http://linux.cn/article-2561-1.html>Nmap 监视开放端口的 29 个有用命令</a></p><h3 id=14-配置-firewalld>14. 配置 FirewallD</h3><p>firewalld 是动态管理服务器的防火墙服务。在 CentOS 7 中 Firewalld 移除了 iptables 服务。在红帽企业版 Linux 和它的衍生版中默认安装了 Firewalld。如果有 iptables 的话为了使每个更改生效需要清空所有旧的规则然后创建新规则。</p><p>然而用firewalld，不需要清空并重新创建新规则就可以实现更改生效。</p><p>检查 Firewalld 是否运行。</p><pre tabindex=0><code># systemctl status firewalld
+或
+# firewall-cmd –state
+</code></pre><p><img src=/data/attachment/album/201504/28/210642o0l0y8ad8nqpnp1w.jpg alt="检查 Firewalld 状态"></p><p><em>检查 Firewalld 状态</em></p><p>获取所有的区域列表。</p><pre tabindex=0><code># firewall-cmd --get-zones
+</code></pre><p><img src=/data/attachment/album/201504/28/210643q5p3vuwxq5tqvqwy.jpg alt="检查 Firewalld 区域"></p><p><em>检查 Firewalld 区域</em></p><p>在切换之前先获取区域的详细信息。</p><pre tabindex=0><code># firewall-cmd --zone=work --list-all
+</code></pre><p><img src=/data/attachment/album/201504/28/210643jc1h5hmqr0gdhxqx.jpg alt=检查区域详情></p><p><em>检查区域详情</em></p><p>获取默认区域。</p><pre tabindex=0><code># firewall-cmd --get-default-zone
+</code></pre><p><img src=/data/attachment/album/201504/28/210644asrtt4u0nsd44tsy.jpg alt="Firewalld 默认区域"></p><p><em>Firewalld 默认区域</em></p><p>切换到另一个区域，比如 ‘work’。</p><pre tabindex=0><code># firewall-cmd --set-default-zone=work
+</code></pre><p><img src=/data/attachment/album/201504/28/210644bvlvqi8ivp3j2ayu.jpg alt="切换 Firewalld 区域"></p><p><em>切换 Firewalld 区域</em></p><p>列出区域中的所有服务。</p><pre tabindex=0><code># firewall-cmd --list-services
+</code></pre><p><img src=/data/attachment/album/201504/28/210645onkyzsntakkkgpyq.jpg alt="列出 Firewalld 区域的服务"></p><p><em>列出 Firewalld 区域的服务</em></p><p>添加临时服务，比如 http，然后重载 firewalld。</p><pre tabindex=0><code># firewall-cmd  --add-service=http
+# firewall-cmd –reload
+</code></pre><p><img src=/data/attachment/album/201504/28/210648bhwhhzr33m6qls4a.jpg alt="添加临时 http 服务"></p><p><em>添加临时 http 服务</em></p><p>添加永久服务，比如 http，然后重载 firewalld。</p><pre tabindex=0><code># firewall-cmd --add-service=http --permanent
+# firewall-cmd --reload
+</code></pre><p><img src=/data/attachment/album/201504/28/210648bhwhhzr33m6qls4a.jpg alt="添加永久 http 服务"></p><p><em>添加永久 http 服务</em></p><p>删除临时服务，比如 http。</p><pre tabindex=0><code># firewall-cmd  --remove-service=http
+# firewall-cmd --reload
+</code></pre><p><img src=/data/attachment/album/201504/28/210648rpczhpt2h5ggc8c8.jpg alt="删除临时 Firewalld 服务"></p><p><em>删除临时 Firewalld 服务</em></p><p>删除永久服务，比如 http</p><pre tabindex=0><code># firewall-cmd --zone=work --remove-service=http --permanent
+# firewall-cmd --reload
+</code></pre><p><img src=/data/attachment/album/201504/28/210649nizhfelajep8vq9p.jpg alt=删除永久服务></p><p><em>删除永久服务</em></p><p>允许一个临时端口(比如 331)。</p><pre tabindex=0><code># firewall-cmd --add-port=331/tcp
+# firewall-cmd --reload
+</code></pre><p><img src=/data/attachment/album/201504/28/210650e5958dc8f8rz5t5f.jpg alt="打开临时 Firewalld 端口"></p><p><em>打开临时端口</em></p><p>允许一个永久端口(比如 331)。</p><pre tabindex=0><code># firewall-cmd --add-port=331/tcp --permanent
+# firewall-cmd --reload
+</code></pre><p><img src=/data/attachment/album/201504/28/210651quuctarriqcbdk7k.jpg alt="打开永久 Firewalld 端口"></p><p><em>打开永久端口</em></p><p>阻塞/移除临时端口(比如 331)。</p><pre tabindex=0><code># firewall-cmd --remove-port=331/tcp
+# firewall-cmd --reload
+</code></pre><p><img src=/data/attachment/album/201504/28/210651f8568w675pqz5dff.jpg alt="移除 Firewalld 临时端口"></p><p><em>移除临时端口</em></p><p>阻塞/移除永久端口(比如 331)。</p><pre tabindex=0><code># firewall-cmd --remove-port=331/tcp --permanent
+# firewall-cmd --reload
+</code></pre><p><img src=/data/attachment/album/201504/28/210652ayw066hrcnw97e66.jpg alt="移除 Firewalld 永久端口"></p><p><em>移除永久端口</em></p><p>停用 firewalld。</p><pre tabindex=0><code># systemctl stop firewalld
+# systemctl disable firewalld
+# firewall-cmd --state
+</code></pre><p><img src=/data/attachment/album/201504/28/210653nxsyq2dl1xezv7ox.jpg alt="在 CentOS 7 中停用 Firewalld"></p><p><em>停用 Firewalld 服务</em></p><p>启用 firewalld。</p><pre tabindex=0><code># systemctl enable firewalld
+# systemctl start firewalld
+# firewall-cmd --state
+</code></pre><p><img src=/data/attachment/album/201504/28/210655zg0f4x4ib0xsij0u.jpg alt="在 CentOS 7 中取消 Firewalld"></p><p><em>启用 Firewalld</em></p><ul><li><a href=http://linux.cn/article-4425-1.html>如何在 RHEL/CentOS 7 中配置 ‘Firewalld’</a></li><li><a href=http://www.tecmint.com/firewalld-rules-for-centos-7/>配置和管理 Firewalld 的有用 ‘Firewalld’ 规则</a></li></ul><h3 id=15-安装-wget>15. 安装 Wget</h3><p>Wget 是从 web 服务器获取(下载)内容的命令行工具。它是你使用 wget 命令获取 web 内容或下载任何文件必须要有的重要工具。</p><pre tabindex=0><code># yum install wget
+</code></pre><p><img src=/data/attachment/album/201504/28/210656rpt5aul17635z4uu.png alt="安装 Wget 工具"></p><p><em>安装 Wget 工具</em></p><p>关于在终端中如何使用 wget 命令下载文件的方法和实际例子，请阅读<a href=http://linux.cn/article-4129-1.html>10 个 Wget 命令例子</a>。</p><h3 id=16-安装-telnet-客户端>16. 安装 Telnet 客户端</h3><p>Telnet 是通过 TCP/IP 允许用户登录到相同网络上的另一台计算机的网络协议。和远程计算机的连接建立后，它就成为了一个允许你在自己的计算机上用所有提供给你的权限和远程主机交互的虚拟终端。（LCTT 译注：除非你真的需要，不要安装 telnet 服务，也不要用 telnet 客户端连接另外一个 telnet 服务，因为 telnet 是明文传输的。不过如下用 telnet 客户端检测另外一个服务的端口是否工作是常用的操作。）</p><p>Telnet 对于检查远程计算机或主机的监听端口也非常有用。</p><pre tabindex=0><code># yum install telnet
+# telnet google.com 80
+</code></pre><p><img src=/data/attachment/album/201504/28/210656it715tcmwkkwos4w.png alt="Telnet 端口检查"></p><p><em>Telnet 端口检查</em></p><hr><p>via: <a href=http://www.tecmint.com/things-to-do-after-minimal-rhel-centos-7-installation/3/>http://www.tecmint.com/things-to-do-after-minimal-rhel-centos-7-installation/3/</a></p><p>作者：<a href=http://www.tecmint.com/author/avishek/>Avishek Kumar</a> 译者：<a href=https://github.com/ictlyh>ictlyh</a> 校对：<a href=https://github.com/%E6%A0%A1%E5%AF%B9%E8%80%85ID>校对者ID</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/centos-7/ rel=tag>CentOS 7</a></li><li class=tags__item><a class="tags__link btn" href=/tags/rhel-7/ rel=tag>RHEL 7</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

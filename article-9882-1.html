@@ -1,0 +1,445 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>想学习区块链？那就用 Python 构建一个 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="想学习区块链？那就用 Python 构建一个"><meta property="og:description" content="了解区块链是如何工作的最快的方法是构建一个。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9882-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-07-30T13:04:02+00:00"><meta property="article:modified_time" content="2018-07-30T13:04:02+00:00"><meta itemprop=name content="想学习区块链？那就用 Python 构建一个"><meta itemprop=description content="了解区块链是如何工作的最快的方法是构建一个。"><meta itemprop=datePublished content="2018-07-30T13:04:02+00:00"><meta itemprop=dateModified content="2018-07-30T13:04:02+00:00"><meta itemprop=wordCount content="1556"><meta itemprop=keywords content="区块链,Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>想学习区块链？那就用 Python 构建一个</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-07-30T13:04:02Z>July 30, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>了解区块链是如何工作的最快的方法是构建一个。</p></blockquote><p><img src=/data/attachment/album/201807/30/130406cfee68me8pzkemkz.jpg alt></p><p>你看到这篇文章是因为和我一样，对加密货币的大热而感到兴奋。并且想知道区块链是如何工作的 —— 它们背后的技术基础是什么。</p><p>但是理解区块链并不容易 —— 至少对我来说是这样。我徜徉在各种难懂的视频中，并且因为示例太少而陷入深深的挫败感中。</p><p>我喜欢在实践中学习。这会使得我在代码层面上处理主要问题，从而可以让我坚持到底。如果你也是这么做的，在本指南结束的时候，你将拥有一个功能正常的区块链，并且实实在在地理解了它的工作原理。</p><h3 id=开始之前->开始之前 …</h3><p>记住，区块链是一个 <em>不可更改的、有序的</em> 记录（被称为区块）的链。它们可以包括 交易 transaction 、文件或者任何你希望的真实数据。最重要的是它们是通过使用<em>哈希</em>链接到一起的。</p><p>如果你不知道哈希是什么，<a href=https://learncryptography.com/hash-functions/what-are-hash-functions>这里有解释</a>。</p><p><em><strong>本指南的目标读者是谁？</strong></em> 你应该能轻松地读、写一些基本的 Python 代码，并能够理解 HTTP 请求是如何工作的，因为我们讨论的区块链将基于 HTTP。</p><p><em><strong>我需要做什么？</strong></em> 确保安装了 <a href=https://www.python.org/downloads/>Python 3.6</a>+（以及 <code>pip</code>），还需要去安装 Flask 和非常好用的 Requests 库：</p><pre tabindex=0><code>pip install Flask==0.12.2 requests==2.18.4 
+</code></pre><p>当然，你也需要一个 HTTP 客户端，像 <a href=https://www.getpostman.com>Postman</a> 或者 cURL。哪个都行。</p><p><em><strong>最终的代码在哪里可以找到？</strong></em> 源代码在 <a href=https://github.com/dvf/blockchain>这里</a>。</p><h3 id=第-1-步构建一个区块链>第 1 步：构建一个区块链</h3><p>打开你喜欢的文本编辑器或者 IDE，我个人喜欢 <a href=https://www.jetbrains.com/pycharm/>PyCharm</a>。创建一个名为 <code>blockchain.py</code> 的新文件。我将仅使用一个文件，如果你看晕了，可以去参考 <a href=https://github.com/dvf/blockchain>源代码</a>。</p><h4 id=描述一个区块链>描述一个区块链</h4><p>我们将创建一个 <code>Blockchain</code> 类，它的构造函数将去初始化一个空列表（去存储我们的区块链），以及另一个列表去保存交易。下面是我们的类规划：</p><pre tabindex=0><code>class Blockchain(object):
+    def __init__(self):
+        self.chain = []
+        self.current_transactions = []
+
+    def new_block(self):
+        # Creates a new Block and adds it to the chain
+        pass
+
+    def new_transaction(self):
+        # Adds a new transaction to the list of transactions
+        pass
+
+    @staticmethod
+    def hash(block):
+        # Hashes a Block
+        pass
+
+    @property
+    def last_block(self):
+        # Returns the last Block in the chain
+        pass
+</code></pre><p><em>我们的 Blockchain 类的原型</em></p><p>我们的 <code>Blockchain</code> 类负责管理链。它将存储交易并且有一些为链中增加新区块的辅助性质的方法。现在我们开始去充实一些类的方法。</p><h4 id=区块是什么样子的>区块是什么样子的？</h4><p>每个区块有一个索引、一个时间戳（Unix 时间）、一个交易的列表、一个证明（后面会详细解释）、以及前一个区块的哈希。</p><p>单个区块的示例应该是下面的样子：</p><pre tabindex=0><code>block = {
+    &#39;index&#39;: 1,
+    &#39;timestamp&#39;: 1506057125.900785,
+    &#39;transactions&#39;: [
+        {
+            &#39;sender&#39;: &#34;8527147fe1f5426f9dd545de4b27ee00&#34;,
+            &#39;recipient&#39;: &#34;a77f5cdfa2934df3954a5c7c7da5df1f&#34;,
+            &#39;amount&#39;: 5,
+        }
+    ],
+    &#39;proof&#39;: 324984774000,
+    &#39;previous_hash&#39;: &#34;2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824&#34;
+}
+</code></pre><p><em>我们的区块链中的块示例</em></p><p>此刻，链的概念应该非常明显 —— 每个新区块包含它自身的信息和前一个区域的哈希。<strong>这一点非常重要，因为这就是区块链不可更改的原因</strong>：如果攻击者修改了一个早期的区块，那么<strong>所有</strong>的后续区块将包含错误的哈希。</p><p><em>这样做有意义吗？如果没有，就让时间来埋葬它吧 —— 这就是区块链背后的核心思想。</em></p><h4 id=添加交易到一个区块>添加交易到一个区块</h4><p>我们将需要一种区块中添加交易的方式。我们的 <code>new_transaction()</code> 就是做这个的，它非常简单明了：</p><pre tabindex=0><code>class Blockchain(object):
+    ...
+
+    def new_transaction(self, sender, recipient, amount):
+        &#34;&#34;&#34;
+        Creates a new transaction to go into the next mined Block
+        :param sender: &lt;str&gt; Address of the Sender
+        :param recipient: &lt;str&gt; Address of the Recipient
+        :param amount: &lt;int&gt; Amount
+        :return: &lt;int&gt; The index of the Block that will hold this transaction
+        &#34;&#34;&#34;
+
+        self.current_transactions.append({
+            &#39;sender&#39;: sender,
+            &#39;recipient&#39;: recipient,
+            &#39;amount&#39;: amount,
+        })
+
+        return self.last_block[&#39;index&#39;] + 1
+</code></pre><p>在 <code>new_transaction()</code> 运行后将在列表中添加一个交易，它返回添加交易后的那个区块的索引 —— 那个区块接下来将被挖矿。提交交易的用户后面会用到这些。</p><h4 id=创建新区块>创建新区块</h4><p>当我们的 <code>Blockchain</code> 被实例化后，我们需要一个创世区块（一个没有祖先的区块）来播种它。我们也需要去添加一些 “证明” 到创世区块，它是挖矿（工作量证明 PoW）的成果。我们在后面将讨论更多挖矿的内容。</p><p>除了在我们的构造函数中创建创世区块之外，我们还需要写一些方法，如 <code>new_block()</code>、<code>new_transaction()</code> 以及 <code>hash()</code>：</p><pre tabindex=0><code>import hashlib
+import json
+from time import time
+
+
+class Blockchain(object):
+    def __init__(self):
+        self.current_transactions = []
+        self.chain = []
+
+        # Create the genesis block
+        self.new_block(previous_hash=1, proof=100)
+
+    def new_block(self, proof, previous_hash=None):
+        &#34;&#34;&#34;
+        Create a new Block in the Blockchain
+        :param proof: &lt;int&gt; The proof given by the Proof of Work algorithm
+        :param previous_hash: (Optional) &lt;str&gt; Hash of previous Block
+        :return: &lt;dict&gt; New Block
+        &#34;&#34;&#34;
+
+        block = {
+            &#39;index&#39;: len(self.chain) + 1,
+            &#39;timestamp&#39;: time(),
+            &#39;transactions&#39;: self.current_transactions,
+            &#39;proof&#39;: proof,
+            &#39;previous_hash&#39;: previous_hash or self.hash(self.chain[-1]),
+        }
+
+        # Reset the current list of transactions
+        self.current_transactions = []
+
+        self.chain.append(block)
+        return block
+
+    def new_transaction(self, sender, recipient, amount):
+        &#34;&#34;&#34;
+        Creates a new transaction to go into the next mined Block
+        :param sender: &lt;str&gt; Address of the Sender
+        :param recipient: &lt;str&gt; Address of the Recipient
+        :param amount: &lt;int&gt; Amount
+        :return: &lt;int&gt; The index of the Block that will hold this transaction
+        &#34;&#34;&#34;
+        self.current_transactions.append({
+            &#39;sender&#39;: sender,
+            &#39;recipient&#39;: recipient,
+            &#39;amount&#39;: amount,
+        })
+
+        return self.last_block[&#39;index&#39;] + 1
+
+    @property
+    def last_block(self):
+        return self.chain[-1]
+
+    @staticmethod
+    def hash(block):
+        &#34;&#34;&#34;
+        Creates a SHA-256 hash of a Block
+        :param block: &lt;dict&gt; Block
+        :return: &lt;str&gt;
+        &#34;&#34;&#34;
+
+        # We must make sure that the Dictionary is Ordered, or we&#39;ll have inconsistent hashes
+        block_string = json.dumps(block, sort_keys=True).encode()
+        return hashlib.sha256(block_string).hexdigest()
+</code></pre><p>上面的内容简单明了 —— 我添加了一些注释和文档字符串，以使代码清晰可读。到此为止，表示我们的区块链基本上要完成了。但是，你肯定想知道新区块是如何被创建、打造或者挖矿的。</p><h4 id=理解工作量证明>理解工作量证明</h4><p>工作量证明 Proof of Work （PoW）算法是在区块链上创建或者挖出新区块的方法。PoW 的目标是去撞出一个能够解决问题的数字。这个数字必须满足“找到它很困难但是验证它很容易”的条件 —— 网络上的任何人都可以计算它。这就是 PoW 背后的核心思想。</p><p>我们来看一个非常简单的示例来帮助你了解它。</p><p>我们来解决一个问题，一些整数 <code>x</code> 乘以另外一个整数 <code>y</code> 的结果的哈希值必须以 <code>0</code> 结束。因此，<code>hash(x * y) = ac23dc…0</code>。为简单起见，我们先把 <code>x = 5</code> 固定下来。在 Python 中的实现如下：</p><pre tabindex=0><code>from hashlib import sha256
+
+x = 5
+y = 0  # We don&#39;t know what y should be yet...
+
+while sha256(f&#39;{x*y}&#39;.encode()).hexdigest()[-1] != &#34;0&#34;:
+    y += 1
+
+print(f&#39;The solution is y = {y}&#39;)
+</code></pre><p>在这里的答案是 <code>y = 21</code>。因为它产生的哈希值是以 0 结尾的：</p><pre tabindex=0><code>hash(5 * 21) = 1253e9373e...5e3600155e860
+</code></pre><p>在比特币中，工作量证明算法被称之为 <a href=https://en.wikipedia.org/wiki/Hashcash>Hashcash</a>。与我们上面的例子没有太大的差别。这就是矿工们进行竞赛以决定谁来创建新块的算法。一般来说，其难度取决于在一个字符串中所查找的字符数量。然后矿工会因其做出的求解而得到奖励的币——在一个交易当中。</p><p>网络上的任何人都可以很容易地去核验它的答案。</p><h4 id=实现基本的-pow>实现基本的 PoW</h4><p>为我们的区块链来实现一个简单的算法。我们的规则与上面的示例类似：</p><blockquote><p>找出一个数字 <code>p</code>，它与前一个区块的答案进行哈希运算得到一个哈希值，这个哈希值的前四位必须是由 <code>0</code> 组成。</p></blockquote><pre tabindex=0><code>import hashlib
+import json
+
+from time import time
+from uuid import uuid4
+
+
+class Blockchain(object):
+    ...
+
+    def proof_of_work(self, last_proof):
+        &#34;&#34;&#34;
+        Simple Proof of Work Algorithm:
+         - Find a number p&#39; such that hash(pp&#39;) contains leading 4 zeroes, where p is the previous p&#39;
+         - p is the previous proof, and p&#39; is the new proof
+        :param last_proof: &lt;int&gt;
+        :return: &lt;int&gt;
+        &#34;&#34;&#34;
+
+        proof = 0
+        while self.valid_proof(last_proof, proof) is False:
+            proof += 1
+
+        return proof
+
+    @staticmethod
+    def valid_proof(last_proof, proof):
+        &#34;&#34;&#34;
+        Validates the Proof: Does hash(last_proof, proof) contain 4 leading zeroes?
+        :param last_proof: &lt;int&gt; Previous Proof
+        :param proof: &lt;int&gt; Current Proof
+        :return: &lt;bool&gt; True if correct, False if not.
+        &#34;&#34;&#34;
+
+        guess = f&#39;{last_proof}{proof}&#39;.encode()
+        guess_hash = hashlib.sha256(guess).hexdigest()
+        return guess_hash[:4] == &#34;0000&#34;
+</code></pre><p>为了调整算法的难度，我们可以修改前导 0 的数量。但是 4 个零已经足够难了。你会发现，将前导 0 的数量每增加一，那么找到正确答案所需要的时间难度将大幅增加。</p><p>我们的类基本完成了，现在我们开始去使用 HTTP 请求与它交互。</p><h3 id=第-2-步以-api-方式去访问我们的区块链>第 2 步：以 API 方式去访问我们的区块链</h3><p>我们将使用 Python Flask 框架。它是个微框架，使用它去做端点到 Python 函数的映射很容易。这样我们可以使用 HTTP 请求基于 web 来与我们的区块链对话。</p><p>我们将创建三个方法：</p><ul><li><code>/transactions/new</code> 在一个区块上创建一个新交易</li><li><code>/mine</code> 告诉我们的服务器去挖矿一个新区块</li><li><code>/chain</code> 返回完整的区块链</li></ul><h4 id=配置-flask>配置 Flask</h4><p>我们的 “服务器” 将在我们的区块链网络中产生一个单个的节点。我们来创建一些样板代码：</p><pre tabindex=0><code>import hashlib
+import json
+from textwrap import dedent
+from time import time
+from uuid import uuid4
+
+from flask import Flask
+
+
+class Blockchain(object):
+    ...
+
+
+# Instantiate our Node
+app = Flask(__name__)
+
+# Generate a globally unique address for this node
+node_identifier = str(uuid4()).replace(&#39;-&#39;, &#39;&#39;)
+
+# Instantiate the Blockchain
+blockchain = Blockchain()
+
+
+@app.route(&#39;/mine&#39;, methods=[&#39;GET&#39;])
+def mine():
+    return &#34;We&#39;ll mine a new Block&#34;
+
+@app.route(&#39;/transactions/new&#39;, methods=[&#39;POST&#39;])
+def new_transaction():
+    return &#34;We&#39;ll add a new transaction&#34;
+
+@app.route(&#39;/chain&#39;, methods=[&#39;GET&#39;])
+def full_chain():
+    response = {
+        &#39;chain&#39;: blockchain.chain,
+        &#39;length&#39;: len(blockchain.chain),
+    }
+    return jsonify(response), 200
+
+if __name__ == &#39;__main__&#39;:
+    app.run(host=&#39;0.0.0.0&#39;, port=5000)
+</code></pre><p>对上面的代码，我们做添加一些详细的解释：</p><ul><li>Line 15：实例化我们的节点。更多关于 Flask 的知识读 <a href=http://flask.pocoo.org/docs/0.12/quickstart/#a-minimal-application>这里</a>。</li><li>Line 18：为我们的节点创建一个随机的名字。</li><li>Line 21：实例化我们的区块链类。</li><li>Line 24–26：创建 <code>/mine</code> 端点，这是一个 GET 请求。</li><li>Line 28–30：创建 <code>/transactions/new</code> 端点，这是一个 POST 请求，因为我们要发送数据给它。</li><li>Line 32–38：创建 <code>/chain</code> 端点，它返回全部区块链。</li><li>Line 40–41：在 5000 端口上运行服务器。</li></ul><h4 id=交易端点>交易端点</h4><p>这就是对一个交易的请求，它是用户发送给服务器的：</p><pre tabindex=0><code>{
+ &#34;sender&#34;: &#34;my address&#34;,
+ &#34;recipient&#34;: &#34;someone else&#39;s address&#34;,
+ &#34;amount&#34;: 5
+}
+</code></pre><p>因为我们已经有了添加交易到块中的类方法，剩下的就很容易了。让我们写个函数来添加交易：</p><pre tabindex=0><code>import hashlib
+import json
+from textwrap import dedent
+from time import time
+from uuid import uuid4
+
+from flask import Flask, jsonify, request
+
+...
+
+@app.route(&#39;/transactions/new&#39;, methods=[&#39;POST&#39;])
+def new_transaction():
+    values = request.get_json()
+
+    # Check that the required fields are in the POST&#39;ed data
+    required = [&#39;sender&#39;, &#39;recipient&#39;, &#39;amount&#39;]
+    if not all(k in values for k in required):
+        return &#39;Missing values&#39;, 400
+
+    # Create a new Transaction
+    index = blockchain.new_transaction(values[&#39;sender&#39;], values[&#39;recipient&#39;], values[&#39;amount&#39;])
+
+    response = {&#39;message&#39;: f&#39;Transaction will be added to Block {index}&#39;}
+    return jsonify(response), 201
+</code></pre><p><em>创建交易的方法</em></p><h4 id=挖矿端点>挖矿端点</h4><p>我们的挖矿端点是见证奇迹的地方，它实现起来很容易。它要做三件事情：</p><ol><li>计算工作量证明</li><li>因为矿工（我们）添加一个交易而获得报酬，奖励矿工（我们） 1 个币</li><li>通过将它添加到链上而打造一个新区块</li></ol><pre tabindex=0><code>import hashlib
+import json
+
+from time import time
+from uuid import uuid4
+
+from flask import Flask, jsonify, request
+
+...
+
+@app.route(&#39;/mine&#39;, methods=[&#39;GET&#39;])
+def mine():
+    # We run the proof of work algorithm to get the next proof...
+    last_block = blockchain.last_block
+    last_proof = last_block[&#39;proof&#39;]
+    proof = blockchain.proof_of_work(last_proof)
+
+    # We must receive a reward for finding the proof.
+    # The sender is &#34;0&#34; to signify that this node has mined a new coin.
+    blockchain.new_transaction(
+        sender=&#34;0&#34;,
+        recipient=node_identifier,
+        amount=1,
+    )
+
+    # Forge the new Block by adding it to the chain
+    previous_hash = blockchain.hash(last_block)
+    block = blockchain.new_block(proof, previous_hash)
+
+    response = {
+        &#39;message&#39;: &#34;New Block Forged&#34;,
+        &#39;index&#39;: block[&#39;index&#39;],
+        &#39;transactions&#39;: block[&#39;transactions&#39;],
+        &#39;proof&#39;: block[&#39;proof&#39;],
+        &#39;previous_hash&#39;: block[&#39;previous_hash&#39;],
+    }
+    return jsonify(response), 200
+</code></pre><p>注意，挖掘出的区块的接收方是我们的节点地址。现在，我们所做的大部分工作都只是与我们的 <code>Blockchain</code> 类的方法进行交互的。到目前为止，我们已经做完了，现在开始与我们的区块链去交互。</p><h3 id=第-3-步与我们的区块链去交互>第 3 步：与我们的区块链去交互</h3><p>你可以使用简单的 cURL 或者 Postman 通过网络与我们的 API 去交互。</p><p>启动服务器：</p><pre tabindex=0><code>$ python blockchain.py
+* Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+</code></pre><p>我们通过生成一个 <code>GET</code> 请求到 <code>http://localhost:5000/mine</code> 去尝试挖一个区块：</p><p><img src=/data/attachment/album/201807/30/130406sqneoxnqwznnmnzw.png alt></p><p><em>使用 Postman 去生成一个 GET 请求</em></p><p>我们通过生成一个 <code>POST</code> 请求到 <code>http://localhost:5000/transactions/new</code> 去创建一个区块，请求数据包含我们的交易结构：</p><p><img src=/data/attachment/album/201807/30/130407t52mn4sjtsmkdysw.png alt></p><p><em>使用 Postman 去生成一个 POST 请求</em></p><p>如果你不使用 Postman，也可以使用 cURL 去生成一个等价的请求：</p><pre tabindex=0><code>$ curl -X POST -H &#34;Content-Type: application/json&#34; -d &#39;{
+ &#34;sender&#34;: &#34;d4ee26eee15148ee92c6cd394edd974e&#34;,
+ &#34;recipient&#34;: &#34;someone-other-address&#34;,
+ &#34;amount&#34;: 5
+}&#39; &#34;http://localhost:5000/transactions/new&#34;
+</code></pre><p>我重启动我的服务器，然后我挖到了两个区块，这样总共有了 3 个区块。我们通过请求 <code>http://localhost:5000/chain</code> 来检查整个区块链：</p><pre tabindex=0><code>{
+  &#34;chain&#34;: [
+    {
+      &#34;index&#34;: 1,
+      &#34;previous_hash&#34;: 1,
+      &#34;proof&#34;: 100,
+      &#34;timestamp&#34;: 1506280650.770839,
+      &#34;transactions&#34;: []
+    },
+    {
+      &#34;index&#34;: 2,
+      &#34;previous_hash&#34;: &#34;c099bc...bfb7&#34;,
+      &#34;proof&#34;: 35293,
+      &#34;timestamp&#34;: 1506280664.717925,
+      &#34;transactions&#34;: [
+        {
+          &#34;amount&#34;: 1,
+          &#34;recipient&#34;: &#34;8bbcb347e0634905b0cac7955bae152b&#34;,
+          &#34;sender&#34;: &#34;0&#34;
+        }
+      ]
+    },
+    {
+      &#34;index&#34;: 3,
+      &#34;previous_hash&#34;: &#34;eff91a...10f2&#34;,
+      &#34;proof&#34;: 35089,
+      &#34;timestamp&#34;: 1506280666.1086972,
+      &#34;transactions&#34;: [
+        {
+          &#34;amount&#34;: 1,
+          &#34;recipient&#34;: &#34;8bbcb347e0634905b0cac7955bae152b&#34;,
+          &#34;sender&#34;: &#34;0&#34;
+        }
+      ]
+    }
+  ],
+  &#34;length&#34;: 3
+}
+</code></pre><h3 id=第-4-步共识>第 4 步：共识</h3><p>这是很酷的一个地方。我们已经有了一个基本的区块链，它可以接收交易并允许我们去挖掘出新区块。但是区块链的整个重点在于它是 去中心化的 decentralized 。而如果它们是去中心化的，那我们如何才能确保它们表示在同一个区块链上？这就是 共识 Consensus 问题，如果我们希望在我们的网络上有多于一个的节点运行，那么我们将必须去实现一个共识算法。</p><h4 id=注册新节点>注册新节点</h4><p>在我们能实现一个共识算法之前，我们需要一个办法去让一个节点知道网络上的邻居节点。我们网络上的每个节点都保留有一个该网络上其它节点的注册信息。因此，我们需要更多的端点：</p><ol><li><code>/nodes/register</code> 以 URL 的形式去接受一个新节点列表</li><li><code>/nodes/resolve</code> 去实现我们的共识算法，由它来解决任何的冲突 —— 确保节点有一个正确的链。</li></ol><p>我们需要去修改我们的区块链的构造函数，来提供一个注册节点的方法：</p><pre tabindex=0><code>...
+from urllib.parse import urlparse
+...
+
+
+class Blockchain(object):
+    def __init__(self):
+        ...
+        self.nodes = set()
+        ...
+
+    def register_node(self, address):
+        &#34;&#34;&#34;
+        Add a new node to the list of nodes
+        :param address: &lt;str&gt; Address of node. Eg. &#39;http://192.168.0.5:5000&#39;
+        :return: None
+        &#34;&#34;&#34;
+
+        parsed_url = urlparse(address)
+        self.nodes.add(parsed_url.netloc)
+</code></pre><p><em>一个添加邻居节点到我们的网络的方法</em></p><p>注意，我们将使用一个 <code>set()</code> 去保存节点列表。这是一个非常合算的方式，它将确保添加的节点是 幂等 idempotent 的 —— 这意味着不论你将特定的节点添加多少次，它都是精确地只出现一次。</p><h4 id=实现共识算法>实现共识算法</h4><p>正如前面提到的，当一个节点与另一个节点有不同的链时就会产生冲突。为解决冲突，我们制定一个规则，即最长的有效的链才是权威的链。换句话说就是，网络上最长的链就是事实上的区块链。使用这个算法，可以在我们的网络上节点之间达到共识。</p><pre tabindex=0><code>...
+import requests
+
+
+class Blockchain(object)
+    ...
+
+    def valid_chain(self, chain):
+        &#34;&#34;&#34;
+        Determine if a given blockchain is valid
+        :param chain: &lt;list&gt; A blockchain
+        :return: &lt;bool&gt; True if valid, False if not
+        &#34;&#34;&#34;
+
+        last_block = chain[0]
+        current_index = 1
+
+        while current_index &lt; len(chain):
+            block = chain[current_index]
+            print(f&#39;{last_block}&#39;)
+            print(f&#39;{block}&#39;)
+            print(&#34;\n-----------\n&#34;)
+            # Check that the hash of the block is correct
+            if block[&#39;previous_hash&#39;] != self.hash(last_block):
+                return False
+
+            # Check that the Proof of Work is correct
+            if not self.valid_proof(last_block[&#39;proof&#39;], block[&#39;proof&#39;]):
+                return False
+
+            last_block = block
+            current_index += 1
+
+        return True
+
+    def resolve_conflicts(self):
+        &#34;&#34;&#34;
+        This is our Consensus Algorithm, it resolves conflicts
+        by replacing our chain with the longest one in the network.
+        :return: &lt;bool&gt; True if our chain was replaced, False if not
+        &#34;&#34;&#34;
+
+        neighbours = self.nodes
+        new_chain = None
+
+        # We&#39;re only looking for chains longer than ours
+        max_length = len(self.chain)
+
+        # Grab and verify the chains from all the nodes in our network
+        for node in neighbours:
+            response = requests.get(f&#39;http://{node}/chain&#39;)
+
+            if response.status_code == 200:
+                length = response.json()[&#39;length&#39;]
+                chain = response.json()[&#39;chain&#39;]
+
+                # Check if the length is longer and the chain is valid
+                if length &gt; max_length and self.valid_chain(chain):
+                    max_length = length
+                    new_chain = chain
+
+        # Replace our chain if we discovered a new, valid chain longer than ours
+        if new_chain:
+            self.chain = new_chain
+            return True
+
+        return False
+</code></pre><p>第一个方法 <code>valid_chain()</code> 是负责来检查链是否有效，它通过遍历区块链上的每个区块并验证它们的哈希和工作量证明来检查这个区块链是否有效。</p><p><code>resolve_conflicts()</code> 方法用于遍历所有的邻居节点，下载它们的链并使用上面的方法去验证它们是否有效。<strong>如果找到有效的链，确定谁是最长的链，然后我们就用最长的链来替换我们的当前的链。</strong></p><p>在我们的 API 上来注册两个端点，一个用于添加邻居节点，另一个用于解决冲突：</p><pre tabindex=0><code>@app.route(&#39;/nodes/register&#39;, methods=[&#39;POST&#39;])
+def register_nodes():
+    values = request.get_json()
+
+    nodes = values.get(&#39;nodes&#39;)
+    if nodes is None:
+        return &#34;Error: Please supply a valid list of nodes&#34;, 400
+
+    for node in nodes:
+        blockchain.register_node(node)
+
+    response = {
+        &#39;message&#39;: &#39;New nodes have been added&#39;,
+        &#39;total_nodes&#39;: list(blockchain.nodes),
+    }
+    return jsonify(response), 201
+
+
+@app.route(&#39;/nodes/resolve&#39;, methods=[&#39;GET&#39;])
+def consensus():
+    replaced = blockchain.resolve_conflicts()
+
+    if replaced:
+        response = {
+            &#39;message&#39;: &#39;Our chain was replaced&#39;,
+            &#39;new_chain&#39;: blockchain.chain
+        }
+    else:
+        response = {
+            &#39;message&#39;: &#39;Our chain is authoritative&#39;,
+            &#39;chain&#39;: blockchain.chain
+        }
+
+    return jsonify(response), 200
+</code></pre><p>这种情况下，如果你愿意，可以使用不同的机器来做，然后在你的网络上启动不同的节点。或者是在同一台机器上使用不同的端口启动另一个进程。我是在我的机器上使用了不同的端口启动了另一个节点，并将它注册到了当前的节点上。因此，我现在有了两个节点：<code>http://localhost:5000</code> 和 <code>http://localhost:5001</code>。</p><p><img src=/data/attachment/album/201807/30/130408f07oq477un5h505n.png alt></p><p><em>注册一个新节点</em></p><p>我接着在节点 2 上挖出一些新区块，以确保这个链是最长的。之后我在节点 1 上以 <code>GET</code> 方式调用了 <code>/nodes/resolve</code>，这时，节点 1 上的链被共识算法替换成节点 2 上的链了：</p><p><img src=/data/attachment/album/201807/30/130409wilhpjiwhhhl88ou.png alt></p><p><em>工作中的共识算法</em></p><p>然后将它们封装起来 … 找一些朋友来帮你一起测试你的区块链。</p><hr><p>我希望以上内容能够鼓舞你去创建一些新的东西。我是加密货币的狂热拥护者，因此我相信区块链将迅速改变我们对经济、政府和记录保存的看法。</p><p><strong>更新：</strong> 我正计划继续它的第二部分，其中我将扩展我们的区块链，使它具备交易验证机制，同时讨论一些你可以在其上产生你自己的区块链的方式。（LCTT 译注：第二篇并没有~！）</p><hr><p>via: <a href=https://hackernoon.com/learn-blockchains-by-building-one-117428612f46>https://hackernoon.com/learn-blockchains-by-building-one-117428612f46</a></p><p>作者：<a href="https://hackernoon.com/@vanflymen?source=post_header_lockup">Daniel van Flymen</a> 译者：<a href=https://github.com/qhwdw>qhwdw</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/ rel=tag>区块链</a></li><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

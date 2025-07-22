@@ -1,0 +1,101 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>编写 android 测试单元该做的和不该做的事 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="编写 android 测试单元该做的和不该做的事"><meta property="og:description" content="正确的编写测试用例与编写这些测试代码同等重要。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8196-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-02-12T11:38:00+00:00"><meta property="article:modified_time" content="2017-02-12T11:38:00+00:00"><meta itemprop=name content="编写 android 测试单元该做的和不该做的事"><meta itemprop=description content="正确的编写测试用例与编写这些测试代码同等重要。"><meta itemprop=datePublished content="2017-02-12T11:38:00+00:00"><meta itemprop=dateModified content="2017-02-12T11:38:00+00:00"><meta itemprop=wordCount content="433"><meta itemprop=keywords content="测试用例,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>编写 android 测试单元该做的和不该做的事</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-02-12T11:38:00Z>February 12, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201702/12/074546yq265tzih222wt1k.jpg alt></p><p>在本文中, 我将根据我的实际经验，为大家阐述一个编写测试用例的最佳实践。在本文中我将使用 Espresso 编码, 但是它们可以用到单元测试和 仪器测试 （ instrumentation test ） 当中。基于以上目的，我们来研究一个新闻程序。</p><blockquote><p>以下内容纯属虚构，如有雷同纯属巧合 :P</p></blockquote><p>一个新闻 APP 应该会有以下这些 activity。</p><ul><li>语言选择 - 当用户第一次打开软件, 他必须至少选择一种语言。选择后，选项保存在共享偏好中，用户跳转到新闻列表 activity。</li><li>新闻列表 - 当用户来到新闻列表 activity，将发送一个包含语言参数的请求到服务器，并将服务器返回的内容显示在 recycler view 上（包含有新闻列表的 id， news_list）。 如果共享偏好中未存语言参数，或者服务器没有返回一个成功消息, 就会弹出一个错误对话框并且 recycler view 将不可见。如果用户只选择了一种语言，新闻列表 activity 有个 “Change your Language” 的按钮，或者如果用户选择多种语言，则按钮为 “Change your Languages” 。 （我对天发誓这是一个虚构的 APP 软件）</li><li>新闻细节 - 如同名字所述, 当用户点选新闻列表项时将启动这个 activity。</li></ul><p>这个 APP 功能已经足够,，让我们深入研究下为新闻列表 activity 编写的测试用例。 这是我第一次写的代码。</p><pre tabindex=0><code>/*
+    Click on the first news item.
+    It should open NewsDetailActivity
+     */
+    @Test
+    public void testClickOnAnyNewsItem() {
+        onView(allOf(withId(R.id.news_list), isDisplayed())).perform(RecyclerViewActions
+                .actionOnItemAtPosition(1, click()));
+        intended(hasComponent(NewsDetailsActivity.class.getName()));
+    }
+
+
+  /**
+   * To test the correct text on the button
+   */
+  @Test
+  public void testChangeLanguageFeature() {
+    int count = UserPreferenceUtil.getSelectedLanguagesCount();
+    if (count == 1) {
+      onView(withText(&#34;Choose your Language&#34;)).check(matches(isDisplayed()));
+    } else if (count &gt; 1) {
+      onView(withText(&#34;Choose your Languages&#34;)).check(matches(isDisplayed()));
+    }
+ ?}
+</code></pre><h4 id=仔细想想测试什么>仔细想想测试什么</h4><p>在第一个测试用例 <code>testClickOnAnyNewsItem()</code>， 如果服务器没有返回成功信息，测试用例将会返回失败，因为 recycler view 是不可见的。但是这个测试用例的目的并非如此。 <strong>不管该用例为 PASS 还是 FAIL，它的最低要求是 recycler view 总是可见的，</strong> 如果因某种原因，recycler view 不可见，那么测试用例不应视为 FAILED。正确的测试代码应该像下面这个样子。</p><pre tabindex=0><code> /*
+  Click on any news item.
+  It should open NewsDetailActivity
+   */
+  @Test
+  public void testClickOnAnyNewsItem() {
+    try {
+            /*To test this case, we need to have recyclerView present. If we don&#39;t have the
+            recyclerview present either due to the presence of error_screen, then we should consider
+            this test case successful. The test case should be unsuccesful only when we click on a
+            news item and it doesn&#39;t open NewsDetail activity
+            */
+      ViewInteraction viewInteraction = onView(withId(R.id.news_list));
+      viewInteraction.check(matches(isDisplayed()));
+    } catch (NoMatchingViewException e) {
+      return;
+    } catch (AssertionFailedError e) {
+      return;
+    }
+ &amp;nbsp; &amp;nbsp;//在这里我们确信，news_list的 recyclerview 对用户是可见的。
+ &amp;nbsp; &amp;nbsp;onView(allOf(withId(R.id.news_list), isDisplayed())).perform(RecyclerViewActions
+        .actionOnItemAtPosition(1, click()));
+    intended(hasComponent(NewsDetailsActivity.class.getName()));
+  }
+}
+</code></pre><h4 id=一个测试用例本身应该是完整的>一个测试用例本身应该是完整的</h4><p>当我开始测试, 我通常按如下顺序测试 activity:</p><ul><li>语言选择</li><li>新闻列表</li><li>新闻细节</li></ul><p>因为我首先测试语言选择 activity，在测试 NewsList activity 之前，总有一种语言已经是选择好了的。但是当我先测试新闻列表 activity 时，测试用例开始返回错误信息。原因很简单 - 没有选择语言，recycler view 不会显示。<strong>注意, 测试用例的执行顺序不能影响测试结果。</strong> 因此在运行测试用例之前, 语言选项必须是保存在共享偏好中的。在本例中，测试用例独立于语言选择 activity 的测试。</p><pre tabindex=0><code>@Rule
+  public ActivityTestRule activityTestRule =
+      new ActivityTestRule(TopicsActivity.class, false, false);
+
+  /*
+  Click on any news item.
+  It should open NewsDetailActivity
+   */
+  @Test
+  public void testClickOnAnyNewsItem() {
+    UserPreferenceUtil.saveUserPrimaryLanguage(&#34;english&#34;);
+    Intent intent = new Intent();
+    activityTestRule.launchActivity(intent);
+    try {
+      ViewInteraction viewInteraction = onView(withId(R.id.news_list));
+      viewInteraction.check(matches(isDisplayed()));
+    } catch (NoMatchingViewException e) {
+      return;
+    } catch (AssertionFailedError e) {
+      return;
+    }
+    onView(allOf(withId(R.id.news_list), isDisplayed())).perform(RecyclerViewActions
+        .actionOnItemAtPosition(1, click()));
+    intended(hasComponent(NewsDetailsActivity.class.getName()));
+ ?}
+</code></pre><h4 id=在测试用例中避免使用条件代码>在测试用例中避免使用条件代码</h4><p>现在在第二个测试用例 <code>testChangeLanguageFeature()</code> 中，我们获取到用户选择语言的个数，基于这个数目，我们写了 if-else 条件来进行测试。 但是 if-else 条件应该写在你的代码当中，而不是测试代码里。每一个条件应该单独测试。 因此，在本例中，不是只写一条测试用例，而是要写如下两个测试用例。</p><pre tabindex=0><code>/**
+   * To test the correct text on the button when only one language is selected.
+   */
+  @Test
+  public void testChangeLanguageFeatureForSingeLanguage() {
+    //Other initializations
+    UserPreferenceUtil.saveSelectedLanguagesCount(1);
+    Intent intent = new Intent();
+    activityTestRule.launchActivity(intent);
+      onView(withText(&#34;Choose your Language&#34;)).check(matches(isDisplayed()));
+  }
+
+  /**
+   * To test the correct text on the button when more than one language is selected.
+   */
+  @Test
+  public void testChangeLanguageFeatureForMultipleLanguages() {
+    //Other initializations
+    UserPreferenceUtil.saveSelectedLanguagesCount(5); //Write anything greater than 1.
+    Intent intent = new Intent();
+    activityTestRule.launchActivity(intent);
+    onView(withText(&#34;Choose your Languages&#34;)).check(matches(isDisplayed()));
+  }
+</code></pre><h4 id=测试用例应该独立于外部因素>测试用例应该独立于外部因素</h4><p>在大多数应用中，我们与外部网络或者数据库进行交互。一个测试用例运行时可以向服务器发送一个请求，并获取成功或失败的返回信息。但是不能因从服务器获取到失败信息，就认为测试用例没有通过。这样想这个问题 - 如果测试用例失败，然后我们修改客户端代码，以便测试用例通过。 但是在本例中, 我们要在客户端进行任何更改吗？- <strong>NO</strong>。</p><p>但是你应该也无法完全避免要测试网络请求和响应。由于服务器是一个外部代理，我们可以设想一个场景，发送一些可能导致程序崩溃的错误响应。因此，你写的测试用例应该覆盖所有可能来自服务器的响应，甚至包括服务器决不会发出的响应。这样可以覆盖所有代码，并能保证应用可以处理所有响应，而不会崩溃。</p><blockquote><p>正确的编写测试用例与编写这些测试代码同等重要。</p></blockquote><p>感谢你阅读此文章。希望对测试用例写的更好有所帮助。你可以在 <a href=http://www.linkedin.com/in/anshul-jain-b7082573>LinkedIn</a> 上联系我。还可以<a href=https://medium.com/@anshuljain>在这里</a>阅读我的其他文章。</p><p>获取更多资讯请关注我们, 我们发新文章时您将获得通知。</p><hr><p>via: <a href=https://blog.mindorks.com/the-dos-and-don-ts-of-writing-test-cases-in-android-70f1b5dab3e1#.lfilq9k5e>https://blog.mindorks.com/the-dos-and-don-ts-of-writing-test-cases-in-android-70f1b5dab3e1#.lfilq9k5e</a></p><p>作者：<a href="https://blog.mindorks.com/@anshuljain?source=post_header_lockup">Anshul Jain</a> 译者：<a href=https://github.com/kokialoves>kokialoves</a> 校对：<a href=https://github.com/jasminepeng>jasminepeng</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B/ rel=tag>测试用例</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

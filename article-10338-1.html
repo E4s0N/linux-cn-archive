@@ -1,0 +1,287 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>12 条实用的 zypper 命令范例 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="12 条实用的 zypper 命令范例"><meta property="og:description" content="zypper 是 Suse Linux 系统的包和补丁管理器，你可以根据下面的 12 条附带输出示例的实用范例来学习 zypper 命令的使用。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10338-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-12-12T13:29:35+00:00"><meta property="article:modified_time" content="2018-12-12T13:29:35+00:00"><meta itemprop=name content="12 条实用的 zypper 命令范例"><meta itemprop=description content="zypper 是 Suse Linux 系统的包和补丁管理器，你可以根据下面的 12 条附带输出示例的实用范例来学习 zypper 命令的使用。"><meta itemprop=datePublished content="2018-12-12T13:29:35+00:00"><meta itemprop=dateModified content="2018-12-12T13:29:35+00:00"><meta itemprop=wordCount content="1473"><meta itemprop=keywords content="zypper,包管理器,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>12 条实用的 zypper 命令范例</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-12-12T13:29:35Z>December 12, 2018</time></div></div></header><div class="content post__content clearfix"><p><code>zypper</code> 是 Suse Linux 系统的包和补丁管理器，你可以根据下面的 12 条附带输出示例的实用范例来学习 <code>zypper</code> 命令的使用。</p><p><img src=/data/attachment/album/201812/12/132928jmstt99so6s0tesp.jpg alt></p><p>Suse Linux 使用 <code>zypper</code> 进行包管理，其是一个由 <a href=https://en.wikipedia.org/wiki/ZYpp>ZYpp 包管理引擎</a>提供的包管理系统。在此篇文章中我们将分享 12 条附带输出示例的实用 <code>zypper</code> 命令，能帮助你处理日常的系统管理任务。</p><p>不带参数的 <code>zypper</code> 命令将列出所有可用的选项，这比参考详细的 man 手册要容易上手得多。</p><pre tabindex=0><code>root@kerneltalks # zypper
+  用法：
+        zypper [--global-options] &lt;command&gt; [--command-options] [arguments]
+        zypper &lt;subcommand&gt; [--command-options] [arguments]
+ 
+  全局选项：
+        --help, -h              帮助
+        --version, -V           输出版本号
+        --promptids             输出 zypper 用户提示符列表
+        --config, -c &lt;file&gt;     使用指定的配置文件来替代默认的
+        --userdata &lt;string&gt;     在历史和插件中使用的用户自定义事务 id
+        --quiet, -q             忽略正常输出，只打印错误信息
+        --verbose, -v           增加冗长程度
+        --color
+        --no-color              是否启用彩色模式，如果 tty 支持的话
+        --no-abbrev, -A         表格中的文字不使用缩写
+        --table-style, -s       表格样式（整型）
+        --non-interactive, -n   不询问任何选项，自动使用默认答案
+        --non-interactive-include-reboot-patches
+                                针对带有重启标志的补丁，不使用交互模式
+        --xmlout, -x            切换至 XML 输出
+        --ignore-unknown, -i    忽略未知的包
+ 
+        --reposd-dir, -D &lt;dir&gt;  使用自定义仓库文件目录
+        --cache-dir, -C &lt;dir&gt;   为所有缓存启用可选路径
+        --raw-cache-dir &lt;dir&gt;   启用可选 raw 元数据缓存路径
+        --solv-cache-dir &lt;dir&gt;  启用可选 solv 文件缓存路径
+        --pkg-cache-dir &lt;dir&gt;   启用可选包缓存路径
+ 
+     仓库选项：
+        --no-gpg-checks         忽略 GPG 检查失败并跳过
+        --gpg-auto-import-keys  自动信任并导入新仓库的签名密钥
+        --plus-repo, -p &lt;URI&gt;   使用附加仓库
+        --plus-content &lt;tag&gt;    另外使用禁用的仓库来提供特定的关键词
+                                尝试使用 &#39;--plus-content debug&#39; 选项来启用仓库
+        --disable-repositories  不从仓库中读取元数据
+        --no-refresh            不刷新仓库
+        --no-cd                 忽略 CD/DVD 中的仓库
+        --no-remote             忽略远程仓库
+        --releasever            设置所有 .repo 文件中的 $releasever 变量（默认值：发行版版本）
+ 
+     Target Options:
+        --root, -R &lt;dir&gt;        在另一个根路径下进行操作
+        --disable-system-resolvables
+                                不读取已安装包
+ 
+  命令：
+        help, ?                 打印帮助
+        shell, sh               允许多命令
+ 
+     仓库管理：
+        repos, lr               列出所有自定义仓库
+        addrepo, ar             添加一个新仓库
+        removerepo, rr          移除指定仓库
+        renamerepo, nr          重命名指定仓库
+        modifyrepo, mr          修改指定仓库
+        refresh, ref            刷新所有仓库
+        clean                   清除本地缓存
+ 
+     服务管理：
+        services, ls            列出所有自定义服务
+        addservice, as          添加一个新服务
+        modifyservice, ms       修改指定服务
+        removeservice, rs       移除指定服务
+        refresh-services, refs  刷新所有服务
+ 
+     软件管理：
+        install, in             安装包
+        remove, rm              移除包
+        verify, ve              确认包依赖的完整性
+        source-install, si      安装源码包及其构建依赖
+        install-new-recommends, inr
+                                安装由已安装包建议一并安装的新包
+ 
+     更新管理：
+        update, up              更新已安装包至更新版本
+        list-updates, lu        列出可用更新
+        patch                   安装必要的补丁
+        list-patches, lp        列出必要的补丁
+        dist-upgrade, dup       进行发行版更新
+        patch-check, pchk       检查补丁
+ 
+     查询：
+        search, se              查找符合匹配模式的包
+        info, if                展示特定包的完全信息
+        patch-info              展示特定补丁的完全信息
+        pattern-info            展示特定模式的完全信息
+        product-info            展示特定产品的完全信息
+        patches, pch            列出所有可用的补丁
+        packages, pa            列出所有可用的包
+        patterns, pt            列出所有可用的模式
+        products, pd            列出所有可用的产品
+        what-provides, wp       列出提供特定功能的包
+ 
+     包锁定：
+        addlock, al             添加一个包锁定
+        removelock, rl          移除一个包锁定
+        locks, ll               列出当前的包锁定
+        cleanlocks, cl          移除无用的锁定
+ 
+     其他命令：
+        versioncmp, vcmp        比较两个版本字符串
+        targetos, tos           打印目标操作系统 ID 字符串
+        licenses                打印已安装包的证书和 EULAs 报告
+        download                使用命令行下载指定 rpm 包到本地目录
+        source-download         下载所有已安装包的源码 rpm 包到本地目录
+ 
+     子命令：
+        subcommand              列出可用子命令
+ 
+输入 &#39;zypper help &lt;command&gt;&#39; 来获得特定命令的帮助。
+</code></pre><h3 id=如何使用-zypper-安装包>如何使用 zypper 安装包</h3><p><code>zypper</code> 通过 <code>in</code> 或 <code>install</code> 子命令来在你的系统上安装包。它的用法与 <a href=https://kerneltalks.com/tools/package-installation-linux-yum-apt/>yum 软件包安装</a> 相同。你只需要提供包名作为参数，包管理器（此处是 <code>zypper</code>）就会处理所有的依赖并与你指定的包一并安装。</p><pre tabindex=0><code># zypper install telnet
+Refreshing service &#39;SMT-http_smt-ec2_susecloud_net&#39;.
+Refreshing service &#39;cloud_update&#39;.
+Loading repository data...
+Reading installed packages...
+Resolving package dependencies...
+ 
+The following NEW package is going to be installed:
+  telnet
+ 
+1 new package to install.
+Overall download size: 51.8 KiB. Already cached: 0 B. After the operation, additional 113.3 KiB will be used.
+Continue? [y/n/...? shows all options] (y): y
+Retrieving package telnet-1.2-165.63.x86_64                                                                                        (1/1),  51.8 KiB (113.3 KiB unpacked)
+Retrieving: telnet-1.2-165.63.x86_64.rpm .........................................................................................................................[done]
+Checking for file conflicts: .....................................................................................................................................[done]
+(1/1) Installing: telnet-1.2-165.63.x86_64 .......................................................................................................................[done]
+</code></pre><p>以上是我们安装 <code>telnet</code> 包时的输出，供你参考。</p><p>推荐阅读：<a href=https://kerneltalks.com/tools/package-installation-linux-yum-apt/>在 YUM 和 APT 系统中安装包</a></p><h3 id=如何使用-zypper-移除包>如何使用 zypper 移除包</h3><p>要在 Suse Linux 中擦除或移除包，使用 <code>zypper</code> 附带 <code>remove</code> 或 <code>rm</code> 子命令。</p><pre tabindex=0><code>root@kerneltalks # zypper rm telnet
+Loading repository data...
+Reading installed packages...
+Resolving package dependencies...
+ 
+The following package is going to be REMOVED:
+  telnet
+ 
+1 package to remove.
+After the operation, 113.3 KiB will be freed.
+Continue? [y/n/...? shows all options] (y): y
+(1/1) Removing telnet-1.2-165.63.x86_64 ..........................................................................................................................[done]
+</code></pre><p>我们在此处移除了先前安装的 telnet 包。</p><h3 id=使用-zypper-检查依赖或者认证已安装包的完整性>使用 zypper 检查依赖或者认证已安装包的完整性</h3><p>有时可以通过强制忽略依赖关系来安装软件包。<code>zypper</code> 使你能够扫描所有已安装的软件包并检查其依赖性。如果缺少任何依赖项，它将提供你安装或重新安装它的机会，从而保持已安装软件包的完整性。</p><p>使用附带 <code>verify</code> 或 <code>ve</code> 子命令的 <code>zypper</code> 命令来检查已安装包的完整性。</p><pre tabindex=0><code>root@kerneltalks # zypper ve
+Refreshing service &#39;SMT-http_smt-ec2_susecloud_net&#39;.
+Refreshing service &#39;cloud_update&#39;.
+Loading repository data...
+Reading installed packages...
+ 
+Dependencies of all installed packages are satisfied.
+</code></pre><p>在上面的输出中，你能够看到最后一行说明已安装包的所有依赖都已安装完全，并且无需更多操作。</p><h3 id=如何在-suse-linux-中使用-zypper-下载包>如何在 Suse Linux 中使用 zypper 下载包</h3><p><code>zypper</code> 提供了一种方法使得你能够将包下载到本地目录而不去安装它。你可以在其他具有同样配置的系统上使用这个已下载的软件包。包会被下载至 <code>/var/cache/zypp/packages/&lt;repo>/&lt;arch>/</code> 目录。</p><pre tabindex=0><code>root@kerneltalks # zypper download telnet
+Refreshing service &#39;SMT-http_smt-ec2_susecloud_net&#39;.
+Refreshing service &#39;cloud_update&#39;.
+Loading repository data...
+Reading installed packages...
+Retrieving package telnet-1.2-165.63.x86_64                                                                                        (1/1),  51.8 KiB (113.3 KiB unpacked)
+(1/1) /var/cache/zypp/packages/SMT-http_smt-ec2_susecloud_net:SLES12-SP3-Pool/x86_64/telnet-1.2-165.63.x86_64.rpm ................................................[done]
+ 
+download: Done.
+ 
+# ls -lrt /var/cache/zypp/packages/SMT-http_smt-ec2_susecloud_net:SLES12-SP3-Pool/x86_64/
+total 52
+-rw-r--r-- 1 root root 53025 Feb 21 03:17 telnet-1.2-165.63.x86_64.rpm
+ 
+</code></pre><p>你能看到我们使用 <code>zypper</code> 将 telnet 包下载到了本地。</p><p>推荐阅读：<a href=https://kerneltalks.com/howto/download-package-using-yum-apt/>在 YUM 和 APT 系统中只下载包而不安装</a></p><h3 id=如何使用-zypper-列出可用包更新>如何使用 zypper 列出可用包更新</h3><p><code>zypper</code> 允许你浏览已安装包的所有可用更新，以便你可以提前计划更新活动。使用 <code>list-updates</code> 或 <code>lu</code> 子命令来显示已安装包的所有可用更新。</p><pre tabindex=0><code>root@kerneltalks # zypper lu
+Refreshing service &#39;SMT-http_smt-ec2_susecloud_net&#39;.
+Refreshing service &#39;cloud_update&#39;.
+Loading repository data...
+Reading installed packages...
+S | Repository                        | Name                       | Current Version               | Available Version                  | Arch
+--|-----------------------------------|----------------------------|-------------------------------|------------------------------------|-------
+v | SLES12-SP3-Updates                | at-spi2-core               | 2.20.2-12.3                   | 2.20.2-14.3.1                      | x86_64
+v | SLES12-SP3-Updates                | bash                       | 4.3-82.1                      | 4.3-83.5.2                         | x86_64
+v | SLES12-SP3-Updates                | ca-certificates-mozilla    | 2.7-11.1                      | 2.22-12.3.1                        | noarch
+v | SLE-Module-Containers12-Updates   | containerd                 | 0.2.5+gitr639_422e31c-20.2    | 0.2.9+gitr706_06b9cb351610-16.8.1  | x86_64
+v | SLES12-SP3-Updates                | crash                      | 7.1.8-4.3.1                   | 7.1.8-4.6.2                        | x86_64
+v | SLES12-SP3-Updates                | rsync                      | 3.1.0-12.1                    | 3.1.0-13.10.1                      | x86_64
+</code></pre><p>输出特意被格式化以便于阅读。每一列分别代表包所属仓库名称、包名、已安装版本、可用的更新版本和架构。</p><h3 id=在-suse-linux-中列出和安装补丁>在 Suse Linux 中列出和安装补丁</h3><p>使用 <code>list-patches</code> 或 <code>lp</code> 子命令来显示你的 Suse Linux 系统需要被应用的所有可用补丁。</p><pre tabindex=0><code>root@kerneltalks # zypper lp
+Refreshing service &#39;SMT-http_smt-ec2_susecloud_net&#39;.
+Refreshing service &#39;cloud_update&#39;.
+Loading repository data...
+Reading installed packages...
+ 
+Repository                        | Name                                     | Category    | Severity  | Interactive | Status | Summary                                 
+----------------------------------|------------------------------------------|-------------|-----------|-------------|--------|------------------------------------------------------------------------------------
+SLE-Module-Containers12-Updates   | SUSE-SLE-Module-Containers-12-2018-273   | security    | important | ---         | needed | Version update for docker, docker-runc, containerd, golang-github-docker-libnetwork
+SLE-Module-Containers12-Updates   | SUSE-SLE-Module-Containers-12-2018-62    | recommended | low       | ---         | needed | Recommended update for sle2docker       
+SLE-Module-Public-Cloud12-Updates | SUSE-SLE-Module-Public-Cloud-12-2018-268 | recommended | low       | ---         | needed | Recommended update for python-ecdsa     
+SLES12-SP3-Updates                | SUSE-SLE-SERVER-12-SP3-2018-116          | security    | moderate  | ---         | needed | Security update for rsync               
+---- output clipped ----
+SLES12-SP3-Updates                | SUSE-SLE-SERVER-12-SP3-2018-89           | security    | moderate  | ---         | needed | Security update for perl-XML-LibXML     
+SLES12-SP3-Updates                | SUSE-SLE-SERVER-12-SP3-2018-90           | recommended | low       | ---         | needed | Recommended update for lvm2             
+ 
+Found 37 applicable patches:
+37 patches needed (18 security patches)
+</code></pre><p>使用相应的表头可以很好地组织输出。你可以轻松地找出并根据情况计划你的补丁更新。我们能看到在我们的系统中，37 个可用补丁中有 18 个是安全补丁，需要被高优先级应用！</p><p>你可以通过发出 <code>zypper patch</code> 命令安装所有需要的补丁。</p><h5 id=如何使用-zypper-更新包>如何使用 zypper 更新包</h5><p>要使用 <code>zypper</code> 更新包，使用 <code>update</code> 或 <code>up</code> 子命令后接包名。在上述列出的更新命令中，我们知道在我们的服务器上 <code>rsync</code> 包更新可用。让我们现在来更新它吧！</p><pre tabindex=0><code>root@kerneltalks # zypper update rsync
+Refreshing service &#39;SMT-http_smt-ec2_susecloud_net&#39;.
+Refreshing service &#39;cloud_update&#39;.
+Loading repository data...
+Reading installed packages...
+Resolving package dependencies...
+ 
+The following package is going to be upgraded:
+  rsync
+ 
+1 package to upgrade.
+Overall download size: 325.2 KiB. Already cached: 0 B. After the operation, additional 64.0 B will be used.
+Continue? [y/n/...? shows all options] (y): y
+Retrieving package rsync-3.1.0-13.10.1.x86_64                                                                                      (1/1), 325.2 KiB (625.5 KiB unpacked)
+Retrieving: rsync-3.1.0-13.10.1.x86_64.rpm .......................................................................................................................[done]
+Checking for file conflicts: .....................................................................................................................................[done]
+(1/1) Installing: rsync-3.1.0-13.10.1.x86_64 .....................................................................................................................[done]
+</code></pre><h3 id=在-suse-linux-上使用-zypper-查找包>在 Suse Linux 上使用 zypper 查找包</h3><p>如果你不确定包的全名也不要担心。你可以使用 <code>zypper</code> 附带的 <code>se</code> 或 <code>search</code> 子命令并提供查找字符串来查找包。</p><pre tabindex=0><code>root@kerneltalks # zypper se lvm
+Refreshing service &#39;SMT-http_smt-ec2_susecloud_net&#39;.
+Refreshing service &#39;cloud_update&#39;.
+Loading repository data...
+Reading installed packages...
+ 
+S  | Name          | Summary                      | Type
+---|---------------|------------------------------|-----------
+   | libLLVM       | Libraries for LLVM           | package
+   | libLLVM-32bit | Libraries for LLVM           | package
+   | llvm          | Low Level Virtual Machine    | package
+   | llvm-devel    | Header Files for LLVM        | package
+   | lvm2          | Logical Volume Manager Tools | srcpackage
+i+ | lvm2          | Logical Volume Manager Tools | package
+   | lvm2-devel    | Development files for LVM2   | package 
+</code></pre><p>在上述示例中我们查找了 <code>lvm</code> 字符串并得到了如上输出列表。你能在 <code>zypper install/remove/update</code> 命令中使用 <code>Name</code> 字段的名字。</p><h3 id=使用-zypper-检查已安装包信息>使用 zypper 检查已安装包信息</h3><p>你能够使用 <code>zypper</code> 检查已安装包的详细信息。<code>info</code> 或 <code>if</code> 子命令将列出已安装包的信息。它也可以显示未安装包的详细信息，在该情况下，<code>Installed</code> 参数将返回 <code>No</code> 值。</p><pre tabindex=0><code>root@kerneltalks # zypper info rsync
+Refreshing service &#39;SMT-http_smt-ec2_susecloud_net&#39;.
+Refreshing service &#39;cloud_update&#39;.
+Loading repository data...
+Reading installed packages...
+ 
+ 
+Information for package rsync:
+------------------------------
+Repository     : SLES12-SP3-Updates
+Name           : rsync
+Version        : 3.1.0-13.10.1
+Arch           : x86_64
+Vendor         : SUSE LLC &lt;https://www.suse.com/&gt;
+Support Level  : Level 3
+Installed Size : 625.5 KiB
+Installed      : Yes
+Status         : up-to-date
+Source package : rsync-3.1.0-13.10.1.src
+Summary        : Versatile tool for fast incremental file transfer
+Description    :
+    Rsync is a fast and extraordinarily versatile file  copying  tool. It can copy
+    locally, to/from another host over any remote shell, or to/from a remote rsync
+    daemon. It offers a large number of options that control every aspect of its
+    behavior and permit very flexible specification of the set of files to be
+    copied. It is famous for its delta-transfer algorithm, which reduces the amount
+    of data sent over the network by sending only the differences between the
+    source files and the existing files in the destination. Rsync is widely used
+    for backups and mirroring and as an improved copy command for everyday use.
+</code></pre><h3 id=使用-zypper-列出仓库>使用 zypper 列出仓库</h3><p>使用 <code>zypper</code> 命令附带 <code>lr</code> 或 <code>repos</code> 子命令列出仓库。</p><pre tabindex=0><code>root@kerneltalks # zypper lr
+Refreshing service &#39;cloud_update&#39;.
+Repository priorities are without effect. All enabled repositories share the same priority.
+ 
+#  | Alias                                                                                | Name                                                  | Enabled | GPG Check | Refresh
+---|--------------------------------------------------------------------------------------|-------------------------------------------------------|---------|-----------|--------
+ 1 | SMT-http_smt-ec2_susecloud_net:SLE-Module-Adv-Systems-Management12-Debuginfo-Pool    | SLE-Module-Adv-Systems-Management12-Debuginfo-Pool    | No      | ----      | ----
+ 2 | SMT-http_smt-ec2_susecloud_net:SLE-Module-Adv-Systems-Management12-Debuginfo-Updates | SLE-Module-Adv-Systems-Management12-Debuginfo-Updates | No      | ----      | ----
+ 3 | SMT-http_smt-ec2_susecloud_net:SLE-Module-Adv-Systems-Management12-Pool              | SLE-Module-Adv-Systems-Management12-Pool              | Yes     | (r ) Yes  | No
+ 4 | SMT-http_smt-ec2_susecloud_net:SLE-Module-Adv-Systems-Management12-Updates           | SLE-Module-Adv-Systems-Management12-Updates           | Yes     | (r ) Yes  | Yes
+ 5 | SMT-http_smt-ec2_susecloud_net:SLE-Module-Containers12-Debuginfo-Pool                | SLE-Module-Containers12-Debuginfo-Pool                | No      | ----      | ----
+ 6 | SMT-http_smt-ec2_susecloud_net:SLE-Module-Containers12-Debuginfo-Updates             | SLE-Module-Containers12-Debuginfo-Updates             | No      | ----      | ----
+</code></pre><p>此处你需要检查 <code>enabled</code> 列来确定哪些仓库是已被启用的而哪些没有。</p><h3 id=在-suse-linux-中使用-zypper-添加或移除仓库>在 Suse Linux 中使用 zypper 添加或移除仓库</h3><p>要添加仓库你需要仓库或 .repo 文件的 URI，否则你会遇到如下错误。</p><pre tabindex=0><code>root@kerneltalks # zypper addrepo -c SLES12-SP3-Updates
+If only one argument is used, it must be a URI pointing to a .repo file.
+</code></pre><p>使用 URI，你可以像如下方式添加仓库：</p><pre tabindex=0><code>root@kerneltalks # zypper  addrepo -c http://smt-ec2.susecloud.net/repo/SUSE/Products/SLE-SDK/12-SP3/x86_64/product?credentials=SMT-http_smt-ec2_susecloud_net SLE-SDK12-SP3-Pool
+Adding repository &#39;SLE-SDK12-SP3-Pool&#39; ...........................................................................................................................[done]
+Repository &#39;SLE-SDK12-SP3-Pool&#39; successfully added
+ 
+URI         : http://smt-ec2.susecloud.net/repo/SUSE/Products/SLE-SDK/12-SP3/x86_64/product?credentials=SMT-http_smt-ec2_susecloud_net
+Enabled     : Yes
+GPG Check   : Yes
+Autorefresh : No
+Priority    : 99 (default priority)
+ 
+Repository priorities are without effect. All enabled repositories share the same priority.
+</code></pre><p>在 Suse 中使用附带 <code>addrepo</code> 或 <code>ar</code> 子命令的 <code>zypper</code> 命令添加仓库，后接 URI 以及你需要提供一个别名。</p><p>要在 Suse 中移除一个仓库，使用附带 <code>removerepo</code> 或 <code>rr</code> 子命令的 <code>zypper</code> 命令。</p><pre tabindex=0><code>root@kerneltalks # zypper removerepo nVidia-Driver-SLE12-SP3
+Removing repository &#39;nVidia-Driver-SLE12-SP3&#39; ....................................................................................................................[done]
+Repository &#39;nVidia-Driver-SLE12-SP3&#39; has been removed.
+</code></pre><h3 id=清除-zypper-本地缓存>清除 zypper 本地缓存</h3><p>使用 <code>zypper clean</code> 命令清除 zypper 本地缓存。</p><pre tabindex=0><code>root@kerneltalks # zypper clean
+All repositories have been cleaned up.
+</code></pre><hr><p>via: <a href=https://kerneltalks.com/commands/12-useful-zypper-command-examples/>https://kerneltalks.com/commands/12-useful-zypper-command-examples/</a></p><p>作者：<a href=https://kerneltalks.com>KernelTalks</a> 译者：<a href=https://github.com/cycoe>cycoe</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/zypper/ rel=tag>zypper</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8/ rel=tag>包管理器</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

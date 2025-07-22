@@ -1,0 +1,205 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>用 Python 测试 API 的 3 种方式 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="用 Python 测试 API 的 3 种方式"><meta property="og:description" content="单元测试可能令人生畏，但是这些 Python 模块会使你的生活变得更容易。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14944-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-08-18T18:08:00+00:00"><meta property="article:modified_time" content="2022-08-18T18:08:00+00:00"><meta itemprop=name content="用 Python 测试 API 的 3 种方式"><meta itemprop=description content="单元测试可能令人生畏，但是这些 Python 模块会使你的生活变得更容易。"><meta itemprop=datePublished content="2022-08-18T18:08:00+00:00"><meta itemprop=dateModified content="2022-08-18T18:08:00+00:00"><meta itemprop=wordCount content="903"><meta itemprop=keywords content="API,Python,测试,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>用 Python 测试 API 的 3 种方式</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-08-18T18:08:00Z>August 18, 2022</time></div></div></header><div class="content post__content clearfix"><blockquote><p>单元测试可能令人生畏，但是这些 Python 模块会使你的生活变得更容易。</p></blockquote><p><img src=/data/attachment/album/202208/18/180800clp08p82pi838zrs.jpg alt></p><p>在这个教程中，你将学到如何对执行 HTTP 请求代码的进行单元测试。也就是说，你将看到用 Python 对 API 进行单元测试的艺术。</p><p>单元测试是指对单个行为的测试。在测试中，一个众所周知的经验法则就是隔离那些需要外部依赖的代码。</p><p>比如，当测试一段执行 HTTP 请求的代码时，建议在测试过程中，把真正的调用替换成一个假的的调用。这种情况下，每次运行测试的时候，就可以对它进行单元测试，而不需要执行一个真正的 HTTP 请求。</p><p>问题就是，<em>怎样才能隔离这些代码？</em></p><p>这就是我希望在这篇博文中回答的问题！我不仅会向你展示如果去做，而且也会权衡不同方法之间的优点和缺点。</p><p>要求：</p><ul><li><a href=https://miguendes.me/how-i-set-up-my-python-workspace>Python 3.8</a></li><li>pytest-mock</li><li>requests</li><li>flask</li><li>responses</li><li><a href=http://VCR.py>VCR.py</a></li></ul><h3 id=使用一个天气状况-rest-api-的演示程序>使用一个天气状况 REST API 的演示程序</h3><p>为了更好的解决这个问题，假设你正在创建一个天气状况的应用。这个应用使用第三方天气状况 REST API 来检索一个城市的天气信息。其中一个需求是生成一个简单的 HTML 页面，像下面这个图片：</p><p><img src=/data/attachment/album/202208/18/181132ceoyfizljzu94qi0.jpg alt="web page displaying London weather"></p><p><em>伦敦的天气，OpenWeatherMap。图片是作者自己制作的。</em></p><p>为了获得天气的信息，必须得去某个地方找。幸运的是，通过 <a href=https://miguendes.me/how-i-set-up-my-python-workspace>OpenWeatherMap</a> 的 REST API 服务，可以获得一切需要的信息。</p><p><em>好的，很棒，但是我该怎么用呢？</em></p><p>通过发送一个 <code>GET</code> 请求到：<code>https://api.openweathermap.org/data/2.5/weather?q={city_name}&amp;appid={api_key}&amp;units=metric</code>，就可以获得你所需要的所有东西。在这个教程中，我会把城市名字设置成一个参数，并确定使用公制单位。</p><h3 id=检索数据>检索数据</h3><p>使用 <code>requests</code> 模块来检索天气数据。你可以创建一个接收城市名字作为参数的函数，然后返回一个 JSON。JSON 包含温度、天气状况的描述、日出和日落时间等数据。</p><p>下面的例子演示了这样一个函数：</p><pre tabindex=0><code>def find_weather_for(city: str) -&gt; dict:
+    &#34;&#34;&#34;Queries the weather API and returns the weather data for a particular city.&#34;&#34;&#34;
+    url = API.format(city_name=city, api_key=API_KEY)
+    resp = requests.get(url)
+    return resp.json()
+</code></pre><p>这个 URL 是由两个全局变量构成：</p><pre tabindex=0><code>BASE_URL = &#34;https://api.openweathermap.org/data/2.5/weather&#34;
+API = BASE_URL + &#34;?q={city_name}&amp;amp;appid={api_key}&amp;amp;units=metric&#34;
+</code></pre><p>API 以这个格式返回了一个 JSON：</p><pre tabindex=0><code>{
+  &#34;coord&#34;: {
+    &#34;lon&#34;: -0.13,
+    &#34;lat&#34;: 51.51
+  },
+  &#34;weather&#34;: [
+    {
+      &#34;id&#34;: 800,
+      &#34;main&#34;: &#34;Clear&#34;,
+      &#34;description&#34;: &#34;clear sky&#34;,
+      &#34;icon&#34;: &#34;01d&#34;
+    }
+  ],
+  &#34;base&#34;: &#34;stations&#34;,
+  &#34;main&#34;: {
+    &#34;temp&#34;: 16.53,
+    &#34;feels_like&#34;: 15.52,
+    &#34;temp_min&#34;: 15,
+    &#34;temp_max&#34;: 17.78,
+    &#34;pressure&#34;: 1023,
+    &#34;humidity&#34;: 72
+  },
+  &#34;visibility&#34;: 10000,
+  &#34;wind&#34;: {
+    &#34;speed&#34;: 2.1,
+    &#34;deg&#34;: 40
+  },
+  &#34;clouds&#34;: {
+    &#34;all&#34;: 0
+  },
+  &#34;dt&#34;: 1600420164,
+  &#34;sys&#34;: {
+    &#34;type&#34;: 1,
+    &#34;id&#34;: 1414,
+    &#34;country&#34;: &#34;GB&#34;,
+    &#34;sunrise&#34;: 1600407646,
+    &#34;sunset&#34;: 1600452509
+  },
+  &#34;timezone&#34;: 3600,
+  &#34;id&#34;: 2643743,
+  &#34;name&#34;: &#34;London&#34;,
+  &#34;cod&#34;: 200
+</code></pre><p>当调用 <code>resp.json()</code> 的时候，数据是以 Python 字典的形式返回的。为了封装所有细节，可以用 <code>dataclass</code> 来表示它们。这个类有一个工厂方法，可以获得这个字典并且返回一个 <code>WeatherInfo</code> 实例。</p><p>这种办法很好，因为可以保持这种表示方法的稳定。比如，如果 API 改变了 JSON 的结构，就可以在同一个地方（<code>from_dict</code> 方法中）修改逻辑。其他代码不会受影响。你也可以从不同的源获得信息，然后把它们都整合到 <code>from_dict</code> 方法中。</p><pre tabindex=0><code>@dataclass
+class WeatherInfo:
+    temp: float
+    sunset: str
+    sunrise: str
+    temp_min: float
+    temp_max: float
+    desc: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -&gt; &#34;WeatherInfo&#34;:
+        return cls(
+            temp=data[&#34;main&#34;][&#34;temp&#34;],
+            temp_min=data[&#34;main&#34;][&#34;temp_min&#34;],
+            temp_max=data[&#34;main&#34;][&#34;temp_max&#34;],
+            desc=data[&#34;weather&#34;][0][&#34;main&#34;],
+            sunset=format_date(data[&#34;sys&#34;][&#34;sunset&#34;]),
+            sunrise=format_date(data[&#34;sys&#34;][&#34;sunrise&#34;]),
+        )
+</code></pre><p>现在来创建一个叫做 <code>retrieve_weather</code> 的函数。使用这个函数调用 API，然后返回一个 <code>WeatherInfo</code>，这样就可创建你自己的 HTML 页面。</p><pre tabindex=0><code>def retrieve_weather(city: str) -&gt; WeatherInfo:
+    &#34;&#34;&#34;Finds the weather for a city and returns a WeatherInfo instance.&#34;&#34;&#34;
+    data = find_weather_for(city)
+    return WeatherInfo.from_dict(data)
+</code></pre><p>很好，我们的 app 现在有一些基础了。在继续之前，对这些函数进行单元测试。</p><h3 id=1使用-mock-测试-api>1、使用 mock 测试 API</h3><p><a href=https://en.wikipedia.org/wiki/Mock_object>根据维基百科</a>， 模拟对象 mock object 是通过模仿真实对象来模拟它行为的一个对象。在 Python 中，你可以使用 <code>unittest.mock</code> 库来 模拟 mock 任何对象，这个库是标准库中的一部分。为了测试 <code>retrieve_weather</code> 函数，可以模拟 <code>requests.get</code>，然后返回静态数据。</p><h4 id=pytest-mock>pytest-mock</h4><p>在这个教程中，会使用 <code>pytest</code> 作为测试框架。通过插件，<code>pytest</code> 库是非常具有扩展性的。为了完成我们的模拟目标，要用 <code>pytest-mock</code>。这个插件抽象化了大量 <code>unittest.mock</code> 中的设置，也会让你的代码更简洁。如果你感兴趣的话，我在 <a href=https://miguendes.me/7-pytest-plugins-you-must-definitely-use>另一篇博文中</a> 会有更多的讨论。</p><p><em>好的，言归正传，现在看代码。</em></p><p>下面是一个 <code>retrieve_weather</code> 函数的完整测试用例。这个测试使用了两个 <code>fixture</code>：一个是由 <code>pytest-mock</code> 插件提供的 <code>mocker</code> fixture, 还有一个是我们自己的。就是从之前请求中保存的静态数据。</p><pre tabindex=0><code>@pytest.fixture()
+def fake_weather_info():
+    &#34;&#34;&#34;Fixture that returns a static weather data.&#34;&#34;&#34;
+    with open(&#34;tests/resources/weather.json&#34;) as f:
+        return json.load(f)
+</code></pre><pre tabindex=0><code>def test_retrieve_weather_using_mocks(mocker, fake_weather_info):
+    &#34;&#34;&#34;Given a city name, test that a HTML report about the weather is generated
+    correctly.&#34;&#34;&#34;
+    # Creates a fake requests response object
+    fake_resp = mocker.Mock()
+    # Mock the json method to return the static weather data
+    fake_resp.json = mocker.Mock(return_value=fake_weather_info)
+    # Mock the status code
+    fake_resp.status_code = HTTPStatus.OK
+
+    mocker.patch(&#34;weather_app.requests.get&#34;, return_value=fake_resp)
+
+    weather_info = retrieve_weather(city=&#34;London&#34;)
+    assert weather_info == WeatherInfo.from_dict(fake_weather_info)
+</code></pre><p>如果运行这个测试，会获得下面的输出：</p><pre tabindex=0><code>============================= test session starts ==============================
+...[omitted]...
+tests/test_weather_app.py::test_retrieve_weather_using_mocks PASSED      [100%]
+============================== 1 passed in 0.20s ===============================
+Process finished with exit code 0
+</code></pre><p>很好，测试通过了！但是&mldr;生活并非一帆风顺。这个测试有优点，也有缺点。现在来看一下。</p><h4 id=优点>优点</h4><p>好的，有一个之前讨论过的优点就是，通过模拟 API 的返回值，测试变得简单了。将通信和 API 隔离，这样测试就可以预测了。这样总会返回你需要的东西。</p><h4 id=缺点>缺点</h4><p>对于缺点，问题就是，如果不再想用 <code>requests</code> 了，并且决定回到标准库的 <code>urllib</code>，怎么办。每次改变 <code>find_weather_for</code> 的代码，都得去适配测试。好的测试是，当你修改代码实现的时候，测试时不需要改变的。所以，通过模拟，你最终把测试和实现耦合在了一起。</p><p>而且，另一个不好的方面是你需要在调用函数之前进行大量设置——至少是三行代码。</p><pre tabindex=0><code>...
+    # Creates a fake requests response object
+    fake_resp = mocker.Mock()
+    # Mock the json method to return the static weather data
+    fake_resp.json = mocker.Mock(return_value=fake_weather_info)
+    # Mock the status code
+    fake_resp.status_code = HTTPStatus.OK
+...
+</code></pre><p><em>我可以做的更好吗？</em></p><p>是的，请继续看。我现在看看怎么改进一点。</p><h3 id=使用-responses>使用 responses</h3><p>用 <code>mocker</code> 功能模拟 <code>requests</code> 有点问题，就是有很多设置。避免这个问题的一个好办法就是使用一个库，可以拦截 <code>requests</code> 调用并且给它们 打补丁 patch 。有不止一个库可以做这件事，但是对我来说最简单的是 <code>responses</code>。我们来看一下怎么用，并且替换 <code>mock</code>。</p><pre tabindex=0><code>@responses.activate
+def test_retrieve_weather_using_responses(fake_weather_info):
+    &#34;&#34;&#34;Given a city name, test that a HTML report about the weather is generated
+    correctly.&#34;&#34;&#34;
+    api_uri = API.format(city_name=&#34;London&#34;, api_key=API_KEY)
+    responses.add(responses.GET, api_uri, json=fake_weather_info, status=HTTPStatus.OK)
+
+    weather_info = retrieve_weather(city=&#34;London&#34;)
+    assert weather_info == WeatherInfo.from_dict(fake_weather_info)
+</code></pre><p>这个函数再次使用了我们的 <code>fake_weather_info</code> fixture。</p><p>然后运行测试：</p><pre tabindex=0><code>============================= test session starts ==============================
+...
+tests/test_weather_app.py::test_retrieve_weather_using_responses PASSED  [100%]
+============================== 1 passed in 0.19s ===============================
+</code></pre><p>非常好！测试也通过了。但是&mldr;并不是那么棒。</p><h4 id=优点-1>优点</h4><p>使用诸如 <code>responses</code> 这样的库，好的方面就是不需要再给 <code>requests</code> 打补丁 patch 。通过将这层抽象交给库，可以减少一些设置。然而，如果你没注意到的话，还是有一些问题。</p><h4 id=缺点-1>缺点</h4><p>和 <code>unittest.mock</code> 很像，测试和实现再一次耦合了。如果替换 <code>requests</code>，测试就不能用了。</p><h3 id=2使用适配器测试-api>2、使用适配器测试 API</h3><p><em>如果用模拟让测试耦合了，我能做什么？</em></p><p>设想下面的场景：假如说你不能再用 <code>requests</code> 了，而且必须要用 <code>urllib</code> 替换，因为这是 Python 自带的。不仅仅是这样，你了解了不要把测试代码和实现耦合，并且你想今后都避免这种情况。你想替换 <code>urllib</code>，也不想重写测试了。</p><p>事实证明，你可以抽象出执行 <code>GET</code> 请求的代码。</p><p><em>真的吗？怎么做？</em></p><p>可以使用 适配器 adapter 来抽象它。适配器是一种用来封装其他类的接口，并作为新接口暴露出来的一种设计模式。用这种方式，就可以修改适配器而不需要修改代码了。比如，在 <code>find_weather_for</code> 函数中，封装关于 <code>requests</code> 的所有细节，然后把这部分暴露给只接受 URL 的函数。</p><p>所以，这个：</p><pre tabindex=0><code>def find_weather_for(city: str) -&gt; dict:
+    &#34;&#34;&#34;Queries the weather API and returns the weather data for a particular city.&#34;&#34;&#34;
+    url = API.format(city_name=city, api_key=API_KEY)
+    resp = requests.get(url)
+    return resp.json()
+</code></pre><p>变成这样：</p><pre tabindex=0><code>def find_weather_for(city: str) -&gt; dict:
+    &#34;&#34;&#34;Queries the weather API and returns the weather data for a particular city.&#34;&#34;&#34;
+    url = API.format(city_name=city, api_key=API_KEY)
+    return adapter(url)
+</code></pre><p>然后适配器变成这样：</p><pre tabindex=0><code>def requests_adapter(url: str) -&gt; dict:
+    resp = requests.get(url)
+    return resp.json()
+</code></pre><p>现在到了重构 <code>retrieve_weather</code> 函数的时候：</p><pre tabindex=0><code>def retrieve_weather(city: str) -&gt; WeatherInfo:
+    &#34;&#34;&#34;Finds the weather for a city and returns a WeatherInfo instance.&#34;&#34;&#34;
+    data = find_weather_for(city, adapter=requests_adapter)
+    return WeatherInfo.from_dict(data)
+</code></pre><p>所以，如果你决定改为使用 <code>urllib</code> 的实现，只要换一下适配器：</p><pre tabindex=0><code>def urllib_adapter(url: str) -&gt; dict:
+    &#34;&#34;&#34;An adapter that encapsulates urllib.urlopen&#34;&#34;&#34;
+    with urllib.request.urlopen(url) as response:
+        resp = response.read()
+    return json.loads(resp)
+</code></pre><pre tabindex=0><code>def retrieve_weather(city: str) -&gt; WeatherInfo:
+    &#34;&#34;&#34;Finds the weather for a city and returns a WeatherInfo instance.&#34;&#34;&#34;
+    data = find_weather_for(city, adapter=urllib_adapter)
+    return WeatherInfo.from_dict(data)
+</code></pre><p><em>好的，那测试怎么做？</em></p><p>为了测试 <code>retrieve_weather</code>, 只要创建一个在测试过程中使用的假的适配器：</p><pre tabindex=0><code>@responses.activate
+def test_retrieve_weather_using_adapter(
+    fake_weather_info,
+):
+    def fake_adapter(url: str):
+        return fake_weather_info
+
+    weather_info = retrieve_weather(city=&#34;London&#34;, adapter=fake_adapter)
+    assert weather_info == WeatherInfo.from_dict(fake_weather_info)
+</code></pre><p>如果运行测试，会获得：</p><pre tabindex=0><code>============================= test session starts ==============================
+tests/test_weather_app.py::test_retrieve_weather_using_adapter PASSED    [100%]
+============================== 1 passed in 0.22s ===============================
+</code></pre><h4 id=优点-2>优点</h4><p>这个方法的优点是可以成功将测试和实现解耦。使用 依赖注入 dependency injection 在测试期间注入一个假的适配器。你也可以在任何时候更换适配器，包括在运行时。这些事情都不会改变任何行为。</p><h4 id=缺点-2>缺点</h4><p>缺点就是，因为你在测试中用了假的适配器，如果在实现中往适配器中引入了一个 bug，测试的时候就不会发现。比如说，往 <code>requests</code> 传入了一个有问题的参数，像这样：</p><pre tabindex=0><code>def requests_adapter(url: str) -&gt; dict:
+    resp = requests.get(url, headers=&lt;some broken headers&gt;)
+    return resp.json()
+</code></pre><p>在生产环境中，适配器会有问题，而且单元测试没办法发现。但是事实是，之前的方法也会有同样的问题。这就是为什么不仅要单元测试，并且总是要集成测试。也就是说，要考虑另一个选项。</p><h3 id=3使用-vcrpy-测试-api>3、使用 VCR.py 测试 API</h3><p>现在终于到了讨论我们最后一个选项了。诚实地说，我也是最近才发现这个。我用 模拟 mock 也很长时间了，而且总是有一些问题。<code>VCR.py</code> 是一个库，它可以简化很多 HTTP 请求的测试。</p><p>它的工作原理是将第一次运行测试的 HTTP 交互记录为一个 YAML 文件，叫做 <code>cassette</code>。请求和响应都会被序列化。当第二次运行测试的时候，<code>VCT.py</code> 将拦截对请求的调用，并且返回一个响应。</p><p>现在看一下下面如何使用 <code>VCR.py</code> 测试 <code>retrieve_weather</code>：</p><pre tabindex=0><code>@vcr.use_cassette()
+def test_retrieve_weather_using_vcr(fake_weather_info):
+    weather_info = retrieve_weather(city=&#34;London&#34;)
+    assert weather_info == WeatherInfo.from_dict(fake_weather_info)
+</code></pre><p><em>天呐，就这样？没有设置？<code>@vcr.use_cassette()</code> 是什么？</em></p><p>是的，就这样！没有设置，只要一个 <code>pytest</code> 标注告诉 VCR 去拦截调用，然后保存 cassette 文件。</p><p><em>cassette 文件是什么样？</em></p><p>好问题。这个文件里有很多东西。这是因为 VCR 保存了交互中的所有细节。</p><pre tabindex=0><code>interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - &#39;*/*&#39;
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+    method: GET
+    uri: https://api.openweathermap.org/data/2.5/weather?q=London&amp;appid=&lt;YOUR API KEY HERE&gt;&amp;units=metric
+  response:
+    body:
+      string: &#39;{&#34;coord&#34;:{&#34;lon&#34;:-0.13,&#34;lat&#34;:51.51},&#34;weather&#34;:[{&#34;id&#34;:800,&#34;main&#34;:&#34;Clear&#34;,&#34;description&#34;:&#34;clearsky&#34;,&#34;icon&#34;:&#34;01d&#34;}],&#34;base&#34;:&#34;stations&#34;,&#34;main&#34;:{&#34;temp&#34;:16.53,&#34;feels_like&#34;:15.52,&#34;temp_min&#34;:15,&#34;temp_max&#34;:17.78,&#34;pressure&#34;:1023,&#34;humidity&#34;:72},&#34;visibility&#34;:10000,&#34;wind&#34;:{&#34;speed&#34;:2.1,&#34;deg&#34;:40},&#34;clouds&#34;:{&#34;all&#34;:0},&#34;dt&#34;:1600420164,&#34;sys&#34;:{&#34;type&#34;:1,&#34;id&#34;:1414,&#34;country&#34;:&#34;GB&#34;,&#34;sunrise&#34;:1600407646,&#34;sunset&#34;:1600452509},&#34;timezone&#34;:3600,&#34;id&#34;:2643743,&#34;name&#34;:&#34;London&#34;,&#34;cod&#34;:200}&#39;
+    headers:
+      Access-Control-Allow-Credentials:
+      - &#39;true&#39;
+      Access-Control-Allow-Methods:
+      - GET, POST
+      Access-Control-Allow-Origin:
+      - &#39;*&#39;
+      Connection:
+      - keep-alive
+      Content-Length:
+      - &#39;454&#39;
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 18 Sep 2020 10:53:25 GMT
+      Server:
+      - openresty
+      X-Cache-Key:
+      - /data/2.5/weather?q=london&amp;amp;units=metric
+    status:
+      code: 200
+      message: OK
+version: 1
+</code></pre><p><em>确实很多！</em></p><p>真的！好的方面就是你不需要留意它。<code>VCR.py</code> 会为你安排好一切。</p><h4 id=优点-3>优点</h4><p>现在看一下优点，我可以至少列出五个：</p><ul><li>没有设置代码。</li><li>测试仍然是分离的，所以很快。</li><li>测试是确定的。</li><li>如果你改了请求，比如说用了错误的 header，测试会失败。</li><li>没有与代码实现耦合，所以你可以换适配器，而且测试会通过。唯一有关系的东西就是请求必须是一样的。</li></ul><h4 id=缺点-3>缺点</h4><p>再与模拟相比较，除了避免了错误，还是有一些问题。</p><p>如果 API 提供者出于某种原因修改了数据格式，测试仍然会通过。幸运的是，这种情况并不经常发生，而且在这种重大改变之前，API 提供者通常会给他们的 API 提供不同版本。</p><p>另一个需要考虑的事情是 就地 in place 端到端 end-to-end 测试。每次服务器运行的时候，这些测试都会调用。顾名思义，这是一个范围更广、更慢的测试。它们会比单元测试覆盖更多。事实上，并不是每个项目都需要使用它们。所以，就我看来，<code>VCR.py</code> 对于大多数人的需求来说都绰绰有余。</p><h3 id=总结>总结</h3><p>就这么多了。我希望今天你了解了一些有用的东西。测试 API 客户端应用可能会有点吓人。然而，当武装了合适的工具和知识，你就可以驯服这个野兽。</p><p>在 <a href=https://github.com/miguendes/tutorials/tree/master/testing_http>我的 Github</a> 上可以找到这个完整的应用。</p><p><em>这篇文章最早发表在 <a href=https://miguendes.me/3-ways-to-test-api-client-applications-in-python>作者的个人博客</a>，授权转载</em></p><hr><p>via: <a href=https://opensource.com/article/21/9/unit-test-python>https://opensource.com/article/21/9/unit-test-python</a></p><p>作者：<a href=https://opensource.com/users/miguendes>Miguel Brito</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/Yufei-Yan>Yufei-Yan</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/api/ rel=tag>API</a></li><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%B5%8B%E8%AF%95/ rel=tag>测试</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,75 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Python 函数式编程：不可变数据结构 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Python 函数式编程：不可变数据结构"><meta property="og:description" content="不可变性可以帮助我们更好地理解我们的代码。下面我将讲述如何在不牺牲性能的条件下来实现它。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10222-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-11-11T22:41:16+00:00"><meta property="article:modified_time" content="2018-11-11T22:41:16+00:00"><meta itemprop=name content="Python 函数式编程：不可变数据结构"><meta itemprop=description content="不可变性可以帮助我们更好地理解我们的代码。下面我将讲述如何在不牺牲性能的条件下来实现它。"><meta itemprop=datePublished content="2018-11-11T22:41:16+00:00"><meta itemprop=dateModified content="2018-11-11T22:41:16+00:00"><meta itemprop=wordCount content="321"><meta itemprop=keywords content="不可变,函数式编程,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Python 函数式编程：不可变数据结构</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-11-11T22:41:16Z>November 11, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>不可变性可以帮助我们更好地理解我们的代码。下面我将讲述如何在不牺牲性能的条件下来实现它。</p></blockquote><p><img src=/data/attachment/album/201811/11/224129ysll52s353dsnvyd.png alt></p><p>在这个由两篇文章构成的系列中，我将讨论如何将函数式编程方法论中的思想引入至 Python 中，来充分发挥这两个领域的优势。</p><p>本文（也就是第一篇文章）中，我们将探讨不可变数据结构的优势。第二部分会探讨如何在 <code>toolz</code> 库的帮助下，用 Python 实现高层次的函数式编程理念。</p><p>为什么要用函数式编程？因为变化的东西更难推理。如果你已经确信变化会带来麻烦，那很棒。如果你还没有被说服，在文章结束时，你会明白这一点的。</p><p>我们从思考正方形和矩形开始。如果我们抛开实现细节，单从接口的角度考虑，正方形是矩形的子类吗？</p><p>子类的定义基于<a href=https://en.wikipedia.org/wiki/Liskov_substitution_principle>里氏替换原则</a>。一个子类必须能够完成超类所做的一切。</p><p>如何为矩形定义接口？</p><pre tabindex=0><code>from zope.interface import Interface
+
+class IRectangle(Interface):
+    def get_length(self):
+        &#34;&#34;&#34;正方形能做到&#34;&#34;&#34;
+    def get_width(self):
+        &#34;&#34;&#34;正方形能做到&#34;&#34;&#34;
+    def set_dimensions(self, length, width):
+        &#34;&#34;&#34;啊哦&#34;&#34;&#34;
+</code></pre><p>如果我们这么定义，那正方形就不能成为矩形的子类：如果长度和宽度不等，它就无法对 <code>set_dimensions</code> 方法做出响应。</p><p>另一种方法，是选择将矩形做成不可变对象。</p><pre tabindex=0><code>class IRectangle(Interface):
+    def get_length(self):
+        &#34;&#34;&#34;正方形能做到&#34;&#34;&#34;
+    def get_width(self):
+        &#34;&#34;&#34;正方形能做到&#34;&#34;&#34;
+    def with_dimensions(self, length, width):
+        &#34;&#34;&#34;返回一个新矩形&#34;&#34;&#34;
+</code></pre><p>现在，我们可以将正方形视为矩形了。在调用 <code>with_dimensions</code> 时，它可以返回一个新的矩形（它不一定是个正方形），但它本身并没有变，依然是一个正方形。</p><p>这似乎像是个学术问题 —— 直到我们认为正方形和矩形可以在某种意义上看做一个容器的侧面。在理解了这个例子以后，我们会处理更传统的容器，以解决更现实的案例。比如，考虑一下随机存取数组。</p><p>我们现在有 <code>ISquare</code> 和 <code>IRectangle</code>，而且 <code>ISequere</code> 是 <code>IRectangle</code> 的子类。</p><p>我们希望把矩形放进随机存取数组中：</p><pre tabindex=0><code>class IArrayOfRectangles(Interface):
+    def get_element(self, i):
+        &#34;&#34;&#34;返回一个矩形&#34;&#34;&#34;
+    def set_element(self, i, rectangle):
+        &#34;&#34;&#34;&#39;rectangle&#39; 可以是任意 IRectangle 对象&#34;&#34;&#34;
+</code></pre><p>我们同样希望把正方形放进随机存取数组：</p><pre tabindex=0><code>class IArrayOfSquare(Interface):
+    def get_element(self, i):
+        &#34;&#34;&#34;返回一个正方形&#34;&#34;&#34;
+    def set_element(self, i, square):
+        &#34;&#34;&#34;&#39;square&#39; 可以是任意 ISquare 对象&#34;&#34;&#34;
+</code></pre><p>尽管 <code>ISquare</code> 是 <code>IRectangle</code> 的子集，但没有任何一个数组可以同时实现 <code>IArrayOfSquare</code> 和 <code>IArrayOfRectangle</code>.</p><p>为什么不能呢？假设 <code>bucket</code> 实现了这两个类的功能。</p><pre tabindex=0><code>&gt;&gt;&gt; rectangle = make_rectangle(3, 4)
+&gt;&gt;&gt; bucket.set_element(0, rectangle) # 这是 IArrayOfRectangle 中的合法操作
+&gt;&gt;&gt; thing = bucket.get_element(0) # IArrayOfSquare 要求 thing 必须是一个正方形
+&gt;&gt;&gt; assert thing.height == thing.width
+Traceback (most recent call last):
+  File &#34;&lt;stdin&gt;&#34;, line 1, in &lt;module&gt;
+AssertionError
+</code></pre><p>无法同时实现这两类功能，意味着这两个类无法构成继承关系，即使 <code>ISquare</code> 是 <code>IRectangle</code> 的子类。问题来自 <code>set_element</code> 方法：如果我们实现一个只读的数组，那 <code>IArrayOfSquare</code> 就可以是 <code>IArrayOfRectangle</code> 的子类了。</p><p>在可变的 <code>IRectangle</code> 和可变的 <code>IArrayOf*</code> 接口中，可变性都会使得对类型和子类的思考变得更加困难 —— 放弃变换的能力，意味着我们的直觉所希望的类型间关系能够成立了。</p><p>可变性还会带来作用域方面的影响。当一个共享对象被两个地方的代码改变时，这种问题就会发生。一个经典的例子是两个线程同时改变一个共享变量。不过在单线程程序中，即使在两个相距很远的地方共享一个变量，也是一件简单的事情。从 Python 语言的角度来思考，大多数对象都可以从很多位置来访问：比如在模块全局变量，或在一个堆栈跟踪中，或者以类属性来访问。</p><p>如果我们无法对共享做出约束，那我们可能要考虑对可变性来进行约束了。</p><p>这是一个不可变的矩形，它利用了 <a href=https://www.attrs.org/en/stable/>attr</a> 库：</p><pre tabindex=0><code>@attr.s(frozen=True)
+class Rectange(object):
+    length = attr.ib()
+    width = attr.ib()
+    @classmethod
+    def with_dimensions(cls, length, width):
+        return cls(length, width)
+</code></pre><p>这是一个正方形：</p><pre tabindex=0><code>@attr.s(frozen=True)
+class Square(object):
+    side = attr.ib()
+    @classmethod
+    def with_dimensions(cls, length, width):
+        return Rectangle(length, width)
+</code></pre><p>使用 <code>frozen</code> 参数，我们可以轻易地使 <code>attrs</code> 创建的类成为不可变类型。正确实现 <code>__setitem__</code> 方法的工作都交给别人完成了，对我们是不可见的。</p><p>修改对象仍然很容易；但是我们不可能改变它的本质。</p><pre tabindex=0><code>too_long = Rectangle(100, 4)
+reasonable = attr.evolve(too_long, length=10)
+</code></pre><p><a href=https://pyrsistent.readthedocs.io/en/latest/>Pyrsistent</a> 能让我们拥有不可变的容器。</p><pre tabindex=0><code># 由整数构成的向量
+a = pyrsistent.v(1, 2, 3)
+# 并非由整数构成的向量
+b = a.set(1, &#34;hello&#34;)
+</code></pre><p>尽管 <code>b</code> 不是一个由整数构成的向量，但没有什么能够改变 <code>a</code> 只由整数构成的性质。</p><p>如果 <code>a</code> 有一百万个元素呢？<code>b</code> 会将其中的 999999 个元素复制一遍吗？<code>Pyrsistent</code> 具有“大 O”性能保证：所有操作的时间复杂度都是 <code>O(log n)</code>. 它还带有一个可选的 C 语言扩展，以在“大 O”性能之上进行提升。</p><p>修改嵌套对象时，会涉及到“变换器”的概念：</p><pre tabindex=0><code>blog = pyrsistent.m(
+    title=&#34;My blog&#34;,
+    links=pyrsistent.v(&#34;github&#34;, &#34;twitter&#34;),
+    posts=pyrsistent.v(
+        pyrsistent.m(title=&#34;no updates&#34;,
+                     content=&#34;I&#39;m busy&#34;),
+        pyrsistent.m(title=&#34;still no updates&#34;,
+                     content=&#34;still busy&#34;)))
+new_blog = blog.transform([&#34;posts&#34;, 1, &#34;content&#34;],
+                          &#34;pretty busy&#34;)
+</code></pre><p><code>new_blog</code> 现在将是如下对象的不可变等价物：</p><pre tabindex=0><code>{&#39;links&#39;: [&#39;github&#39;, &#39;twitter&#39;],
+ &#39;posts&#39;: [{&#39;content&#39;: &#34;I&#39;m busy&#34;,
+            &#39;title&#39;: &#39;no updates&#39;},
+           {&#39;content&#39;: &#39;pretty busy&#39;,
+            &#39;title&#39;: &#39;still no updates&#39;}],
+ &#39;title&#39;: &#39;My blog&#39;}
+</code></pre><p>不过 <code>blog</code> 依然不变。这意味着任何拥有旧对象引用的人都没有受到影响：转换只会有局部效果。</p><p>当共享行为猖獗时，这会很有用。例如，函数的默认参数：</p><pre tabindex=0><code>def silly_sum(a, b, extra=v(1, 2)):
+    extra = extra.extend([a, b])
+    return sum(extra)
+</code></pre><p>在本文中，我们了解了为什么不可变性有助于我们来思考我们的代码，以及如何在不带来过大性能负担的条件下实现它。下一篇，我们将学习如何借助不可变对象来实现强大的程序结构。</p><hr><p>via: <a href=https://opensource.com/article/18/10/functional-programming-python-immutable-data-structures>https://opensource.com/article/18/10/functional-programming-python-immutable-data-structures</a></p><p>作者：<a href=https://opensource.com/users/moshez>Moshe Zadka</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/StdioA>StdioA</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E4%B8%8D%E5%8F%AF%E5%8F%98/ rel=tag>不可变</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/ rel=tag>函数式编程</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

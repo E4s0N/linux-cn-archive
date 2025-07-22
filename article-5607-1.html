@@ -1,0 +1,122 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Shell 脚本面试问题大全 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Shell 脚本面试问题大全"><meta property="og:description" content="我们为你的面试准备选择了 70 个你可能遇到的 shell 脚本面试问题及解答。了解脚本或至少知道基础知识对系统管理员来说至关重要，它也有助于你在工作环境中自动完成很多任务。在过去的几年里，我们注意到所有的 linux 工作职位都要求脚本技能。  1) 如何向脚本传递参数 ? ./script argument  例子 : 显示文件名称脚本 ./show.sh file1.txt cat show.sh #!/bin/bash cat $1  2) 如何在脚本中使用参数 ? 第一个参数 : $1，第二个参数 : $2 例子 : 脚本会复制文件(arg1) 到目标地址(arg2) ./copy.sh file1.txt /tmp/ cat copy.sh #!/bin/bash"><meta property="og:type" content="article"><meta property="og:url" content="/article-5607-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-06-12T10:30:00+00:00"><meta property="article:modified_time" content="2015-06-12T10:30:00+00:00"><meta itemprop=name content="Shell 脚本面试问题大全"><meta itemprop=description content="我们为你的面试准备选择了 70 个你可能遇到的 shell 脚本面试问题及解答。了解脚本或至少知道基础知识对系统管理员来说至关重要，它也有助于你在工作环境中自动完成很多任务。在过去的几年里，我们注意到所有的 linux 工作职位都要求脚本技能。  1) 如何向脚本传递参数 ? ./script argument  例子 : 显示文件名称脚本 ./show.sh file1.txt cat show.sh #!/bin/bash cat $1  2) 如何在脚本中使用参数 ? 第一个参数 : $1，第二个参数 : $2 例子 : 脚本会复制文件(arg1) 到目标地址(arg2) ./copy.sh file1.txt /tmp/ cat copy.sh #!/bin/bash"><meta itemprop=datePublished content="2015-06-12T10:30:00+00:00"><meta itemprop=dateModified content="2015-06-12T10:30:00+00:00"><meta itemprop=wordCount content="880"><meta itemprop=keywords content="脚本,面试,shell,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Shell 脚本面试问题大全</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2015-06-12T10:30:00Z>June 12, 2015</time></div></div></header><div class="content post__content clearfix"><p>我们为你的面试准备选择了 70 个你可能遇到的 shell 脚本面试问题及解答。了解脚本或至少知道基础知识对系统管理员来说至关重要，它也有助于你在工作环境中自动完成很多任务。在过去的几年里，我们注意到所有的 linux 工作职位都要求脚本技能。</p><p><a href=https://img.linux.net.cn/data/attachment/album/201506/11/103441j12o49f7qstm7o22.jpg><img src=/data/attachment/album/201506/11/103441j12o49f7qstm7o22.jpg alt></a></p><h3 id=1-如何向脚本传递参数->1) 如何向脚本传递参数 ?</h3><pre tabindex=0><code>./script argument
+</code></pre><p><strong>例子</strong> : 显示文件名称脚本</p><pre tabindex=0><code>./show.sh file1.txt
+
+cat show.sh
+#!/bin/bash
+echo $1
+</code></pre><p>（LCTT 译注：谢谢某匿名访客的提醒，原题有误，修改之。）</p><h3 id=2-如何在脚本中使用参数->2) 如何在脚本中使用参数 ?</h3><p>第一个参数 : $1，第二个参数 : $2</p><p>例子 : 脚本会复制文件(arg1) 到目标地址(arg2)</p><pre tabindex=0><code>./copy.sh file1.txt /tmp/
+
+cat copy.sh
+#!/bin/bash
+cp $1 $2
+</code></pre><h3 id=3-如何计算传递进来的参数->3) 如何计算传递进来的参数 ?</h3><pre tabindex=0><code>$#
+</code></pre><h3 id=4-如何在脚本中获取脚本名称->4) 如何在脚本中获取脚本名称 ?</h3><pre tabindex=0><code>$0
+</code></pre><h3 id=5-如何检查之前的命令是否运行成功->5) 如何检查之前的命令是否运行成功 ?</h3><pre tabindex=0><code>$?
+</code></pre><h3 id=6-如何获取文件的最后一行->6) 如何获取文件的最后一行 ?</h3><pre tabindex=0><code>tail -1
+</code></pre><h3 id=7-如何获取文件的第一行->7) 如何获取文件的第一行 ?</h3><pre tabindex=0><code>head -1
+</code></pre><h3 id=8-如何获取一个文件每一行的第三个元素->8) 如何获取一个文件每一行的第三个元素 ?</h3><pre tabindex=0><code>awk &#39;{print $3}&#39;
+</code></pre><h3 id=9-假如文件中每行第一个元素是-find如何获取第二个元素>9) 假如文件中每行第一个元素是 FIND，如何获取第二个元素</h3><pre tabindex=0><code>awk &#39;{ if ($1 == &#34;FIND&#34;) print $2}&#39;
+</code></pre><h3 id=10-如何调试-bash-脚本>10) 如何调试 bash 脚本</h3><p>将 -xv 参数加到 #!/bin/bash 后</p><p>例子：</p><pre tabindex=0><code>#!/bin/bash –xv
+</code></pre><h3 id=11-举例如何写一个函数->11) 举例如何写一个函数 ?</h3><pre tabindex=0><code>function example() {
+echo &#34;Hello world!&#34;
+}
+</code></pre><h3 id=12-如何向连接两个字符串->12) 如何向连接两个字符串 ?</h3><pre tabindex=0><code>V1=&#34;Hello&#34;
+V2=&#34;World&#34;
+V3=${V1}${V2}
+echo $V3
+</code></pre><p>输出</p><pre tabindex=0><code>HelloWorld
+</code></pre><blockquote><p>据匿名网友评论，本题原答案有误，已经修正。</p></blockquote><h3 id=13-如何进行两个整数相加->13) 如何进行两个整数相加 ?</h3><pre tabindex=0><code>V1=1
+V2=2
+let V3=$V1+$V2
+echo $V3
+</code></pre><p>输出</p><pre tabindex=0><code>3
+</code></pre><blockquote><p>据 @kashu 的意见，本题的更佳回答为：</p><p>两个整数相加，还有若干种方法实现：</p><pre tabindex=0><code>A=5
+B=6
+
+echo $(($A+$B))  # 方法 2
+echo $[$A+$B]    # 方法 3
+expr $A + $B     # 方法 4
+echo $A+$B | bc  # 方法 5
+awk &#39;BEGIN{print &#39;&#34;$A&#34;&#39;+&#39;&#34;$B&#34;&#39;}&#39;   # 方法 6
+</code></pre></blockquote><h3 id=14-如何检查文件系统中是否存在某个文件->14) 如何检查文件系统中是否存在某个文件 ?</h3><pre tabindex=0><code>if [ -f /var/log/messages ]
+then
+echo &#34;File exists&#34;
+fi
+</code></pre><h3 id=15-写出-shell-脚本中所有循环语法->15) 写出 shell 脚本中所有循环语法 ?</h3><h4 id=for-循环->for 循环 :</h4><pre tabindex=0><code>for i in $( ls ); do
+echo item: $i
+done
+</code></pre><h4 id=while-循环->while 循环 :</h4><pre tabindex=0><code>#!/bin/bash
+COUNTER=0
+while [ $COUNTER -lt 10 ]; do
+echo The counter is $COUNTER
+let COUNTER=COUNTER+1
+done
+</code></pre><h4 id=until-循环->until 循环 :</h4><pre tabindex=0><code>#!/bin/bash
+COUNTER=20
+until [ $COUNTER -lt 10 ]; do
+echo COUNTER $COUNTER
+let COUNTER-=1
+done
+</code></pre><h3 id=16-每个脚本开始的-binsh-或-binbash-表示什么意思->16) 每个脚本开始的 #!/bin/sh 或 #!/bin/bash 表示什么意思 ?</h3><p>这一行说明要使用的 shell。#!/bin/bash 表示脚本使用 /bin/bash。对于 python 脚本，就是 #!/usr/bin/python。（LCTT译注：这一行称之为<a href=/article-3664-1.html>释伴行</a>。）</p><h3 id=17-如何获取文本文件的第-10-行->17) 如何获取文本文件的第 10 行 ?</h3><pre tabindex=0><code>head -10 file|tail -1
+</code></pre><h3 id=18-bash-脚本文件的第一个符号是什么>18) bash 脚本文件的第一个符号是什么</h3><pre tabindex=0><code>#
+</code></pre><h3 id=19-命令--z----echo-0--echo-1-的输出是什么>19) 命令：[ -z "" ] && echo 0 || echo 1 的输出是什么</h3><pre tabindex=0><code>0
+</code></pre><h3 id=20-命令-export-有什么用->20) 命令 “export” 有什么用 ?</h3><p>使变量在子 shell 中可用。</p><h3 id=21-如何在后台运行脚本->21) 如何在后台运行脚本 ?</h3><p>在脚本后面添加 “&”。</p><blockquote><p>据 @kashu 的意见，更好的答案是：</p><pre tabindex=0><code>nohup command &amp;
+</code></pre><p>大部分时间我们可能是远程使用Linux，我碰到过由于网络断线使得在后台运行的command &没了&mldr;</p></blockquote><h3 id=22-chmod-500-script-做什么->22) &ldquo;chmod 500 script&rdquo; 做什么 ?</h3><p>使脚本所有者拥有可执行权限。</p><h3 id=23--做什么->23) &ldquo;>&rdquo; 做什么 ?</h3><p>重定向输出流到文件或另一个流。</p><h3 id=24--和--有什么区别>24) & 和 && 有什么区别</h3><ul><li>& - 希望脚本在后台运行的时候使用它</li><li>&& - 当前一个脚本成功完成才执行后面的命令/脚本的时候使用它</li></ul><h3 id=25-什么时候要在--condition--之前使用-if->25) 什么时候要在 [ condition ] 之前使用 “if” ?</h3><p>当条件满足时需要运行多条命令的时候。</p><h3 id=26-命令-namejohn--echo-my-name-is-name-的输出是什么>26) 命令： name=John && echo &lsquo;My name is $name&rsquo; 的输出是什么</h3><pre tabindex=0><code>My name is $name
+</code></pre><h3 id=27-bash-shell-脚本中哪个符号用于注释->27) bash shell 脚本中哪个符号用于注释 ?</h3><pre tabindex=0><code>#
+</code></pre><h3 id=28-命令-echo-new-variable-的输出是什么>28) 命令: echo ${new:-variable} 的输出是什么</h3><pre tabindex=0><code>variable
+</code></pre><h3 id=29--和--引号有什么区别->29) &rsquo; 和 " 引号有什么区别 ?</h3><ul><li>&rsquo; - 当我们不希望把变量转换为值的时候使用它。</li><li>" - 会计算所有变量的值并用值代替。</li></ul><h3 id=30-如何在脚本文件中重定向标准输出和标准错误流到-logtxt-文件->30) 如何在脚本文件中重定向标准输出和标准错误流到 log.txt 文件 ?</h3><p>在脚本文件中添加 &ldquo;exec >log.txt 2>&amp;1&rdquo; 命令。</p><h3 id=31-如何只用-echo-命令获取字符串变量的一部分->31) 如何只用 echo 命令获取字符串变量的一部分 ?</h3><pre tabindex=0><code>echo ${variable:x:y}
+x - 起始位置
+y - 长度
+</code></pre><p>例子:</p><pre tabindex=0><code>variable=&#34;My name is Petras, and I am developer.&#34;
+echo ${variable:11:6} # 会显示 Petras
+</code></pre><h3 id=32-如果给定字符串-variableuser123321homedir如何只用-echo-命令获取-home_dir->32) 如果给定字符串 variable=&ldquo;User:123:321:/home/dir&rdquo;，如何只用 echo 命令获取 home_dir ?</h3><pre tabindex=0><code>echo ${variable#*:*:*:}
+</code></pre><p>或</p><pre tabindex=0><code>echo ${variable##*:}
+</code></pre><h3 id=33-如何从上面的字符串中获取-user->33) 如何从上面的字符串中获取 “User” ?</h3><pre tabindex=0><code>echo ${variable%:*:*:*}
+</code></pre><p>或</p><pre tabindex=0><code>echo ${variable%%:*}
+</code></pre><h3 id=34-如何使用-awk-列出-uid-小于-100-的用户->34) 如何使用 awk 列出 UID 小于 100 的用户 ?</h3><pre tabindex=0><code>awk -F: &#39;$3&lt;100&#39; /etc/passwd
+</code></pre><h3 id=35-写程序为用户计算主组数目并显示次数和组名>35) 写程序为用户计算主组数目并显示次数和组名</h3><pre tabindex=0><code>cat /etc/passwd|cut -d: -f4|sort|uniq -c|while read c g
+do
+{ echo $c; grep :$g: /etc/group|cut -d: -f1;}|xargs -n 2
+done
+</code></pre><h3 id=36-如何在-bash-shell-中更改标准的域分隔符为-->36) 如何在 bash shell 中更改标准的域分隔符为 &ldquo;:&rdquo; ?</h3><pre tabindex=0><code>IFS=&#34;:&#34;
+</code></pre><h3 id=37-如何获取变量长度->37) 如何获取变量长度 ?</h3><pre tabindex=0><code>${#variable}
+</code></pre><h3 id=38-如何打印变量的最后-5-个字符->38) 如何打印变量的最后 5 个字符 ?</h3><pre tabindex=0><code>echo ${variable: -5}
+</code></pre><h3 id=39-variable-10-和-variable--10-有什么区别>39) ${variable:-10} 和 ${variable: -10} 有什么区别?</h3><ul><li>${variable:-10} - 如果之前没有给 variable 赋值则输出 10；如果有赋值则输出该变量</li><li>${variable: -10} - 输出 variable 的最后 10 个字符</li></ul><h3 id=40-如何只用-echo-命令替换字符串的一部分->40) 如何只用 echo 命令替换字符串的一部分 ?</h3><pre tabindex=0><code>echo ${variable//pattern/replacement}
+</code></pre><h3 id=41-哪个命令将命令替换为大写->41) 哪个命令将命令替换为大写 ?</h3><pre tabindex=0><code>tr &#39;[:lower:]&#39; &#39;[:upper:]&#39;
+</code></pre><h3 id=42-如何计算本地用户数目->42) 如何计算本地用户数目 ?</h3><p>wc -l /etc/passwd|cut -d" " -f1 或者 cat /etc/passwd|wc -l</p><h3 id=43-不用-wc-命令如何计算字符串中的单词数目->43) 不用 wc 命令如何计算字符串中的单词数目 ?</h3><pre tabindex=0><code>set ${string}
+echo $#
+</code></pre><h3 id=44-export-variable-或-export-variable-哪个正确->44) &ldquo;export $variable&rdquo; 或 &ldquo;export variable&rdquo; 哪个正确 ?</h3><pre tabindex=0><code>export variable
+</code></pre><h3 id=45-如何列出第二个字母是-a-或-b-的文件->45) 如何列出第二个字母是 a 或 b 的文件 ?</h3><pre tabindex=0><code>ls -d ?[ab]*
+</code></pre><h3 id=46-如何将整数-a-加到-b-并赋值给-c->46) 如何将整数 a 加到 b 并赋值给 c ?</h3><pre tabindex=0><code>c=$((a+b))
+</code></pre><p>或</p><pre tabindex=0><code>c=`expr $a + $b`
+</code></pre><p>或</p><pre tabindex=0><code>c=`echo &#34;$a+$b&#34;|bc`
+</code></pre><h3 id=47-如何去除字符串中的所有空格->47) 如何去除字符串中的所有空格 ?</h3><pre tabindex=0><code>echo $string|tr -d &#34; &#34;
+</code></pre><h3 id=48-重写这个命令将输出变量转换为复数-itemcar-echo-i-like-item->48) 重写这个命令，将输出变量转换为复数: item=&ldquo;car&rdquo;; echo &ldquo;I like $item&rdquo; ?</h3><pre tabindex=0><code>item=&#34;car&#34;; echo &#34;I like ${item}s&#34;
+</code></pre><h3 id=49-写出输出数字-0-到-100-中-3-的倍数0-3-6-9-的命令->49) 写出输出数字 0 到 100 中 3 的倍数(0 3 6 9 …)的命令 ?</h3><pre tabindex=0><code>for i in {0..100..3}; do echo $i; done
+</code></pre><p>或</p><pre tabindex=0><code>for (( i=0; i&lt;=100; i=i+3 )); do echo &#34;Welcome $i times&#34;; done
+</code></pre><h3 id=50-如何打印传递给脚本的所有参数->50) 如何打印传递给脚本的所有参数 ?</h3><pre tabindex=0><code>echo $*
+</code></pre><p>或</p><pre tabindex=0><code>echo $@
+</code></pre><h3 id=51--a--b--和--a--eq-b--有什么区别>51) [ $a == $b ] 和 [ $a -eq $b ] 有什么区别</h3><ul><li>[ $a == $b ] - 用于字符串比较</li><li>[ $a -eq $b ] - 用于数字比较</li></ul><h3 id=52--和--有什么区别>52) = 和 == 有什么区别</h3><ul><li>= - 用于为变量赋值</li><li>== - 用于字符串比较</li></ul><h3 id=53-写出测试-a-是否大于-12-的命令->53) 写出测试 $a 是否大于 12 的命令 ?</h3><pre tabindex=0><code>[ $a -gt 12 ]
+</code></pre><h3 id=54-写出测试-b-是否小于等于-12-的命令->54) 写出测试 $b 是否小于等于 12 的命令 ?</h3><pre tabindex=0><code>[ $b -le 12 ]
+</code></pre><h3 id=55-如何检查字符串是否以字母-abc-开头->55) 如何检查字符串是否以字母 &ldquo;abc&rdquo; 开头 ?</h3><pre tabindex=0><code>[[ $string == abc* ]]
+</code></pre><h3 id=56--string--abc--和--string--abc--有什么区别>56) [[ $string == abc* ]] 和 [[ $string == &ldquo;abc*&rdquo; ]] 有什么区别</h3><ul><li>[[ $string == abc* ]] - 检查字符串是否以字母 abc 开头</li><li>[[ $string == &ldquo;abc*&rdquo; ]] - 检查字符串是否完全等于 abc*</li></ul><h3 id=57-如何列出以-ab-或-xy-开头的用户名->57) 如何列出以 ab 或 xy 开头的用户名 ?</h3><pre tabindex=0><code>egrep &#34;^ab|^xy&#34; /etc/passwd|cut -d: -f1
+</code></pre><h3 id=58-bash-中--表示什么意思->58) bash 中 $! 表示什么意思 ?</h3><p>后台最近执行命令的 PID.</p><h3 id=59--表示什么意思->59) $? 表示什么意思 ?</h3><p>前台最近命令的结束状态。</p><h3 id=60-如何输出当前-shell-的-pid->60) 如何输出当前 shell 的 PID ?</h3><pre tabindex=0><code>echo $$
+</code></pre><h3 id=61-如何获取传递给脚本的参数数目->61) 如何获取传递给脚本的参数数目 ?</h3><pre tabindex=0><code>echo $#
+</code></pre><p>（LCTT 译注：和第3题重复了。）</p><h3 id=62--和--有什么区别>62) $* 和 $@ 有什么区别</h3><ul><li>$* - 以一个字符串形式输出所有传递到脚本的参数</li><li>$@ - 以 $IFS 为分隔符列出所有传递到脚本中的参数</li></ul><h3 id=63-如何在-bash-中定义数组->63) 如何在 bash 中定义数组 ?</h3><pre tabindex=0><code>array=(&#34;Hi&#34; &#34;my&#34; &#34;name&#34; &#34;is&#34;)
+</code></pre><h3 id=64-如何打印数组的第一个元素->64) 如何打印数组的第一个元素 ?</h3><pre tabindex=0><code>echo ${array[0]}
+</code></pre><h3 id=65-如何打印数组的所有元素->65) 如何打印数组的所有元素 ?</h3><pre tabindex=0><code>echo ${array[@]}
+</code></pre><h3 id=66-如何输出所有数组索引->66) 如何输出所有数组索引 ?</h3><pre tabindex=0><code>echo ${!array[@]}
+</code></pre><h3 id=67-如何移除数组中索引为-2-的元素->67) 如何移除数组中索引为 2 的元素 ?</h3><pre tabindex=0><code>unset array[2]
+</code></pre><h3 id=68-如何在数组中添加-id-为-333-的元素->68) 如何在数组中添加 id 为 333 的元素 ?</h3><pre tabindex=0><code>array[333]=&#34;New_element&#34;
+</code></pre><h3 id=69-shell-脚本如何获取输入的值->69) shell 脚本如何获取输入的值 ?</h3><p>a) 通过参数</p><pre tabindex=0><code>./script param1 param2
+</code></pre><p>b) 通过 read 命令</p><pre tabindex=0><code>read -p &#34;Destination backup Server : &#34; desthost
+</code></pre><h3 id=70-在脚本中如何使用-expect->70) 在脚本中如何使用 &ldquo;expect&rdquo; ?</h3><pre tabindex=0><code>/usr/bin/expect &lt;&lt; EOD
+spawn rsync -ar ${line} ${desthost}:${destpath}
+expect &#34;*?assword:*&#34;
+send &#34;${password}\r&#34;
+expect eof
+EOD
+</code></pre><p>祝你好运 !! 如果你有任何疑问或者问题需要解答都可以在下面的评论框中写下来。让我们知道这对你的面试有所帮助:-)</p><hr><p>via: <a href=http://linoxide.com/linux-shell-script/shell-scripting-interview-questions-answers/>http://linoxide.com/linux-shell-script/shell-scripting-interview-questions-answers/</a></p><p>作者：<a href=http://linoxide.com/author/petrasl/>Petras Liumparas</a> 译者：<a href=https://github.com/ictlyh>ictlyh</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%84%9A%E6%9C%AC/ rel=tag>脚本</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E9%9D%A2%E8%AF%95/ rel=tag>面试</a></li><li class=tags__item><a class="tags__link btn" href=/tags/shell/ rel=tag>shell</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

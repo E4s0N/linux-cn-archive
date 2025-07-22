@@ -1,0 +1,55 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Ubuntu 和其他相关 Linux 中安装 Python 3.10 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Ubuntu 和其他相关 Linux 中安装 Python 3.10"><meta property="og:description" content="计划为工作安装 Python 3.10？以下是在 Ubuntu 和相关发行版中安装 Python 3.10 的方法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15195-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-10-30T15:26:00+00:00"><meta property="article:modified_time" content="2022-10-30T15:26:00+00:00"><meta itemprop=name content="如何在 Ubuntu 和其他相关 Linux 中安装 Python 3.10"><meta itemprop=description content="计划为工作安装 Python 3.10？以下是在 Ubuntu 和相关发行版中安装 Python 3.10 的方法。"><meta itemprop=datePublished content="2022-10-30T15:26:00+00:00"><meta itemprop=dateModified content="2022-10-30T15:26:00+00:00"><meta itemprop=wordCount content="208"><meta itemprop=keywords content="Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Ubuntu 和其他相关 Linux 中安装 Python 3.10</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-10-30T15:26:00Z>October 30, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202210/30/152139lddzddabu5u4buud.jpg alt></p><blockquote><p>计划为工作安装 Python 3.10？以下是在 Ubuntu 和相关发行版中安装 Python 3.10 的方法。</p></blockquote><p>Python 3.10 于 2021 年 10 月 25 日发布，具有附加功能和更新。此版本带来了更好的错误消息处理、新的模式匹配功能、 类型别名 TypeAlias 、用户定义的类型保护等。你可以在 <a href=https://docs.python.org/3.10/whatsnew/3.10.html>此处</a> 阅读发布重点。</p><p>在编写本指南时，大多数当前发行版都采用 Python 3.10。例如，Ubuntu 22.04 LTS 和 Fedora 36 默认都有 Python 3.10。</p><p>也就是说，如果你现在在任何不支持的版本中需要 Python 3.10，你可以使用 <a href=https://github.com/deadsnakes>下面的可靠 PPA</a> 在 Ubuntu 中安装最新的 Python 3.10。下面是方法。</p><h3 id=如何在-ubuntu-上安装-python-310>如何在 Ubuntu 上安装 Python 3.10</h3><p>此 PPA 可用于 Ubuntu 21.10、Ubuntu 21.04、Ubuntu 20.04 LTS、Ubuntu 18.04 LTS 和 Linux Mint 20.x、Elementary OS 6 和其他相关的基于 Ubuntu 的发行版。这些发行版大多数默认情况下不支持 3.10。</p><p>打开终端并添加以下 PPA：</p><pre tabindex=0><code>sudo add-apt-repository ppa:deadsnakes/ppa
+</code></pre><p>使用以下命令刷新缓存：</p><pre tabindex=0><code>sudo apt update 
+</code></pre><p>并使用以下命令安装 Python 3.10：</p><pre tabindex=0><code>sudo apt install python3.10
+</code></pre><h3 id=设置-python-版本>设置 Python 版本</h3><p>将 Python 3.10 设置为默认值需要一些额外的步骤。如下。</p><blockquote><p><strong>警告</strong>：你的 Ubuntu 系统中的许多应用程序依赖于 Python 3.9 的库存版本。因此，请确保你的工作应用（例如 GIMP、GNOME 终端等）与 Python 3.10 兼容。所以，要小心。</p></blockquote><p><strong>快速提示：</strong> 如果要检查已安装的系统包中的哪些依赖于特定版本，请使用 <code>apt-cache</code> 命令的 <code>rdepends</code> 开关。在下面的示例中，我检查哪些已安装的包依赖于 Python 3.8。</p><pre tabindex=0><code>apt-cache rdepends python3.8
+</code></pre><pre tabindex=0><code>[~]$ apt-cache rdepends python3.8
+python3.8
+Reverse Depends:
+python3.8-dbg
+virtualbox
+python3.8-venv
+python3.8-full
+libpython3.8-testsuite
+libglib2.0-tests
+idle-python3.8
+idle-python3.8
+python3.8-minimal
+python3.8-doc
+python3.8-dev
+python3.8-dbg
+python3-uno
+gedit
+virtualbox
+stimfit
+python3.8-venv
+python3-stfio
+python3-escript-mpi
+python3-escript
+python3-csound
+pitivi
+obs-studio
+liferea
+libpython3.8-testsuite
+libglib2.0-tests
+kitty
+kdevelop-python
+idle-python3.8
+idle-python3.8
+rhythmbox-plugins
+python3.8-minimal
+python3.8-doc
+python3.8-dev
+python3
+python3-uno
+python3-all
+cluster-glue
+gedit
+[~]$
+</code></pre><h4 id=使用-python-310-作为默认-python3>使用 Python 3.10 作为默认 Python3</h4><p>首先，使用终端中的以下命令检查当前默认版本。</p><pre tabindex=0><code>python3 --version
+</code></pre><p>使用 <code>update-alternatives</code> 创建指向 <code>python3</code> 的符号链接。</p><pre tabindex=0><code>sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+</code></pre><pre tabindex=0><code>sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 2
+</code></pre><p>并通过以下命令选择使用哪一个作为 <code>python3</code>：</p><pre tabindex=0><code>sudo update-alternatives --config python3
+</code></pre><p><img src=/data/attachment/album/202210/30/152703v363mq83isiv3ni3.jpg alt="在 Ubuntu 中安装 Python 3.10"></p><p>这就是所有步骤。现在，你可以开始在当前的 Ubuntu 版本中使用最新的 Python 进行工作/学习。你可以使用上述命令切换到库存版本并在任何时间更改版本号。</p><hr><p>via: <a href=https://www.debugpoint.com/install-python-3-10-ubuntu/>https://www.debugpoint.com/install-python-3-10-ubuntu/</a></p><p>作者：<a href=https://www.debugpoint.com/author/admin1/>Arindam</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

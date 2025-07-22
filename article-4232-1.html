@@ -1,0 +1,73 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>想玩路由器吗？使用 Quagga 将你的 CentOS 变成 OSPF 路由器 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="想玩路由器吗？使用 Quagga 将你的 CentOS 变成 OSPF 路由器"><meta property="og:description" content="Quagga是一个开源路由软件套件，可以将Linux变成支持如RIP、OSPF、BGP和IS-IS等主要路由协议的路由器。它具有对IPv4和IPv6的完整支持，并支持路由/前缀过滤。Quagga可以是你生命中的救星，以防你的生产路由器一旦宕机，而你没有备用的设备而只能等待更换。通过适当的配置，Quagga甚至可以作为生产路由器。  本教程中，我们将连接假设之间具有专线连接的两个分支机构网络（例如，192.168.1.0/24和172.17.1.0/24）。  我们的CentOS位于所述专用链路的两端。两台主机名分别设置为site-A-RTR和site-B-RTR&rsquo;。下面是IP地址的详细信息。  Site-A:"><meta property="og:type" content="article"><meta property="og:url" content="/article-4232-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-11-15T22:36:33+00:00"><meta property="article:modified_time" content="2014-11-15T22:36:33+00:00"><meta itemprop=name content="想玩路由器吗？使用 Quagga 将你的 CentOS 变成 OSPF 路由器"><meta itemprop=description content="Quagga是一个开源路由软件套件，可以将Linux变成支持如RIP、OSPF、BGP和IS-IS等主要路由协议的路由器。它具有对IPv4和IPv6的完整支持，并支持路由/前缀过滤。Quagga可以是你生命中的救星，以防你的生产路由器一旦宕机，而你没有备用的设备而只能等待更换。通过适当的配置，Quagga甚至可以作为生产路由器。  本教程中，我们将连接假设之间具有专线连接的两个分支机构网络（例如，192.168.1.0/24和172.17.1.0/24）。  我们的CentOS位于所述专用链路的两端。两台主机名分别设置为site-A-RTR和site-B-RTR&rsquo;。下面是IP地址的详细信息。  Site-A:"><meta itemprop=datePublished content="2014-11-15T22:36:33+00:00"><meta itemprop=dateModified content="2014-11-15T22:36:33+00:00"><meta itemprop=wordCount content="410"><meta itemprop=keywords content="Quagga,路由器,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>想玩路由器吗？使用 Quagga 将你的 CentOS 变成 OSPF 路由器</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-11-15T22:36:33Z>November 15, 2014</time></div></div></header><div class="content post__content clearfix"><p><a href=http://www.nongnu.org/quagga/>Quagga</a>是一个开源路由软件套件，可以将Linux变成支持如RIP、OSPF、BGP和IS-IS等主要路由协议的路由器。它具有对IPv4和IPv6的完整支持，并支持路由/前缀过滤。Quagga可以是你生命中的救星，以防你的生产路由器一旦宕机，而你没有备用的设备而只能等待更换。通过适当的配置，Quagga甚至可以作为生产路由器。</p><p><img src=/data/attachment/album/201411/15/223635xiijibllia332ls2.png alt></p><p>本教程中，我们将连接假设之间具有专线连接的两个分支机构网络（例如，192.168.1.0/24和172.17.1.0/24）。</p><p><img src=/data/attachment/album/201411/15/223639s9vgeoeguwzewcjw.jpg alt></p><p>我们的CentOS位于所述专用链路的两端。两台主机名分别设置为“site-A-RTR”和“site-B-RTR&rsquo;。下面是IP地址的详细信息。</p><ul><li><strong>Site-A</strong>: 192.168.1.0/24</li><li><strong>Site-B</strong>: 172.16.1.0/24</li><li><strong>两个 Linux 路由器之间的对等网络</strong>: 10.10.10.0/30</li></ul><p>Quagga包括了几个协同工作的守护进程。在本教程中，我们将重点建立以下守护进程。</p><ol><li><strong>Zebra</strong>: 核心守护进程，负责内核接口和静态路由。</li><li><strong>Ospfd</strong>: IPv4 OSPF 守护进程。</li></ol><h3 id=在centos上安装quagga>在CentOS上安装Quagga</h3><p>我们使用yum安装Quagga。</p><pre tabindex=0><code># yum install quagga 
+</code></pre><p>在CentOS7，SELinux默认会阻止quagga将配置文件写到/usr/sbin/zebra。这个SELinux策略会干扰我们接下来要介绍的安装过程，所以我们要禁用此策略。对于这一点，无论是<a href=http://xmodulo.com/how-to-disable-selinux.html>关闭SELinux</a>（这里不推荐），还是如下启用“zebra<em>write</em>config”都可以。如果你使用的是CentOS 6的请跳过此步骤。</p><pre tabindex=0><code># setsebool -P zebra_write_config 1 
+</code></pre><p>如果没有做这个修改，在我们尝试在Quagga命令行中保存配置的时候看到如下错误。</p><pre tabindex=0><code>Can&#39;t open configuration file /etc/quagga/zebra.conf.OS1Uu5.
+</code></pre><p>安装完Quagga后，我们要配置必要的对等IP地址，并更新OSPF设置。Quagga自带了一个命令行称为vtysh。vtysh里面用到的Quagga命令与主要的路由器厂商如思科和Juniper是相似的。</p><h3 id=步骤-1-配置-zebra>步骤 1: 配置 Zebra</h3><p>我们首先创建Zebra配置文件，并启用Zebra守护进程。</p><pre tabindex=0><code># cp /usr/share/doc/quagga-XXXXX/zebra.conf.sample /etc/quagga/zebra.conf
+# service zebra start
+# chkconfig zebra on 
+</code></pre><p>启动vtysh命令行：</p><pre tabindex=0><code># vtysh 
+</code></pre><p>首先，我们为Zebra配置日志文件。输入下面的命令进入vtysh的全局配置模式：</p><pre tabindex=0><code>site-A-RTR# configure terminal
+</code></pre><p>指定日志文件位置，接着退出模式：</p><pre tabindex=0><code>site-A-RTR(config)# log file /var/log/quagga/quagga.log
+site-A-RTR(config)# exit
+</code></pre><p>永久保存配置：</p><pre tabindex=0><code>site-A-RTR# write
+</code></pre><p>接下来，我们要确定可用的接口并按需配置它们的IP地址。</p><pre tabindex=0><code>site-A-RTR# show interface 
+</code></pre><hr><pre tabindex=0><code>Interface eth0 is up, line protocol detection is disabled
+. . . . .
+Interface eth1 is up, line protocol detection is disabled
+. . . . .
+</code></pre><p>配置eth0参数：</p><pre tabindex=0><code>site-A-RTR# configure terminal
+site-A-RTR(config)# interface eth0
+site-A-RTR(config-if)# ip address 10.10.10.1/30
+site-A-RTR(config-if)# description to-site-B
+site-A-RTR(config-if)# no shutdown 
+</code></pre><p>继续配置eth1参数：</p><pre tabindex=0><code>site-A-RTR(config)# interface eth1
+site-A-RTR(config-if)# ip address 192.168.1.1/24
+site-A-RTR(config-if)# description to-site-A-LAN
+site-A-RTR(config-if)# no shutdown 
+</code></pre><p>现在验证配置:</p><pre tabindex=0><code>site-A-RTR(config-if)# do show interface 
+</code></pre><hr><pre tabindex=0><code>Interface eth0 is up, line protocol detection is disabled
+. . . . .
+  inet 10.10.10.1/30 broadcast 10.10.10.3
+. . . . .
+Interface eth1 is up, line protocol detection is disabled
+. . . . .
+  inet 192.168.1.1/24 broadcast 192.168.1.255
+. . . . .
+</code></pre><hr><pre tabindex=0><code>site-A-RTR(config-if)# do show interface description 
+</code></pre><hr><pre tabindex=0><code>Interface      Status  Protocol  Description
+eth0           up      unknown   to-site-B
+eth1           up      unknown   to-site-A-LAN
+</code></pre><p>永久保存配置:</p><pre tabindex=0><code>site-A-RTR(config-if)# do write
+</code></pre><p>在site-B上重复上面配置IP地址的步骤。</p><p>如果一切顺利，你应该可以在site-A的服务器上ping通site-B上的对等IP地址10.10.10.2了。</p><p>注意：一旦Zebra的守护进程启动了，在vtysh命令行中的任何改变都会立即生效。因此没有必要在更改配置后重启Zebra守护进程。</p><h3 id=步骤-2-配置ospf>步骤 2: 配置OSPF</h3><p>我们首先创建OSPF配置文件，并启动OSPF守护进程：</p><pre tabindex=0><code># cp /usr/share/doc/quagga-XXXXX/ospfd.conf.sample /etc/quagga/ospfd.conf
+# service ospfd start
+# chkconfig ospfd on 
+</code></pre><p>现在启动vtysh命令行来继续OSPF配置：</p><pre tabindex=0><code># vtysh
+</code></pre><p>输入路由配置模式:</p><pre tabindex=0><code>site-A-RTR# configure terminal
+site-A-RTR(config)# router ospf
+</code></pre><p>可选配置路由id:</p><pre tabindex=0><code>site-A-RTR(config-router)# router-id 10.10.10.1
+</code></pre><p>添加在OSPF中的网络:</p><pre tabindex=0><code>site-A-RTR(config-router)# network 10.10.10.0/30 area 0
+site-A-RTR(config-router)# network 192.168.1.0/24 area 0
+</code></pre><p>永久保存配置:</p><pre tabindex=0><code>site-A-RTR(config-router)# do write
+</code></pre><p>在site-B上重复和上面相似的OSPF配置:</p><pre tabindex=0><code>site-B-RTR(config-router)# network 10.10.10.0/30 area 0
+site-B-RTR(config-router)# network 172.16.1.0/24 area 0
+site-B-RTR(config-router)# do write 
+</code></pre><p>OSPF的邻居现在应该启动了。只要ospfd在运行，通过vtysh的任何OSPF相关配置的改变都会立即生效而不必重启ospfd。</p><p>下一节，我们会验证我们的Quagga设置。</p><h3 id=验证>验证</h3><h4 id=1-通过ping测试>1. 通过ping测试</h4><p>首先你应该可以从site-A ping同site-B的LAN子网。确保你的防火墙没有阻止ping的流量。</p><pre tabindex=0><code>[root@site-A-RTR ~]# ping 172.16.1.1 -c 2 
+</code></pre><h4 id=2-检查路由表>2. 检查路由表</h4><p>必要的路由应该同时出现在内核与Quagga理由表中。</p><pre tabindex=0><code>[root@site-A-RTR ~]# ip route 
+</code></pre><hr><pre tabindex=0><code>10.10.10.0/30 dev eth0  proto kernel  scope link  src 10.10.10.1
+172.16.1.0/30 via 10.10.10.2 dev eth0  proto zebra  metric 20
+192.168.1.0/24 dev eth1  proto kernel  scope link  src 192.168.1.1
+</code></pre><hr><pre tabindex=0><code>[root@site-A-RTR ~]# vtysh
+site-A-RTR# show ip route 
+</code></pre><hr><pre tabindex=0><code>Codes: K - kernel route, C - connected, S - static, R - RIP, O - OSPF,
+       I - ISIS, B - BGP, &gt; - selected route, * - FIB route
+
+O   10.10.10.0/30 [110/10] is directly connected, eth0, 00:14:29
+C&gt;* 10.10.10.0/30 is directly connected, eth0
+C&gt;* 127.0.0.0/8 is directly connected, lo
+O&gt;* 172.16.1.0/30 [110/20] via 10.10.10.2, eth0, 00:14:14
+C&gt;* 192.168.1.0/24 is directly connected, eth1
+</code></pre><h4 id=3-验证ospf邻居和路由>3. 验证OSPF邻居和路由</h4><p>在vtysh命令行中，你可以检查必要的邻居是否在线与是否已经学习了合适的路由。</p><pre tabindex=0><code>[root@site-A-RTR ~]# vtysh
+site-A-RTR# show ip ospf neighbor 
+</code></pre><p><img src=/data/attachment/album/201411/15/223644bwephhtqlhlplewi.jpg alt></p><p>本教程中，我们将重点放在使用Quagga配置基本的OSPF。在一般情况下，Quagga能让我们能够轻松在一台普通的Linux机器上配置动态路由协议，如OSPF、RIP或BGP。启用了Quagga的机器可以与你网络中的其他路由器进行通信和交换路由信息。由于它支持主要的开放标准的路由协议，它或许是许多情况下的首选。更重要的是，Quagga的命令行界面与主要路由器厂商如思科和Juniper几乎是相同的，这使得部署和维护Quagga机器变得非常容易。</p><p>希望这些对你们有帮助。</p><hr><p>via: <a href=http://xmodulo.com/turn-centos-box-into-ospf-router-quagga.html>http://xmodulo.com/turn-centos-box-into-ospf-router-quagga.html</a></p><p>作者：<a href=http://xmodulo.com/author/sarmed>Sarmed Rahman</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/quagga/ rel=tag>Quagga</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%B7%AF%E7%94%B1%E5%99%A8/ rel=tag>路由器</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

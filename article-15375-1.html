@@ -1,0 +1,143 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 JavaScript 增强你的文档 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 JavaScript 增强你的文档"><meta property="og:description" content="让你的开源项目文档充满活力，从而吸引各种经验水平的用户。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15375-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-12-23T10:06:22+00:00"><meta property="article:modified_time" content="2022-12-23T10:06:22+00:00"><meta itemprop=name content="使用 JavaScript 增强你的文档"><meta itemprop=description content="让你的开源项目文档充满活力，从而吸引各种经验水平的用户。"><meta itemprop=datePublished content="2022-12-23T10:06:22+00:00"><meta itemprop=dateModified content="2022-12-23T10:06:22+00:00"><meta itemprop=wordCount content="454"><meta itemprop=keywords content="文档,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 JavaScript 增强你的文档</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-12-23T10:06:22Z>December 23, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202212/23/100615quu385qf83bu3p35.jpg alt></p><blockquote><p>让你的开源项目文档充满活力，从而吸引各种经验水平的用户。</p></blockquote><p>开源软件项目通常拥有非常多样化的用户人群。有些用户非常擅长使用该系统，并且只需要很少的文档。对于这些实力派用户，文档只需要提供必要的提示，并且可以包含更多的技术信息，比如说在 Shell 中运行的命令行。有些用户可能只是初学者。这些用户需要更多的帮助来设置系统并学习如何使用它。</p><p>写一个同时适合这两个用户群体的文档是令人生畏的。网站文档需要在 “提供详细的技术信息” 和 “提供更多的概述和指导” 之间寻求一个平衡。这是一个很难找到的平衡。如果你的文档不能同时满足这两个用户人群，那么考虑一下另外一个选择 —— 动态文档。</p><p>探索在网页中添加一点 <a href=https://opensource.com/downloads/learn-javascript>JavaScript</a> 使用户可以选择自己想看的内容。</p><h3 id=构建你的内容>构建你的内容</h3><p>你可以把例程添加的你的文档中需要同时满足 专家 expert 和 初学者 novice 的地方。在这个例程中，我们可以使用一个虚构的名为 AwesmeProject 的音乐播放器。</p><p>你可以用 HTML 编写一个简短的安装文档，通过 HTML 的 类 class 功能同时为专家和初学者提供操作指南。</p><p>例如，你可以用下面的代码来为专家定义一个段落：</p><pre tabindex=0><code>&lt;p class=&#34;expert reader&#34;&gt;
+</code></pre><p>这同时指派了 “专家类” 和 “读者类”。你可以用下面的代码来为初学者创建一个相同的段落。</p><pre tabindex=0><code>&lt;p class=&#34;novice reader&#34;&gt;
+</code></pre><p>完整的 HTML 文件同时包含初学者的段落和专家的段落。</p><pre tabindex=0><code>&lt;!DOCTYPE html&gt;
+
+&lt;html lang=&#34;en&#34;&gt;
+
+&lt;head&gt;
+
+&lt;title&gt;How to install the software&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;h1&gt;How to install the software&lt;/h1&gt;
+
+&lt;p&gt;Thanks for installing AwesomeProject! With AwesomeProject,
+you can manage your music collection like a wizard.&lt;/p&gt;
+
+&lt;p&gt;But first, we need to install it:&lt;/p&gt;
+
+&lt;p class=&#34;expert reader&#34;&gt;You can install AwesomeProject from
+source. Download the tar file, extract it, then run:
+&lt;code&gt;./configure ; make ; make install&lt;/code&gt;&lt;/p&gt;
+
+&lt;p class=&#34;novice reader&#34;&gt;AwesomeProject is available in
+most Linux distributions. Check your graphical package manager and search for AwesomeProject to install it.&lt;/p&gt;
+
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre><p>例子中的 HTML 文档没有与之关联的样式表，所以浏览器中会显示所有的段落。</p><p><img src=/data/attachment/album/202212/23/100623uxiiyqi2siwylzix.png alt="Image of html in black text."></p><p>我们可在文档中添加一些简单的样式来为 读者 reader 、 专家 expert 或者 初学者 novice 突出任何元素。为了使不同的文本更容易区分，让我们把读者类的背景颜色设置成米白色，专家类的字体颜色设置为深红色，初学者的字体颜色则设置为深蓝色。</p><pre tabindex=0><code>&lt;!DOCTYPE html&gt;
+
+&lt;html lang=&#34;en&#34;&gt;
+
+&lt;head&gt;
+
+&lt;title&gt;How to install the software&lt;/title&gt;
+
+&lt;style&gt;
+
+.reader {
+background-color: ghostwhite;
+}
+
+.expert {
+color: darkred;
+}
+
+.novice {
+color: darkblue;
+}
+
+&lt;/style&gt;
+
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;h1&gt;How to install the software&lt;/h1&gt;
+</code></pre><p>当你在浏览器中查看这个网页时，这些样式有助于突出这两个段落。安装指导的所有段落都有一个米白色背景，因为他们都有 读者 reader 这个类。第一个段落的字体是深红色的，这是由 专家 expert 这个类定义的。第二个段落的字体是深蓝色的，则是由 初学者 novice 这个类定义的。</p><p><img src=/data/attachment/album/202212/23/100623zdhggyg05lifiqdy.png alt="Image of html in red and black text."></p><h3 id=添加-javascript-控件>添加 JavaScript 控件</h3><p>这些类的应用，使你可以添加一些简单的 JavaScript 函数，只显示其中一个内容块。一个方法是，首先给所有的读者类元素设置 <code>display:none</code> 。这会将内容隐藏，使其不会在页面上显示。然后，用函数将你想显示的类元素设置为 <code>display:block</code> :</p><pre tabindex=0><code>&lt;script&gt;
+function readerview(audience) {
+  var list, item;
+  // hide all class=&#34;reader&#34;
+  list = document.getElementsByClassName(&#34;reader&#34;);
+  for (item = 0; item &lt; list.length; item++) {
+    list[item].style.display = &#34;none&#34;;
+  }
+  // show all class=audience
+  list = document.getElementsByClassName(audience);
+  for (item = 0; item &lt; list.length; item++) {
+    list[item].style.display = &#34;block&#34;;
+  }
+}
+&lt;/script&gt;
+</code></pre><p>要在 HTML 文档中使用这个 JavaScript，你可以吧这个功能附加到一个按钮上。由于 <code>readerview</code> 函数需要一个 听众 audience （这应该是相对那个虚拟音乐播放器来说的）作为参数，你可以使用你想查看的听众类别来调用这个函数，可以是 读者 reader ， 专家 expert 或者 初学者 novice 。</p><pre tabindex=0><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+&lt;head&gt;
+&lt;title&gt;How to install the software&lt;/title&gt;
+  &lt;style&gt;
+    .reader {
+    background-color: ghostwhite;
+    }
+
+    .expert {
+    color: darkred;
+    }
+
+    .novice {
+    color: darkblue;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;script&gt;
+function readerview(audience) {
+  var list, item;
+
+  // hide all class=&#34;reader&#34;
+  list = document.getElementsByClassName(&#34;reader&#34;);
+
+  for (item = 0; item &lt; list.length; item++) {
+    list[item].style.display = &#34;none&#34;;
+  }
+
+  // show all class=audience
+  list = document.getElementsByClassName(audience);
+
+  for (item = 0; item &lt; list.length; item++) {
+    list[item].style.display = &#34;block&#34;;
+  }
+}
+&lt;/script&gt;
+
+&lt;h1&gt;How to install the software&lt;/h1&gt;
+
+&lt;nav&gt;
+
+&lt;button onclick=&#34;readerview(&#39;novice&#39;)&#34;&gt;view novice text&lt;/button&gt;
+
+&lt;button onclick=&#34;readerview(&#39;expert&#39;)&#34;&gt;view expert text&lt;/button&gt;
+
+&lt;/nav&gt;
+
+&lt;p&gt;Thanks for installing AwesomeProject! With AwesomeProject,
+you can manage your music collection like a wizard.&lt;/p&gt;
+
+&lt;p&gt;But first, we need to install it:&lt;/p&gt;
+&lt;p class=&#34;expert reader&#34;&gt;You can install AwesomeProject from
+source. Download the tar file, extract it, then run
+&lt;code&gt;./configure ; make ; make install&lt;/code&gt;&lt;/p&gt;
+
+&lt;p class=&#34;novice reader&#34;&gt;AwesomeProject is available in
+most Linux distributions. Check your graphical package
+manager and search for AwesomeProject to install it.&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>有了这些设置，用户可以在网页上选择他们想看的文本。</p><p><img src=/data/attachment/album/202212/23/100623d1sppx1b58d5h6o1.png alt="Image of window that allows you to select between novice and expert text."></p><p>点击任何一个按钮都将只显示用户想要阅读的文本。例如，如果你点击了 “ 阅读初学者内容 view novice text ” 按钮，你就只会看到蓝色段落。</p><p><img src=/data/attachment/album/202212/23/100623r96nt4e6i05teq5n.png alt="Image showing blue text when you press the novice button."></p><p>点击 “ 阅读专家内容 view expert text ” 按钮，就会隐藏初学者文本，只显示红色的专家文本。</p><p><img src=/data/attachment/album/202212/23/100623ep3ebb66kkyzraem.png alt="Image of red text after the expert button is clicked."></p><h3 id=将此扩展到你的文档>将此扩展到你的文档</h3><p>如果你的项目需要你为不同的听众编写多个操作文档，你可以考虑使用这种方法，一次发布，多次阅读。为所有的用户编写一个文档，是每个人都能很容易的发现和分享你项目的文档。而你也不必同时维护尽在细节上有所不同的多个文档。</p><hr><p>via: <a href=https://opensource.com/article/22/12/dynamic-documentation-javascript>https://opensource.com/article/22/12/dynamic-documentation-javascript</a></p><p>作者：<a href=https://opensource.com/users/jim-hall>Jim Hall</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/duoluoxiaosehng>duoluoxiaosheng</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%96%87%E6%A1%A3/ rel=tag>文档</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

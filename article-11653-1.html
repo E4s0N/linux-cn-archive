@@ -1,0 +1,46 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 AWS 中使用 Ansible 来管理你的 SSH 密钥 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 AWS 中使用 Ansible 来管理你的 SSH 密钥"><meta property="og:description" content="本文将会介绍一种在所有区域中使用你的公钥的方法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11653-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-12-08T09:31:00+00:00"><meta property="article:modified_time" content="2019-12-08T09:31:00+00:00"><meta itemprop=name content="在 AWS 中使用 Ansible 来管理你的 SSH 密钥"><meta itemprop=description content="本文将会介绍一种在所有区域中使用你的公钥的方法。"><meta itemprop=datePublished content="2019-12-08T09:31:00+00:00"><meta itemprop=dateModified content="2019-12-08T09:31:00+00:00"><meta itemprop=wordCount content="297"><meta itemprop=keywords content="密钥,AWS,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 AWS 中使用 Ansible 来管理你的 SSH 密钥</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-12-08T09:31:00Z>December 08, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201912/08/093119pzwt6w8peb98ew8s.jpg alt></p><p>如果你长期使用亚马逊 Web 服务（AWS）中的实例，你可能会遇到下面这个常见的问题，它不是因为技术性的原因导致的，更多的是因为人类追求方便舒适的天性：当你登录一台你最近没有使用的区域的新实例，你最终会创建一个新的 SSH 密钥对，久而久之这最终就会造成个人拥有太多密钥，导致管理起来复杂混乱。</p><p>本文将会介绍一种在所有区域中使用你的公钥的方法。最近，一篇 <a href=https://fedoramagazine.org/ssh-key-aws-regions/>Fedora Magazine 的文章</a>介绍了另一种解决方案。但本文中的解决方案可以进一步的以更简洁和可扩展的方式实现自动化。</p><p>假设你有一个 Fedora 30 或 31 系统，其中存储了你的密钥，并且还安装了 Ansible。当这两件事同时满足时，就提供了解决这个问题的办法，甚至它还能做到更多。</p><p>使用 Ansible 的 <a href=https://docs.ansible.com/ansible/latest/modules/ec2_key_module.html>ec2_key 模块</a>，你可以创建一个简单的 Ansible 剧本来在所有区域中维护你的 SSH 密钥对。如果你需要增加或者删除密钥，在 Ansible 中这就像从文件中添加和删除行一样简单。</p><h3 id=设置和运行-ansible-剧本>设置和运行 Ansible 剧本</h3><p>如果要使用剧本，首先需要安装 <code>ec2_key</code> 模块的必要依赖项：</p><pre tabindex=0><code>$ sudo dnf install python3-boto python3-boto3
+</code></pre><p>该剧本很简单：你只需要像下面的例子一样，修改其中的密钥及其对应的名称。然后，运行该剧本，它会帮你遍历所有列出的公共 AWS 区域。该示例还包括一些你可能要访问的受限区域，只需根据需要来取消对应行的注释，然后，保存文件重新运行剧本即可。</p><pre tabindex=0><code>---
+- name: Maintain an ssh key pair in ec2
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: python
+  tasks:
+    - name: Make available your ssh public key in ec2 for new instances
+      ec2_key:
+        name: &#34;YOUR KEY NAME GOES HERE&#34;
+        key_material: &#39;YOUR KEY GOES HERE&#39;
+        state: present
+        region: &#34;{{ item }}&#34;
+      with_items:
+        - us-east-2   #US East (Ohio)
+        - us-east-1   #US East (N. Virginia)
+        - us-west-1   #US West (N. California)
+        - us-west-2   #US West (Oregon)
+        - ap-east-1   #Asia Pacific (Hong Kong)
+        - ap-south-1   #Asia Pacific (Mumbai)
+        - ap-northeast-2  #Asia Pacific (Seoul)
+        - ap-southeast-1  #Asia Pacific (Singapore)
+        - ap-southeast-2  #Asia Pacific (Sydney)
+        - ap-northeast-1  #Asia Pacific (Tokyo)
+        - ca-central-1   #Canada (Central)
+        - eu-central-1   #EU (Frankfurt)
+        - eu-west-1   #EU (Ireland)
+        - eu-west-2   #EU (London)
+        - eu-west-3   #EU (Paris)
+        - eu-north-1   #EU (Stockholm)
+        - me-south-1   #Middle East (Bahrain)
+        - sa-east-1   #South America (Sao Paulo)
+  #      - us-gov-east-1  #AWS GovCloud (US-East)
+  #      - us-gov-west-1  #AWS GovCloud (US-West)
+  #      - ap-northeast-3 #Asia Pacific (Osaka-Local)
+  #      - cn-north-1   #China (Beijing)
+  #      - cn-northwest-1 #China (Ningxia)
+</code></pre><p>这个剧本需要通过 API 访问 AWS，为此，请使用环境变量，如下所示：</p><pre tabindex=0><code>$ AWS_ACCESS_KEY=&#34;aws-access-key-id&#34; AWS_SECRET_KEY=&#34;aws-secret-key-id&#34; ansible-playbook ec2-playbook.yml
+</code></pre><p>另一个方式是安装 aws 命令行工具并添加凭据，如以前的一篇 <a href=https://fedoramagazine.org/aws-tools-fedora/>Fedora Magazine 文章</a>所述。如果你在线存储它们，这些参数将<strong>不建议</strong>插入到剧本中！你可以在 <a href=https://github.com/dlabreu/aws>GitHub</a> 中找到本文的剧本代码。</p><p>完成该剧本之后，请确认你的密钥在 AWS 控制台上可用。为此，可以做如下操作：</p><ol><li>登录你的 AWS 控制台</li><li>转到 “EC2 > Key Pairs”</li><li>你应该会看到列出的密钥。唯一的限制是你必须使用此方法逐个区域来检查。</li></ol><p>另一种方法是在 shell 中使用一个快速命令来为你做这些检查。</p><p>首先在剧本上创建一个包含所有区域的变量：</p><pre tabindex=0><code>AWS_REGION=&#34;us-east-1 us-west-1 us-west-2 ap-east-1 ap-south-1 ap-northeast-2 ap-southeast-1 ap-southeast-2 ap-northeast-1 ca-central-1 eu-central-1 eu-west-1 eu-west-2 eu-west-3 eu-north-1 me-south-1 sa-east-1&#34;
+</code></pre><p>然后，执行如下循环，你就可以从 aws 的 API 获得结果：</p><pre tabindex=0><code>for each in ${AWS_REGION} ; do aws ec2 describe-key-pairs --key-name &lt;YOUR KEY GOES HERE&gt; ; done
+</code></pre><p>请记住，要执行上述操作，你需要安装 aws 命令行。</p><hr><p>via: <a href=https://fedoramagazine.org/using-ansible-to-organize-your-ssh-keys-in-aws/>https://fedoramagazine.org/using-ansible-to-organize-your-ssh-keys-in-aws/</a></p><p>作者：<a href=https://fedoramagazine.org/author/dabreu/>Daniel Leite de Abreu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/hj24>hj24</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AF%86%E9%92%A5/ rel=tag>密钥</a></li><li class=tags__item><a class="tags__link btn" href=/tags/aws/ rel=tag>AWS</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

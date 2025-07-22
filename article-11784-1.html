@@ -1,0 +1,59 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Linux seq 命令生成数字序列 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Linux seq 命令生成数字序列"><meta property="og:description" content="Linux 的 seq 命令可以以闪电般的速度生成数字列表，而且它也易于使用而且灵活。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11784-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-01-15T11:28:31+00:00"><meta property="article:modified_time" content="2020-01-15T11:28:31+00:00"><meta itemprop=name content="使用 Linux seq 命令生成数字序列"><meta itemprop=description content="Linux 的 seq 命令可以以闪电般的速度生成数字列表，而且它也易于使用而且灵活。"><meta itemprop=datePublished content="2020-01-15T11:28:31+00:00"><meta itemprop=dateModified content="2020-01-15T11:28:31+00:00"><meta itemprop=wordCount content="177"><meta itemprop=keywords content="seq,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Linux seq 命令生成数字序列</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-01-15T11:28:31Z>January 15, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>Linux 的 seq 命令可以以闪电般的速度生成数字列表，而且它也易于使用而且灵活。</p></blockquote><p><img src=/data/attachment/album/202001/15/112717drpb9nuwss84xebu.jpg alt></p><p>在 Linux 中生成数字列表的最简单方法之一是使用 <code>seq</code>（ 系列 sequence ）命令。其最简单的形式是，<code>seq</code> 接收一个数字参数，并输出从 1 到该数字的列表。例如：</p><pre tabindex=0><code>$ seq 5
+1
+2
+3
+4
+5
+</code></pre><p>除非另有指定，否则 <code>seq</code> 始终以 1 开头。你可以在最终数字前面插上不同数字开始一个序列。</p><pre tabindex=0><code>$ seq 3 5
+3
+4
+5
+</code></pre><h3 id=指定增量>指定增量</h3><p>你还可以指定增量步幅。假设你要列出 3 的倍数。指定起点（在此示例中为第一个 3 ），增量（第二个 3）和终点（18）。</p><pre tabindex=0><code>$ seq 3 3 18
+3
+6
+9
+12
+15
+18
+</code></pre><p>你可以选择使用负增量（即减量）将数字从大变小。</p><pre tabindex=0><code>$ seq 18 -3 3
+18
+15
+12
+9
+6
+3
+</code></pre><p><code>seq</code> 命令也非常快。你或许可以在 10 秒内生成一百万个数字的列表。</p><pre tabindex=0><code>$ time seq 1000000
+1
+2
+3
+…
+…
+999998
+999999
+1000000
+
+real    0m9.290s  &lt;== 9+ seconds
+user    0m0.020s
+sys     0m0.899s
+</code></pre><h3 id=使用分隔符>使用分隔符</h3><p>另一个非常有用的选项是使用分隔符。你可以插入逗号、冒号或其他一些字符，而不是在每行上列出单个数字。<code>-s</code> 选项后跟要使用的字符。</p><pre tabindex=0><code>$ seq -s: 3 3 18
+3:6:9:12:15:18
+</code></pre><p>实际上，如果只是希望将数字列在一行上，那么可以使用空格代替默认的换行符。</p><pre tabindex=0><code>$ seq -s&#39; &#39;  3 3 18
+3 6 9 12 15 18
+</code></pre><h3 id=开始数学运算>开始数学运算</h3><p>从生成数字序列到进行数学运算似乎是一个巨大的飞跃，但是有了正确的分隔符，<code>seq</code> 可以轻松地传递给 <code>bc</code> 进行计算。例如：</p><pre tabindex=0><code>$ seq -s* 5 | bc
+120
+</code></pre><p>该命令中发生了什么？让我们来看看。首先，<code>seq</code> 生成一个数字列表，并使用 <code>*</code> 作为分隔符。</p><pre tabindex=0><code>$ seq -s* 5
+1*2*3*4*5
+</code></pre><p>然后，它将字符串传递给计算器（<code>bc</code>），计算器立即将数字相乘。你可以在不到一秒的时间内进行相当庞大的计算。</p><pre tabindex=0><code>$ time seq -s* 117 | bc
+39699371608087208954019596294986306477904063601683223011297484643104\
+22041758630649341780708631240196854767624444057168110272995649603642\
+560353748940315749184568295424000000000000000000000000000
+
+real    0m0.003s
+user    0m0.004s
+sys     0m0.000s
+</code></pre><h3 id=局限性>局限性</h3><p>你只能选择一个分隔符，因此计算将非常有限。而单独使用 <code>bc</code> 可进行更复杂的数学运算。此外，<code>seq</code> 仅适用于数字。要生成单个字母的序列，请改用如下命令：</p><pre tabindex=0><code>$ echo {a..g}
+a b c d e f g
+</code></pre><hr><p>via: <a href=https://www.networkworld.com/article/3511954/generating-numeric-sequences-with-the-linux-seq-command.html>https://www.networkworld.com/article/3511954/generating-numeric-sequences-with-the-linux-seq-command.html</a></p><p>作者：<a href=https://www.networkworld.com/author/Sandra-Henry_Stocker/>Sandra Henry-Stocker</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/seq/ rel=tag>seq</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

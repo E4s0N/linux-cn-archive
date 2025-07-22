@@ -1,0 +1,61 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Headless Chrome 进行自动化测试 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Headless Chrome 进行自动化测试"><meta property="og:description" content="如果你想使用 Headless Chrome 进行自动化测试，那么就往下！这篇文章将让你完全使用 Karma 作为运行器（runner），并且使用 Mocha+Chai 来编撰测试。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8861-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-09-12T15:08:00+00:00"><meta property="article:modified_time" content="2017-09-12T15:08:00+00:00"><meta itemprop=name content="使用 Headless Chrome 进行自动化测试"><meta itemprop=description content="如果你想使用 Headless Chrome 进行自动化测试，那么就往下！这篇文章将让你完全使用 Karma 作为运行器（runner），并且使用 Mocha+Chai 来编撰测试。"><meta itemprop=datePublished content="2017-09-12T15:08:00+00:00"><meta itemprop=dateModified content="2017-09-12T15:08:00+00:00"><meta itemprop=wordCount content="310"><meta itemprop=keywords content="Chrome,Headless,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Headless Chrome 进行自动化测试</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-09-12T15:08:00Z>September 12, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201709/12/150805oxtnywgwkgwct55k.png alt></p><p>如果你想使用 Headless Chrome 进行自动化测试，那么就往下！这篇文章将让你完全使用 Karma 作为 运行器 runner ，并且使用 Mocha+Chai 来编撰测试。</p><p><strong>这些东西是什么？</strong></p><p>Karma、Mocha、Chai、Headless Chrome，哦，我的天哪！</p><p><a href=https://karma-runner.github.io/>Karma</a> 是一个测试工具，可以和所有最流行的测试框架（<a href=https://jasmine.github.io/>Jasmine</a>、<a href=https://mochajs.org/>Mocha</a>、 <a href=https://qunitjs.com/>QUnit</a>）配合使用。</p><p><a href=http://chaijs.com/>Chai</a> 是一个断言库，可以与 Node 和浏览器一起使用。这里我们需要后者。</p><p><a href=https://developers.google.com/web/updates/2017/04/headless-chrome>Headless Chrome</a> 是一种在没有浏览器用户界面的无需显示环境中运行 Chrome 浏览器的方法。使用 Headless Chrome（而不是直接在 Node 中测试） 的一个好处是 JavaScript 测试将在与你的网站用户相同的环境中执行。Headless Chrome 为你提供了真正的浏览器环境，却没有运行完整版本的 Chrome 一样的内存开销。</p><h3 id=设置>设置</h3><h4 id=安装>安装</h4><p>使用 <code>yarn</code> 安装 Karma、相关插件和测试用例：</p><pre tabindex=0><code>yarn add --dev karma karma-chrome-launcher karma-mocha karma-chai
+yarn add --dev mocha chai
+</code></pre><p>或者使用 <code>npm</code>：</p><pre tabindex=0><code>npm i --save-dev karma karma-chrome-launcher karma-mocha karma-chai
+npm i --save-dev mocha chai
+</code></pre><p>在这篇文章中我使用 <a href=https://mochajs.org/>Mocha</a> 和 <a href=http://chaijs.com/>Chai</a>，但是你也可以选择自己最喜欢的在浏览器中工作的断言库。</p><h4 id=配置-karma>配置 Karma</h4><p>创建一个使用 <code>ChromeHeadless</code> 启动器的 <code>karma.config.js</code> 文件。</p><p><strong>karma.conf.js</strong>：</p><pre tabindex=0><code>module.exports = function(config) {
+  config.set({
+    frameworks: [&#39;mocha&#39;, &#39;chai&#39;],
+    files: [&#39;test/**/*.js&#39;],
+    reporters: [&#39;progress&#39;],
+    port: 9876,  // karma web server port
+    colors: true,
+    logLevel: config.LOG_INFO,
+    browsers: [&#39;ChromeHeadless&#39;],
+    autoWatch: false,
+    // singleRun: false, // Karma captures browsers, runs the tests and exits
+    concurrency: Infinity
+  })
+}
+</code></pre><blockquote><p><strong>注意：</strong> 运行 <code>./node_modules/karma/bin/karma init karma.conf.js</code> 生成 Karma 的配置文件。</p></blockquote><h3 id=写一个测试>写一个测试</h3><p>在 <code>/test/test.js</code> 中写一个测试：</p><p><strong>/test/test.js</strong>：</p><pre tabindex=0><code>describe(&#39;Array&#39;, () =&gt; {
+  describe(&#39;#indexOf()&#39;, () =&gt; {
+    it(&#39;should return -1 when the value is not present&#39;, () =&gt; {
+      assert.equal(-1, [1,2,3].indexOf(4));
+    });
+  });
+});
+</code></pre><h3 id=运行你的测试>运行你的测试</h3><p>在我们设置好用于运行 Karma 的 <code>package.json</code> 中添加一个测试脚本。</p><p><strong>package.json</strong>：</p><pre tabindex=0><code>&#34;scripts&#34;: {
+  &#34;test&#34;: &#34;karma start --single-run --browsers ChromeHeadless karma.conf.js&#34;
+}
+</code></pre><p>当你运行你的测试（<code>yarn test</code>）时，Headless Chrome 会启动并将运行结果输出到终端：</p><p><img src=/data/attachment/album/201709/12/151002mihg3iv4zarhpmm3.png alt></p><h3 id=创建你自己的-headless-chrome-启动器>创建你自己的 Headless Chrome 启动器</h3><p><code>ChromeHeadless</code> 启动器非常棒，因为它可以在 Headless Chrome 上进行测试。它包含了适合你的 Chrome 标志，并在端口 <code>9222</code> 上启动 Chrome 的远程调试版本。</p><p>但是，有时你可能希望将自定义的标志传递给 Chrome 或更改启动器使用的远程调试端口。要做到这一点，可以通过创建一个 <code>customLaunchers</code> 字段来扩展基础的 <code>ChromeHeadless</code> 启动器：</p><p><strong>karma.conf.js</strong>：</p><pre tabindex=0><code>module.exports = function(config) {
+  ...
+
+  config.set({
+    browsers: [&#39;Chrome&#39;, &#39;ChromeHeadless&#39;, &#39;MyHeadlessChrome&#39;],
+
+    customLaunchers: {
+      MyHeadlessChrome: {
+        base: &#39;ChromeHeadless&#39;,
+        flags: [&#39;--disable-translate&#39;, &#39;--disable-extensions&#39;, &#39;--remote-debugging-port=9223&#39;]
+      }
+    },
+  }
+};
+</code></pre><h3 id=完全在-travis-ci-上运行它>完全在 Travis CI 上运行它</h3><p>在 Headless Chrome 中配置 Karma 运行测试是很困难的。而在 Travis 中持续集成就只有几种！</p><p>要在 Travis 中运行测试，请使用 <code>dist: trusty</code> 并安装稳定版 Chrome 插件：</p><p><strong>.travis.yml</strong>：</p><pre tabindex=0><code>language: node_js
+node_js:
+  - &#34;7&#34;
+dist: trusty # needs Ubuntu Trusty
+sudo: false  # no need for virtualization.
+addons:
+  chrome: stable # have Travis install chrome stable.
+cache:
+  yarn: true
+  directories:
+    - node_modules
+install:
+  - yarn
+script:
+  - yarn test
+</code></pre><hr><p>作者简介</p><p><a href=https://developers.google.com/web/resources/contributors#ericbidelman>Eric Bidelman</a> 谷歌工程师，Lighthouse 开发，Web 和 Web 组件开发，Chrome 开发</p><hr><p>via: <a href=https://developers.google.com/web/updates/2017/06/headless-karma-mocha-chai>https://developers.google.com/web/updates/2017/06/headless-karma-mocha-chai</a></p><p>作者：<a href=https://developers.google.com/web/resources/contributors#ericbidelman>Eric Bidelman</a> 译者：<a href=https://github.com/firmianay>firmianay</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/chrome/ rel=tag>Chrome</a></li><li class=tags__item><a class="tags__link btn" href=/tags/headless/ rel=tag>Headless</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

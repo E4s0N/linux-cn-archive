@@ -1,0 +1,76 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 中把用户添加到组的四个方法 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 中把用户添加到组的四个方法"><meta property="og:description" content="Linux 组是用于管理 Linux 中用户帐户的组织单位。组的主要目的是为组的成员定义一组特权。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10768-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-04-23T13:03:00+00:00"><meta property="article:modified_time" content="2019-04-23T13:03:00+00:00"><meta itemprop=name content="在 Linux 中把用户添加到组的四个方法"><meta itemprop=description content="Linux 组是用于管理 Linux 中用户帐户的组织单位。组的主要目的是为组的成员定义一组特权。"><meta itemprop=datePublished content="2019-04-23T13:03:00+00:00"><meta itemprop=dateModified content="2019-04-23T13:03:00+00:00"><meta itemprop=wordCount content="492"><meta itemprop=keywords content="用户,用户组,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 中把用户添加到组的四个方法</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-04-23T13:03:00Z>April 23, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201904/23/125254ml0g10000tiv0k0d.jpg alt></p><p>Linux 组是用于管理 Linux 中用户帐户的组织单位。对于 Linux 系统中的每一个用户和组，它都有惟一的数字标识号。它被称为 用户 ID（UID）和组 ID（GID）。组的主要目的是为组的成员定义一组特权。它们都可以执行特定的操作，但不能执行其他操作。</p><p>Linux 中有两种类型的默认组。每个用户应该只有一个 主要组 primary group 和任意数量的 次要组 secondary group 。</p><ul><li><strong>主要组：</strong> 创建用户帐户时，已将主要组添加到用户。它通常是用户的名称。在执行诸如创建新文件（或目录）、修改文件或执行命令等任何操作时，主要组将应用于用户。用户的主要组信息存储在 <code>/etc/passwd</code> 文件中。</li><li><strong>次要组：</strong> 它被称为次要组。它允许用户组在同一组成员文件中执行特定操作。例如，如果你希望允许少数用户运行 Apache（httpd）服务命令，那么它将非常适合。</li></ul><p>你可能对以下与用户管理相关的文章感兴趣。</p><ul><li><a href=https://www.2daygeek.com/linux-user-account-creation-useradd-adduser-newusers/>在 Linux 中创建用户帐户的三种方法？</a></li><li><a href=https://www.2daygeek.com/how-to-create-the-bulk-users-in-linux/>如何在 Linux 中创建批量用户？</a></li><li><a href=https://www.2daygeek.com/linux-passwd-chpasswd-command-set-update-change-users-password-in-linux-using-shell-script/>如何在 Linux 中使用不同的方法更新/更改用户密码？</a></li></ul><p>可以使用以下四种方法实现。</p><ul><li><code>usermod</code>：修改系统帐户文件，以反映在命令行中指定的更改。</li><li><code>gpasswd</code>：用于管理 <code>/etc/group</code> 和 <code>/etc/gshadow</code>。每个组都可以有管理员、成员和密码。</li><li>Shell 脚本：可以让管理员自动执行所需的任务。</li><li>手动方式：我们可以通过编辑 <code>/etc/group</code> 文件手动将用户添加到任何组中。</li></ul><p>我假设你已经拥有此操作所需的组和用户。在本例中，我们将使用以下用户和组：<code>user1</code>、<code>user2</code>、<code>user3</code>，另外的组是 <code>mygroup</code> 和 <code>mygroup1</code>。</p><p>在进行更改之前，我希望检查一下用户和组信息。详见下文。</p><p>我可以看到下面的用户与他们自己的组关联，而不是与其他组关联。</p><pre tabindex=0><code># id user1
+uid=1008(user1) gid=1008(user1) groups=1008(user1)
+
+# id user2
+uid=1009(user2) gid=1009(user2) groups=1009(user2)
+
+# id user3
+uid=1010(user3) gid=1010(user3) groups=1010(user3)
+</code></pre><p>我可以看到这个组中没有关联的用户。</p><pre tabindex=0><code># getent group mygroup
+mygroup:x:1012:
+
+# getent group mygroup1
+mygroup1:x:1013:
+</code></pre><h3 id=方法-1使用-usermod-命令>方法 1：使用 usermod 命令</h3><p><code>usermod</code> 命令修改系统帐户文件，以反映命令行上指定的更改。</p><h4 id=如何使用-usermod-命令将现有的用户添加到次要组或附加组>如何使用 usermod 命令将现有的用户添加到次要组或附加组？</h4><p>要将现有用户添加到辅助组，请使用带有 <code>-G</code> 选项和组名称的 <code>usermod</code> 命令。</p><p>语法：</p><pre tabindex=0><code># usermod [-G] [GroupName] [UserName]
+</code></pre><p>如果系统中不存在给定的用户或组，你将收到一条错误消息。如果没有得到任何错误，那么用户已经被添加到相应的组中。</p><pre tabindex=0><code># usermod -a -G mygroup user1
+</code></pre><p>让我使用 <code>id</code> 命令查看输出。是的，添加成功。</p><pre tabindex=0><code># id user1
+uid=1008(user1) gid=1008(user1) groups=1008(user1),1012(mygroup)
+</code></pre><h4 id=如何使用-usermod-命令将现有的用户添加到多个次要组或附加组>如何使用 usermod 命令将现有的用户添加到多个次要组或附加组？</h4><p>要将现有用户添加到多个次要组中，请使用带有 <code>-G</code> 选项的 <code>usermod</code> 命令和带有逗号分隔的组名称。</p><p>语法：</p><pre tabindex=0><code># usermod [-G] [GroupName1,GroupName2] [UserName]
+</code></pre><p>在本例中，我们将把 <code>user2</code> 添加到 <code>mygroup</code> 和 <code>mygroup1</code> 中。</p><pre tabindex=0><code># usermod -a -G mygroup,mygroup1 user2
+</code></pre><p>让我使用 <code>id</code> 命令查看输出。是的，<code>user2</code> 已成功添加到 <code>myGroup</code> 和 <code>myGroup1</code> 中。</p><pre tabindex=0><code># id user2
+uid=1009(user2) gid=1009(user2) groups=1009(user2),1012(mygroup),1013(mygroup1)
+</code></pre><h4 id=如何改变用户的主要组>如何改变用户的主要组？</h4><p>要更改用户的主要组，请使用带有 <code>-g</code> 选项和组名称的 <code>usermod</code> 命令。</p><p>语法：</p><pre tabindex=0><code># usermod [-g] [GroupName] [UserName]
+</code></pre><p>我们必须使用 <code>-g</code> 改变用户的主要组。</p><pre tabindex=0><code># usermod -g mygroup user3
+</code></pre><p>让我们看看输出。是的，已成功更改。现在，显示<code>user3</code> 主要组是 <code>mygroup</code> 而不是 <code>user3</code>。</p><pre tabindex=0><code># id user3
+uid=1010(user3) gid=1012(mygroup) groups=1012(mygroup)
+</code></pre><h3 id=方法-2使用-gpasswd-命令>方法 2：使用 gpasswd 命令</h3><p><code>gpasswd</code> 命令用于管理 <code>/etc/group</code> 和 <code>/etc/gshadow</code>。每个组都可以有管理员、成员和密码。</p><h4 id=如何使用-gpasswd-命令将现有用户添加到次要组或者附加组>如何使用 gpasswd 命令将现有用户添加到次要组或者附加组？</h4><p>要将现有用户添加到次要组，请使用带有 <code>-M</code> 选项和组名称的 <code>gpasswd</code> 命令。</p><p>语法：</p><pre tabindex=0><code># gpasswd [-M] [UserName] [GroupName]
+</code></pre><p>在本例中，我们将把 <code>user1</code> 添加到 <code>mygroup</code> 中。</p><pre tabindex=0><code># gpasswd -M user1 mygroup
+</code></pre><p>让我使用 <code>id</code> 命令查看输出。是的，<code>user1</code> 已成功添加到 <code>mygroup</code> 中。</p><pre tabindex=0><code># id  user1
+uid=1008(user1) gid=1008(user1) groups=1008(user1),1012(mygroup)
+</code></pre><h4 id=如何使用-gpasswd-命令添加多个用户到次要组或附加组中>如何使用 gpasswd 命令添加多个用户到次要组或附加组中？</h4><p>要将多个用户添加到辅助组中，请使用带有 <code>-M</code> 选项和组名称的 <code>gpasswd</code> 命令。</p><p>语法：</p><pre tabindex=0><code># gpasswd [-M] [UserName1,UserName2] [GroupName]
+</code></pre><p>在本例中，我们将把 <code>user2</code> 和 <code>user3</code> 添加到 <code>mygroup1</code> 中。</p><pre tabindex=0><code># gpasswd -M user2,user3 mygroup1
+</code></pre><p>让我使用 <code>getent</code> 命令查看输出。是的，<code>user2</code> 和 <code>user3</code> 已成功添加到 <code>myGroup1</code> 中。</p><pre tabindex=0><code># getent group mygroup1
+mygroup1:x:1013:user2,user3
+</code></pre><h4 id=如何使用-gpasswd-命令从组中删除一个用户>如何使用 gpasswd 命令从组中删除一个用户？</h4><p>要从组中删除用户，请使用带有 <code>-d</code> 选项的 <code>gpasswd</code> 命令以及用户和组的名称。</p><p>语法：</p><pre tabindex=0><code># gpasswd [-d] [UserName] [GroupName]
+</code></pre><p>在本例中，我们将从 <code>mygroup</code> 中删除 <code>user1</code> 。</p><pre tabindex=0><code># gpasswd -d user1 mygroup
+Removing user user1 from group mygroup
+</code></pre><h3 id=方法-3使用-shell-脚本>方法 3：使用 Shell 脚本</h3><p>基于上面的例子，我知道 <code>usermod</code> 命令没有能力将多个用户添加到组中，可以通过 <code>gpasswd</code> 命令完成。但是，它将覆盖当前与组关联的现有用户。</p><p>例如，<code>user1</code> 已经与 <code>mygroup</code> 关联。如果要使用 <code>gpasswd</code> 命令将 <code>user2</code> 和 <code>user3</code> 添加到 <code>mygroup</code> 中，它将不会按预期生效，而是对组进行修改。</p><p>如果要将多个用户添加到多个组中，解决方案是什么？</p><p>两个命令中都没有默认选项来实现这一点。</p><p>因此，我们需要编写一个小的 shell 脚本来实现这一点。</p><h4 id=如何使用-gpasswd-命令将多个用户添加到次要组或附加组>如何使用 gpasswd 命令将多个用户添加到次要组或附加组？</h4><p>如果要使用 <code>gpasswd</code> 命令将多个用户添加到次要组或附加组，请创建以下 shell 脚本。</p><p>创建用户列表。每个用户应该在单独的行中。</p><pre tabindex=0><code>$ cat user-lists.txt
+user1
+user2
+user3
+</code></pre><p>使用以下 shell 脚本将多个用户添加到单个次要组。</p><pre tabindex=0><code>vi group-update.sh
+
+#!/bin/bash
+for user in `cat user-lists.txt`
+do
+usermod -a -G mygroup $user
+done
+</code></pre><p>设置 <code>group-update.sh</code> 文件的可执行权限。</p><pre tabindex=0><code># chmod + group-update.sh
+</code></pre><p>最后运行脚本来实现它。</p><pre tabindex=0><code># sh group-update.sh
+</code></pre><p>让我看看使用 <code>getent</code> 命令的输出。 是的，<code>user1</code>、<code>user2</code> 和 <code>user3</code> 已成功添加到 <code>mygroup</code> 中。</p><pre tabindex=0><code># getent group mygroup
+mygroup:x:1012:user1,user2,user3
+</code></pre><h4 id=如何使用-gpasswd-命令将多个用户添加到多个次要组或附加组>如何使用 gpasswd 命令将多个用户添加到多个次要组或附加组？</h4><p>如果要使用 <code>gpasswd</code> 命令将多个用户添加到多个次要组或附加组中，请创建以下 shell 脚本。</p><p>创建用户列表。每个用户应该在单独的行中。</p><pre tabindex=0><code>$ cat user-lists.txt
+user1
+user2
+user3
+</code></pre><p>创建组列表。每组应在单独的行中。</p><pre tabindex=0><code>$ cat group-lists.txt
+mygroup
+mygroup1
+</code></pre><p>使用以下 shell 脚本将多个用户添加到多个次要组。</p><pre tabindex=0><code>#!/bin/sh
+for user in `more user-lists.txt`
+do
+for group in `more group-lists.txt`
+do
+usermod -a -G $group $user
+done
+</code></pre><p>设置 <code>group-update-1.sh</code> 文件的可执行权限。</p><pre tabindex=0><code># chmod +x group-update-1.sh
+</code></pre><p>最后运行脚本来实现它。</p><pre tabindex=0><code># sh group-update-1.sh
+</code></pre><p>让我看看使用 <code>getent</code> 命令的输出。 是的，<code>user1</code>、<code>user2</code> 和 <code>user3</code> 已成功添加到 <code>mygroup</code> 中。</p><pre tabindex=0><code># getent group mygroup
+mygroup:x:1012:user1,user2,user3
+</code></pre><p>此外，<code>user1</code>、<code>user2</code> 和 <code>user3</code> 已成功添加到 <code>mygroup1</code> 中。</p><pre tabindex=0><code># getent group mygroup1
+mygroup1:x:1013:user1,user2,user3
+</code></pre><h3 id=方法-4在-linux-中将用户添加到组中的手动方法>方法 4：在 Linux 中将用户添加到组中的手动方法</h3><p>我们可以通过编辑 <code>/etc/group</code> 文件手动将用户添加到任何组中。</p><p>打开 <code>/etc/group</code> 文件并搜索要更新用户的组名。最后将用户更新到相应的组中。</p><pre tabindex=0><code># vi /etc/group
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/linux-add-user-to-group-primary-secondary-group-usermod-gpasswd/>https://www.2daygeek.com/linux-add-user-to-group-primary-secondary-group-usermod-gpasswd/</a></p><p>作者：<a href=https://www.2daygeek.com/author/magesh/>Magesh Maruthamuthu</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/NeverKnowsTomorrow>NeverKnowsTomorrow</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux 中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%94%A8%E6%88%B7/ rel=tag>用户</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%94%A8%E6%88%B7%E7%BB%84/ rel=tag>用户组</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

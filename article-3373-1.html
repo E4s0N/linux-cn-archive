@@ -1,0 +1,59 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在Ubuntu,Linux Mint,Debian上禁用IPv6 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在Ubuntu,Linux Mint,Debian上禁用IPv6"><meta property="og:description" content="【编者注】都说IPv4地址枯竭了，要推广IPv6，但是迟迟不见动静，既然如此，在它完全就绪前，就不要让它来打扰我们的系统好了。 IPv6 IPv6是寻址方案IPv4的下一个版本，被用来给域名分配数字地址。 IPv6比IPv4支持更多的地址。然而，它还没有被广泛支持，还在被接受的过程中。  你的系统支持IPv6么? 为了支持IPv6，需要很多事情。首先你需要系统/操作系统支持IPv6。Ubuntu，Linux Mint，和大多是现代发行版都支持它。如果你看一下ifconfig指令的输出，你就会看见你的网络接口被分配了IPv6地址。 $ ifconfig eth0 Link encap:Ethernet HWadd"><meta property="og:type" content="article"><meta property="og:url" content="/article-3373-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-07-12T09:00:00+00:00"><meta property="article:modified_time" content="2014-07-12T09:00:00+00:00"><meta itemprop=name content="如何在Ubuntu,Linux Mint,Debian上禁用IPv6"><meta itemprop=description content="【编者注】都说IPv4地址枯竭了，要推广IPv6，但是迟迟不见动静，既然如此，在它完全就绪前，就不要让它来打扰我们的系统好了。 IPv6 IPv6是寻址方案IPv4的下一个版本，被用来给域名分配数字地址。 IPv6比IPv4支持更多的地址。然而，它还没有被广泛支持，还在被接受的过程中。  你的系统支持IPv6么? 为了支持IPv6，需要很多事情。首先你需要系统/操作系统支持IPv6。Ubuntu，Linux Mint，和大多是现代发行版都支持它。如果你看一下ifconfig指令的输出，你就会看见你的网络接口被分配了IPv6地址。 $ ifconfig eth0 Link encap:Ethernet HWadd"><meta itemprop=datePublished content="2014-07-12T09:00:00+00:00"><meta itemprop=dateModified content="2014-07-12T09:00:00+00:00"><meta itemprop=wordCount content="277"><meta itemprop=keywords content="IP,IPv6,IPv4,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在Ubuntu,Linux Mint,Debian上禁用IPv6</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-07-12T09:00:00Z>July 12, 2014</time></div></div></header><div class="content post__content clearfix"><p>【编者注】都说IPv4地址枯竭了，要推广IPv6，但是迟迟不见动静，既然如此，在它完全就绪前，就不要让它来打扰我们的系统好了。</p><h3 id=ipv6>IPv6</h3><p>IPv6是寻址方案IPv4的下一个版本，被用来给域名分配数字地址。</p><p>IPv6比IPv4支持更多的地址。然而，它还没有被广泛支持，还在被接受的过程中。</p><p><img src=/data/attachment/album/201407/12/001926eqbu2vjzu6zxzmxz.jpg alt></p><h3 id=你的系统支持ipv6么>你的系统支持IPv6么?</h3><p>为了支持IPv6，需要很多事情。首先你需要系统/操作系统支持IPv6。Ubuntu，Linux Mint，和大多是现代发行版都支持它。如果你看一下ifconfig指令的输出，你就会看见你的网络接口被分配了IPv6地址。</p><pre tabindex=0><code>$ ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:1c:c0:f8:79:ee  
+          inet addr:192.168.1.2  Bcast:192.168.1.255  Mask:255.255.255.0
+          inet6 addr: fe80::21c:c0ff:fef8:79ee/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:110880 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:111960 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:62289395 (62.2 MB)  TX bytes:25169458 (25.1 MB)
+          Interrupt:20 Memory:e3200000-e3220000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:45258 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:45258 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:4900560 (4.9 MB)  TX bytes:4900560 (4.9 MB)
+</code></pre><p>看一下行“inet6 addr”。</p><p>接下来你需要一个支持ipv6的路由器/调制解调器。此外，你的ISP也必须支持IPv6。</p><p>除了检查网络设备的每一部分，最好查出你是否可以通过IPv6访问网站。</p><p>有很多网站可以检测你的网络连接是否支持IPv6. 这里就是个例子：<a href=http://testmyipv6.com/>http://testmyipv6.com/</a></p><p>下面是在内核中启用IPv6的参数：</p><pre tabindex=0><code>$ sysctl net.ipv6.conf.all.disable_ipv6
+net.ipv6.conf.all.disable_ipv6 = 0
+
+$ sysctl net.ipv6.conf.default.disable_ipv6
+net.ipv6.conf.default.disable_ipv6 = 0
+
+$ sysctl net.ipv6.conf.lo.disable_ipv6
+net.ipv6.conf.lo.disable_ipv6 = 0
+</code></pre><p>同样可以在proc文件中检查</p><pre tabindex=0><code>$ cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+0
+</code></pre><p>注意这里的变量是控制IPv6的“禁用”。所以设置1就会禁用IPv6。</p><h3 id=如果它不支持就禁用ipv6>如果它不支持就禁用IPv6</h3><p>如果你的网络设备中不支持IPv6，那最好就全部禁用它们。为什么？因为这会引起域名查询延迟，在网络连接中不必要地尝试连接到IPv6地址导致延迟等等问题。</p><p>我也遇到过像这样的问题，apt-get命令偶尔会尝试连接到IPv6地址失败接着检索IPv4地址。看一下下面的输出。</p><pre tabindex=0><code>$ sudo apt-get update
+Ign http://archive.canonical.com trusty InRelease
+Ign http://archive.canonical.com raring InRelease                                                                                                    
+Err http://archive.canonical.com trusty Release.gpg                                                                                                  
+  Cannot initiate the connection to archive.canonical.com:80 (2001:67c:1360:8c01::1b). - connect (101: Network is unreachable) [IP: 2001:67c:1360:8c01::1b 80]
+Err http://archive.canonical.com raring Release.gpg                                                                                                  
+  Cannot initiate the connection to archive.canonical.com:80 (2001:67c:1360:8c01::1b). - connect (101: Network is unreachable) [IP: 2001:67c:1360:8c01::1b 80]
+
+.....
+</code></pre><p>像这样的错误在最近的Ubuntu中更频繁了，或许它比以前更频繁地尝试使用IPv6地址。</p><p>我在其他的应用上也注意到了相似的问题，如Hexchat，同样Google Chrome也会有时会在查询域名的时候花费更长的时间。</p><p>所以最好的方案是完全禁用IPv6来摆脱这些事情。这只需要一点点配置但可以帮助你解决很多你系统上的很多问题。用户甚至反应这可以加速网络。</p><h4 id=禁用-ipv6---方案1>禁用 IPv6 - 方案1</h4><p>编辑文件 - /etc/sysctl.conf</p><pre tabindex=0><code>$ sudo gedit /etc/sysctl.conf
+</code></pre><p>在文件的最后加入下面的行。</p><pre tabindex=0><code># IPv6 disabled
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+</code></pre><p>保存并关闭</p><p>重启sysctl</p><pre tabindex=0><code>$ sudo sysctl -p
+</code></pre><p>再次检查ifconfig的输出，这里应该没有IPv6地址了。</p><pre tabindex=0><code>$ ifconfig
+eth0      Link encap:Ethernet  HWaddr 08:00:27:5f:28:8b  
+          inet addr:192.168.1.3  Bcast:192.168.1.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:1346 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:965 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:1501691 (1.5 MB)  TX bytes:104883 (104.8 KB)
+</code></pre><p>如果不行，尝试重启系统并再次检查ifconfig</p><h4 id=禁用-ipv6---grub-方案>禁用 IPv6 - GRUB 方案</h4><p>IPv6同样可以通过编辑grub配置文件禁用。</p><pre tabindex=0><code>$ sudo gedit /etc/default/grub
+</code></pre><p>查找包含"GRUB<em>CMDLINE</em>LINUX"的行，并如下编辑：</p><pre tabindex=0><code>GRUB_CMDLINE_LINUX=&#34;ipv6.disable=1&#34;
+</code></pre><p>同样可以加入名为"GRUB<em>CMDLINE</em>LINUX_DEFAULT"的变量，这同样有用。保存并关闭文件，重新生成grub配置。</p><pre tabindex=0><code>$ sudo update-grub2
+</code></pre><p>重启，现在IPv6应该就已经禁用了。</p><hr><p>via: <a href=http://www.binarytides.com/disable-ipv6-ubuntu/>http://www.binarytides.com/disable-ipv6-ubuntu/</a></p><p>译者：<a href=https://github.com/geekpi>geekpi</a> ，校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/ip/ rel=tag>IP</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ipv6/ rel=tag>IPv6</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ipv4/ rel=tag>IPv4</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

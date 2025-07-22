@@ -1,0 +1,61 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Ubuntu 22.04 上安装 CRI-O 容器运行时 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Ubuntu 22.04 上安装 CRI-O 容器运行时"><meta property="og:description" content="在本指南中，我们将逐步演示如何在 Ubuntu 22.04 LTS 上安装 CRI-O。"><meta property="og:type" content="article"><meta property="og:url" content="/article-15687-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-04-03T10:54:00+00:00"><meta property="article:modified_time" content="2023-04-03T10:54:00+00:00"><meta itemprop=name content="如何在 Ubuntu 22.04 上安装 CRI-O 容器运行时"><meta itemprop=description content="在本指南中，我们将逐步演示如何在 Ubuntu 22.04 LTS 上安装 CRI-O。"><meta itemprop=datePublished content="2023-04-03T10:54:00+00:00"><meta itemprop=dateModified content="2023-04-03T10:54:00+00:00"><meta itemprop=wordCount content="449"><meta itemprop=keywords content="容器,CRI-O,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Ubuntu 22.04 上安装 CRI-O 容器运行时</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2023-04-03T10:54:00Z>April 03, 2023</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105419akd0pr3ns2n50nz0.jpg alt></p><p>CRI-O 是 Kubernetes 的开源轻量级容器运行时。它是使用 开放容器组织 Open Container Initiative （OCI）兼容运行时的 Kubernetes 容器运行时接口 Container Runtime Interface （CRI）的实现。在运行 Kubernetes 时，它是 Docker 的完美替代品。</p><p>在本指南中，我们将逐步演示如何在 Ubuntu 22.04 LTS 上安装 CRI-O。</p><h3 id=先决条件>先决条件</h3><p>在开始之前，这是你需要的：</p><ul><li>具有 SSH 访问权限的 Ubuntu 22.04 实例</li><li>在实例上配置的 sudo 用户</li><li>快速稳定的互联网连接</li></ul><p>有了这个，让我们开始吧。</p><h3 id=步骤-1更新系统并安装依赖>步骤 1：更新系统并安装依赖</h3><p>立即登录你的服务器实例，并按如下方式更新包列表：</p><pre tabindex=0><code>$ sudo apt update
+</code></pre><p>更新本地包索引后，按如下方式安装依赖项：</p><pre tabindex=0><code>$ sudo apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common -y
+</code></pre><h3 id=步骤-2添加-cri-o-存储库>步骤 2：添加 CRI-O 存储库</h3><p>要安装 CRI-O，我们需要在 Ubuntu 上添加或启用它的仓库。但首先，你需要根据操作系统和要安装的 CRI-O 版本定义变量。</p><p>因此，定义如下变量：</p><pre tabindex=0><code>$ export OS=xUbuntu_22.04
+$ export CRIO_VERSION=1.24
+</code></pre><p>完成后，运行以下命令集以添加 CRI-O Kubic 仓库：</p><pre tabindex=0><code>$ echo &#34;deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /&#34;| sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+$ echo &#34;deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$CRIO_VERSION/$OS/ /&#34;|sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION.list
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105732daan5rcnwu5whhdr.jpg alt></p><p>此后，为 CRI-O 仓库导入 GPG 密钥：</p><pre tabindex=0><code>$ curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION/$OS/Release.key | sudo apt-key add -
+$ curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | sudo apt-key add -
+</code></pre><p>这会产生如下输出：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105740bb7nd2wz7iblixd4.jpg alt></p><p>再次更新包索引，使系统与新添加的 CRI-O Kubic 仓库同步：</p><pre tabindex=0><code>$ sudo apt update
+</code></pre><h3 id=步骤-3在-ubuntu-2204-上安装-cri-o>步骤 3：在 Ubuntu 22.04 上安装 CRI-O</h3><p>添加仓库后，使用 APT 包管理器安装 CRI-O 和运行时客户端：</p><pre tabindex=0><code>$ sudo apt install cri-o cri-o-runc -y
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105747niy2fiduhweir1fg.jpg alt></p><p>安装后，启动并启用 CRI-O 守护程序：</p><pre tabindex=0><code>$ sudo systemctl start crio
+$ sudo systemctl enable crio
+</code></pre><p>接下来，验证 CRI-O 服务是否正在运行：</p><pre tabindex=0><code>$ sudo systemctl status crio
+</code></pre><p>你应该看到以下输出，表明 CRI-O 服务正在按预期运行：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105756ih2eac22plnwpzb2.jpg alt></p><h3 id=步骤-4为-cri-o-安装-cni-插件>步骤 4：为 CRI-O 安装 CNI 插件</h3><p>接下来，你需要安装 CNI（ 容器网络接口 Container Network Interface ）以及 CNI 插件。请记住，环回和桥接配置已启用并且足以使用 CRI-O 运行 容器荚 Pod ：</p><p>因此，要安装 CNI 插件，请运行以下命令：</p><pre tabindex=0><code>$ sudo apt install containernetworking-plugins -y
+</code></pre><p>安装后，编辑 CRI-O 配置文件：</p><pre tabindex=0><code>$ sudo nano /etc/crio/crio.conf
+</code></pre><p>取消注释 <code>network_dir</code> 和 <code>plugin_dirs</code> 部分，并在 <code>plugin_dirs</code> 下添加 <code>/usr/lib/cni/</code>。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105811o8bmrmwslflzb1b4.jpg alt></p><p>保存更改并退出配置文件。</p><p>接下来，重启 CRIO 服务：</p><pre tabindex=0><code>$ sudo systemctl restart crio
+</code></pre><h3 id=步骤-5安装-cri-o-工具>步骤 5：安装 CRI-O 工具</h3><p>此外，你还需要安装 <code>cri-tools</code> 包，它提供了 <code>crictl</code> 命令行程序，用于交互和管理容器和 pod。</p><p>为此，请运行以下命令：</p><pre tabindex=0><code>$ sudo apt install -y cri-tools
+</code></pre><p>安装后，确认 <code>crictl</code> 的版本和 <code>RunTimeVersion</code> 如下：</p><pre tabindex=0><code>$ sudo crictl --runtime-endpoint unix:///var/run/crio/crio.sock version
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105821nxippxx9pm0xxumq.jpg alt></p><p>一定要检查 CRI-O 是否准备好使用以下命令部署容器荚：</p><pre tabindex=0><code>$ sudo crictl info
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105830f8wdzwwi1nq1kqky.jpg alt></p><p><code>crictl</code> 命令提供自动补全功能，让你可以通过按 <code>TAB</code> 键自动补全命令。要启用命令补全，请运行以下命令：</p><pre tabindex=0><code>$ sudo su -
+
+# crictl completion &gt; /etc/bash_completion.d/crictl
+</code></pre><p>然后重新加载当前的 Bash 会话：</p><pre tabindex=0><code># source ~/.bashrc
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105840of5hot1opfmomdf1.jpg alt></p><p>要使用自动补全功能，你需要注销或启动新的终端会话。然后只需键入 <code>crictl</code> 命令并按 <code>TAB</code> 键即可查看所有选项。</p><pre tabindex=0><code>$ crictl
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105850az3h1l5yy9cyc58y.jpg alt></p><h3 id=步骤-6使用-crictl-程序创建容器荚>步骤 6：使用 crictl 程序创建容器荚</h3><p>至此，CRI-O 已完全安装和配置并准备好启动容器荚。在本节中，我们将在容器荚中创建一个 Apache Web 服务器并确认它是否正在处理请求。</p><p>首先，我们将使用容器荚配置文件设置一个沙箱或隔离环境，如下所示：</p><pre tabindex=0><code>$ sudo nano apache_sandbox.json
+</code></pre><p>然后我们将以下配置添加到文件中：</p><pre tabindex=0><code>{
+    &#34;metadata&#34;: {
+        &#34;name&#34;: &#34;apache-sandbox&#34;,
+        &#34;namespace&#34;: &#34;default&#34;,
+        &#34;attempt&#34;: 1,
+        &#34;uid&#34;: &#34;hdishd83djaidwnduwk28bcsb&#34;
+    },
+    &#34;linux&#34;: {
+    },
+    &#34;log_directory&#34;: &#34;/tmp&#34;
+}
+</code></pre><p>保存并退出。接下来使用以下命令创建容器荚。这会打印出很长的字母数字，它是容器荚 ID。</p><pre tabindex=0><code>$ sudo crictl runp apache_sandbox.json
+</code></pre><p>要确认容器荚已创建，请运行命令：</p><pre tabindex=0><code>$ sudo crictl pods
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105903tkpwmmwejej7mv0u.jpg alt></p><p>要检索有关创建的容器荚的更多信息，请运行以下命令：</p><pre tabindex=0><code>$ sudo crictl inspectp --output table 05ba2f0704f22
+</code></pre><p>这将打印出 ID、名称、UID、命名空间、创建日期、内部 IP 等详细信息。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105914m9cevk7devvca0cj.jpg alt></p><h3 id=步骤-7在容器荚中创建容器>步骤 7：在容器荚中创建容器</h3><p>这部分中，我们将在容器荚中创建一个 Apache Web 服务器容器。因此，使用 <code>crictl</code> 程序从 Docker Hub 拉取 Apache Web 服务器镜像：</p><pre tabindex=0><code>$ sudo crictl pull httpd
+</code></pre><p>你可以如图所示验证拉取的镜像：</p><pre tabindex=0><code>$ sudo crictl images
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105928lrwlmzw4wbllaawa.jpg alt></p><p>接下来，我们将为 Apache Web 服务器定义一个容器配置文件：</p><pre tabindex=0><code>$ sudo nano container_apache.json
+</code></pre><p>复制并粘贴以下代码：</p><pre tabindex=0><code>{
+  &#34;metadata&#34;: {
+      &#34;name&#34;: &#34;apache&#34;
+    },
+  &#34;image&#34;:{
+      &#34;image&#34;: &#34;httpd&#34;
+    },
+  &#34;log_path&#34;:&#34;apache.0.log&#34;,
+  &#34;linux&#34;: {
+  }
+}
+</code></pre><p>保存并退出配置文件。</p><p>最后，要将容器连接到之前创建的沙盒容器荚，请运行以下命令：</p><pre tabindex=0><code>$ sudo crictl create 05ba2f0704f22 container_apache.json apache_sandbox.json
+</code></pre><p>这会向终端输出一长串字母数字 ID。请记下此 ID。</p><p>最后，使用 ID 启动 Apache Web 服务器容器，如下所示：</p><pre tabindex=0><code>$ sudo crictl start 37f4d26510965452aa918f04d629f5332a1cd398d4912298c796942e22f964a7
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105938czh1uh35hgkw3929.jpg alt></p><p>要检查容器状态，请运行以下命令：</p><pre tabindex=0><code>$ sudo crictl ps
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105944d3en2xe8q5h7jwj6.jpg alt></p><p>要验证 Apache Web 服务器是否正在运行，请使用 <code>curl</code> 命令和容器荚的内部 ID 向 Web 服务器发送 HTTP 请求：</p><pre tabindex=0><code>$ curl -I 10.85.0.2
+</code></pre><p>以下输出确认 Web 服务器正在运行：</p><p><img src=https://img.linux.net.cn/data/attachment/album/202304/03/105950w95bbas5pdq5bq5z.jpg alt></p><h3 id=结论>结论</h3><p>这就是全部的指南。我们已经在 Ubuntu 22.04 上成功安装了 CRI-O，并继续创建容器荚和容器。欢迎你提出意见和反馈。</p><hr><p>via: <a href=https://www.linuxtechi.com/install-crio-container-runtime-on-ubuntu/>https://www.linuxtechi.com/install-crio-container-runtime-on-ubuntu/</a></p><p>作者：<a href=https://www.linuxtechi.com/author/james/>James Kiarie</a> 选题：<a href=https://github.com/lkxed/>lkxed</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%B9%E5%99%A8/ rel=tag>容器</a></li><li class=tags__item><a class="tags__link btn" href=/tags/cri-o/ rel=tag>CRI-O</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

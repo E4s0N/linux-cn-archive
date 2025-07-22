@@ -1,0 +1,135 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 20 分钟内发布一个正式的 ERC20 通证 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 20 分钟内发布一个正式的 ERC20 通证"><meta property="og:description" content="在这篇教程中，我准备指导你部署你自己的 ERC20 通证到实际的以太坊网络上去。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9825-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-07-10T22:21:00+00:00"><meta property="article:modified_time" content="2018-07-10T22:21:00+00:00"><meta itemprop=name content="如何在 20 分钟内发布一个正式的 ERC20 通证"><meta itemprop=description content="在这篇教程中，我准备指导你部署你自己的 ERC20 通证到实际的以太坊网络上去。"><meta itemprop=datePublished content="2018-07-10T22:21:00+00:00"><meta itemprop=dateModified content="2018-07-10T22:21:00+00:00"><meta itemprop=wordCount content="632"><meta itemprop=keywords content="以太坊,ERC20,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 20 分钟内发布一个正式的 ERC20 通证</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-07-10T22:21:00Z>July 10, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201807/10/222045hwhg7mp7w766v7dz.jpg alt></p><p>这段时间以来，以太坊通证很流行。这些通证可以用来代表现实世界的各种价值单位：<a href=https://digix.global/>黄金</a>、 <a href=https://www.cnbc.com/2017/08/28/burger-king-russia-cryptocurrency-whoppercoin.html>谎言</a>、 <a href=https://www.cryptokitties.co/>猫咪</a> 甚至是类似 <a href=https://www.investopedia.com/terms/i/initial-coin-offering-ico.asp>公司股票</a> 一样的东西。迄今为止，人们已经募集了 <a href=https://www.forbes.com/sites/chancebarnett/2017/09/23/inside-the-meteoric-rise-of-icos/#57ac46d95670>20 亿美元的通证</a>。那些通证是以 <a href=https://theethereum.wiki/w/index.php/ERC20_Token_Standard>ERC20</a> 为标准的，人们可以轻松地在钱包之间进行交易。在这篇教程中，我准备指导你部署你自己的 ERC20 通证到真实的以太坊网络上去。</p><p>事先准备：</p><ul><li>一个文本编辑器（<a href=https://atom.io/>Atom</a> 不错，不过我喜欢 <a href=http://www.vim.org/>Vim</a>）</li><li>对命令行和终端（模拟器）有起码的了解。Mac 内置的应用“终端”就很好，不过我喜欢 <a href=https://www.iterm2.com/>iTerm2</a></li><li>Chrome 浏览器</li><li><a href=https://nodejs.org/>Node.js 8</a>（或更高版本）</li><li>你的通证的名字。我的准备叫做 HamburgerCoin（汉堡币）</li></ul><p>你需要做的第一件事是安装 <a href=https://metamask.io/>MetaMask</a>。访问 <a href=https://metamask.io/>Metamask 网站</a> 并点击“Get Chrome Extention”。</p><p>Metamask 可以让你通过 Chrome 在以太坊上进行交易。它依靠运行着公开以太坊节点的 <a href=https://infura.io/>Infura</a> ，所以你不用自己运行以太坊全节点。如果你颇具探索精神，你也可以下载和安装 <a href=https://github.com/ethereum/mist/releases>Mist</a> 以替代它。运行 Mist 就可以让你运行你自己的以太坊节点。运行自己的节点你就需要将你的计算机与该网络进行同步，这需要不短的时间。从技术上讲这更安全，因为这样你不必信任 Infura 来处理你的交易。Infura 可以忽略你的交易而干预你，但是它并不能偷走你的钱。因为安装 Metamask 比 Mist 更快也更简单，所以我假设你在下面的教程中使用 Metamask。</p><p>接着你需要安装 <a href=http://truffleframework.com/>truffle</a>：</p><pre tabindex=0><code> $ npm install -g truffle
+</code></pre><p>现在为你自己的新通证创建一个新目录，cd 到其中并初始化你的 truffle 项目。</p><pre tabindex=0><code>$ mkdir hamburger-coin
+$ cd hamburger-coin
+$ truffle init
+</code></pre><p>很好，你的 truffle 项目已经设置好了！</p><p>现在来创建我们的通证。首先我们需要安装 <a href=https://github.com/OpenZeppelin>OpenZepplin</a> 框架。OpenZepplin 框架包括了大量预先构建好的合约，包括我们要部署的 ERC20 通证合约。</p><p>（只需要按下回车接受默认值即可）</p><pre tabindex=0><code>$ npm init
+package name: (hamburger-coin)
+version: (1.0.0)
+description:
+entry point: (truffle.js)
+test command:
+git repository:
+keywords:
+author:
+license: (ISC)
+About to write to /Users/masonf/src/hamburger-coin/package.json:
+
+{
+  &#34;name&#34;: &#34;hamburger-coin&#34;,
+  &#34;version&#34;: &#34;1.0.0&#34;,
+  &#34;description&#34;: &#34;&#34;,
+  &#34;main&#34;: &#34;truffle.js&#34;,
+  &#34;directories&#34;: {
+    &#34;test&#34;: &#34;test&#34;
+  },
+  &#34;scripts&#34;: {
+    &#34;test&#34;: &#34;echo \&#34;Error: no test specified\&#34; &amp;&amp; exit 1&#34;
+  },
+  &#34;author&#34;: &#34;&#34;,
+  &#34;license&#34;: &#34;ISC&#34;
+}
+
+
+Is this ok? (yes) yes
+$ npm install zeppelin-solidity
+</code></pre><p>现在我们可以创建我们的通证合约了。创建一个 <code>contracts/HamburgerCoin.sol</code> 文件并加入如下内容：</p><pre tabindex=0><code>pragma solidity ^0.4.18;
+import &#34;zeppelin-solidity/contracts/token/StandardToken.sol&#34;;
+
+contract HamburgerCoin is StandardToken {
+  string public name = &#34;HamburgerCoin&#34;; 
+  string public symbol = &#34;HBC&#34;;
+  uint public decimals = 2;
+  uint public INITIAL_SUPPLY = 10000 * (10 ** decimals);
+
+  function HamburgerCoin() public {
+    totalSupply_ = INITIAL_SUPPLY;
+    balances[msg.sender] = INITIAL_SUPPLY;
+  }
+}
+</code></pre><p>（LCTT 译注：上述合约内容中指定了合约的名称、符号和供应量。在 ERC20 当中，通证的供应量其实是整数，上述合约中通证的实际供应量是 10000 * 100 个，出于显示 2 位小数的需求，你在合约浏览器、钱包软件中看到和操作的 1 个通证，实际上在交易中是以 100 个进行的。）</p><p>OpenZepplin 的 <code>StandardToken</code> 是一个标准的 ERC20 通证。如果你感兴趣，你可以看看它的 <a href=https://github.com/OpenZeppelin/zeppelin-solidity/tree/master/contracts/token>源代码</a> 以了解是如何工作的。</p><p>实际上并不太复杂。该合约有一个 <a href=https://github.com/OpenZeppelin/zeppelin-solidity/blob/master/contracts/token/BasicToken.sol#L15>地址到余额</a> 的映射（LCTT 译注：你可以理解为哈希、关联数组），它也有一个 <a href=https://github.com/OpenZeppelin/zeppelin-solidity/blob/master/contracts/token/StandardToken.sol#L17>允许转账</a> 的列表。你可以看做是支票。你可以写张支票，但是直到它被兑付前，钱并不会被转账。</p><p>如果有人要转走一些资金，你可以在合约上调用 <a href=https://github.com/OpenZeppelin/zeppelin-solidity/blob/master/contracts/token/StandardToken.sol#L48>approve</a> 方法，设置你要发送的通证数量。这就像是写支票一样。</p><p>然后调用 <a href=https://github.com/OpenZeppelin/zeppelin-solidity/blob/master/contracts/token/StandardToken.sol#L26>transferFrom</a> 会实际进行转账。</p><p>我们可以从头写这些合约，但是最好采用经过完备的社区测试的合约。从头写一个 ERC20 通证那就是另外一篇文章了。</p><p>试着运行 <code>compile</code> 来编译我们的合约：</p><pre tabindex=0><code>$ truffle compile
+Compiling ./contracts/HamburgerCoin.sol...
+Compiling zeppelin-solidity/contracts/math/SafeMath.sol...
+Compiling zeppelin-solidity/contracts/ownership/Ownable.sol...
+Compiling zeppelin-solidity/contracts/token/BasicToken.sol...
+Compiling zeppelin-solidity/contracts/token/ERC20.sol...
+Compiling zeppelin-solidity/contracts/token/ERC20Basic.sol...
+Compiling zeppelin-solidity/contracts/token/MintableToken.sol...
+Compiling zeppelin-solidity/contracts/token/StandardToken.sol...
+Writing artifacts to ./build/contracts Next you&#39;ll need to add a migration file which will tell truffle how to deploy your contract.
+</code></pre><p>接下来我们需要增加一个 truffle <a href=http://truffleframework.com/docs/getting_started/migrations>迁移</a>。</p><p>创建 <code>migrations/2_deploy_hamburgercoin.js</code> 文件并添加如下内容：</p><pre tabindex=0><code>var HamburgerCoin = artifacts.require(&#34;./HamburgerCoin.sol&#34;);
+
+module.exports = function(deployer) {
+  deployer.deploy(HamburgerCoin);
+};
+</code></pre><p>现在让我们配置 truffle 以能够使用 Infura 公共节点。如果我们要部署到公共节点，那就需要钱包的私钥。我们可以将该私钥包含在我们的源代码当中，但是如果任何人可以访问你的源代码（和版本库），他就能够偷走我们所有的汉堡币！要避免这种情况，我们会使用 <a href=https://github.com/motdotla/dotenv>dotenv</a> node.js 模块。（LCTT 译注：dotenv 用于存储机密信息的文件 .env 是以 “.” 开头的，默认不会进入版本库，当然，如果有人能查看你全部的项目文件，你的私钥还是会被泄露。）</p><p>让我们安装部署到 Infura 所需的所有模块。</p><pre tabindex=0><code>npm install --save-dev dotenv truffle-wallet-provider ethereumjs-wallet
+</code></pre><p>（LCTT 译注：可能安装过程中会有很多警告，大多应该是属于定义了未使用的变量和方法的编译警告，可以忽略。）</p><p>现在编辑 <code>truffle.js</code> 并（原样）加入如下内容：</p><pre tabindex=0><code>require(&#39;dotenv&#39;).config();
+const Web3 = require(&#34;web3&#34;);
+const web3 = new Web3();
+const WalletProvider = require(&#34;truffle-wallet-provider&#34;);
+const Wallet = require(&#39;ethereumjs-wallet&#39;);
+
+var mainNetPrivateKey = Buffer.from(process.env[&#34;MAINNET_PRIVATE_KEY&#34;], &#34;hex&#34;)
+var mainNetWallet = Wallet.fromPrivateKey(mainNetPrivateKey);
+var mainNetProvider = new WalletProvider(mainNetWallet, &#34;https://mainnet.infura.io/&#34;);
+
+var ropstenPrivateKey = Buffer.from(process.env[&#34;ROPSTEN_PRIVATE_KEY&#34;], &#34;hex&#34;)
+var ropstenWallet = Wallet.fromPrivateKey(ropstenPrivateKey);
+var ropstenProvider = new WalletProvider(ropstenWallet, &#34;https://ropsten.infura.io/&#34;);
+
+
+module.exports = {
+  networks: {
+    development: {
+      host: &#34;localhost&#34;,
+      port: 8545,
+      network_id: &#34;*&#34; // Match any network id
+    },
+    ropsten: {
+      provider: ropstenProvider,
+      // You can get the current gasLimit by running
+      // truffle deploy --network rinkeby
+      // truffle(rinkeby)&gt; web3.eth.getBlock(&#34;pending&#34;, (error, result) =&gt;
+      //   console.log(result.gasLimit))
+      gas: 4600000,
+      gasPrice: web3.toWei(&#34;20&#34;, &#34;gwei&#34;),
+      network_id: &#34;3&#34;,
+    },
+    mainnet: {
+      provider: mainNetProvider,
+      gas: 4600000,
+      gasPrice: web3.toWei(&#34;20&#34;, &#34;gwei&#34;),
+      network_id: &#34;1&#34;,
+    }
+  }
+};
+</code></pre><p>（LCTT 译注：原文采用 <code>new Buffer</code> 来获取私钥设置，但 node.js 升级后，废弃了 <code>new Buffer</code> 这种用法，运行时会发出警告，所以上面我修改为使用 <code>Buffer.from</code> 。）</p><p>接下来我们从 Metamask 中得到我们的私钥：</p><ol><li>点击你的 Chrome 窗口右上角的狐狸图标。</li><li>点击 “Account 1” 右侧的省略号。</li><li>点击 “Export Private Key”。</li><li>输入你的密码。</li><li>点击该文字以复制私钥到剪贴板。</li></ol><p>然后打开 <code>.env</code>文件，并像下面这样贴入你的私钥（对于 Ropsten 测试网和 Mainnet 主网，你的私钥是一样的）：</p><pre tabindex=0><code>ROPSTEN_PRIVATE_KEY=&#34;123YourPrivateKeyHere&#34;
+MAINNET_PRIVATE_KEY=&#34;123YourPrivateKeyHere&#34;
+</code></pre><p>接下来，让我们部署到 Ropsten 以太坊测试网。</p><p>以太坊测试网是一个你可以测试合约的地方。此外还有 <a href=https://kovan-testnet.github.io/website/>Kovan</a> 和 <a href=https://www.rinkeby.io/>Rinkeby</a> 测试网。我在这个教程中选择 Ropsten 是因为现在很容易得到 Ropsten 的测试 ETH。这些测试网都类似，你可以使用任何一个你喜欢的，但是在此教程当中我假设你在使用 Ropsten。访问 <a href=https://faucet.metamask.io/>https://faucet.metamask.io/</a> 以得到一些测试 ETH。从 faucet 得到一些 ETH 后，你就可以部署了。</p><pre tabindex=0><code>$ truffle deploy --network ropsten
+Compiling ./contracts/HamburgerCoin.sol...
+Compiling ./contracts/Migrations.sol...
+Compiling zeppelin-solidity/contracts/math/SafeMath.sol...
+Compiling zeppelin-solidity/contracts/token/BasicToken.sol...
+Compiling zeppelin-solidity/contracts/token/ERC20.sol...
+Compiling zeppelin-solidity/contracts/token/ERC20Basic.sol...
+Compiling zeppelin-solidity/contracts/token/StandardToken.sol...
+Writing artifacts to ./build/contracts
+
+Using network &#39;ropsten&#39;.
+
+Running migration: 1_initial_migration.js
+  Deploying Migrations...
+  ... 0xc2bbe6bf5a7c7c7312c43d65de4c18c51c4d620d5bf51481ea530411dcebc499
+  Migrations: 0xd827b6f93fcb50631edc4cf8e293159f0c056538
+Saving successful migration to network...
+  ... 0xe6f92402e6ca0b1d615a310751568219f66b9d78b80a37c6d92ca59af26cf475
+Saving artifacts...
+Running migration: 2_deploy_contracts.js
+  Deploying HamburgerCoin...
+  ... 0x02c4d47526772dc524851fc2180b338a6b037500ab298fa2f405f01abdee21c4
+  HamburgerCoin: 0x973b1a5c753a2d5d3924dfb66028b975e7ccca51
+Saving artifacts...
+</code></pre><p>在 “Saving aritfacts” 上面的这行即是你的合约的新地址。</p><p>复制并黏贴该地址到 <a href=https://ropsten.etherscan.io/>Ropsten Etherscan 搜索框</a>，你就能看到你新部署的合约。</p><p>现在你可以在任何 ERC20 兼容的钱包，如 <a href=https://github.com/ethereum/mist>Mist</a> 、<a href=https://www.myetherwallet.com/>MyEtherWallet</a>（LCTT 译注：或 ImToken 这样的手机应用）里面使用你的通证了。</p><p>为了这篇教程，我构建了一个名为 <a href=http://etherface.io/>Etherface</a> 的钱包来做演示。</p><p>首先你需要添加你的通证到 Etherface：</p><ol><li>访问 <a href=http://etherface.io/>http://etherface.io/</a> 。</li><li>确认你在 Metamask 中选择了 “Ropsten” 网络。</li><li>点击 “Tokens”。</li><li>点击右上角的加号按钮。</li><li>输入上面的合约地址。</li></ol><p>如果你有朋友想要一些汉堡币，你现在就可以发送给他们了。如果没有，你也可以在你的两个账号间测试转账：</p><ol><li>在 Metamask 中点击 “切换账号”按钮（在右上角），并改变你的账号为 “Account 2”。</li><li>点击 “Account 2” 右边的省略号，然后选择 “Copy Address to clipboard”。</li><li>切换回 “Account 1”，这很重要！否则交易会失败。</li><li>在 Etherface 中你的余额下点击 “Send”。</li><li>黏贴 “Account 2” 的地址。</li><li>输入你要发送的数量。</li><li>Metamask 会弹出确认窗口，点击 “Submit”。</li><li>等大约 15-30 秒。</li><li>你的 “Account 1” 的余额应该会减少，“Account 2” 现在会有了一些汉堡币！</li></ol><p>最后，让我们来部署到主网（LCTT 译注：这会花费你真实的 ETH，你可以通过查看前面部署到 Ropsten 的合约信息中了解花费了多少 gas，以相应估计实际要花费多少 ETH）：</p><pre tabindex=0><code>$ truffle deploy --network mainnet
+</code></pre><p>你可以如前面一样加你的通证到 Etherface ，并发送你新打造的通证给你的朋友们了！</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/ rel=tag>以太坊</a></li><li class=tags__item><a class="tags__link btn" href=/tags/erc20/ rel=tag>ERC20</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

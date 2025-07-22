@@ -1,0 +1,323 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>构建一个即时消息应用（二）：OAuth - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="构建一个即时消息应用（二）：OAuth"><meta property="og:description" content="在这篇帖子中，我们将会通过为应用添加社交登录功能进入后端开发。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11510-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-10-28T07:03:29+00:00"><meta property="article:modified_time" content="2019-10-28T07:03:29+00:00"><meta itemprop=name content="构建一个即时消息应用（二）：OAuth"><meta itemprop=description content="在这篇帖子中，我们将会通过为应用添加社交登录功能进入后端开发。"><meta itemprop=datePublished content="2019-10-28T07:03:29+00:00"><meta itemprop=dateModified content="2019-10-28T07:03:29+00:00"><meta itemprop=wordCount content="1098"><meta itemprop=keywords content="即时消息,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>构建一个即时消息应用（二）：OAuth</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-10-28T07:03:29Z>October 28, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201910/28/070221l7wmy37l9llsl23z.jpg alt></p><p><a href=/article-11396-1.html>上一篇：模式</a>。</p><p>在这篇帖子中，我们将会通过为应用添加社交登录功能进入后端开发。</p><p>社交登录的工作方式十分简单：用户点击链接，然后重定向到 GitHub 授权页面。当用户授予我们对他的个人信息的访问权限之后，就会重定向回登录页面。下一次尝试登录时，系统将不会再次请求授权，也就是说，我们的应用已经记住了这个用户。这使得整个登录流程看起来就和你用鼠标单击一样快。</p><p>如果进一步考虑其内部实现的话，过程就会变得复杂起来。首先，我们需要注册一个新的 <a href=https://github.com/settings/applications/new>GitHub OAuth 应用</a>。</p><p>这一步中，比较重要的是回调 URL。我们将它设置为 <code>http://localhost:3000/api/oauth/github/callback</code>。这是因为，在开发过程中，我们总是在本地主机上工作。一旦你要将应用交付生产，请使用正确的回调 URL 注册一个新的应用。</p><p>注册以后，你将会收到“客户端 id”和“安全密钥”。安全起见，请不要与任何人分享他们 ?</p><p>顺便让我们开始写一些代码吧。现在，创建一个 <code>main.go</code> 文件：</p><pre tabindex=0><code>package main
+
+import (
+    &#34;database/sql&#34;
+    &#34;fmt&#34;
+    &#34;log&#34;
+    &#34;net/http&#34;
+    &#34;net/url&#34;
+    &#34;os&#34;
+    &#34;strconv&#34;
+
+    &#34;github.com/gorilla/securecookie&#34;
+    &#34;github.com/joho/godotenv&#34;
+    &#34;github.com/knq/jwt&#34;
+    _ &#34;github.com/lib/pq&#34;
+    &#34;github.com/matryer/way&#34;
+    &#34;golang.org/x/oauth2&#34;
+    &#34;golang.org/x/oauth2/github&#34;
+)
+
+var origin *url.URL
+var db *sql.DB
+var githubOAuthConfig *oauth2.Config
+var cookieSigner *securecookie.SecureCookie
+var jwtSigner jwt.Signer
+
+func main() {
+    godotenv.Load()
+
+    port := intEnv(&#34;PORT&#34;, 3000)
+    originString := env(&#34;ORIGIN&#34;, fmt.Sprintf(&#34;http://localhost:%d/&#34;, port))
+    databaseURL := env(&#34;DATABASE_URL&#34;, &#34;postgresql://root@127.0.0.1:26257/messenger?sslmode=disable&#34;)
+    githubClientID := os.Getenv(&#34;GITHUB_CLIENT_ID&#34;)
+    githubClientSecret := os.Getenv(&#34;GITHUB_CLIENT_SECRET&#34;)
+    hashKey := env(&#34;HASH_KEY&#34;, &#34;secret&#34;)
+    jwtKey := env(&#34;JWT_KEY&#34;, &#34;secret&#34;)
+
+    var err error
+    if origin, err = url.Parse(originString); err != nil || !origin.IsAbs() {
+        log.Fatal(&#34;invalid origin&#34;)
+        return
+    }
+
+    if i, err := strconv.Atoi(origin.Port()); err == nil {
+        port = i
+    }
+
+    if githubClientID == &#34;&#34; || githubClientSecret == &#34;&#34; {
+        log.Fatalf(&#34;remember to set both $GITHUB_CLIENT_ID and $GITHUB_CLIENT_SECRET&#34;)
+        return
+    }
+
+    if db, err = sql.Open(&#34;postgres&#34;, databaseURL); err != nil {
+        log.Fatalf(&#34;could not open database connection: %v\n&#34;, err)
+        return
+    }
+    defer db.Close()
+    if err = db.Ping(); err != nil {
+        log.Fatalf(&#34;could not ping to db: %v\n&#34;, err)
+        return
+    }
+
+    githubRedirectURL := *origin
+    githubRedirectURL.Path = &#34;/api/oauth/github/callback&#34;
+    githubOAuthConfig = &amp;oauth2.Config{
+        ClientID:     githubClientID,
+        ClientSecret: githubClientSecret,
+        Endpoint:     github.Endpoint,
+        RedirectURL:  githubRedirectURL.String(),
+        Scopes:       []string{&#34;read:user&#34;},
+    }
+
+    cookieSigner = securecookie.New([]byte(hashKey), nil).MaxAge(0)
+
+    jwtSigner, err = jwt.HS256.New([]byte(jwtKey))
+    if err != nil {
+        log.Fatalf(&#34;could not create JWT signer: %v\n&#34;, err)
+        return
+    }
+
+    router := way.NewRouter()
+    router.HandleFunc(&#34;GET&#34;, &#34;/api/oauth/github&#34;, githubOAuthStart)
+    router.HandleFunc(&#34;GET&#34;, &#34;/api/oauth/github/callback&#34;, githubOAuthCallback)
+    router.HandleFunc(&#34;GET&#34;, &#34;/api/auth_user&#34;, guard(getAuthUser))
+
+    log.Printf(&#34;accepting connections on port %d\n&#34;, port)
+    log.Printf(&#34;starting server at %s\n&#34;, origin.String())
+    addr := fmt.Sprintf(&#34;:%d&#34;, port)
+    if err = http.ListenAndServe(addr, router); err != nil {
+        log.Fatalf(&#34;could not start server: %v\n&#34;, err)
+    }
+}
+
+func env(key, fallbackValue string) string {
+    v, ok := os.LookupEnv(key)
+    if !ok {
+        return fallbackValue
+    }
+    return v
+}
+
+func intEnv(key string, fallbackValue int) int {
+    v, ok := os.LookupEnv(key)
+    if !ok {
+        return fallbackValue
+    }
+    i, err := strconv.Atoi(v)
+    if err != nil {
+        return fallbackValue
+    }
+    return i
+}
+</code></pre><p>安装依赖项：</p><pre tabindex=0><code>go get -u github.com/gorilla/securecookie
+go get -u github.com/joho/godotenv
+go get -u github.com/knq/jwt
+go get -u github.com/lib/pq
+ge get -u github.com/matoous/go-nanoid
+go get -u github.com/matryer/way
+go get -u golang.org/x/oauth2
+</code></pre><p>我们将会使用 <code>.env</code> 文件来保存密钥和其他配置。请创建这个文件，并保证里面至少包含以下内容：</p><pre tabindex=0><code>GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+</code></pre><p>我们还要用到的其他环境变量有：</p><ul><li><code>PORT</code>：服务器运行的端口，默认值是 <code>3000</code>。</li><li><code>ORIGIN</code>：你的域名，默认值是 <code>http://localhost:3000/</code>。我们也可以在这里指定端口。</li><li><code>DATABASE_URL</code>：Cockroach 数据库的地址。默认值是 <code>postgresql://root@127.0.0.1:26257/messenger?sslmode=disable</code>。</li><li><code>HASH_KEY</code>：用于为 cookie 签名的密钥。没错，我们会使用已签名的 cookie 来确保安全。</li><li><code>JWT_KEY</code>：用于签署 JSON 网络令牌 Web Token 的密钥。</li></ul><p>因为代码中已经设定了默认值，所以你也不用把它们写到 <code>.env</code> 文件中。</p><p>在读取配置并连接到数据库之后，我们会创建一个 OAuth 配置。我们会使用 <code>ORIGIN</code> 信息来构建回调 URL（就和我们在 GitHub 页面上注册的一样）。我们的数据范围设置为 “read:user”。这会允许我们读取公开的用户信息，这里我们只需要他的用户名和头像就够了。然后我们会初始化 cookie 和 JWT 签名器。定义一些端点并启动服务器。</p><p>在实现 HTTP 处理程序之前，让我们编写一些函数来发送 HTTP 响应。</p><pre tabindex=0><code>func respond(w http.ResponseWriter, v interface{}, statusCode int) {
+    b, err := json.Marshal(v)
+    if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not marshal response: %v&#34;, err))
+        return
+    }
+    w.Header().Set(&#34;Content-Type&#34;, &#34;application/json; charset=utf-8&#34;)
+    w.WriteHeader(statusCode)
+    w.Write(b)
+}
+
+func respondError(w http.ResponseWriter, err error) {
+    log.Println(err)
+    http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+}
+</code></pre><p>第一个函数用来发送 JSON，而第二个将错误记录到控制台并返回一个 <code>500 Internal Server Error</code> 错误信息。</p><h3 id=oauth-开始>OAuth 开始</h3><p>所以，用户点击写着 “Access with GitHub” 的链接。该链接指向 <code>/api/oauth/github</code>，这将会把用户重定向到 github。</p><pre tabindex=0><code>func githubOAuthStart(w http.ResponseWriter, r *http.Request) {
+    state, err := gonanoid.Nanoid()
+    if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not generte state: %v&#34;, err))
+        return
+    }
+
+    stateCookieValue, err := cookieSigner.Encode(&#34;state&#34;, state)
+    if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not encode state cookie: %v&#34;, err))
+        return
+    }
+
+    http.SetCookie(w, &amp;http.Cookie{
+        Name:     &#34;state&#34;,
+        Value:    stateCookieValue,
+        Path:     &#34;/api/oauth/github&#34;,
+        HttpOnly: true,
+    })
+    http.Redirect(w, r, githubOAuthConfig.AuthCodeURL(state), http.StatusTemporaryRedirect)
+}
+</code></pre><p>OAuth2 使用一种机制来防止 CSRF 攻击，因此它需要一个“状态”（<code>state</code>）。我们使用 <code>Nanoid()</code> 来创建一个随机字符串，并用这个字符串作为状态。我们也把它保存为一个 cookie。</p><h3 id=oauth-回调>OAuth 回调</h3><p>一旦用户授权我们访问他的个人信息，他将会被重定向到这个端点。这个 URL 的查询字符串上将会包含状态（<code>state</code>）和授权码（<code>code</code>）： <code>/api/oauth/github/callback?state=&amp;code=</code>。</p><pre tabindex=0><code>const jwtLifetime = time.Hour * 24 * 14
+
+type GithubUser struct {
+    ID        int     `json:&#34;id&#34;`
+    Login     string  `json:&#34;login&#34;`
+    AvatarURL *string `json:&#34;avatar_url,omitempty&#34;`
+}
+
+type User struct {
+    ID        string  `json:&#34;id&#34;`
+    Username  string  `json:&#34;username&#34;`
+    AvatarURL *string `json:&#34;avatarUrl&#34;`
+}
+
+func githubOAuthCallback(w http.ResponseWriter, r *http.Request) {
+    stateCookie, err := r.Cookie(&#34;state&#34;)
+    if err != nil {
+        http.Error(w, http.StatusText(http.StatusTeapot), http.StatusTeapot)
+        return
+    }
+
+    http.SetCookie(w, &amp;http.Cookie{
+        Name:     &#34;state&#34;,
+        Value:    &#34;&#34;,
+        MaxAge:   -1,
+        HttpOnly: true,
+    })
+
+    var state string
+    if err = cookieSigner.Decode(&#34;state&#34;, stateCookie.Value, &amp;state); err != nil {
+        http.Error(w, http.StatusText(http.StatusTeapot), http.StatusTeapot)
+        return
+    }
+
+    q := r.URL.Query()
+
+    if state != q.Get(&#34;state&#34;) {
+        http.Error(w, http.StatusText(http.StatusTeapot), http.StatusTeapot)
+        return
+    }
+
+    ctx := r.Context()
+
+    t, err := githubOAuthConfig.Exchange(ctx, q.Get(&#34;code&#34;))
+    if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not fetch github token: %v&#34;, err))
+        return
+    }
+
+    client := githubOAuthConfig.Client(ctx, t)
+    resp, err := client.Get(&#34;https://api.github.com/user&#34;)
+    if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not fetch github user: %v&#34;, err))
+        return
+    }
+
+    var githubUser GithubUser
+    if err = json.NewDecoder(resp.Body).Decode(&amp;githubUser); err != nil {
+        respondError(w, fmt.Errorf(&#34;could not decode github user: %v&#34;, err))
+        return
+    }
+    defer resp.Body.Close()
+
+    tx, err := db.BeginTx(ctx, nil)
+    if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not begin tx: %v&#34;, err))
+        return
+    }
+
+    var user User
+    if err = tx.QueryRowContext(ctx, `
+        SELECT id, username, avatar_url FROM users WHERE github_id = $1
+    `, githubUser.ID).Scan(&amp;user.ID, &amp;user.Username, &amp;user.AvatarURL); err == sql.ErrNoRows {
+        if err = tx.QueryRowContext(ctx, `
+            INSERT INTO users (username, avatar_url, github_id) VALUES ($1, $2, $3)
+            RETURNING id
+        `, githubUser.Login, githubUser.AvatarURL, githubUser.ID).Scan(&amp;user.ID); err != nil {
+            respondError(w, fmt.Errorf(&#34;could not insert user: %v&#34;, err))
+            return
+        }
+        user.Username = githubUser.Login
+        user.AvatarURL = githubUser.AvatarURL
+    } else if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not query user by github ID: %v&#34;, err))
+        return
+    }
+
+    if err = tx.Commit(); err != nil {
+        respondError(w, fmt.Errorf(&#34;could not commit to finish github oauth: %v&#34;, err))
+        return
+    }
+
+    exp := time.Now().Add(jwtLifetime)
+    token, err := jwtSigner.Encode(jwt.Claims{
+        Subject:    user.ID,
+        Expiration: json.Number(strconv.FormatInt(exp.Unix(), 10)),
+    })
+    if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not create token: %v&#34;, err))
+        return
+    }
+
+    expiresAt, _ := exp.MarshalText()
+
+    data := make(url.Values)
+    data.Set(&#34;token&#34;, string(token))
+    data.Set(&#34;expires_at&#34;, string(expiresAt))
+
+    http.Redirect(w, r, &#34;/callback?&#34;+data.Encode(), http.StatusTemporaryRedirect)
+}
+</code></pre><p>首先，我们会尝试使用之前保存的状态对 cookie 进行解码。并将其与查询字符串中的状态进行比较。如果它们不匹配，我们会返回一个 <code>418 I'm teapot</code>（未知来源）错误。</p><p>接着，我们使用授权码生成一个令牌。这个令牌被用于创建 HTTP 客户端来向 GitHub API 发出请求。所以最终我们会向 <code>https://api.github.com/user</code> 发送一个 GET 请求。这个端点将会以 JSON 格式向我们提供当前经过身份验证的用户信息。我们将会解码这些内容，一并获取用户的 ID、登录名（用户名）和头像 URL。</p><p>然后我们将会尝试在数据库上找到具有该 GitHub ID 的用户。如果没有找到，就使用该数据创建一个新的。</p><p>之后，对于新创建的用户，我们会发出一个将用户 ID 作为主题（<code>Subject</code>）的 JSON 网络令牌，并使用该令牌重定向到前端，查询字符串中一并包含该令牌的到期日（<code>Expiration</code>）。</p><p>这一 Web 应用也会被用在其他帖子，但是重定向的链接会是 <code>/callback?token=&amp;expires_at=</code>。在那里，我们将会利用 JavaScript 从 URL 中获取令牌和到期日，并通过 <code>Authorization</code> 标头中的令牌以 <code>Bearer token_here</code> 的形式对 <code>/api/auth_user</code> 进行 GET 请求，来获取已认证的身份用户并将其保存到 localStorage。</p><h3 id=guard-中间件>Guard 中间件</h3><p>为了获取当前已经过身份验证的用户，我们设计了 Guard 中间件。这是因为在接下来的文章中，我们会有很多需要进行身份认证的端点，而中间件将会允许我们共享这一功能。</p><pre tabindex=0><code>type ContextKey struct {
+    Name string
+}
+
+var keyAuthUserID = ContextKey{&#34;auth_user_id&#34;}
+
+func guard(handler http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        var token string
+        if a := r.Header.Get(&#34;Authorization&#34;); strings.HasPrefix(a, &#34;Bearer &#34;) {
+            token = a[7:]
+        } else if t := r.URL.Query().Get(&#34;token&#34;); t != &#34;&#34; {
+            token = t
+        } else {
+            http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+            return
+        }
+
+        var claims jwt.Claims
+        if err := jwtSigner.Decode([]byte(token), &amp;claims); err != nil {
+            http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+            return
+        }
+
+        ctx := r.Context()
+        ctx = context.WithValue(ctx, keyAuthUserID, claims.Subject)
+
+        handler(w, r.WithContext(ctx))
+    }
+}
+</code></pre><p>首先，我们尝试从 <code>Authorization</code> 标头或者是 URL 查询字符串中的 <code>token</code> 字段中读取令牌。如果没有找到，我们需要返回 <code>401 Unauthorized</code>（未授权）错误。然后我们将会对令牌中的申明进行解码，并使用该主题作为当前已经过身份验证的用户 ID。</p><p>现在，我们可以用这一中间件来封装任何需要授权的 <code>http.handlerFunc</code>，并且在处理函数的上下文中保有已经过身份验证的用户 ID。</p><pre tabindex=0><code>var guarded = guard(func(w http.ResponseWriter, r *http.Request) {
+    authUserID := r.Context().Value(keyAuthUserID).(string)
+})
+</code></pre><h3 id=获取认证用户>获取认证用户</h3><pre tabindex=0><code>func getAuthUser(w http.ResponseWriter, r *http.Request) {
+    ctx := r.Context()
+    authUserID := ctx.Value(keyAuthUserID).(string)
+
+    var user User
+    if err := db.QueryRowContext(ctx, `
+        SELECT username, avatar_url FROM users WHERE id = $1
+    `, authUserID).Scan(&amp;user.Username, &amp;user.AvatarURL); err == sql.ErrNoRows {
+        http.Error(w, http.StatusText(http.StatusTeapot), http.StatusTeapot)
+        return
+    } else if err != nil {
+        respondError(w, fmt.Errorf(&#34;could not query auth user: %v&#34;, err))
+        return
+    }
+
+    user.ID = authUserID
+
+    respond(w, user, http.StatusOK)
+}
+</code></pre><p>我们使用 Guard 中间件来获取当前经过身份认证的用户 ID 并查询数据库。</p><p>这一部分涵盖了后端的 OAuth 流程。在下一篇帖子中，我们将会看到如何开始与其他用户的对话。</p><ul><li><a href=https://github.com/nicolasparada/go-messenger-demo>源代码</a></li></ul><hr><p>via: <a href=https://nicolasparada.netlify.com/posts/go-messenger-oauth/>https://nicolasparada.netlify.com/posts/go-messenger-oauth/</a></p><p>作者：<a href=https://nicolasparada.netlify.com/>Nicolás Parada</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/PsiACE>PsiACE</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8D%B3%E6%97%B6%E6%B6%88%E6%81%AF/ rel=tag>即时消息</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

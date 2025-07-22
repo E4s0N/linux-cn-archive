@@ -1,0 +1,61 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>科学音频处理（二）：如何使用 Octave 对音频文件进行基本数学信号处理 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="科学音频处理（二）：如何使用 Octave 对音频文件进行基本数学信号处理"><meta property="og:description" content="在这篇指导教程中，我们将会看到如何对信号进行叠加和倍乘（调整），并应用一些基本的数学函数看看它们对原始信号的影响。"><meta property="og:type" content="article"><meta property="og:url" content="/article-7824-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2016-09-30T14:26:20+00:00"><meta property="article:modified_time" content="2016-09-30T14:26:20+00:00"><meta itemprop=name content="科学音频处理（二）：如何使用 Octave 对音频文件进行基本数学信号处理"><meta itemprop=description content="在这篇指导教程中，我们将会看到如何对信号进行叠加和倍乘（调整），并应用一些基本的数学函数看看它们对原始信号的影响。"><meta itemprop=datePublished content="2016-09-30T14:26:20+00:00"><meta itemprop=dateModified content="2016-09-30T14:26:20+00:00"><meta itemprop=wordCount content="324"><meta itemprop=keywords content="音频,Octave,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>科学音频处理（二）：如何使用 Octave 对音频文件进行基本数学信号处理</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2016-09-30T14:26:20Z>September 30, 2016</time></div></div></header><div class="content post__content clearfix"><p>在<a href=/article-7755-1.html>前一篇的指导教程</a>中，我们看到了读、写以及重放音频文件的简单步骤，我们甚至看到如何从一个周期函数比如余弦函数合成一个音频文件。在这篇指导教程中，我们将会看到如何对信号进行叠加和倍乘（调整），并应用一些基本的数学函数看看它们对原始信号的影响。</p><p><img src=/data/attachment/album/201609/30/142614fv37zcv20r20svvs.jpg alt></p><h3 id=信号叠加>信号叠加</h3><p>两个信号 S1（t）和 S2（t）相加形成一个新的信号 R(t)，这个信号在任何瞬间的值等于构成它的两个信号在那个时刻的值之和。就像下面这样：</p><pre tabindex=0><code>R(t) = S1(t) + S2(t)
+</code></pre><p>我们将用 Octave 重新产生两个信号的和并通过图表看达到的效果。首先，我们生成两个不同频率的信号，看一看它们的叠加信号是什么样的。</p><h4 id=第一步产生两个不同频率的信号oog-文件>第一步：产生两个不同频率的信号（oog 文件）</h4><pre tabindex=0><code>&gt;&gt; sig1=&#39;cos440.ogg&#39;;                  %creating the audio file @440 Hz
+&gt;&gt; sig2=&#39;cos880.ogg&#39;;                  %creating the audio file @880 Hz
+&gt;&gt; fs=44100;                           %generating the parameters values (Period, sampling frequency and angular frequency)
+&gt;&gt; t=0:1/fs:0.02;
+&gt;&gt; w1=2*pi*440*t;
+&gt;&gt; w2=2*pi*880*t;
+&gt;&gt; audiowrite(sig1,cos(w1),fs);        %writing the function cos(w) on the files created
+&gt;&gt; audiowrite(sig2,cos(w2),fs);
+</code></pre><p>然后我们绘制出两个信号的图像。</p><p><strong>信号 1 的图像（440 赫兹）</strong></p><pre tabindex=0><code>&gt;&gt; [y1, fs] = audioread(sig1);
+&gt;&gt; plot(y1)
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/plotsignal1.png><img src=/data/attachment/album/201609/30/142623bjmr212im84nnjkr.png alt="信号 1 的图像"></a></p><p><strong>信号 2 的图像（880 赫兹）</strong></p><pre tabindex=0><code>&gt;&gt; [y2, fs] = audioread(sig2);
+&gt;&gt; plot(y2)
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/plotsignal2.png><img src=/data/attachment/album/201609/30/142624p9pmpphiddyj9jr5.png alt="信号 2 的图像"></a></p><h4 id=第二步把两个信号叠加>第二步：把两个信号叠加</h4><p>现在我们展示一下前面步骤中产生的两个信号的和。</p><pre tabindex=0><code>&gt;&gt; sumres=y1+y2;
+&gt;&gt; plot(sumres)
+</code></pre><p>叠加信号的图像</p><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/plotsum.png><img src=/data/attachment/album/201609/30/142626hy5c6yyieigzmi59.png alt=和信号的图像></a></p><p><strong>Octaver 中的效果</strong></p><p>在 Octaver 中，这个效果产生的声音是独特的，因为它可以仿真音乐家弹奏的低八度或者高八度音符（取决于内部程序设计），仿真音符和原始音符成对，也就是两个音符发出相同的声音。</p><h4 id=第三步把两个真实的信号相加比如两首音乐歌曲>第三步：把两个真实的信号相加（比如两首音乐歌曲）</h4><p>为了实现这个目的，我们使用 格列高利圣咏 （ Gregorian Chants ） 中的两首歌曲（声音采样）。</p><p>圣母颂曲 （ Avemaria Track ）</p><p>首先，我们看一下圣母颂曲并绘出它的图像：</p><pre tabindex=0><code>&gt;&gt; [y1,fs]=audioread(&#39;avemaria_.ogg&#39;);
+&gt;&gt; plot(y1)
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/avemaria.png><img src=/data/attachment/album/201609/30/142627jdkizdd4jhc68fzd.png alt=圣母歌曲></a></p><p>赞美诗曲 （ Hymnus Track ）</p><p>现在我们看一下赞美诗曲并绘出它的图像。</p><pre tabindex=0><code>&gt;&gt; [y2,fs]=audioread(&#39;hymnus.ogg&#39;);
+&gt;&gt; plot(y2)
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/hymnus.png><img src=/data/attachment/album/201609/30/142628vif2uzfdfcdcy2gf.png alt=赞美诗曲></a></p><p><strong>圣母颂曲 + 赞美诗曲</strong></p><pre tabindex=0><code>&gt;&gt; y=&#39;avehymnus.ogg&#39;;
+&gt;&gt; audiowrite(y, y1+y2, fs);
+&gt;&gt; [y, fs]=audioread(&#39;avehymnus.ogg&#39;);
+&gt;&gt; plot(y)
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/avehymnus.png><img src=/data/attachment/album/201609/30/142629fbz22rizro22cijo.png alt="圣母歌曲 + 赞美诗曲"></a></p><p>结果，从音频的角度来看，两个声音信号混合在了一起。</p><h3 id=两个信号的乘积>两个信号的乘积</h3><p>对于求两个信号的乘积，我们可以使用类似求和的方法。我们使用之前生成的相同文件。</p><pre tabindex=0><code>R(t) = S1(t) * S2(t)
+</code></pre><pre tabindex=0><code>&gt;&gt; sig1=&#39;cos440.ogg&#39;;                  %creating the audio file @440 Hz
+&gt;&gt; sig2=&#39;cos880.ogg&#39;;                  %creating the audio file @880 Hz
+&gt;&gt; product=&#39;prod.ogg&#39;;                 %creating the audio file for product
+&gt;&gt; fs=44100;                           %generating the parameters values (Period, sampling frequency and angular frequency)
+&gt;&gt; t=0:1/fs:0.02;
+&gt;&gt; w1=2*pi*440*t;
+&gt;&gt; w2=2*pi*880*t;
+&gt;&gt; audiowrite(sig1, cos(w1), fs);      %writing the function cos(w) on the files created
+&gt;&gt; audiowrite(sig2, cos(w2), fs);&gt;&gt; [y1,fs]=audioread(sig1);&gt;&gt; [y2,fs]=audioread(sig2);
+&gt;&gt; audiowrite(product, y1.*y2, fs);    %performing the product
+&gt;&gt; [yprod,fs]=audioread(product);
+&gt;&gt; plot(yprod);                        %plotting the product
+</code></pre><p>注意：我们必须使用操作符 ‘<code>.*</code>’，因为在参数文件中，这个乘积是值与值相乘。更多信息，请参考 Octave 矩阵操作产品手册。</p><h4 id=乘积生成信号的图像>乘积生成信号的图像</h4><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/plotprod.png><img src=/data/attachment/album/201609/30/142629e0twfm4gvn8zvjvb.png alt=乘积信号的图像></a></p><h4 id=两个基本频率相差很大的信号相乘后的图表效果调制原理>两个基本频率相差很大的信号相乘后的图表效果（调制原理）</h4><p><strong>第一步：</strong></p><p>生成两个频率为 220 赫兹的声音信号。</p><pre tabindex=0><code>&gt;&gt; fs=44100;
+&gt;&gt; t=0:1/fs:0.03;
+&gt;&gt; w=2*pi*220*t;
+&gt;&gt; y1=cos(w);
+&gt;&gt; plot(y1);
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/carrier.png><img src=/data/attachment/album/201609/30/142630lb4ggglzw1mh01wb.png alt=载波></a></p><p><strong>第二步：</strong></p><p>生成一个 22000 赫兹的高频调制信号。</p><pre tabindex=0><code>&gt;&gt; y2=cos(100*w);
+&gt;&gt; plot(y2);
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/modulating.png><img src=/data/attachment/album/201609/30/142630ojjjb2wcs283vvjj.png alt=调制中></a></p><p><strong>第三步：</strong></p><p>把两个信号相乘并绘出图像。</p><pre tabindex=0><code>&gt;&gt; plot(y1.*y2);
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/modulated.png><img src=/data/attachment/album/201609/30/142631jkmequ4qq748lruk.png alt=调制后的信号></a></p><h3 id=一个信号和一个标量相乘>一个信号和一个标量相乘</h3><p>一个函数和一个标量相乘的效果等于更改它的值域，在某些情况下，更改的是相标志。给定一个标量 K ，一个函数 F(t) 和这个标量相乘定义为：</p><pre tabindex=0><code>R(t) = K*F(t)
+</code></pre><pre tabindex=0><code>&gt;&gt; [y,fs]=audioread(&#39;cos440.ogg&#39;);        %creating the work files
+&gt;&gt; res1=&#39;coslow.ogg&#39;;                
+&gt;&gt; res2=&#39;coshigh.ogg&#39;;&gt;&gt; res3=&#39;cosinverted.ogg&#39;;
+&gt;&gt; K1=0.2;                                %values of the scalars
+&gt;&gt; K2=0.5;&gt;&gt; K3=-1;
+&gt;&gt; audiowrite(res1, K1*y, fs);            %product function-scalar
+&gt;&gt; audiowrite(res2, K2*y, fs);
+&gt;&gt; audiowrite(res3, K3*y, fs);
+</code></pre><p><strong>原始信号的图像</strong></p><pre tabindex=0><code>&gt;&gt; plot(y)
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/originalsignal.png><img src=/data/attachment/album/201609/30/142631e0z3d41a4mmt1tzz.png alt></a></p><p><strong>信号振幅减为原始信号振幅的 0.2 倍后的图像</strong></p><pre tabindex=0><code>&gt;&gt; plot(res1)
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/coslow.png><img src=/data/attachment/album/201609/30/142631ld3q7ht3l8ddli71.png alt=低余弦></a></p><p><strong>信号振幅减为原始振幅的 0.5 倍后的图像</strong></p><pre tabindex=0><code>&gt;&gt; plot(res2)
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/coshigh.png><img src=/data/attachment/album/201609/30/142632bbh49di239m4pd4x.png alt=高余弦></a></p><p><strong>倒相后的信号图像</strong></p><pre tabindex=0><code>&gt;&gt; plot(res3)
+</code></pre><p><a href=https://www.howtoforge.com/images/octave-audio-signal-processing-ubuntu/big/cosinverted.png><img src=/data/attachment/album/201609/30/142632ahi48hzvzw8wzpjj.png alt=倒相余弦></a></p><h3 id=结论>结论</h3><p>基本数学运算比如代数和、乘，以及函数与常量相乘是更多高级运算比如谱分析、振幅调制，角调制等的支柱和基础。在下一个教程中，我们来看一看如何进行这样的运算以及它们对声音文件产生的效果。</p><hr><p>via: <a href=https://www.howtoforge.com/tutorial/octave-audio-signal-processing-ubuntu/>https://www.howtoforge.com/tutorial/octave-audio-signal-processing-ubuntu/</a></p><p>作者：<a href=https://www.howtoforge.com/tutorial/octave-audio-signal-processing-ubuntu/>David Duarte</a> 译者：<a href=https://github.com/ucasFL>ucasFL</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E9%9F%B3%E9%A2%91/ rel=tag>音频</a></li><li class=tags__item><a class="tags__link btn" href=/tags/octave/ rel=tag>Octave</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

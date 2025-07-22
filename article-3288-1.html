@@ -1,0 +1,59 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在Debian中启用测试版/不稳定版的软件库 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在Debian中启用测试版/不稳定版的软件库"><meta property="og:description" content="为何要启用测试版/不稳定版？ 测试版/不稳定版的Debian给开发者提供了一个比当前稳定版更新的环境以及软件。你们注意到了么？其实这些稳定版啊不稳定版啊神马的都是别名，比方说稳定版其实就是Debian的稳定发行版，而测试版将会是下一个Debian的稳定发行版（当然那是测试后的事了）。截至发稿为止，当前Debian的稳定发行版是Wheezy 7.x，将会成为下一个稳定版的测试版则是Jessie。 当你需要一款应用的最新版本的时候，启用测试版/不稳定版将会是不二的选择。当初我因为工作需要，要安装个Apache的 2.4.x到我的Debian Wheezy。测试版需要的"><meta property="og:type" content="article"><meta property="og:url" content="/article-3288-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-06-28T23:12:43+00:00"><meta property="article:modified_time" content="2014-06-28T23:12:43+00:00"><meta itemprop=name content="如何在Debian中启用测试版/不稳定版的软件库"><meta itemprop=description content="为何要启用测试版/不稳定版？ 测试版/不稳定版的Debian给开发者提供了一个比当前稳定版更新的环境以及软件。你们注意到了么？其实这些稳定版啊不稳定版啊神马的都是别名，比方说稳定版其实就是Debian的稳定发行版，而测试版将会是下一个Debian的稳定发行版（当然那是测试后的事了）。截至发稿为止，当前Debian的稳定发行版是Wheezy 7.x，将会成为下一个稳定版的测试版则是Jessie。 当你需要一款应用的最新版本的时候，启用测试版/不稳定版将会是不二的选择。当初我因为工作需要，要安装个Apache的 2.4.x到我的Debian Wheezy。测试版需要的"><meta itemprop=datePublished content="2014-06-28T23:12:43+00:00"><meta itemprop=dateModified content="2014-06-28T23:12:43+00:00"><meta itemprop=wordCount content="272"><meta itemprop=keywords content="Debian,apt-get,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在Debian中启用测试版/不稳定版的软件库</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2014-06-28T23:12:43Z>June 28, 2014</time></div></div></header><div class="content post__content clearfix"><h3 id=为何要启用测试版不稳定版>为何要启用测试版/不稳定版？</h3><p>测试版/不稳定版的Debian给开发者提供了一个比当前稳定版更新的环境以及软件。你们注意到了么？其实这些稳定版啊不稳定版啊神马的都是别名，比方说稳定版其实就是Debian的稳定发行版，而测试版将会是下一个Debian的稳定发行版（当然那是测试后的事了）。截至发稿为止，当前Debian的稳定发行版是Wheezy 7.x，将会成为下一个稳定版的测试版则是Jessie。</p><p>当你需要一款应用的最新版本的时候，启用测试版/不稳定版将会是不二的选择。当初我因为工作需要，要安装个Apache的 2.4.x到我的Debian Wheezy。测试版需要的是2.4.x的，可是我的软件库里面只有2.2.x的。所以最好的解决方案当时是将测试版下下来啦。</p><p>通常来说当我们想尝试最新版本的应用时，都应该只在测试版软件库中搜索。</p><p><img src=/data/attachment/album/201406/28/231253cyknh99a611gff35.jpg alt></p><p>(<a href=http://www.omgubuntu.co.uk/>题图来源</a>)</p><p>在这篇文章里我将教大家如何在不弄坏你系统的前提下设置好测试、不稳定版的Debain系统并在上面安装软件。</p><blockquote><pre tabindex=0><code>Stable &lt; Testing &lt; Unstable （稳定 &lt; 测试版 &lt; 不稳定版）
+Wheezy &lt; Jessie &lt; Sid
+</code></pre></blockquote><h3 id=1-设置测试版不稳定版的apt源>1. 设置测试版/不稳定版的apt源</h3><p>第一步是把测试版/不稳定版的源加到你的sources.list文件里。在Debian Wheezy系统上，/etc/apt/sources.list理应长得像这样：</p><pre tabindex=0><code>$ cat /etc/apt/sources.list
+</code></pre><hr><pre tabindex=0><code>...
+deb http://security.debian.org/ wheezy/updates main
+deb http://http.us.debian.org/debian/ wheezy main
+deb-src http://security.debian.org/ wheezy/updates main
+...
+</code></pre><p>把你repo服务器的链接记下来，比如：<a href=http://http.us.debian.org/debian/>http://http.us.debian.org/debian/</a></p><p>这个repo服务器将会是离你最近的一个服务器； 在不同的地理位置会有不同的url，这个将会用于下一步。</p><p>如果想加测试/不稳定源，则需要在sources.list文件加上这些东西：</p><pre tabindex=0><code># Testing repository - main, contrib and non-free branches
+deb http://http.us.debian.org/debian testing main non-free contrib
+deb-src http://http.us.debian.org/debian testing main non-free contrib
+
+
+# Testing security updates repository
+deb http://security.debian.org/ testing/updates main contrib non-free
+deb-src http://security.debian.org/ testing/updates main contrib non-free
+
+
+# Unstable repo main, contrib and non-free branches, no security updates here
+deb http://http.us.debian.org/debian unstable main non-free contrib
+deb-src http://http.us.debian.org/debian unstable main non-free contrib
+</code></pre><p>格式将会是</p><pre tabindex=0><code>deb &lt;respository server/mirror&gt; &lt;repository name&gt; &lt;sub branches of the repo&gt;
+(deb &lt;上一步弄的服务器或镜像url&gt; &lt;repo的名字&gt; &lt;repo底下的分支&gt;)
+</code></pre><p>当然啦，除了用testing或者unstable这么烂的词，也能使用他们的发行版代号，比如Jessie或者Sid</p><pre tabindex=0><code>deb http://http.us.debian.org/debian jessie main non-free contrib
+deb http://security.debian.org/ jessie/updates main contrib non-free
+deb http://http.us.debian.org/debian sid main non-free contrib
+</code></pre><h3 id=2-钉住-apt这非常重要>2. 钉住 apt！这非常重要</h3><blockquote><p>在加了测试/不稳定的repo之后，当你更新系统的时候所有安装过并且可用的软件就会立马更新，而后你的系统就被你玩火自焚了。</p></blockquote><p>所以需要设置一些规则，以便选定的软件包在正常的更新时不会被更新到一个不稳定的测试版本。</p><p>我们需要使用“钉住APT”的方式来告诉apt系统，除了我们希望使用测试版或不稳定版的特定软件包之外，其它的总是使用稳定版的软件包来更新。</p><p>可以通过如下两个文件之一来设置如何设置APT的优先级来“钉住”。</p><pre tabindex=0><code>/etc/apt/preferences
+或
+/etc/apt/preferences.d/my_preferences
+</code></pre><p>打开这两个文件之一（如果没有的话就创建一个），然后输入如下内容：</p><pre tabindex=0><code>Package: *
+Pin: release a=stable
+Pin-Priority: 700
+
+Package: *
+Pin: release a=testing
+Pin-Priority: 650
+
+Package: *
+Pin: release a=unstable
+Pin-Priority: 600
+</code></pre><p>前面我们提到过，稳定版指的是你当前的debian版本，测试版是下一个，而不稳定版则是更远的将来发行版。上面的设置中最主要的是优先级（Pin-Priority）。当前的稳定版应该有最高的优先级，这就是说，正常的apt-get操作只会从当前的稳定版的软件库（现在是wheezy）里面安装软件。</p><h4 id=更新包缓存>更新包缓存</h4><p>在增加了新的软件库和指定了优先规则后，需要更新一下包缓存。</p><pre tabindex=0><code>$ sudo apt-get update
+</code></pre><h4 id=确认apt规则>确认APT规则</h4><p>我们必须确认“钉住”的设置正确，优先级也没问题。使用 apt-cache 的 policy 参数来检查：</p><pre tabindex=0><code>$ apt-cache policy apache2
+apache2:
+  Installed: (none)
+  Candidate: 2.2.22-13
+  Version table:
+     2.4.7-1 0
+        600 http://http.us.debian.org/debian/ unstable/main amd64 Packages
+     2.4.6-3 0
+        650 http://http.us.debian.org/debian/ testing/main amd64 Packages
+     2.2.22-13 0
+        700 http://http.us.debian.org/debian/ wheezy/main amd64 Packages
+</code></pre><p>如上的输出，确认在wheezy 稳定版中， 2.2.22 版本的Apache是选定的版本，它有最高的优先级。</p><h3 id=3-从测试版不稳定版软件库中安装软件>3. 从测试版/不稳定版软件库中安装软件</h3><p>现在可以从测试版或不稳定版中选择一个特定的软件来安装它了。假如说我们要从测试版软件源中安装 apache2。</p><p>有两个不同的方法，并且其结果也有所不同。</p><h4 id=方式一>方式一</h4><pre tabindex=0><code># apt-get install apache2/testing
+</code></pre><p>上述命令会从测试版软件库中安装 apache2，并从稳定版软件库中安装其依赖包（稳定版通过apt规则确定）。这个命令在某些情况下会失败，比如安装的软件包（apache2）所需的依赖包在稳定版软件库中没有更新到可以支持该软件时。</p><h4 id=方式二>方式二</h4><pre tabindex=0><code># apt-get -t testing install apache2
+</code></pre><p>上述命令会从测试版软件库中安装apache2，并从测试版软件库中安装其依赖包。这要比上面的命令工作的更好。</p><p>所以，要安装较新的软件包，直接从测试版/不稳定版的软件库中安装就行了。注意，优先级号码不只是一个数字而已，还有其特定意义。可以查看 apt_preferences的man页面了解更多：</p><pre tabindex=0><code>$ man 5 apt_preferences
+</code></pre><h3 id=总结>总结</h3><p>使用“钉住”方式的测试版/不稳定版的软件库是一个获取较新版本软件包的一个好办法，不过其实并不推荐使用它们。如果弄错了，可能会从也许不兼容的分支上下载软件包，这会把你的系统搞乱。</p><p>一个更好的方式是，使用向后移植的软件库来安装更新的包。它从测试版和不稳定版的软件库中获取较新版本的软件包，但是为当前的稳定版软件库而编译。所以，对于 debian wheezy来说，你可以使用wheezy-backports 软件库。访问<a href=http://backports.debian.org/>http://backports.debian.org/</a> 了解更多。</p><h3 id=资源>资源</h3><ul><li><a href=http://wiki.debian.org/AptPreferences>https://wiki.debian.org/AptPreferences</a></li><li><a href=http://wiki.debian.org/DebianTesting>https://wiki.debian.org/DebianTesting</a></li><li><a href=http://www.debian.org/security/>https://www.debian.org/security/</a></li></ul><hr><p>via: <a href=http://www.binarytides.com/enable-testing-repo-debian/>http://www.binarytides.com/enable-testing-repo-debian/</a></p><p>译者：<a href=https://github.com/213edu>213edu</a> <a href=https://github.com/wxy>wxy</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创翻译，<a href=http://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/debian/ rel=tag>Debian</a></li><li class=tags__item><a class="tags__link btn" href=/tags/apt-get/ rel=tag>apt-get</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

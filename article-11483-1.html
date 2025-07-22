@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>变异测试：如何利用故障？ - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="变异测试：如何利用故障？"><meta property="og:description" content="使用事先设计好的故障以确保你的代码达到预期的结果，并遵循 .NET xUnit.net 测试框架来进行测试。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11483-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-10-21T07:57:00+00:00"><meta property="article:modified_time" content="2019-10-21T07:57:00+00:00"><meta itemprop=name content="变异测试：如何利用故障？"><meta itemprop=description content="使用事先设计好的故障以确保你的代码达到预期的结果，并遵循 .NET xUnit.net 测试框架来进行测试。"><meta itemprop=datePublished content="2019-10-21T07:57:00+00:00"><meta itemprop=dateModified content="2019-10-21T07:57:00+00:00"><meta itemprop=wordCount content="260"><meta itemprop=keywords content="TDD,变异测试,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>变异测试：如何利用故障？</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-10-21T07:57:00Z>October 21, 2019</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201910/23/164730vtddtydtktazagnz.jpg alt></p><blockquote><p>使用事先设计好的故障以确保你的代码达到预期的结果，并遵循 .NET xUnit.net 测试框架来进行测试。</p></blockquote><p><a href=/article-11468-1.html>在变异测试是 TDD 的演变</a> 一文中，我谈到了迭代的力量。在可度量的测试中，迭代能够保证找到问题的解决方案。在那篇文章中，我们讨论了迭代法帮助确定实现计算给定数字平方根的代码。</p><p>我还演示了最有效的方法是找到可衡量的目标或测试，然后以最佳猜测值开始迭代。正如所预期的，第一次测试通常会失败。因此，必须根据可衡量的目标或测试对失败的代码进行完善。根据运行结果，对测试值进行验证或进一步加以完善。</p><p>在此模型中，学习获得解决方案的唯一方法是反复失败。这听起来有悖常理，但它确实有效。</p><p>按照这种分析，本文探讨了在构建包含某些依赖项的解决方案时使用 DevOps 的最佳方法。第一步是编写一个预期结果失败的用例。</p><h3 id=依赖性问题是你不能依赖它们>依赖性问题是你不能依赖它们</h3><p>正如 迈克尔·尼加德 Michael Nygard 在《<a href=https://www.infoq.com/presentations/Architecture-Without-an-End-State/>没有终结状态的架构</a>》中机智的表示的那样，依赖问题是一个很大的话题，最好留到另一篇文章中讨论。在这里，你将会看到依赖项给项目带来的一些潜在问题，以及如何利用测试驱动开发（TDD）来避免这些陷阱。</p><p>首先，找到现实生活中的一个挑战，然后看看如何使用 TDD 解决它。</p><h3 id=谁把猫放出来>谁把猫放出来？</h3><p><img src=/data/attachment/album/201910/20/200146crgvqy17p9ypd2r7.png alt=一只猫站在屋顶 title="Cat standing on a roof"></p><p>在敏捷开发环境中，通过定义期望结果开始构建解决方案会很有帮助。通常，在 用户故事 user story 中描述期望结果：</p><blockquote><p>我想使用我的家庭自动化系统（HAS）来控制猫何时可以出门，因为我想保证它在夜间的安全。</p></blockquote><p>现在你已经有了一个用户故事，你需要通过提供一些功能要求（即指定验收标准）来对其进行详细说明。 从伪代码中描述的最简单的场景开始：</p><blockquote><p>场景 1：在夜间关闭猫门</p><ul><li>用时钟监测到了晚上的时间</li><li>时钟通知 HAS 系统</li><li>HAS 关闭支持物联网（IoT）的猫门</li></ul></blockquote><h3 id=分解系统>分解系统</h3><p>开始构建之前，你需要将正在构建的系统（HAS）进行分解（分解为依赖项）。你必须要做的第一件事是识别任何依赖项（如果幸运的话，你的系统没有依赖项，这将会更容易，但是，这样的系统可以说不是非常有用）。</p><p>从上面的简单场景中，你可以看到所需的业务成果（自动控制猫门）取决于对夜间情况监测。这种依赖性取决于时钟。但是时钟是无法区分白天和夜晚的。需要你来提供这种逻辑。</p><p>正在构建的系统中的另一个依赖项是能够自动访问猫门并启用或关闭它。该依赖项很可能取决于具有 IoT 功能的猫门提供的 API。</p><h3 id=依赖管理面临快速失败>依赖管理面临快速失败</h3><p>为了满足依赖项，我们将构建确定当前时间是白天还是晚上的逻辑。本着 TDD 的精神，我们将从一个小小的失败开始。</p><p>有关如何设置此练习所需的开发环境和脚手架的详细说明，请参阅我的<a href=/article-11468-1.html>上一篇文章</a>。我们将重用相同的 NET 环境和 <a href=https://xunit.net/>xUnit.net</a> 框架。</p><p>接下来，创建一个名为 HAS（“家庭自动化系统”）的新项目，创建一个名为 <code>UnitTest1.cs</code> 的文件。在该文件中，编写第一个失败的单元测试。在此单元测试中，描述你的期望结果。例如，当系统运行时，如果时间是晚上 7 点，负责确定是白天还是夜晚的组件将返回值 <code>Nighttime</code>。</p><p>这是描述期望值的单元测试：</p><pre tabindex=0><code>using System;
+using Xunit;
+
+namespace unittest
+{
+   public class UnitTest1
+   {
+       DayOrNightUtility dayOrNightUtility = new DayOrNightUtility();
+
+       [Fact]
+       public void Given7pmReturnNighttime()
+       {
+           var expected = &#34;Nighttime&#34;;
+           var actual = dayOrNightUtility.GetDayOrNight();
+           Assert.Equal(expected, actual);
+       }
+   }
+}
+</code></pre><p>至此，你可能已经熟悉了单元测试的结构。快速复习一下：在此示例中，通过给单元测试一个描述性名称<code>Given7pmReturnNighttime</code> 来描述期望结果。然后，在单元测试的主体中，创建一个名为 <code>expected</code> 的变量，并为该变量指定期望值（在该示例中，值为 <code>Nighttime</code>）。然后，为实际值指定一个 <code>actual</code>（在组件或服务处理一天中的时间之后可用）。</p><p>最后，通过断言期望值和实际值是否相等来检查是否满足期望结果：<code>Assert.Equal(expected, actual)</code>。</p><p>你还可以在上面的列表中看到名为 <code>dayOrNightUtility</code> 的组件或服务。该模块能够接收消息<code>GetDayOrNight</code>，并且返回 <code>string</code> 类型的值。</p><p>同样，本着 TDD 的精神，描述的组件或服务还尚未构建（仅为了后面说明在此进行描述）。构建这些是由所描述的期望结果来驱动的。</p><p>在 <code>app</code> 文件夹中创建一个新文件，并将其命名为 <code>DayOrNightUtility.cs</code>。将以下 C＃ 代码添加到该文件中并保存：</p><pre tabindex=0><code>using System;
+
+namespace app {
+   public class DayOrNightUtility {
+       public string GetDayOrNight() {
+           string dayOrNight = &#34;Undetermined&#34;;
+           return dayOrNight;
+       }
+   }
+}
+</code></pre><p>现在转到命令行，将目录更改为 <code>unittests</code> 文件夹，然后运行：</p><pre tabindex=0><code>[Xunit.net 00:00:02.33] unittest.UnitTest1.Given7pmReturnNighttime [FAIL]
+Failed unittest.UnitTest1.Given7pmReturnNighttime
+[...]
+</code></pre><p>恭喜，你已经完成了第一个失败的单元测试。单元测试的期望结果是 <code>DayOrNightUtility</code> 方法返回字符串 <code>Nighttime</code>，但相反，它返回是 <code>Undetermined</code>。</p><h3 id=修复失败的单元测试>修复失败的单元测试</h3><p>修复失败的测试的一种快速而粗略的方法是将值 <code>Undetermined</code> 替换为值 <code>Nighttime</code> 并保存更改：</p><pre tabindex=0><code>using System;
+
+namespace app {
+   public class DayOrNightUtility {
+       public string GetDayOrNight() {
+           string dayOrNight = &#34;Nighttime&#34;;
+           return dayOrNight;
+       }
+   }
+}
+</code></pre><p>现在运行，成功了。</p><pre tabindex=0><code>Starting test execution, please wait...
+
+Total tests: 1. Passed: 1. Failed: 0. Skipped: 0.
+Test Run Successful.
+Test execution time: 2.6470 Seconds
+</code></pre><p>但是，对值进行硬编码基本上是在作弊，最好为 <code>DayOrNightUtility</code> 方法赋予一些智能。修改 <code>GetDayOrNight</code> 方法以包括一些时间计算逻辑：</p><pre tabindex=0><code>public string GetDayOrNight() {
+    string dayOrNight = &#34;Daylight&#34;;
+    DateTime time = new DateTime();
+    if(time.Hour &lt; 7) {
+        dayOrNight = &#34;Nighttime&#34;;
+    }
+    return dayOrNight;
+}
+</code></pre><p>该方法现在从系统获取当前时间，并与 <code>Hour</code> 比较，查看其是否小于上午 7 点。如果小于，则处理逻辑将 <code>dayOrNight</code> 字符串值从 <code>Daylight</code> 转换为 <code>Nighttime</code>。现在，单元测试通过。</p><h3 id=测试驱动解决方案的开始>测试驱动解决方案的开始</h3><p>现在，我们已经开始了基本的单元测试，并为我们的时间依赖项提供了可行的解决方案。后面还有更多的测试案例需要执行。</p><p>在下一篇文章中，我将演示如何对白天时间进行测试以及如何在整个过程中利用故障。</p><hr><p>via: <a href=https://opensource.com/article/19/9/mutation-testing-example-tdd>https://opensource.com/article/19/9/mutation-testing-example-tdd</a></p><p>作者：<a href=https://opensource.com/users/alex-bunardzic>Alex Bunardzic</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/Morisun029>Morisun029</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/tdd/ rel=tag>TDD</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%8F%98%E5%BC%82%E6%B5%8B%E8%AF%95/ rel=tag>变异测试</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

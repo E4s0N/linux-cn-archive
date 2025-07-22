@@ -1,0 +1,54 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何编写和使用自定义的 Shell 函数和函数库 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何编写和使用自定义的 Shell 函数和函数库"><meta property="og:description" content="在本指南中，我们将向 Linux 新手展示如何可靠地存储自定义的 shell 脚本，解释如何编写 shell 函数和函数库，以及如何在其它的脚本中使用函数库中的函数。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8307-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-03-15T10:38:00+00:00"><meta property="article:modified_time" content="2017-03-15T10:38:00+00:00"><meta itemprop=name content="如何编写和使用自定义的 Shell 函数和函数库"><meta itemprop=description content="在本指南中，我们将向 Linux 新手展示如何可靠地存储自定义的 shell 脚本，解释如何编写 shell 函数和函数库，以及如何在其它的脚本中使用函数库中的函数。"><meta itemprop=datePublished content="2017-03-15T10:38:00+00:00"><meta itemprop=dateModified content="2017-03-15T10:38:00+00:00"><meta itemprop=wordCount content="377"><meta itemprop=keywords content="Shell,脚本,函数,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何编写和使用自定义的 Shell 函数和函数库</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-03-15T10:38:00Z>March 15, 2017</time></div></div></header><div class="content post__content clearfix"><p>在 Linux 系统下，Shell 脚本可以在各种不同的情形下帮到我们，例如展示信息，甚至 <a href=http://www.tecmint.com/using-shell-script-to-automate-linux-system-maintenance-tasks/>自动执行特定的系统管理任务</a>，创建简单的命令行工具等等。</p><p>在本指南中，我们将向 Linux 新手展示如何可靠地存储自定义的 shell 脚本，解释如何编写 shell 函数和函数库，以及如何在其它的脚本中使用函数库中的函数。</p><p><img src=/data/attachment/album/201703/15/103818fl34e8all0weu58z.jpg alt></p><h3 id=shell-脚本要存储在何处>Shell 脚本要存储在何处</h3><p>为了在执行你自己的脚本时不必输入脚本所在位置的完整或绝对路径，脚本必须被存储在 <code>$PATH</code> 环境变量所定义的路径里的其中一个。</p><p>使用下面的命令可以查看你系统中的 <code>$PATH</code> 环境变量：</p><pre tabindex=0><code>$ echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+</code></pre><p>通常来说，如果在用户的家目录下存在名为 <code>bin</code> 的目录，你就可以将 shell 脚本存储在那个目录下，因为那个目录会自动地被包含在用户的 <code>$PATH</code> 环境变量中（LCTT 译注：在 Centos 6/7 下是这样的，在 Debian 8 下不是这样的，在 Ubuntu 16.04 下又是这样的)。</p><p>因此，在你的主目录下创建 <code>bin</code> 目录吧（当然这里也可以用来存储 Perl、Awk 或 Python 的脚本，或者其它程序）：</p><pre tabindex=0><code>$ mkdir ~/bin
+</code></pre><p>接着，建立一个名为 <code>lib</code>（libraries 的简写）的目录来存放你自己的函数库。你也可以在其中存放其它编程语言的函数库，如 C ，Python 等语言。在 <code>lib</code> 目录下建立另一个名为 <code>sh</code> 的目录，这个目录将被用来存放你的 shell 函数库：</p><pre tabindex=0><code>$ mkdir -p ~/lib/sh 
+</code></pre><h3 id=创建你自己的-shell-函数和函数库>创建你自己的 Shell 函数和函数库</h3><p>一个 <code>shell 函数</code> 就是在脚本中能够完成特定任务的一组命令。它们的工作原理与其他编程语言中的过程（LCTT 译注：可能指的是类似 SQL 中的存储过程之类的吧）、子例程、函数类似。</p><p>编写一个函数的语法如下：</p><pre tabindex=0><code>函数名() { 一系列的命令 } 
+</code></pre><p>( LCTT 校注：在函数名前可以加上 <code>function</code> 关键字，但也可省略不写）</p><p>例如，你可以像下面那样在一个脚本中写一个用来显示日期的函数：</p><pre tabindex=0><code>showDATE() {date;}
+</code></pre><p>每当你需要显示日期时，只需调用该函数的函数名即可：</p><pre tabindex=0><code>$ showDATE
+</code></pre><p>简单来说 shell 函数库也是一个 shell 脚本，不过你可以在一个函数库中仅存储其它 shell 脚本中需要调用的函数。</p><p>下面展示的是在我的 <code>~/lib/sh</code> 目录下一个名为 <code>libMYFUNCS.sh</code> 的库函数：</p><pre tabindex=0><code>#!/bin/bash 
+### Function to clearly list directories in PATH 
+showPATH() { 
+  oldifs=&#34;$IFS&#34;   ### store old internal field separator
+  IFS=:              ### specify a new internal field separator
+  for DIR in $PATH&lt;br&gt;  do&lt;br&gt;     echo $DIR&lt;br&gt;  done
+  IFS=&#34;$oldifs&#34;    ### restore old internal field separator
+}
+### Function to show logged user
+showUSERS() {
+  echo -e “Below are the user logged on the system:\n”
+  w
+}
+### Print a user’s details 
+printUSERDETS() {
+  oldifs=&#34;$IFS&#34;    ### store old internal field separator
+  IFS=:                 ### specify a new internal field separator
+  read -p &#34;Enter user name to be searched:&#34; uname   ### read username
+  echo &#34;&#34;
+  ### read and store from a here string values into variables
+  ### using : as  a  field delimiter
+  read -r username pass uid gid comments homedir shell &lt;&lt;&lt; &#34;$(cat /etc/passwd | grep   &#34;^$uname&#34;)&#34;
+  ### print out captured values
+  echo -e &#34;Username is            : $username\n&#34;
+  echo -e &#34;User&#39;s ID                 : $uid\n&#34;
+  echo -e &#34;User&#39;s GID              : $gid\n&#34;
+  echo -e &#34;User&#39;s Comments    : $comments\n&#34;
+  echo -e &#34;User&#39;s Home Dir     : $homedir\n&#34;
+  echo -e &#34;User&#39;s Shell             : $shell\n&#34;
+  IFS=&#34;$oldifs&#34;         ### store old internal field separator
+}
+</code></pre><p>保存文件并且给脚本添加执行权限。</p><h3 id=如何从函数库中调用函数>如何从函数库中调用函数</h3><p>要使用某个 <code>lib</code> 目录下的函数，首先你需要按照下面的形式 将包含该函数的函数库导入到需要执行的 shell 脚本中：</p><pre tabindex=0><code>$ . /path/to/lib 
+或
+$ source /path/to/lib
+</code></pre><p>（LCTT 译注：第一行的 <code>.</code> 和路径间<strong>必须</strong>是有空格的）</p><p>这样你就可以像下面演示的那样，在其它的脚本中使用来自 <code>~/lib/sh/libMYFUNCS.sh</code> 的 <code>printUSERDETS</code> 函数了。</p><p>在下面的脚本中，如果要打印出某个特定用户的详细信息，你不必再一一编写代码，而只需要简单地调用已存在的函数即可。</p><p>创建一个名为 <code>test.sh</code> 的新文件：</p><pre tabindex=0><code>#!/bin/bash 
+### include lib
+.  ~/lib/sh/libMYFUNCS.sh
+### use function from lib
+printUSERDETS
+### exit script
+exit 0
+</code></pre><p>保存这个文件，并使得这个脚本可被执行，然后运行它：</p><pre tabindex=0><code>$ chmod 755 test.sh
+$ ./test.sh 
+</code></pre><p><img src=/data/attachment/album/201703/15/103857fb9ii0uibzk2uub9.png alt="Write Shell Functions"></p><p><em>编写 shell 函数</em></p><p>在本文中，我们介绍了在哪里可靠地存储 shell 脚本，如何编写自己的 shell 函数和函数库，以及如何在一个普通的 shell 脚本中从函数库中调用库中的某些函数。</p><p>在之后，我们还会介绍一种相当简单直接的方式来将 Vim 配置为一个编写 Bash 脚本的 IDE（集成开发环境）。在那之前，记得要经常关注我们 ，如果能和我们分享你对这份指南的想法就更好了。</p><hr><p>作者简介：Aaron Kili 是一名 Linux 和 F.O.S.S 爱好者、一名未来的 Linux 系统管理员、web 开发者，目前是一名 TecMint 上的内容创造者，他喜欢计算机相关的工作，并且坚信知识的分享。</p><hr><p>via: <a href=http://www.tecmint.com/write-custom-shell-functions-and-libraries-in-linux/>http://www.tecmint.com/write-custom-shell-functions-and-libraries-in-linux/</a></p><p>作者：<a href=http://www.tecmint.com/author/aaronkili/>Aaron Kili</a> 译者：<a href=https://github.com/wcnnbdk1>wcnnbdk1</a> 校对：<a href=https://github.com/FSSlc>FSSlc</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/shell/ rel=tag>Shell</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%84%9A%E6%9C%AC/ rel=tag>脚本</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%87%BD%E6%95%B0/ rel=tag>函数</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

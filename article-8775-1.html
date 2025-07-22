@@ -1,0 +1,97 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 CentOS 上安装 Apache Hadoop - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 CentOS 上安装 Apache Hadoop"><meta property="og:description" content="Apache Hadoop 软件库是一个框架，它允许使用简单的编程模型在计算机集群上对大型数据集进行分布式处理。Apache™ Hadoop® 是可靠、可扩展、分布式计算的开源软件。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8775-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-08-13T21:05:34+00:00"><meta property="article:modified_time" content="2017-08-13T21:05:34+00:00"><meta itemprop=name content="如何在 CentOS 上安装 Apache Hadoop"><meta itemprop=description content="Apache Hadoop 软件库是一个框架，它允许使用简单的编程模型在计算机集群上对大型数据集进行分布式处理。Apache™ Hadoop® 是可靠、可扩展、分布式计算的开源软件。"><meta itemprop=datePublished content="2017-08-13T21:05:34+00:00"><meta itemprop=dateModified content="2017-08-13T21:05:34+00:00"><meta itemprop=wordCount content="334"><meta itemprop=keywords content="Hadoop,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 CentOS 上安装 Apache Hadoop</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-08-13T21:05:34Z>August 13, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201708/13/210401f4ttrztmdrn7rxey.jpg alt></p><p>Apache Hadoop 软件库是一个框架，它允许使用简单的编程模型在计算机集群上对大型数据集进行分布式处理。Apache™ Hadoop® 是可靠、可扩展、分布式计算的开源软件。</p><p>该项目包括以下模块：</p><ul><li>Hadoop Common：支持其他 Hadoop 模块的常用工具。</li><li>Hadoop 分布式文件系统 （HDFS™）：分布式文件系统，可提供对应用程序数据的高吞吐量访问支持。</li><li>Hadoop YARN：作业调度和集群资源管理框架。</li><li>Hadoop MapReduce：一个基于 YARN 的大型数据集并行处理系统。</li></ul><p>本文将帮助你逐步在 CentOS 上安装 hadoop 并配置单节点 hadoop 集群。</p><h3 id=安装-java>安装 Java</h3><p>在安装 hadoop 之前，请确保你的系统上安装了 Java。使用此命令检查已安装 Java 的版本。</p><pre tabindex=0><code>java -version
+java version &#34;1.7.0_75&#34;
+Java(TM) SE Runtime Environment (build 1.7.0_75-b13)
+Java HotSpot(TM) 64-Bit Server VM (build 24.75-b04, mixed mode)
+</code></pre><p>要安装或更新 Java，请参考下面逐步的说明。</p><p>第一步是从 <a href=http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html>Oracle 官方网站</a>下载最新版本的 java。</p><pre tabindex=0><code>cd /opt/
+wget --no-cookies --no-check-certificate --header &#34;Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie&#34; &#34;http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz&#34;
+tar xzf jdk-7u79-linux-x64.tar.gz
+</code></pre><p>需要设置使用更新版本的 Java 作为替代。使用以下命令来执行此操作。</p><pre tabindex=0><code>cd /opt/jdk1.7.0_79/
+alternatives --install /usr/bin/java java /opt/jdk1.7.0_79/bin/java 2
+alternatives --config java
+</code></pre><pre tabindex=0><code>There are 3 programs which provide &#39;java&#39;.
+
+  Selection    Command
+-----------------------------------------------
+*  1           /opt/jdk1.7.0_60/bin/java
+ + 2           /opt/jdk1.7.0_72/bin/java
+   3           /opt/jdk1.7.0_79/bin/java
+
+Enter to keep the current selection[+], or type selection number: 3 [Press Enter]
+</code></pre><p>现在你可能还需要使用 <code>alternatives</code> 命令设置 <code>javac</code> 和 <code>jar</code> 命令路径。</p><pre tabindex=0><code>alternatives --install /usr/bin/jar jar /opt/jdk1.7.0_79/bin/jar 2
+alternatives --install /usr/bin/javac javac /opt/jdk1.7.0_79/bin/javac 2
+alternatives --set jar /opt/jdk1.7.0_79/bin/jar
+alternatives --set javac /opt/jdk1.7.0_79/bin/javac
+</code></pre><p>下一步是配置环境变量。使用以下命令正确设置这些变量。</p><p>设置 <code>JAVA_HOME</code> 变量：</p><pre tabindex=0><code>export JAVA_HOME=/opt/jdk1.7.0_79
+</code></pre><p>设置 <code>JRE_HOME</code> 变量：</p><pre tabindex=0><code>export JRE_HOME=/opt/jdk1.7.0_79/jre
+</code></pre><p>设置 <code>PATH</code> 变量：</p><pre tabindex=0><code>export PATH=$PATH:/opt/jdk1.7.0_79/bin:/opt/jdk1.7.0_79/jre/bin
+</code></pre><h3 id=安装-apache-hadoop>安装 Apache Hadoop</h3><p>设置好 java 环境后。开始安装 Apache Hadoop。</p><p>第一步是创建用于 hadoop 安装的系统用户帐户。</p><pre tabindex=0><code>useradd hadoop
+passwd hadoop
+</code></pre><p>现在你需要配置用户 <code>hadoop</code> 的 ssh 密钥。使用以下命令启用无需密码的 ssh 登录。</p><pre tabindex=0><code>su - hadoop
+ssh-keygen -t rsa
+cat ~/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys
+chmod 0600 ~/.ssh/authorized_keys
+exit
+</code></pre><p>现在从官方网站 <a href=https://hadoop.apache.org/>hadoop.apache.org</a> 下载 hadoop 最新的可用版本。</p><pre tabindex=0><code>cd ~
+wget http://apache.claz.org/hadoop/common/hadoop-2.6.0/hadoop-2.6.0.tar.gz
+tar xzf hadoop-2.6.0.tar.gz
+mv hadoop-2.6.0 hadoop
+</code></pre><p>下一步是设置 hadoop 使用的环境变量。</p><p>编辑 <code>~/.bashrc</code>，并在文件末尾添加以下这些值。</p><pre tabindex=0><code>export HADOOP_HOME=/home/hadoop/hadoop
+export HADOOP_INSTALL=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+</code></pre><p>在当前运行环境中应用更改。</p><pre tabindex=0><code>source ~/.bashrc
+</code></pre><p>编辑 <code>$HADOOP_HOME/etc/hadoop/hadoop-env.sh</code> 并设置 <code>JAVA_HOME</code> 环境变量。</p><pre tabindex=0><code>export JAVA_HOME=/opt/jdk1.7.0_79/
+</code></pre><p>现在，先从配置基本的 hadoop 单节点集群开始。</p><p>首先编辑 hadoop 配置文件并进行以下更改。</p><pre tabindex=0><code>cd /home/hadoop/hadoop/etc/hadoop
+</code></pre><p>让我们编辑 <code>core-site.xml</code>。</p><pre tabindex=0><code>&lt;configuration&gt;
+&lt;property&gt;
+  &lt;name&gt;fs.default.name&lt;/name&gt;
+    &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre><p>接着编辑 <code>hdfs-site.xml</code>：</p><pre tabindex=0><code>&lt;configuration&gt;
+&lt;property&gt;
+ &lt;name&gt;dfs.replication&lt;/name&gt;
+ &lt;value&gt;1&lt;/value&gt;
+&lt;/property&gt;
+
+&lt;property&gt;
+  &lt;name&gt;dfs.name.dir&lt;/name&gt;
+    &lt;value&gt;file:///home/hadoop/hadoopdata/hdfs/namenode&lt;/value&gt;
+&lt;/property&gt;
+
+&lt;property&gt;
+  &lt;name&gt;dfs.data.dir&lt;/name&gt;
+    &lt;value&gt;file:///home/hadoop/hadoopdata/hdfs/datanode&lt;/value&gt;
+&lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre><p>并编辑 <code>mapred-site.xml</code>：</p><pre tabindex=0><code>&lt;configuration&gt;
+ &lt;property&gt;
+  &lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+   &lt;value&gt;yarn&lt;/value&gt;
+ &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre><p>最后编辑 <code>yarn-site.xml</code>：</p><pre tabindex=0><code>&lt;configuration&gt;
+ &lt;property&gt;
+  &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+    &lt;value&gt;mapreduce_shuffle&lt;/value&gt;
+ &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre><p>现在使用以下命令格式化 namenode：</p><pre tabindex=0><code>hdfs namenode -format
+</code></pre><p>要启动所有 hadoop 服务，请使用以下命令：</p><pre tabindex=0><code>cd /home/hadoop/hadoop/sbin/
+start-dfs.sh
+start-yarn.sh
+</code></pre><p>要检查所有服务是否正常启动，请使用 <code>jps</code> 命令：</p><pre tabindex=0><code>jps
+</code></pre><p>你应该看到这样的输出。</p><pre tabindex=0><code>26049 SecondaryNameNode
+25929 DataNode
+26399 Jps
+26129 JobTracker
+26249 TaskTracker
+25807 NameNode
+</code></pre><p>现在，你可以在浏览器中访问 Hadoop 服务：http://your-ip-address:8088/ 。</p><p><a href=http://www.unixmen.com/wp-content/uploads/2015/06/hadoop.png><img src=/data/attachment/album/201708/13/210539pb8fkxvzybmmhxjx.png alt=hadoop></a></p><p>谢谢阅读！！！</p><hr><p>via: <a href=https://www.unixmen.com.hijacked/setup-apache-hadoop-centos/>https://www.unixmen.com/setup-apache-hadoop-centos/</a></p><p>作者：<a href=https://www.unixmen.com/author/anis/>anismaj</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/hadoop/ rel=tag>Hadoop</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

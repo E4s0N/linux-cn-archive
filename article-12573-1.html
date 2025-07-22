@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何使用 printf 来格式化输出 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何使用 printf 来格式化输出"><meta property="og:description" content="来了解一下 printf ，一个神秘的、灵活的和功能丰富的函数，可以替换 echo、print 和 cout。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12573-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-09-02T00:11:00+00:00"><meta property="article:modified_time" content="2020-09-02T00:11:00+00:00"><meta itemprop=name content="如何使用 printf 来格式化输出"><meta itemprop=description content="来了解一下 printf ，一个神秘的、灵活的和功能丰富的函数，可以替换 echo、print 和 cout。"><meta itemprop=datePublished content="2020-09-02T00:11:00+00:00"><meta itemprop=dateModified content="2020-09-02T00:11:00+00:00"><meta itemprop=wordCount content="325"><meta itemprop=keywords content="printf,输出,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何使用 printf 来格式化输出</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-09-02T00:11:00Z>September 02, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>来了解一下 printf ，一个神秘的、灵活的和功能丰富的函数，可以替换 echo、print 和 cout。</p></blockquote><p><img src=/data/attachment/album/202009/02/001109wp3xdtr27xop25e7.jpg alt></p><p>当我开始学习 Unix 时，我很早就接触到了 <code>echo</code> 命令。同样，我最初的 <a href=https://opensource.com/resources/python>Python</a> 课程也涉及到了 <code>print</code> 函数。再想起学习 C++ 和 <a href=https://opensource.com/resources/python>Java</a> 时学到 <code>cout</code> 和 <code>systemout</code>。似乎每种语言都骄傲地宣称拥有一种方便的单行输出方法，并生怕这种方式要过时一样宣传它。</p><p>但是当我翻开中级教程的第一页后，我遇到了 <code>printf</code>，一个晦涩难懂的、神秘莫测的，又出奇灵活的函数。本文一反向初学者隐藏 <code>printf</code> 这个令人费解的传统，旨在介绍这个不起眼的 <code>printf</code> 函数，并解释如何在几乎所有语言中使用它。</p><h3 id=printf-简史>printf 简史</h3><p>术语 <code>printf</code> 代表“ 格式化打印 print formatted ”，它可能最早出现 <a href=https://opensource.com/article/20/6/algol68>Algol 68</a> 编程语言中。自从它被纳入到 C 语言后，<code>printf</code> 已经在 C++、Java、Bash、PHP 中一次次重新实现，并且很可能在你最喜欢的 “后 C” 语言中再次出现。</p><p>显然，它很受欢迎，但很多人认为它的语法很复杂，尤其是与 <code>echo</code> 或 <code>print</code> 或 <code>cout</code> 等替代的函数相比尤为明显。例如，这是在 Bash 中的一个简单的 <code>echo</code> 语句：</p><pre tabindex=0><code>$ echo hello
+hello
+$
+</code></pre><p>这是在 Bash 中使用 <code>printf</code> 得到同样结果:</p><pre tabindex=0><code>$ printf &#34;%s\n&#34; hello
+hello
+$
+</code></pre><p>但是所增加的复杂性反而让你拥有很多功能，这是为什么 <code>printf</code> 值得学习的确切原因。</p><h3 id=printf-输出>printf 输出</h3><p>在 <code>printf</code> 背后的基本思想是：它能够基于与内容<em>分离的</em>样式信息来格式化输出。例如，这里是 <code>printf</code> 认可的视作特殊字符的特定序列集合。你喜欢的语言可能会有或多或少的序列，但是通常包含：</p><ul><li><code>\n</code>: 新行</li><li><code>\r</code>: 回车换行</li><li><code>\t</code>: 水平制表符</li><li><code>\NNN</code>: 一个包含一个到三个数字，使用八进制值表示的特殊字节</li></ul><p>例如：</p><pre tabindex=0><code>$ printf &#34;\t\123\105\124\110\n&#34;
+     SETH
+$
+</code></pre><p>在这个 Bash 示例中， <code>printf</code> 渲染一个制表符后，然后是分配给四个八进制值字符串的 ASCII 字符，并以一个生成一个新行（<code>\n</code>）的控制序列结束。</p><p>如果同样使用 <code>echo</code> 来输出会产生更多的字符：</p><pre tabindex=0><code>$ echo &#34;\t\123\105\124\110\n&#34;
+\t\123\105\124\110\n
+$
+</code></pre><p>使用 Python 的 <code>print</code> 函数来完成同样的任务，你会发现 Python 的 <code>print</code> 命令比你想象的要强大：</p><pre tabindex=0><code>&gt;&gt;&gt; print(&#34;\t\123\n&#34;)
+        S
+
+&gt;&gt;&gt;
+</code></pre><p>显然，Python 的 <code>print</code> 包含传统的 <code>printf</code> 特性以及简单的 <code>echo</code> 或 <code>cout</code> 的特性。</p><p>不过，这些示例包括的只是文字字符，尽管在某些情况下它们也很有用，但它们可能是 <code>printf</code> 最不重要的部分。<code>printf</code> 的真正的威力在于格式化说明。</p><h3 id=使用-printf-格式化输出>使用 printf 格式化输出</h3><p>格式化说明符是以一个百分号（<code>%</code>）开头的字符。</p><p>常见的格式化说明符包括：</p><ul><li><code>%s</code>: 字符串</li><li><code>%d</code>: 数字</li><li><code>%f</code>: 浮点数字</li><li><code>%o</code>: 一个八进制的数字</li></ul><p>这些格式化说明符是 <code>printf</code> 语句的占位符，你可以使用一个在其它地方提供的值来替换你的 <code>printf</code> 语句中的占位符。这些值在哪里提供取决于你使用的语言和它的语法，这里有一个简单的 Java 例子：</p><pre tabindex=0><code>string var=&#34;hello\n&#34;;
+system.out.printf(&#34;%s&#34;, var);
+</code></pre><p>把这个代码包裹在适当的样板文件中，在执行后，将呈现:</p><pre tabindex=0><code>$ ./example
+hello
+$
+</code></pre><p>但是，当一个变量的内容更改时，有意思的地方就来了。假设你想基于不断增加的数字来更新输出:</p><pre tabindex=0><code>#include &lt;stdio.h&gt;
+
+int main() {
+  int var=0;
+  while ( var &lt; 100) {
+    var++;
+  printf(&#34;Processing is %d% finished.\n&#34;, var);
+  }
+  return 0;
+}
+</code></pre><p>编译并运行:</p><pre tabindex=0><code>Processing is 1% finished.
+[...]
+Processing is 100% finished.
+</code></pre><p>注意，在代码中的两个 <code>%</code> 将被解析为一个打印出来的 <code>%</code> 符号。</p><h3 id=使用-printf-限制小数位数>使用 printf 限制小数位数</h3><p>数字也可以是很复杂，<code>printf</code> 提供很多格式化选项。你可以对浮点数使用 <code>%f</code> 限制打印出多少个小数位。通过把一个点（<code>.</code>）和一个限制的数放置在百分符号和 <code>f</code> 之间, 你可以告诉 <code>printf</code> 打印多少位小数。这是一个简单的用 Bash 写的简练示例：</p><pre tabindex=0><code>$ printf &#34;%.2f\n&#34; 3.141519
+3.14
+$
+</code></pre><p>类似的语法也适用于其它的语言。这里是一个 C 语言的示例：</p><pre tabindex=0><code>#include &lt;math.h&gt;
+#include &lt;stdio.h&gt;
+
+int main() {
+  fprintf(stdout, &#34;%.2f\n&#34;, 4 * atan(1.0));
+  return 0;
+}
+</code></pre><p>对于三位小数，使用 <code>.3f</code> ，依次类推。</p><h3 id=使用-printf-来在数字上添加逗号>使用 printf 来在数字上添加逗号</h3><p>因为位数大的数字很难解读，所以通常使用一个逗号来断开大的数字。你可以在百分号和 <code>d</code> 之间放置一个撇号（<code>'</code>），让 <code>printf</code> 根据需要添加逗号：</p><pre tabindex=0><code>$ printf &#34;%&#39;d\n&#34; 1024
+1,024
+$ printf &#34;%&#39;d\n&#34; 1024601
+1,024,601
+$
+</code></pre><h3 id=使用-printf-来添加前缀零>使用 printf 来添加前缀零</h3><p><code>printf</code> 的另一个常用的用法是对文件名称中的数字强制实行一种特定的格式。例如，如果你在一台计算机上有 10 个按顺序排列的文件，计算机可能会把 <code>10.jpg</code> 排在 <code>1.jpg</code> 之前，这可能不是你的本意。当你以编程的方式写一个到文件时，你可以使用 <code>printf</code> 来用前缀为 0 的字符形成文件名称。这是一个简单的用 Bash 写的简练示例：</p><pre tabindex=0><code>$ printf &#34;%03d.jpg\n&#34; {1..10}
+001.jpg
+002.jpg
+[...]
+010.jpg
+</code></pre><p>注意：每个数字最多使用 3 位数字。</p><h3 id=使用-printf>使用 printf</h3><p>正如这些 <code>printf</code> 示例所显示，包括控制字符，尤其是 <code>\n</code> ，可能会冗长，并且语法相对复杂。这就是为什么开发像 <code>echo</code> 和 <code>cout</code> 之类的快捷方式的原因。不过，如果你时不时地使用 <code>printf</code> ，你就会习惯于这种语法，并且它也会变成你的习惯。我不认为 <code>printf</code> 有任何理由成为你在日常活动中打印时的<em>首选</em>，但是它是一个很好的工具，当你需要它时，它不会拖累你。</p><p>花一些时间学习你所选择语言中的 <code>printf</code>，并且当你需要时就使用它。它是一个强有力的工具，你不会后悔随时可用的工具。</p><hr><p>via: <a href=https://opensource.com/article/20/8/printf>https://opensource.com/article/20/8/printf</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/robsean>robsean</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/printf/ rel=tag>printf</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%BE%93%E5%87%BA/ rel=tag>输出</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>深入了解 EPUB 文件 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="深入了解 EPUB 文件"><meta property="og:description" content="EPUB 文件是使用开放格式发布内容的好方法。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14967-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-08-25T22:38:34+00:00"><meta property="article:modified_time" content="2022-08-25T22:38:34+00:00"><meta itemprop=name content="深入了解 EPUB 文件"><meta itemprop=description content="EPUB 文件是使用开放格式发布内容的好方法。"><meta itemprop=datePublished content="2022-08-25T22:38:34+00:00"><meta itemprop=dateModified content="2022-08-25T22:38:34+00:00"><meta itemprop=wordCount content="310"><meta itemprop=keywords content="EPUB,电子书,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>深入了解 EPUB 文件</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-08-25T22:38:34Z>August 25, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202208/25/223832eo3gq2o32uz0u0ll.jpg alt></p><blockquote><p>EPUB 文件是使用开放格式发布内容的好方法。</p></blockquote><p>电子书提供了一种随时随地阅读书籍、杂志和其他内容的好方法。读者可以在长途飞行和乘坐火车时享受电子书打发时间。最流行的电子书文件格式是 EPUB 文件，它是“ 电子出版物 electronic publication ”的缩写。 EPUB 文件受到各种电子阅读器的支持，并且是当今电子书出版的有效标准。</p><p>EPUB 文件格式基于 XHTML 内容和 XML 元数据的开放标准，包含在 zip 存档中。由于一切都基于开放标准，我们可以使用通用工具来创建或检查 EPUB 文件。让我们探索一个 EPUB 文件以了解更多信息。《<a href=https://opensource.com/downloads/guide-c-programming>C 编程技巧和窍门指南</a>》，于今年早些时候在 <a href=http://Opensource.com>Opensource.com</a> 上发布，提供 PDF 或 EPUB 格式。</p><p>因为 EPUB 文件是放在 zip 文件中的 XHTML 内容和 XML 元数据，所以你可以用 <code>unzip</code> 命令在命令行检查 EPUB：</p><pre tabindex=0><code>$ unzip -l osdc_Jim-Hall_C-Programming-Tips.epub 
+Archive: osdc_Jim-Hall_C-Programming-Tips.epub
+Length Date Time Name
+--------- ---------- ----- ----
+20 06-23-2022 00:20 mimetype
+8259 06-23-2022 00:20 OEBPS/styles/stylesheet.css
+1659 06-23-2022 00:20 OEBPS/toc.xhtml
+4460 06-23-2022 00:20 OEBPS/content.opf
+44157 06-23-2022 00:20 OEBPS/sections/section0018.xhtml
+1242 06-23-2022 00:20 OEBPS/sections/section0002.xhtml
+22429 06-23-2022 00:20 OEBPS/sections/section0008.xhtml
+[...]
+9628 06-23-2022 00:20 OEBPS/sections/section0016.xhtml
+748 06-23-2022 00:20 OEBPS/sections/section0001.xhtml
+3370 06-23-2022 00:20 OEBPS/toc.ncx
+8308 06-23-2022 00:21 OEBPS/images/image0011.png
+6598 06-23-2022 00:21 OEBPS/images/image0009.png
+[...]
+14492 06-23-2022 00:21 OEBPS/images/image0005.png
+239 06-23-2022 00:20 META-INF/container.xml
+--------- -------
+959201 41 files
+</code></pre><p>这个 EPUB 包含很多文件，但其中大部分是内容。要了解 EPUB 文件是如何组合在一起的，请遵循电子书阅读器的流程：</p><p>1、电子书阅读器需要验证 EPUB 文件是否真的是 EPUB 文件。他们通过检查 EPUB 存档根目录中的 <code>mimetype</code> 文件来验证文件。该文件仅包含一行描述 EPUB 文件的 MIME 类型：</p><pre tabindex=0><code>application/epub+zip
+</code></pre><p>2、为了定位内容，电子书阅读器从 <code>META-INF/container.xml</code> 文件开始。这是一个简短的 XML 文档，指示在哪里可以找到内容。对于此 EPUB 文件，<code>container.xml</code> 文件如下所示：</p><pre tabindex=0><code>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;
+  &lt;container version=&#34;1.0&#34; xmlns=&#34;urn:oasis:names:tc:opendocument:xmlns:container&#34;&gt;
+    &lt;rootfiles&gt;
+      &lt;rootfile full-path=&#34;OEBPS/content.opf&#34; media-type=&#34;application/oebps-package+xml&#34;/&gt;
+  &lt;/rootfiles&gt;
+&lt;/container&gt;
+</code></pre><p>为了使 <code>container.xml</code> 文件更易于阅读，我将单行拆分为多行，并添加了一些间距来缩进每行。XML 文件并不关心新行和空格等额外的空白，因此这种额外的间距不会影响 XML 文件。</p><p>3、<code>container.xml</code> 文件表示 EPUB 的根从 <code>OEBPS</code> 目录中的 <code>content.opf</code> 文件开始。OPF 扩展名是因为 EPUB 基于 “ 开放打包格式 Open Packaging Format ”，但 <code>content.opf</code> 文件实际上只是另一个 XML 文件。</p><p>4、<code>content.opf</code> 文件包含一个完整的 EPUB 内容清单，以及一个有序的目录，以及查找每一章或每一节的引用。这个 EPUB 的 <code>content.opf</code> 文件很长，因此我将在此仅展示一小部分作为示例。</p><p>XML 数据包含在 <code>&lt;package></code> 块中，该块本身具有 <code>&lt;metadata></code> 块、<code>&lt;manifest></code> 数据和包含电子书目录的 <code>&lt;spine></code> 块：</p><pre tabindex=0><code>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;
+&lt;package unique-identifier=&#34;unique-identifier&#34; version=&#34;3.0&#34; xmlns=&#34;http://www.idpf.org/2007/opf&#34; xmlns:dc=&#34;http://purl.org/dc/elements/1.1/&#34; xmlns:dcterms=&#34;http://purl.org/dc/terms/&#34; xmlns:opf=&#34;http://www.idpf.org/2007/opf&#34;&gt;
+  &lt;metadata&gt;
+    &lt;dc:identifier id=&#34;unique-identifier&#34;&gt;osdc002&lt;/dc:identifier&gt;
+    &lt;dc:title&gt;Tips and Tricks for C Programming&lt;/dc:title&gt;
+    &lt;dc:creator&gt;Jim Hall&lt;/dc:creator&gt;
+    &lt;dc:language&gt;English&lt;/dc:language&gt;
+    &lt;meta property=&#34;dcterms:modified&#34;&gt;2022-06-23T12:09:13Z&lt;/meta&gt;
+    &lt;meta content=&#34;LibreOffice/7.3.0.3$Linux_X86_64 LibreOffice_project/0f246aa12d0eee4a0f7adcefbf7c878fc2238db3 (libepubgen/0.1.1)&#34; name=&#34;generator&#34;/&gt;
+  &lt;/metadata&gt;
+  &lt;manifest&gt;
+    ...
+    &lt;item href=&#34;sections/section0001.xhtml&#34; id=&#34;section0001&#34; media-type=&#34;application/xhtml+xml&#34;/&gt;
+    &lt;item href=&#34;images/image0003.png&#34; id=&#34;image0003&#34; media-type=&#34;image/png&#34;/&gt;
+    &lt;item href=&#34;styles/stylesheet.css&#34; id=&#34;stylesheet.css&#34; media-type=&#34;text/css&#34;/&gt;
+    &lt;item href=&#34;toc.ncx&#34; id=&#34;toc.ncx&#34; media-type=&#34;application/x-dtbncx+xml&#34;/&gt;
+    ...
+  &lt;/manifest&gt;
+  &lt;spine toc=&#34;toc.ncx&#34;&gt;
+    &lt;itemref idref=&#34;section0001&#34;/&gt;
+    &lt;itemref idref=&#34;section0002&#34;/&gt;
+    &lt;itemref idref=&#34;section0003&#34;/&gt;
+    ...
+  &lt;/spine&gt;
+&lt;/package&gt;
+</code></pre><p>你可以把数据匹配起来，看看在哪里可以找到每个部分。EPUB 阅读器就是这样做的。例如，目录中的第一项引用了 <code>section0001</code>，它在清单中被定义为位于 <code>sections/section0001.xhtml</code> 文件中。该文件的名称不需要与 <code>idref</code> 条目相同，但 LibreOffice Writer 的自动程序就是这样创建该文件的。（你可以在元数据中看到，这个 EPUB 是在 Linux 上用 LibreOffice 7.3.0.3 版本创建的，它可以将内容导出为 EPUB 文件。）</p><h3 id=epub-格式>EPUB 格式</h3><p>EPUB 文件是一种使用开放格式发布内容的好方法。EPUB 文件格式是 XML 元数据与 XHTML 内容，包含在一个 zip 文件内。虽然大多数技术作家使用工具来创建 EPUB 文件，因为 EPUB 是基于开放标准，意味着你可以使用其他方式创建自己的 EPUB 文件。</p><hr><p>via: <a href=https://opensource.com/article/22/8/epub-file>https://opensource.com/article/22/8/epub-file</a></p><p>作者：<a href=https://opensource.com/users/jim-hall>Jim Hall</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/epub/ rel=tag>EPUB</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%94%B5%E5%AD%90%E4%B9%A6/ rel=tag>电子书</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

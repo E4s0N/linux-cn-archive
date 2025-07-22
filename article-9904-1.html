@@ -1,0 +1,315 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>UKTools：安装最新 Linux 内核的简便方法 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="UKTools：安装最新 Linux 内核的简便方法"><meta property="og:description" content="Ubuntu 中有许多实用程序可以将 Linux 内核升级到最新的稳定版本。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9904-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-08-08T11:24:59+00:00"><meta property="article:modified_time" content="2018-08-08T11:24:59+00:00"><meta itemprop=name content="UKTools：安装最新 Linux 内核的简便方法"><meta itemprop=description content="Ubuntu 中有许多实用程序可以将 Linux 内核升级到最新的稳定版本。"><meta itemprop=datePublished content="2018-08-08T11:24:59+00:00"><meta itemprop=dateModified content="2018-08-08T11:24:59+00:00"><meta itemprop=wordCount content="1839"><meta itemprop=keywords content="内核,Ubuntu,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>UKTools：安装最新 Linux 内核的简便方法</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-08-08T11:24:59Z>August 08, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201808/08/112355c11z061in6oanw60.jpg alt></p><p>Ubuntu 中有许多实用程序可以将 Linux 内核升级到最新的稳定版本。我们之前已经写过关于这些实用程序的文章，例如 Linux Kernel Utilities (LKU)、 Ubuntu Kernel Upgrade Utility (UKUU) 和 Ubunsys。</p><p>另外还有一些其它实用程序可供使用。我们计划在其它文章中包含这些，例如 <code>ubuntu-mainline-kernel.sh</code> 和从主线内核手动安装的方式。</p><p>今天我们还会教你类似的使用工具 —— UKTools。你可以尝试使用这些实用程序中的任何一个来将 Linux 内核升级至最新版本。</p><p>最新的内核版本附带了安全漏洞修复和一些改进，因此，最好保持最新的内核版本以获得可靠、安全和更好的硬件性能。</p><p>有时候最新的内核版本可能会有一些漏洞，并且会导致系统崩溃，这是你的风险。我建议你不要在生产环境中安装它。</p><p><strong>建议阅读：</strong></p><ul><li><a href=https://www.2daygeek.com/lku-linux-kernel-utilities-compile-install-update-latest-kernel-in-linux-mint-ubuntu/>Linux 内核实用程序（LKU）- 在 Ubuntu/LinuxMint 中编译，安装和更新最新内核的一组 Shell 脚本</a></li><li><a href=https://www.2daygeek.com/ukuu-install-upgrade-linux-kernel-in-linux-mint-ubuntu-debian-elementary-os/>Ukuu - 在基于 Ubuntu 的系统中安装或升级 Linux 内核的简便方法</a></li><li><a href=https://www.2daygeek.com/check-find-determine-running-installed-linux-kernel-version/>6 种检查系统上正在运行的 Linux 内核版本的方法</a></li></ul><h3 id=什么是-uktools>什么是 UKTools</h3><p><a href=https://github.com/usbkey9/uktools>UKTools</a> 意思是 Ubuntu 内核工具，它包含两个 shell 脚本 <code>ukupgrade</code> 和 <code>ukpurge</code>。</p><p><code>ukupgrade</code> 意思是 “Ubuntu Kernel Upgrade”，它允许用户将 Linux 内核升级到 Ubuntu/Mint 的最新稳定版本以及基于 <a href=http://kernel.ubuntu.com/%7Ekernel-ppa/mainline/>kernel.ubuntu.com</a> 的衍生版本。</p><p><code>ukpurge</code> 意思是 “Ubuntu Kernel Purge”，它允许用户在机器中删除旧的 Linux 内核镜像或头文件，用于 Ubuntu/Mint 和其衍生版本。它将只保留三个内核版本。</p><p>此实用程序没有 GUI，但它看起来非常简单直接，因此，新手可以在没有任何问题的情况下进行升级。</p><p>我正在运行 Ubuntu 17.10，目前的内核版本如下：</p><pre tabindex=0><code>$ uname -a
+Linux ubuntu 4.13.0-39-generic #44-Ubuntu SMP Thu Apr 5 14:25:01 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+</code></pre><p>运行以下命令来获取系统上已安装内核的列表（Ubuntu 及其衍生产品）。目前我持有 <code>7</code> 个内核。</p><pre tabindex=0><code>$ dpkg --list | grep linux-image
+ii linux-image-4.13.0-16-generic 4.13.0-16.19 amd64 Linux kernel image for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-4.13.0-17-generic 4.13.0-17.20 amd64 Linux kernel image for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-4.13.0-32-generic 4.13.0-32.35 amd64 Linux kernel image for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-4.13.0-36-generic 4.13.0-36.40 amd64 Linux kernel image for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-4.13.0-37-generic 4.13.0-37.42 amd64 Linux kernel image for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-4.13.0-38-generic 4.13.0-38.43 amd64 Linux kernel image for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-4.13.0-39-generic 4.13.0-39.44 amd64 Linux kernel image for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-extra-4.13.0-16-generic 4.13.0-16.19 amd64 Linux kernel extra modules for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-extra-4.13.0-17-generic 4.13.0-17.20 amd64 Linux kernel extra modules for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-extra-4.13.0-32-generic 4.13.0-32.35 amd64 Linux kernel extra modules for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-extra-4.13.0-36-generic 4.13.0-36.40 amd64 Linux kernel extra modules for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-extra-4.13.0-37-generic 4.13.0-37.42 amd64 Linux kernel extra modules for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-extra-4.13.0-38-generic 4.13.0-38.43 amd64 Linux kernel extra modules for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-extra-4.13.0-39-generic 4.13.0-39.44 amd64 Linux kernel extra modules for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-generic 4.13.0.39.42 amd64 Generic Linux kernel image
+</code></pre><h3 id=如何安装-uktools>如何安装 UKTools</h3><p>在 Ubuntu 及其衍生产品上，只需运行以下命令来安装 UKTools 即可。</p><p>在你的系统上运行以下命令来克隆 UKTools 仓库：</p><pre tabindex=0><code>$ git clone https://github.com/usbkey9/uktools
+</code></pre><p>进入 uktools 目录：</p><pre tabindex=0><code>$ cd uktools
+</code></pre><p>运行 <code>Makefile</code> 以生成必要的文件。此外，这将自动安装最新的可用内核。只需重新启动系统即可使用最新的内核。</p><pre tabindex=0><code>$ sudo make
+[sudo] password for daygeek:
+Creating the directories if neccessary
+Linking profile.d file for reboot message
+Linking files to global sbin directory
+Ubuntu Kernel Upgrade - by Mustafa Hasturk
+------------------------------------------
+This script is based on the work of Mustafa Hasturk and was reworked by
+Caio Oliveira and modified and fixed by Christoph Kepler
+
+Current Development and Maintenance by Christoph Kepler
+
+Do you want the Stable Release (if not sure, press y)? (y/n): y
+Do you want the Generic kernel? (y/n): y
+Do you want to autoremove old kernel? (y/n): y
+no crontab for root
+Do you want to update the kernel automatically? (y/n): y
+Setup complete. Update the kernel right now? (y/n): y
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+ linux-headers-4.13.0-16 linux-headers-4.13.0-16-generic linux-headers-4.13.0-17 linux-headers-4.13.0-17-generic linux-headers-4.13.0-32 linux-headers-4.13.0-32-generic linux-headers-4.13.0-36
+ linux-headers-4.13.0-36-generic linux-headers-4.13.0-37 linux-headers-4.13.0-37-generic linux-image-4.13.0-16-generic linux-image-4.13.0-17-generic linux-image-4.13.0-32-generic linux-image-4.13.0-36-generic
+ linux-image-4.13.0-37-generic linux-image-extra-4.13.0-16-generic linux-image-extra-4.13.0-17-generic linux-image-extra-4.13.0-32-generic linux-image-extra-4.13.0-36-generic
+ linux-image-extra-4.13.0-37-generic
+Use &#39;sudo apt autoremove&#39; to remove them.
+The following additional packages will be installed:
+ lynx-common
+The following NEW packages will be installed:
+ lynx lynx-common
+0 upgraded, 2 newly installed, 0 to remove and 71 not upgraded.
+Need to get 1,498 kB of archives.
+After this operation, 5,418 kB of additional disk space will be used.
+Get:1 http://in.archive.ubuntu.com/ubuntu artful/universe amd64 lynx-common all 2.8.9dev16-1 [873 kB]
+Get:2 http://in.archive.ubuntu.com/ubuntu artful/universe amd64 lynx amd64 2.8.9dev16-1 [625 kB]
+Fetched 1,498 kB in 12s (120 kB/s)
+Selecting previously unselected package lynx-common.
+(Reading database ... 441037 files and directories currently installed.)
+Preparing to unpack .../lynx-common_2.8.9dev16-1_all.deb ...
+Unpacking lynx-common (2.8.9dev16-1) ...
+Selecting previously unselected package lynx.
+Preparing to unpack .../lynx_2.8.9dev16-1_amd64.deb ...
+Unpacking lynx (2.8.9dev16-1) ...
+Processing triggers for mime-support (3.60ubuntu1) ...
+Processing triggers for doc-base (0.10.7) ...
+Processing 1 added doc-base file...
+Processing triggers for man-db (2.7.6.1-2) ...
+Setting up lynx-common (2.8.9dev16-1) ...
+Setting up lynx (2.8.9dev16-1) ...
+update-alternatives: using /usr/bin/lynx to provide /usr/bin/www-browser (www-browser) in auto mode
+
+Cleaning old downloads in /tmp
+
+Downloading the kernel&#39;s components...
+Checksum for linux-headers-4.16.7-041607-generic_4.16.7-041607.201805021131_amd64.deb succeed
+Checksum for linux-image-unsigned-4.16.7-041607-generic_4.16.7-041607.201805021131_amd64.deb succeed
+Checksum for linux-modules-4.16.7-041607-generic_4.16.7-041607.201805021131_amd64.deb succeed
+
+Downloading the shared kernel header...
+Checksum for linux-headers-4.16.7-041607_4.16.7-041607.201805021131_all.deb succeed
+
+Installing Kernel and Headers...
+Selecting previously unselected package linux-headers-4.16.7-041607.
+(Reading database ... 441141 files and directories currently installed.)
+Preparing to unpack .../linux-headers-4.16.7-041607_4.16.7-041607.201805021131_all.deb ...
+Unpacking linux-headers-4.16.7-041607 (4.16.7-041607.201805021131) ...
+Selecting previously unselected package linux-headers-4.16.7-041607-generic.
+Preparing to unpack .../linux-headers-4.16.7-041607-generic_4.16.7-041607.201805021131_amd64.deb ...
+Unpacking linux-headers-4.16.7-041607-generic (4.16.7-041607.201805021131) ...
+Selecting previously unselected package linux-image-unsigned-4.16.7-041607-generic.
+Preparing to unpack .../linux-image-unsigned-4.16.7-041607-generic_4.16.7-041607.201805021131_amd64.deb ...
+Unpacking linux-image-unsigned-4.16.7-041607-generic (4.16.7-041607.201805021131) ...
+Selecting previously unselected package linux-modules-4.16.7-041607-generic.
+Preparing to unpack .../linux-modules-4.16.7-041607-generic_4.16.7-041607.201805021131_amd64.deb ...
+Unpacking linux-modules-4.16.7-041607-generic (4.16.7-041607.201805021131) ...
+Setting up linux-headers-4.16.7-041607 (4.16.7-041607.201805021131) ...
+dpkg: dependency problems prevent configuration of linux-headers-4.16.7-041607-generic:
+ linux-headers-4.16.7-041607-generic depends on libssl1.1 (&gt;= 1.1.0); however:
+ Package libssl1.1 is not installed.
+
+Setting up linux-modules-4.16.7-041607-generic (4.16.7-041607.201805021131) ...
+Setting up linux-image-unsigned-4.16.7-041607-generic (4.16.7-041607.201805021131) ...
+I: /vmlinuz.old is now a symlink to boot/vmlinuz-4.13.0-39-generic
+I: /initrd.img.old is now a symlink to boot/initrd.img-4.13.0-39-generic
+I: /vmlinuz is now a symlink to boot/vmlinuz-4.16.7-041607-generic
+I: /initrd.img is now a symlink to boot/initrd.img-4.16.7-041607-generic
+Processing triggers for linux-image-unsigned-4.16.7-041607-generic (4.16.7-041607.201805021131) ...
+/etc/kernel/postinst.d/initramfs-tools:
+update-initramfs: Generating /boot/initrd.img-4.16.7-041607-generic
+/etc/kernel/postinst.d/zz-update-grub:
+Generating grub configuration file ...
+Warning: Setting GRUB_TIMEOUT to a non-zero value when GRUB_HIDDEN_TIMEOUT is set is no longer supported.
+Found linux image: /boot/vmlinuz-4.16.7-041607-generic
+Found initrd image: /boot/initrd.img-4.16.7-041607-generic
+Found linux image: /boot/vmlinuz-4.13.0-39-generic
+Found initrd image: /boot/initrd.img-4.13.0-39-generic
+Found linux image: /boot/vmlinuz-4.13.0-38-generic
+Found initrd image: /boot/initrd.img-4.13.0-38-generic
+Found linux image: /boot/vmlinuz-4.13.0-37-generic
+Found initrd image: /boot/initrd.img-4.13.0-37-generic
+Found linux image: /boot/vmlinuz-4.13.0-36-generic
+Found initrd image: /boot/initrd.img-4.13.0-36-generic
+Found linux image: /boot/vmlinuz-4.13.0-32-generic
+Found initrd image: /boot/initrd.img-4.13.0-32-generic
+Found linux image: /boot/vmlinuz-4.13.0-17-generic
+Found initrd image: /boot/initrd.img-4.13.0-17-generic
+Found linux image: /boot/vmlinuz-4.13.0-16-generic
+Found initrd image: /boot/initrd.img-4.13.0-16-generic
+Found memtest86+ image: /boot/memtest86+.elf
+Found memtest86+ image: /boot/memtest86+.bin
+done
+
+Thanks for using this script! Hope it helped.
+Give it a star: https://github.com/MarauderXtreme/uktools
+</code></pre><p>重新启动系统以激活最新的内核。</p><pre tabindex=0><code>$ sudo shutdown -r now
+</code></pre><p>一旦系统重新启动，重新检查内核版本。</p><pre tabindex=0><code>$ uname -a
+Linux ubuntu 4.16.7-041607-generic #201805021131 SMP Wed May 2 15:34:55 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+</code></pre><p>此 make 命令会将下面的文件放到 <code>/usr/local/bin</code> 目录中。</p><pre tabindex=0><code>do-kernel-upgrade
+do-kernel-purge
+</code></pre><p>要移除旧内核，运行以下命令：</p><pre tabindex=0><code>$ do-kernel-purge
+
+Ubuntu Kernel Purge - by Caio Oliveira
+
+This script will only keep three versions: the first and the last two, others will be purge
+
+---Current version:
+Linux Kernel 4.16.7-041607 Generic (linux-image-4.16.7-041607-generic)
+
+---Versions to remove:
+4.13.0-16
+4.13.0-17
+4.13.0-32
+4.13.0-36
+4.13.0-37
+
+---Do you want to remove the old kernels/headers versions? (Y/n): y
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+ linux-headers-4.13.0-17 linux-headers-4.13.0-17-generic linux-headers-4.13.0-32 linux-headers-4.13.0-32-generic linux-headers-4.13.0-36 linux-headers-4.13.0-36-generic linux-headers-4.13.0-37
+ linux-headers-4.13.0-37-generic linux-image-4.13.0-17-generic linux-image-4.13.0-32-generic linux-image-4.13.0-36-generic linux-image-4.13.0-37-generic linux-image-extra-4.13.0-17-generic
+ linux-image-extra-4.13.0-32-generic linux-image-extra-4.13.0-36-generic linux-image-extra-4.13.0-37-generic
+Use &#39;sudo apt autoremove&#39; to remove them.
+The following packages will be REMOVED:
+ linux-headers-4.13.0-16* linux-headers-4.13.0-16-generic* linux-image-4.13.0-16-generic* linux-image-extra-4.13.0-16-generic*
+0 upgraded, 0 newly installed, 4 to remove and 71 not upgraded.
+After this operation, 318 MB disk space will be freed.
+(Reading database ... 465582 files and directories currently installed.)
+Removing linux-headers-4.13.0-16-generic (4.13.0-16.19) ...
+Removing linux-headers-4.13.0-16 (4.13.0-16.19) ...
+Removing linux-image-extra-4.13.0-16-generic (4.13.0-16.19) ...
+run-parts: executing /etc/kernel/postinst.d/apt-auto-removal 4.13.0-16-generic /boot/vmlinuz-4.13.0-16-generic
+run-parts: executing /etc/kernel/postinst.d/initramfs-tools 4.13.0-16-generic /boot/vmlinuz-4.13.0-16-generic
+update-initramfs: Generating /boot/initrd.img-4.13.0-16-generic
+run-parts: executing /etc/kernel/postinst.d/unattended-upgrades 4.13.0-16-generic /boot/vmlinuz-4.13.0-16-generic
+run-parts: executing /etc/kernel/postinst.d/update-notifier 4.13.0-16-generic /boot/vmlinuz-4.13.0-16-generic
+run-parts: executing /etc/kernel/postinst.d/zz-update-grub 4.13.0-16-generic /boot/vmlinuz-4.13.0-16-generic
+Generating grub configuration file ...
+Warning: Setting GRUB_TIMEOUT to a non-zero value when GRUB_HIDDEN_TIMEOUT is set is no longer supported.
+Found linux image: /boot/vmlinuz-4.16.7-041607-generic
+Found initrd image: /boot/initrd.img-4.16.7-041607-generic
+Found linux image: /boot/vmlinuz-4.13.0-39-generic
+Found initrd image: /boot/initrd.img-4.13.0-39-generic
+Found linux image: /boot/vmlinuz-4.13.0-38-generic
+Found initrd image: /boot/initrd.img-4.13.0-38-generic
+Found linux image: /boot/vmlinuz-4.13.0-37-generic
+Found initrd image: /boot/initrd.img-4.13.0-37-generic
+Found linux image: /boot/vmlinuz-4.13.0-36-generic
+Found initrd image: /boot/initrd.img-4.13.0-36-generic
+Found linux image: /boot/vmlinuz-4.13.0-32-generic
+Found initrd image: /boot/initrd.img-4.13.0-32-generic
+Found linux image: /boot/vmlinuz-4.13.0-17-generic
+Found initrd image: /boot/initrd.img-4.13.0-17-generic
+Found linux image: /boot/vmlinuz-4.13.0-16-generic
+Found initrd image: /boot/initrd.img-4.13.0-16-generic
+Found memtest86+ image: /boot/memtest86+.elf
+Found memtest86+ image: /boot/memtest86+.bin
+done
+Removing linux-image-4.13.0-16-generic (4.13.0-16.19) ...
+Examining /etc/kernel/postrm.d .
+run-parts: executing /etc/kernel/postrm.d/initramfs-tools 4.13.0-16-generic /boot/vmlinuz-4.13.0-16-generic
+update-initramfs: Deleting /boot/initrd.img-4.13.0-16-generic
+run-parts: executing /etc/kernel/postrm.d/zz-update-grub 4.13.0-16-generic /boot/vmlinuz-4.13.0-16-generic
+Generating grub configuration file ...
+Warning: Setting GRUB_TIMEOUT to a non-zero value when GRUB_HIDDEN_TIMEOUT is set is no longer supported.
+Found linux image: /boot/vmlinuz-4.16.7-041607-generic
+Found initrd image: /boot/initrd.img-4.16.7-041607-generic
+Found linux image: /boot/vmlinuz-4.13.0-39-generic
+Found initrd image: /boot/initrd.img-4.13.0-39-generic
+Found linux image: /boot/vmlinuz-4.13.0-38-generic
+Found initrd image: /boot/initrd.img-4.13.0-38-generic
+Found linux image: /boot/vmlinuz-4.13.0-37-generic
+Found initrd image: /boot/initrd.img-4.13.0-37-generic
+Found linux image: /boot/vmlinuz-4.13.0-36-generic
+Found initrd image: /boot/initrd.img-4.13.0-36-generic
+Found linux image: /boot/vmlinuz-4.13.0-32-generic
+Found initrd image: /boot/initrd.img-4.13.0-32-generic
+Found linux image: /boot/vmlinuz-4.13.0-17-generic
+Found initrd image: /boot/initrd.img-4.13.0-17-generic
+Found memtest86+ image: /boot/memtest86+.elf
+Found memtest86+ image: /boot/memtest86+.bin
+done
+(Reading database ... 430635 files and directories currently installed.)
+Purging configuration files for linux-image-extra-4.13.0-16-generic (4.13.0-16.19) ...
+Purging configuration files for linux-image-4.13.0-16-generic (4.13.0-16.19) ...
+Examining /etc/kernel/postrm.d .
+run-parts: executing /etc/kernel/postrm.d/initramfs-tools 4.13.0-16-generic /boot/vmlinuz-4.13.0-16-generic
+run-parts: executing /etc/kernel/postrm.d/zz-update-grub 4.13.0-16-generic /boot/vmlinuz-4.13.0-16-generic
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+.
+.
+.
+.
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following packages will be REMOVED:
+ linux-headers-4.13.0-37* linux-headers-4.13.0-37-generic* linux-image-4.13.0-37-generic* linux-image-extra-4.13.0-37-generic*
+0 upgraded, 0 newly installed, 4 to remove and 71 not upgraded.
+After this operation, 321 MB disk space will be freed.
+(Reading database ... 325772 files and directories currently installed.)
+Removing linux-headers-4.13.0-37-generic (4.13.0-37.42) ...
+Removing linux-headers-4.13.0-37 (4.13.0-37.42) ...
+Removing linux-image-extra-4.13.0-37-generic (4.13.0-37.42) ...
+run-parts: executing /etc/kernel/postinst.d/apt-auto-removal 4.13.0-37-generic /boot/vmlinuz-4.13.0-37-generic
+run-parts: executing /etc/kernel/postinst.d/initramfs-tools 4.13.0-37-generic /boot/vmlinuz-4.13.0-37-generic
+update-initramfs: Generating /boot/initrd.img-4.13.0-37-generic
+run-parts: executing /etc/kernel/postinst.d/unattended-upgrades 4.13.0-37-generic /boot/vmlinuz-4.13.0-37-generic
+run-parts: executing /etc/kernel/postinst.d/update-notifier 4.13.0-37-generic /boot/vmlinuz-4.13.0-37-generic
+run-parts: executing /etc/kernel/postinst.d/zz-update-grub 4.13.0-37-generic /boot/vmlinuz-4.13.0-37-generic
+Generating grub configuration file ...
+Warning: Setting GRUB_TIMEOUT to a non-zero value when GRUB_HIDDEN_TIMEOUT is set is no longer supported.
+Found linux image: /boot/vmlinuz-4.16.7-041607-generic
+Found initrd image: /boot/initrd.img-4.16.7-041607-generic
+Found linux image: /boot/vmlinuz-4.13.0-39-generic
+Found initrd image: /boot/initrd.img-4.13.0-39-generic
+Found linux image: /boot/vmlinuz-4.13.0-38-generic
+Found initrd image: /boot/initrd.img-4.13.0-38-generic
+Found linux image: /boot/vmlinuz-4.13.0-37-generic
+Found initrd image: /boot/initrd.img-4.13.0-37-generic
+Found memtest86+ image: /boot/memtest86+.elf
+Found memtest86+ image: /boot/memtest86+.bin
+done
+Removing linux-image-4.13.0-37-generic (4.13.0-37.42) ...
+Examining /etc/kernel/postrm.d .
+run-parts: executing /etc/kernel/postrm.d/initramfs-tools 4.13.0-37-generic /boot/vmlinuz-4.13.0-37-generic
+update-initramfs: Deleting /boot/initrd.img-4.13.0-37-generic
+run-parts: executing /etc/kernel/postrm.d/zz-update-grub 4.13.0-37-generic /boot/vmlinuz-4.13.0-37-generic
+Generating grub configuration file ...
+Warning: Setting GRUB_TIMEOUT to a non-zero value when GRUB_HIDDEN_TIMEOUT is set is no longer supported.
+Found linux image: /boot/vmlinuz-4.16.7-041607-generic
+Found initrd image: /boot/initrd.img-4.16.7-041607-generic
+Found linux image: /boot/vmlinuz-4.13.0-39-generic
+Found initrd image: /boot/initrd.img-4.13.0-39-generic
+Found linux image: /boot/vmlinuz-4.13.0-38-generic
+Found initrd image: /boot/initrd.img-4.13.0-38-generic
+Found memtest86+ image: /boot/memtest86+.elf
+Found memtest86+ image: /boot/memtest86+.bin
+done
+(Reading database ... 290810 files and directories currently installed.)
+Purging configuration files for linux-image-extra-4.13.0-37-generic (4.13.0-37.42) ...
+Purging configuration files for linux-image-4.13.0-37-generic (4.13.0-37.42) ...
+Examining /etc/kernel/postrm.d .
+run-parts: executing /etc/kernel/postrm.d/initramfs-tools 4.13.0-37-generic /boot/vmlinuz-4.13.0-37-generic
+run-parts: executing /etc/kernel/postrm.d/zz-update-grub 4.13.0-37-generic /boot/vmlinuz-4.13.0-37-generic
+
+Thanks for using this script!!!
+</code></pre><p>使用以下命令重新检查已安装内核的列表。它将只保留三个旧的内核。</p><pre tabindex=0><code>$ dpkg --list | grep linux-image
+ii linux-image-4.13.0-38-generic 4.13.0-38.43 amd64 Linux kernel image for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-4.13.0-39-generic 4.13.0-39.44 amd64 Linux kernel image for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-extra-4.13.0-38-generic 4.13.0-38.43 amd64 Linux kernel extra modules for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-extra-4.13.0-39-generic 4.13.0-39.44 amd64 Linux kernel extra modules for version 4.13.0 on 64 bit x86 SMP
+ii linux-image-generic 4.13.0.39.42 amd64 Generic Linux kernel image
+ii linux-image-unsigned-4.16.7-041607-generic 4.16.7-041607.201805021131 amd64 Linux kernel image for version 4.16.7 on 64 bit x86 SMP
+</code></pre><p>下次你可以调用 <code>do-kernel-upgrade</code> 实用程序来安装新的内核。如果有任何新内核可用，那么它将安装。如果没有，它将报告当前没有可用的内核更新。</p><pre tabindex=0><code>$ do-kernel-upgrade
+Kernel up to date. Finishing
+</code></pre><p>再次运行 <code>do-kernel-purge</code> 命令以确认。如果发现超过三个内核，那么它将移除。如果不是，它将报告没有删除消息。</p><pre tabindex=0><code>$ do-kernel-purge
+
+Ubuntu Kernel Purge - by Caio Oliveira
+
+This script will only keep three versions: the first and the last two, others will be purge
+
+---Current version:
+Linux Kernel 4.16.7-041607 Generic (linux-image-4.16.7-041607-generic)
+Nothing to remove!
+
+Thanks for using this script!!!
+</code></pre><hr><p>via: <a href=https://www.2daygeek.com/uktools-easy-way-to-install-latest-stable-linux-kernel-on-ubuntu-mint-and-derivatives/>https://www.2daygeek.com/uktools-easy-way-to-install-latest-stable-linux-kernel-on-ubuntu-mint-and-derivatives/</a></p><p>作者：<a href=https://www.2daygeek.com/author/prakash/>Prakash Subramanian</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%86%85%E6%A0%B8/ rel=tag>内核</a></li><li class=tags__item><a class="tags__link btn" href=/tags/ubuntu/ rel=tag>Ubuntu</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

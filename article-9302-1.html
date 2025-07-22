@@ -1,0 +1,106 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Linux 或者 UNIX 下调试 Bash Shell 脚本 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Linux 或者 UNIX 下调试 Bash Shell 脚本"><meta property="og:description" content="我写了一个 hello world 小脚本。我如何能调试运行在 Linux 或者类 UNIX 的系统上的 bash shell 脚本呢？"><meta property="og:type" content="article"><meta property="og:url" content="/article-9302-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-02-01T15:13:09+00:00"><meta property="article:modified_time" content="2018-02-01T15:13:09+00:00"><meta itemprop=name content="如何在 Linux 或者 UNIX 下调试 Bash Shell 脚本"><meta itemprop=description content="我写了一个 hello world 小脚本。我如何能调试运行在 Linux 或者类 UNIX 的系统上的 bash shell 脚本呢？"><meta itemprop=datePublished content="2018-02-01T15:13:09+00:00"><meta itemprop=dateModified content="2018-02-01T15:13:09+00:00"><meta itemprop=wordCount content="503"><meta itemprop=keywords content="shell,脚本,调试,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Linux 或者 UNIX 下调试 Bash Shell 脚本</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-02-01T15:13:09Z>February 01, 2018</time></div></div></header><div class="content post__content clearfix"><p>来自我的邮箱：</p><blockquote><p>我写了一个 hello world 小脚本。我如何能调试运行在 Linux 或者类 UNIX 的系统上的 bash shell 脚本呢？</p></blockquote><p>这是 Linux / Unix 系统管理员或新用户最常问的问题。shell 脚本调试可能是一项繁琐的工作（不容易阅读）。调试 shell 脚本有多种方法。</p><p>您需要传递 <code>-x</code> 或 <code>-v</code> 参数，以在 bash shell 中浏览每行代码。</p><p><a href=https://www.cyberciti.biz/tips/wp-content/uploads/2007/01/How-to-debug-a-bash-shell-script-on-Linux-or-Unix.jpg><img src=/data/attachment/album/201802/01/151311iy411omf3kfwy2wy.jpg alt="如何在 Linux 或者 UNIX 下调试 Bash Shell 脚本"></a></p><p>让我们看看如何使用各种方法调试 Linux 和 UNIX 上运行的脚本。</p><h3 id=-x-选项来调试脚本>-x 选项来调试脚本</h3><p>用 <code>-x</code> 选项来运行脚本：</p><pre tabindex=0><code>$ bash -x script-name
+$ bash -x domains.sh
+</code></pre><h3 id=使用-set-内置命令>使用 set 内置命令</h3><p>bash shell 提供调试选项，可以打开或关闭使用 <a href=https://bash.cyberciti.biz/guide/Set_command>set 命令</a>：</p><ul><li><code>set -x</code> : 显示命令及其执行时的参数。</li><li><code>set -v</code> : 显示 shell 输入行作为它们读取的</li></ul><p>可以在 shell 脚本本身中使用上面的两个命令：</p><pre tabindex=0><code>#!/bin/bash
+clear
+
+# turn on debug mode
+set -x
+for f in *
+do
+   file $f
+done
+# turn OFF debug mode
+set +x
+ls
+# more commands
+</code></pre><p>你可以代替 <a href=https://bash.cyberciti.biz/guide/Shebang>标准释伴</a> 行：</p><pre tabindex=0><code>#!/bin/bash
+</code></pre><p>用以下代码（用于调试）：</p><pre tabindex=0><code>#!/bin/bash -xv
+</code></pre><h3 id=使用智能调试功能>使用智能调试功能</h3><p>首先添加一个叫做 <code>_DEBUG</code> 的特殊变量。当你需要调试脚本的时候，设置 <code>_DEBUG</code> 为 <code>on</code>：</p><pre tabindex=0><code>_DEBUG=&#34;on&#34;
+</code></pre><p>在脚本的开头放置以下函数：</p><pre tabindex=0><code>function DEBUG()
+{
+ [ &#34;$_DEBUG&#34; == &#34;on&#34; ] &amp;&amp;  $@
+}
+</code></pre><p>现在，只要你需要调试，只需使用 <code>DEBUG</code> 函数如下：</p><pre tabindex=0><code>DEBUG echo &#34;File is $filename&#34;
+</code></pre><p>或者：</p><pre tabindex=0><code>DEBUG set -x
+Cmd1
+Cmd2
+DEBUG set +x
+</code></pre><p>当调试完（在移动你的脚本到生产环境之前）设置 <code>_DEBUG</code> 为 <code>off</code>。不需要删除调试行。</p><pre tabindex=0><code>_DEBUG=&#34;off&#34; # 设置为非 &#39;on&#39; 的任何字符
+</code></pre><p>示例脚本：</p><pre tabindex=0><code>#!/bin/bash
+_DEBUG=&#34;on&#34;
+function DEBUG()
+{
+ [ &#34;$_DEBUG&#34; == &#34;on&#34; ] &amp;&amp;  $@
+}
+
+DEBUG echo &#39;Reading files&#39;
+for i in *
+do
+  grep &#39;something&#39; $i &gt; /dev/null
+  [ $? -eq 0 ] &amp;&amp; echo &#34;Found in $i file&#34;
+done
+DEBUG set -x
+a=2
+b=3
+c=$(( $a + $b ))
+DEBUG set +x
+echo &#34;$a + $b = $c&#34;
+</code></pre><p>保存并关闭文件。运行脚本如下：</p><pre tabindex=0><code>$ ./script.sh
+</code></pre><p>输出：</p><pre tabindex=0><code>Reading files
+Found in xyz.txt file
++ a=2
++ b=3
++ c=5
++ DEBUG set +x
++ &#39;[&#39; on == on &#39;]&#39;
++ set +x
+2 + 3 = 5
+</code></pre><p>现在设置 <code>_DEBUG</code> 为 <code>off</code>（你需要编辑该文件）：</p><pre tabindex=0><code>_DEBUG=&#34;off&#34;
+</code></pre><p>运行脚本：</p><pre tabindex=0><code>$ ./script.sh
+</code></pre><p>输出：</p><pre tabindex=0><code>Found in xyz.txt file
+2 + 3 = 5
+</code></pre><p>以上是一个简单但非常有效的技术。还可以尝试使用 <code>DEBUG</code> 作为别名而不是函数。</p><h3 id=调试-bash-shell-的常见错误>调试 Bash Shell 的常见错误</h3><p>Bash 或者 sh 或者 ksh 在屏幕上给出各种错误信息，在很多情况下，错误信息可能不提供详细的信息。</p><h4 id=跳过在文件上应用执行权限>跳过在文件上应用执行权限</h4><p>当你 <a href=https://www.cyberciti.biz/faq/hello-world-bash-shell-script/>编写你的第一个 hello world 脚本</a>,您可能会得到一个错误，如下所示：</p><pre tabindex=0><code>bash: ./hello.sh: Permission denied
+</code></pre><p>设置权限使用 <code>chmod</code> 命令:</p><pre tabindex=0><code>$ chmod +x hello.sh
+$ ./hello.sh
+$ bash hello.sh
+</code></pre><h4 id=文件结束时发生意外的错误>文件结束时发生意外的错误</h4><p>如果您收到文件结束意外错误消息，请打开脚本文件，并确保它有打开和关闭引号。在这个例子中，<code>echo</code> 语句有一个开头引号，但没有结束引号：</p><pre tabindex=0><code>#!/bin/bash
+
+...
+....
+
+echo &#39;Error: File not found
+                           ^^^^^^^
+                           missing quote
+</code></pre><p>还要确保你检查缺少的括号和大括号 <code>{}</code>：</p><pre tabindex=0><code>#!/bin/bash
+.....
+[ ! -d $DIRNAME ] &amp;&amp; { echo &#34;Error: Chroot dir not found&#34;; exit 1;
+                                                                    ^^^^^^^^^^^^^
+                                                                    missing brace }
+...
+</code></pre><h4 id=丢失像-fiesac-等关键字>丢失像 fi，esac，;; 等关键字。</h4><p>如果你缺少了结尾的关键字，如 <code>fi</code> 或 <code>;;</code> 你会得到一个错误，如 “XXX 意外”。因此，确保所有嵌套的 <code>if</code> 和 <code>case</code> 语句以适当的关键字结束。有关语法要求的页面。在本例中，缺少 <code>fi</code>：</p><pre tabindex=0><code>#!/bin/bash
+echo &#34;Starting...&#34;
+....
+if [ $1 -eq 10 ]
+then
+   if [ $2 -eq 100 ]
+   then
+      echo &#34;Do something&#34;
+fi
+
+for f in $files
+do
+  echo $f
+done
+
+# 注意 fi 丢失了
+</code></pre><h4 id=在-windows-或-unix-框中移动或编辑-shell-脚本>在 Windows 或 UNIX 框中移动或编辑 shell 脚本</h4><p>不要在 Linux 上创建脚本并移动到 Windows。另一个问题是编辑 Windows 10上的 shell 脚本并将其移动到 UNIX 服务器上。这将由于换行符不同而导致命令没有发现的错误。你可以使用下列命令 <a href=https://www.cyberciti.biz/faq/howto-unix-linux-convert-dos-newlines-cr-lf-unix-text-format/>将 DOS 换行转换为 CR-LF 的Unix/Linux 格式</a> ：</p><pre tabindex=0><code>dos2unix my-script.sh
+</code></pre><h3 id=技巧>技巧</h3><h4 id=技巧-1---发送调试信息输出到标准错误>技巧 1 - 发送调试信息输出到标准错误</h4><p>[标准错误] 是默认错误输出设备，用于写所有系统错误信息。因此，将消息发送到默认的错误设备是个好主意：</p><pre tabindex=0><code># 写错误到标准输出
+echo &#34;Error: $1 file not found&#34;
+#
+# 写错误到标准错误（注意 1&gt;&amp;2 在 echo 命令末尾）
+#
+echo &#34;Error: $1 file not found&#34; 1&gt;&amp;2
+</code></pre><h4 id=技巧-2---在使用-vim-文本编辑器时打开语法高亮>技巧 2 - 在使用 vim 文本编辑器时，打开语法高亮</h4><p>大多数现代文本编辑器允许设置语法高亮选项。这对于检测语法和防止常见错误如打开或关闭引号非常有用。你可以在不同的颜色中看到。这个特性简化了 shell 脚本结构中的编写，语法错误在视觉上截然不同。高亮不影响文本本身的意义，它只为你提示而已。在这个例子中，我的脚本使用了 vim 语法高亮：</p><p><a href=https://www.cyberciti.biz/media/new/tips/2007/01/bash-vim-debug-syntax-highlighting.png>!如何调试 Bash Shell 脚本，在 Linux 或者 UNIX 使用 Vim 语法高亮特性</a>]<a href=https://www.cyberciti.biz/media/new/tips/2007/01/bash-vim-debug-syntax-highlighting.png>7</a></p><h4 id=技巧-3---使用-shellcheck-检查脚本>技巧 3 - 使用 shellcheck 检查脚本</h4><p><a href=https://www.cyberciti.biz/programming/improve-your-bashsh-shell-script-with-shellcheck-lint-script-analysis-tool/>shellcheck 是一个用于静态分析 shell 脚本的工具</a>。可以使用它来查找 shell 脚本中的错误。这是用 Haskell 编写的。您可以使用这个工具找到警告和建议。你可以看看如何在 Linux 或 类UNIX 系统上安装和使用 shellcheck 来改善你的 shell 脚本，避免错误和高效。</p><p>作者：Vivek Gite</p><p>作者是 nixCraft 创造者，一个经验丰富的系统管理员和一个练习 Linux 操作系统/ UNIX shell 脚本的教练。他曾与全球客户和各种行业，包括 IT，教育，国防和空间研究，以及非营利部门。关注他的 <a href=https://twitter.com/nixcraft>推特</a>，<a href=https://facebook.com/nixcraft>脸谱网</a>，<a href=https://plus.google.com/+CybercitiBiz>谷歌+</a> 。</p><hr><p>via: <a href=https://www.cyberciti.biz/tips/debugging-shell-script.html>https://www.cyberciti.biz/tips/debugging-shell-script.html</a></p><p>作者：<a href=https://www.cyberciti.biz>Vivek Gite</a> 译者：<a href=https://github.com/zjon>zjon</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/shell/ rel=tag>shell</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%84%9A%E6%9C%AC/ rel=tag>脚本</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%B0%83%E8%AF%95/ rel=tag>调试</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

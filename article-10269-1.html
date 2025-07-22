@@ -1,0 +1,82 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何使用 Emacs 创建 LaTeX 文档 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何使用 Emacs 创建 LaTeX 文档"><meta property="og:description" content="这篇教程将带你遍历在 Emacs 使用强大的开源排版系统 LaTex 来创建文档的全过程。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10269-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-11-24T10:52:00+00:00"><meta property="article:modified_time" content="2018-11-24T10:52:00+00:00"><meta itemprop=name content="如何使用 Emacs 创建 LaTeX 文档"><meta itemprop=description content="这篇教程将带你遍历在 Emacs 使用强大的开源排版系统 LaTex 来创建文档的全过程。"><meta itemprop=datePublished content="2018-11-24T10:52:00+00:00"><meta itemprop=dateModified content="2018-11-24T10:52:00+00:00"><meta itemprop=wordCount content="515"><meta itemprop=keywords content="LaTex,Emacs,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何使用 Emacs 创建 LaTeX 文档</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-11-24T10:52:00Z>November 24, 2018</time></div></div></header><div class="content post__content clearfix"><blockquote><p>这篇教程将带你遍历在 Emacs 使用强大的开源排版系统 LaTex 来创建文档的全过程。</p></blockquote><p><img src=/data/attachment/album/201811/24/105210i85is8ieli8t4pl0.png alt></p><p>一篇由 Aaron Cocker 写的很棒的文章 “<a href=https://opensource.com/article/17/6/introduction-latex>在 LaTeX 中创建文件的介绍</a>” 中，介绍了 <a href=https://www.latex-project.org>LaTeX 排版系统</a> 并描述了如何使用 <a href=http://www.texstudio.org/>TeXstudio</a> 来创建 LaTeX 文档。同时，他也列举了一些很多用户觉得创建 LaTeX 文档很方便的编辑器。</p><p><a href=https://opensource.com/users/greg-p>Greg Pittman</a> 对这篇文章的评论吸引了我：“当你第一次开始使用 LaTeX 时，他似乎是个很差劲的排版……” 事实也确实如此。LaTeX 包含了多种排版字体和调试，如果你漏了一个特殊的字符比如说感叹号，这会让很多用户感到沮丧，尤其是新手。在本文中，我将介绍如何使用 <a href=https://www.gnu.org/software/emacs/>GNU Emacs</a> 来创建 LaTeX 文档。</p><h3 id=创建你的第一个文档>创建你的第一个文档</h3><p>启动 Emacs：</p><pre tabindex=0><code>emacs -q --no-splash helloworld.org
+</code></pre><p>参数 <code>-q</code> 确保 Emacs 不会加载其他的初始化配置。参数 <code>--no-splash-screen</code> 防止 Emacs 打开多个窗口，确保只打开一个窗口，最后的参数 <code>helloworld.org</code> 表示你要创建的文件名为 <code>helloworld.org</code> 。</p><p><img src=/data/attachment/album/201811/24/105211rn9new4rruwk58cm.png alt="Emacs startup screen" title="Emacs startup screen"></p><p><em>GNU Emacs 打开文件名为 helloworld.org 的窗口时的样子。</em></p><p>现在让我们用 Emacs 添加一些 LaTeX 的标题吧：在菜单栏找到 “Org” 选项并选择 “Export/Publish”。</p><p><img src=/data/attachment/album/201811/24/105214h9jzdjd7itjlz8th.png alt=template_flow.png title=template_flow.png></p><p><em>导入一个默认的模板</em></p><p>在下一个窗口中，Emacs 同时提供了导入和导出一个模板。输入 <code>#</code>（“[#] Insert template”）来导入一个模板。这将会使光标跳转到一个带有 “Options category:” 提示的 mini-buffer 中。第一次你可能不知道这个类型的名字，但是你可以使用 <code>Tab</code> 键来查看所有的补全。输入 “default” 然后按回车，之后你就能看到如下的内容被插入了：</p><pre tabindex=0><code>#+TITLE: helloworld
+#+DATE: &lt;2018-03-12 Mon&gt;
+#+AUTHOR:
+#+EMAIL: makerpm@nubia
+#+OPTIONS: &#39;:nil *:t -:t ::t &lt;:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t c:nil creator:comment d:(not &#34;LOGBOOK&#34;) date:t
+#+OPTIONS: e:t email:nil f:t inline:t num:t p:nil pri:nil stat:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:t todo:t |:t
+#+CREATOR: Emacs 25.3.1 (Org mode 8.2.10)
+#+DESCRIPTION:
+#+EXCLUDE_TAGS: noexport
+#+KEYWORDS:
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+</code></pre><p>根据自己的需求修改标题、日期、作者和 email。我自己的话是下面这样的：</p><pre tabindex=0><code>#+TITLE: Hello World! My first LaTeX document
+#+DATE: \today
+#+AUTHOR: Sachin Patil
+#+EMAIL: psachin@redhat.com
+</code></pre><p>我们目前还不想创建一个目录，所以要将 <code>toc</code> 的值由 <code>t</code> 改为 <code>nil</code>，具体如下：</p><pre tabindex=0><code>#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:nil todo:t |:t
+</code></pre><p>现在让我们添加一个章节和段落吧。章节是由一个星号（<code>*</code>）开头。我们从 Aaron 的贴子（来自 <a href=https://www.lipsum.com/feed/html>Lipsum Lorem Ipsum 生成器</a>）复制一些文本过来：</p><pre tabindex=0><code>* Introduction
+
+  \paragraph{}
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras lorem
+  nisi, tincidunt tempus sem nec, elementum feugiat ipsum. Nulla in
+  diam libero. Nunc tristique ex a nibh egestas sollicitudin.
+
+  \paragraph{}
+  Mauris efficitur vitae ex id egestas. Vestibulum ligula felis,
+  pulvinar a posuere id, luctus vitae leo. Sed ac imperdiet orci, non
+  elementum leo. Nullam molestie congue placerat. Phasellus tempor et
+  libero maximus commodo.
+</code></pre><p><img src=/data/attachment/album/201811/24/105218kt8tkrfijj7g8hyf.png alt=helloworld_file.png title=helloworld_file.png></p><p><em>helloworld.org 文件</em></p><p>将内容修改好后，我们要把它导出为 PDF 格式。再次在 “Org” 的菜单选项中选择 “Export/Publish”，但是这次，要输入 <code>l</code>（“export to LaTeX”），紧跟着输入 <code>o</code>（“as PDF file and open”）。这次操作不止会打开 PDF 文件让你浏览，同时也会将文件保存为 <code>helloworld.pdf</code>，并保存在与 <code>helloworld.org</code> 的同一个目录下。</p><p><img src=/data/attachment/album/201811/24/105220c06y0rr0o22hue33.png alt=org_to_pdf.png title=org_to_pdf.png></p><p><em>将 helloworld.org 导出为 helloworld.pdf</em></p><p><img src=/data/attachment/album/201811/24/105222prduoc80cbi0hudo.png alt=org_and_pdf_file.png title=org_and_pdf_file.png></p><p><em>打开 helloworld.pdf 文件</em></p><p>你也可以按下 <code>Alt + x</code> 键，然后输入 <code>org-latex-export-to-pdf</code> 来将 org 文件导出为 PDF 文件。可以使用 <code>Tab</code> 键来自动补全命令。</p><p>Emacs 也会创建 <code>helloworld.tex</code> 文件来让你控制具体的内容。</p><p><img src=/data/attachment/album/201811/24/105225xrkr2jgq5tgjfxrg.png alt=org_tex_pdf.png title=org_tex_pdf.png></p><p><em>Emacs 在三个不同的窗口中分别打开 LaTeX，org 和 PDF 文档。</em></p><p>你可以使用命令来将 <code>.tex</code> 文件转换为 <code>.pdf</code> 文件：</p><pre tabindex=0><code>pdflatex helloworld.tex
+</code></pre><p>你也可以将 <code>.org</code> 文件输出为 HTML 或是一个简单的文本格式的文件。我最喜欢 <code>.org</code> 文件的原因是他们可以被推送到 <a href=https://github.com>GitHub</a> 上，然后同 markdown 一样被渲染。</p><h3 id=创建一个-latex-的-beamer-简报>创建一个 LaTeX 的 Beamer 简报</h3><p>现在让我们更进一步，通过少量的修改上面的文档来创建一个 LaTeX <a href=https://www.sharelatex.com/learn/Beamer>Beamer</a> 简报，如下所示：</p><pre tabindex=0><code>#+TITLE: LaTeX Beamer presentation
+#+DATE: \today
+#+AUTHOR: Sachin Patil
+#+EMAIL: psachin@redhat.com
+#+OPTIONS: &#39;:nil *:t -:t ::t &lt;:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t c:nil creator:comment d:(not &#34;LOGBOOK&#34;) date:t
+#+OPTIONS: e:t email:nil f:t inline:t num:t p:nil pri:nil stat:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:nil todo:t |:t
+#+CREATOR: Emacs 25.3.1 (Org mode 8.2.10)
+#+DESCRIPTION:
+#+EXCLUDE_TAGS: noexport
+#+KEYWORDS:
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+LATEX_CLASS: beamer
+#+BEAMER_THEME: Frankfurt
+#+BEAMER_INNER_THEME: rounded
+
+
+* Introduction
+*** Programming
+    - Python
+    - Ruby
+
+*** Paragraph one
+
+    Lorem ipsum dolor sit amet, consectetur adipiscing
+    elit. Cras lorem nisi, tincidunt tempus sem nec, elementum feugiat
+    ipsum. Nulla in diam libero. Nunc tristique ex a nibh egestas
+    sollicitudin.
+
+*** Paragraph two
+
+    Mauris efficitur vitae ex id egestas. Vestibulum
+    ligula felis, pulvinar a posuere id, luctus vitae leo. Sed ac
+    imperdiet orci, non elementum leo. Nullam molestie congue
+    placerat. Phasellus tempor et libero maximus commodo.
+
+* Thanks
+*** Links
+    - Link one
+    - Link two
+</code></pre><p>我们给标题增加了三行：</p><pre tabindex=0><code>#+LATEX_CLASS: beamer
+#+BEAMER_THEME: Frankfurt
+#+BEAMER_INNER_THEME: rounded
+</code></pre><p>导出为 PDF，按下 <code>Alt + x</code> 键后输入 <code>org-beamer-export-to-pdf</code>。</p><p><img src=/data/attachment/album/201811/24/105226ibo2jf23hcofqoq7.png alt=latex_beamer_presentation.png title=latex_beamer_presentation.png></p><p><em>用 Emacs 和 Org 模式创建的 Latex Beamer 简报</em></p><p>希望你会爱上使用 Emacs 来创建 LaTex 和 Beamer 文档（注意：使用快捷键比用鼠标更快些）。Emacs 的 Org 模式提供了比我在这篇文章中说的更多的功能，你可以在 <a href=https://orgmode.org/worg/org-tutorials/org-latex-export.html>orgmode.org</a> 获取更多的信息.</p><hr><p>via: <a href=https://opensource.com/article/18/4/how-create-latex-documents-emacs>https://opensource.com/article/18/4/how-create-latex-documents-emacs</a></p><p>作者：<a href=https://opensource.com/users/psachin>Sachin Patil</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/oneforalone>oneforalone</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/latex/ rel=tag>LaTex</a></li><li class=tags__item><a class="tags__link btn" href=/tags/emacs/ rel=tag>Emacs</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

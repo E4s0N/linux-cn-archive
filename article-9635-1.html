@@ -1,0 +1,77 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>给初学者看的 shuf 命令教程 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="给初学者看的 shuf 命令教程"><meta property="og:description" content="使用 shuf 命令，我们可以随机打乱给定输入文件的行。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9635-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-05-13T07:48:38+00:00"><meta property="article:modified_time" content="2018-05-13T07:48:38+00:00"><meta itemprop=name content="给初学者看的 shuf 命令教程"><meta itemprop=description content="使用 shuf 命令，我们可以随机打乱给定输入文件的行。"><meta itemprop=datePublished content="2018-05-13T07:48:38+00:00"><meta itemprop=dateModified content="2018-05-13T07:48:38+00:00"><meta itemprop=wordCount content="192"><meta itemprop=keywords content="shuf,随机,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>给初学者看的 shuf 命令教程</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-05-13T07:48:38Z>May 13, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201805/13/074840tw9rfrjwmzrmm9jb.png alt></p><p><code>shuf</code> 命令用于在类 Unix 操作系统中生成随机排列。使用 <code>shuf</code> 命令，我们可以随机打乱给定输入文件的行。<code>shuf</code> 命令是 GNU Coreutils 的一部分，因此你不必担心安装问题。在这个简短的教程中，让我向你展示一些 <code>shuf</code> 命令的例子。</p><h3 id=带例子的-shuf-命令教程>带例子的 shuf 命令教程</h3><p>我有一个名为 <code>ostechnix.txt</code> 的文件，内容如下：</p><pre tabindex=0><code>$ cat ostechnix.txt
+line1
+line2
+line3
+line4
+line5
+line6
+line7
+line8
+line9
+line10
+</code></pre><p>现在让我们以随机顺序显示上面的行。为此，请运行：</p><pre tabindex=0><code>$ shuf ostechnix.txt
+line2
+line8
+line5
+line10
+line7
+line1
+line4
+line6
+line9
+line3
+</code></pre><p>看到了吗？上面的命令将名为 <code>ostechnix.txt</code> 中的行随机排列并输出了结果。</p><p>你可能想将输出写入另一个文件。例如，我想将输出保存到 <code>output.txt</code> 中。为此，请先创建 <code>output.txt</code>：</p><pre tabindex=0><code>$ touch output.txt
+</code></pre><p>然后，像下面使用 <code>-o</code> 标志将输出写入该文件：</p><pre tabindex=0><code>$ shuf ostechnix.txt -o output.txt
+</code></pre><p>上面的命令将随机随机打乱 <code>ostechnix.txt</code> 的内容并将输出写入 <code>output.txt</code>。你可以使用命令查看 <code>output.txt</code> 的内容：</p><pre tabindex=0><code>$ cat output.txt
+
+line2
+line8
+line9
+line10
+line1
+line3
+line7
+line6
+line4
+line5
+</code></pre><p>我只想显示文件中的任意一行。我该怎么做？很简单！</p><pre tabindex=0><code>$ shuf -n 1 ostechnix.txt
+line6
+</code></pre><p>同样，我们可以选择前 “n” 个随机条目。以下命令将只显示前五个随机条目：</p><pre tabindex=0><code>$ shuf -n 5 ostechnix.txt
+line10
+line4
+line5
+line9
+line3
+</code></pre><p>如下所示，我们可以直接使用 <code>-e</code> 标志传入输入，而不是从文件中读取行：</p><pre tabindex=0><code>$ shuf -e line1 line2 line3 line4 line5
+line1
+line3
+line5
+line4
+line2
+</code></pre><p>你也可以传入数字：</p><pre tabindex=0><code>$ shuf -e 1 2 3 4 5
+3
+5
+1
+4
+2
+</code></pre><p>要快速在给定范围选择一个，请改用此命令：</p><pre tabindex=0><code>$ shuf -n 1 -e 1 2 3 4 5
+</code></pre><p>或者，选择下面的任意三个随机数字：</p><pre tabindex=0><code>$ shuf -n 3 -e 1 2 3 4 5
+3
+5
+1
+</code></pre><p>我们也可以在特定范围内生成随机数。例如，要显示 1 到 10 之间的随机数，只需使用：</p><pre tabindex=0><code>$ shuf -i 1-10
+1
+9
+8
+2
+4
+7
+6
+3
+10
+5
+</code></pre><p>有关更多详细信息，请参阅手册页。</p><pre tabindex=0><code>$ man shuf
+</code></pre><p>今天就是这些。还有更多更好的东西。敬请关注！</p><p>干杯!</p><hr><p>via: <a href=https://www.ostechnix.com/the-shuf-command-tutorial-with-examples-for-beginners/>https://www.ostechnix.com/the-shuf-command-tutorial-with-examples-for-beginners/</a></p><p>作者：<a href=https://www.ostechnix.com/author/sk/>SK</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/shuf/ rel=tag>shuf</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E9%9A%8F%E6%9C%BA/ rel=tag>随机</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

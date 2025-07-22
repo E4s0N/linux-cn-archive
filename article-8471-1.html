@@ -1,0 +1,70 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>命令行的生活是如此的 F**K - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="命令行的生活是如此的 F**K"><meta property="og:description" content="你是不是经常在终端敲错命令，其实这都是因为该死的终端不配合，不能领会你的意思。
+每当这个时候，甚至当你一再敲错的时候，你的内心肯定是崩溃的，一定在默念“……”。
+而现在，是让你的终端觉悟的时候了！"><meta property="og:type" content="article"><meta property="og:url" content="/article-8471-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-05-03T09:42:00+00:00"><meta property="article:modified_time" content="2017-05-03T09:42:00+00:00"><meta itemprop=name content="命令行的生活是如此的 F**K"><meta itemprop=description content="你是不是经常在终端敲错命令，其实这都是因为该死的终端不配合，不能领会你的意思。
+每当这个时候，甚至当你一再敲错的时候，你的内心肯定是崩溃的，一定在默念“……”。
+而现在，是让你的终端觉悟的时候了！"><meta itemprop=datePublished content="2017-05-03T09:42:00+00:00"><meta itemprop=dateModified content="2017-05-03T09:42:00+00:00"><meta itemprop=wordCount content="343"><meta itemprop=keywords content="命令行,fuck,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>命令行的生活是如此的 F**K</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-05-03T09:42:00Z>May 03, 2017</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/201705/03/094006s9eoysqgw9z7slzq.jpg alt></p><p>你是不是经常在终端敲错命令，其实这都是因为该死的终端不配合，不能领会你的意思。</p><p>每当这个时候，甚至当你一再敲错的时候，你的内心肯定是崩溃的，一定在默念“……”。</p><p>而现在，是让你的终端觉悟的时候了！</p><p>有位名为 <a href=https://twitter.com/liamosaur/>@liamosaur</a> 的哥们就忍不住对自己的终端发出了愤怒的<a href=https://twitter.com/liamosaur/status/506975850596536320>吼声</a>，并付诸实践：</p><p><img src=https://img.linux.net.cn/data/attachment/album/201705/03/084650rjktt6969979tk8z.jpg alt></p><p>受此启发， 一位名为 <a href=https://github.com/nvbn>Vladimir Iakovlev</a> 程序员对这个该死的终端发出了致命一击！他以及他的 <a href=https://github.com/nvbn/thefuck/graphs/contributors>90 位愤怒的小伙伴们</a>打造出了一个名为 “<a href=https://github.com/nvbn/thefuck>thefuck</a>” 的神器！</p><p><em>当你的终端没有按你想象的输入命令时，请 <code>fuck</code> 它！</em></p><p><em>当你的终端没有按你想象的以 sudo 执行命令时，请 <code>fuck</code> 它！</em></p><p><em>当你的的终端不知道填上显而易见的参数时，请 <code>fuck</code> 它！</em></p><p>当你输入错误的命令时：</p><pre tabindex=0><code>➜ puthon
+No command &#39;puthon&#39; found, did you mean:
+ Command &#39;python&#39; from package &#39;python-minimal&#39; (main)
+ Command &#39;python&#39; from package &#39;python3&#39; (main)
+zsh: command not found: puthon
+
+➜ fuck
+python [enter/↑/↓/ctrl+c]
+Python 3.4.2 (default, Oct  8 2014, 13:08:17)
+...
+</code></pre><p>当你忘记输入参数时：</p><pre tabindex=0><code>➜ git push
+fatal: The current branch master has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin master
+
+➜ fuck
+git push --set-upstream origin master [enter/↑/↓/ctrl+c]
+Counting objects: 9, done.
+...
+</code></pre><p>当你输入错误的参数时：</p><pre tabindex=0><code>➜ git brnch
+git: &#39;brnch&#39; is not a git command. See &#39;git --help&#39;.
+
+Did you mean this?
+    branch
+
+➜ fuck
+git branch [enter/↑/↓/ctrl+c]
+* master
+</code></pre><p>当你忘记输入 <code>sudo</code> 时：</p><pre tabindex=0><code>➜ apt-get install vim
+E: Could not open lock file /var/lib/dpkg/lock - open (13: Permission denied)
+E: Unable to lock the administration directory (/var/lib/dpkg/), are you root?
+
+➜ fuck
+sudo apt-get install vim [enter/↑/↓/ctrl+c]
+[sudo] password for nvbn:
+Reading package lists... Done
+...
+</code></pre><p>如果生活是如此的不如意，你可以不断的“教诲”它：</p><pre tabindex=0><code>➜ aptget install vim
+No command &#39;aptget&#39; found, did you mean:
+ Command &#39;apt-get&#39; from package &#39;apt&#39; (main)
+zsh: command not found: aptget
+➜ fuck
+aot-get install vim [enter/ctrl-c]
+E: Could not open lock file /var/lib/dpkg/lock - open (13: Permission denied)
+E: Unable to lock the administration directory (/var/lib/dpkg), are you root?
+</code></pre><p>还需要权限？再来！</p><pre tabindex=0><code>➜ fuck
+sudo apt-get install vim [enter/ctrl-c]
+[sudo] password for nvbn:
+Reading package lists... Done
+Building dependency tree... 0%
+... ...
+</code></pre><p><img src=https://img.linux.net.cn/data/attachment/album/201705/03/085931v3zcf73j7schslv7.gif alt="虐我千百遍 我待如初恋"></p><p>好了，我想你肯定也想拥有这样的神器，请如此这般……</p><h3 id=我要这个神器>我要这个神器！</h3><h4 id=环境需求>环境需求</h4><p>首先，你需要这些：</p><ul><li>python (2.7+ or 3.3+)</li><li>pip</li><li>python-dev</li></ul><h4 id=安装>安装</h4><p>然后，在不同的操作系统上（没错，有 Python 的地方就行）：</p><p>在 Ubuntu 上可以通过 <code>apt</code> 安装：</p><pre tabindex=0><code>sudo apt update
+sudo apt install python3-dev python3-pip
+pip3 install --user thefuck
+</code></pre><p>OS X 上使用 <a href=http://brew.sh/>Homebrew</a> 来安装：</p><pre tabindex=0><code>brew install thefuck
+</code></pre><p>其它的系统上，只要你有 <code>pip</code> 就行：</p><pre tabindex=0><code>pip install --user thefuck
+</code></pre><p>更多的 Linux 发行版，可以看<a href=https://github.com/nvbn/thefuck/wiki/Installation>这里</a>。</p><h4 id=设置别名>设置别名</h4><p>上述安装的软件包名字是：“thefuck”——别问我为啥不能直接叫 “fuck”。所以，你可以设置个别名：</p><p><strong>Bash</strong></p><p>将下述行加入到 <code>.bashrc</code> 或 <code>.bash_profile</code> （用于 OSX）：</p><pre tabindex=0><code>eval &#34;$(thefuck --alias)&#34;
+</code></pre><p><strong>ZSH</strong></p><p>将下述行加入到 <code>.zshrc</code>:</p><pre tabindex=0><code>eval &#34;$(thefuck --alias)&#34;
+</code></pre><p>其它的 shell ，包括 powershell，可以参考<a href=https://github.com/nvbn/thefuck/wiki/Shell-aliases>这里</a>。</p><p>当然，我觉得我更喜欢给它起个别名叫 “<code>kao</code>”。:D</p><p>要让别名立刻生效，你需要用 <code>source</code> 命令，如：</p><pre tabindex=0><code>source ~/.bashrc 
+或 
+source ~/.zshrc
+</code></pre><h3 id=它是怎么让我念头通达的>它是怎么让我念头通达的？</h3><p>thefuck 这个软件包包含了<a href=https://github.com/nvbn/thefuck#how-it-works>上百个匹配规则</a>，专门用来修改你的那些错误，贴心地将它们修改成应该的样子！</p><p>具体有哪些规则，你可以看看<a href=https://github.com/nvbn/thefuck#how-it-works>这里</a>，或者试试就知道了。</p><p>当然，如果你经常犯一些<a href=https://github.com/nvbn/thefuck/issues>独特的错误</a>，你也可以建立自己的规则，而且不妨<a href=https://github.com/nvbn/thefuck/pulls>提交拉取请求</a>给这个项目，找到和你一样独特的小伙伴们。</p><p>还等什么？赶快去<strong>装</strong>啊！</p><p>（本文中的例子和图片来自<a href=https://github.com/nvbn/thefuck>该项目</a>。）</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/ rel=tag>命令行</a></li><li class=tags__item><a class="tags__link btn" href=/tags/fuck/ rel=tag>fuck</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

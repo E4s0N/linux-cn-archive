@@ -1,0 +1,54 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在云端自动化设置和交付虚拟机 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在云端自动化设置和交付虚拟机"><meta property="og:description" content="通过使用 Testcloud 自动化设置过程并交付一个准备运行的虚拟机，在几分钟之内准备好一个云镜像。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14524-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-04-30T13:03:41+00:00"><meta property="article:modified_time" content="2022-04-30T13:03:41+00:00"><meta itemprop=name content="在云端自动化设置和交付虚拟机"><meta itemprop=description content="通过使用 Testcloud 自动化设置过程并交付一个准备运行的虚拟机，在几分钟之内准备好一个云镜像。"><meta itemprop=datePublished content="2022-04-30T13:03:41+00:00"><meta itemprop=dateModified content="2022-04-30T13:03:41+00:00"><meta itemprop=wordCount content="317"><meta itemprop=keywords content="虚拟机,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在云端自动化设置和交付虚拟机</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-04-30T13:03:41Z>April 30, 2022</time></div></div></header><div class="content post__content clearfix"><blockquote><p>通过使用 Testcloud 自动化设置过程并交付一个准备运行的虚拟机，在几分钟之内准备好一个云镜像。</p></blockquote><p><img src=/data/attachment/album/202204/30/130336l2l1a77p7m8hwp28.jpg alt title="Looking at a map"></p><p>如果你是一个在云端使用 Fedora <a href=https://en.wikipedia.org/wiki/Qcow>qcow2 镜像</a> 的开发者或者爱好者，在一个镜像准备使用之前，你总是不得不做一大堆初始化设置。我对此深有体会，所以我很想找到一种使设置过程更加简单的方法。碰巧，整个 Fedora 质量保证团队也有同感，所以我们开发了 <a href=https://pagure.io/testcloud>Testcloud</a> 。</p><p>Testcloud 是一个可以轻松的在几分钟之内准备云镜像测试的工具。它用几个命令就可以在云端自动化设置并交付准备运行的虚拟机（VM）。</p><p>Testcloud：</p><ol><li>下载 qcow2 镜像</li><li>用你选择的名称创建实例</li><li>创建一个密码为 <code>passw0rd</code>，用户名为 <code>fedora</code> 的用户</li><li>分配一个 IP 地址，以便于你之后用 SSH 登录到云端</li><li>启动、停止、删除和列出一个实例</li></ol><h3 id=安装-testcloud>安装 Testcloud</h3><p>要开始你的旅程，首先你必须安装 Testcloud 软件包。你可以通过终端或者“软件”应用来安装它。在这两种情况下，软件包的名字都是 <code>testcloud</code> 。用以下命令安装：</p><pre tabindex=0><code>$ sudo dnf install testcloud -y
+</code></pre><p>一旦安装完成，将你所需要的用户添加到 <code>testcloud</code> 用户组，这有助于 Testcloud 自动完成设置过程的剩余部分。执行这两个命令，添加你的用户到 <code>testcloud</code> 用户组，并通过提升组权限重启会话：</p><pre tabindex=0><code>$ sudo usermod -a -G testcloud $USER
+$ su - $USER
+</code></pre><p><img src=/data/attachment/album/202204/30/130342f3lllvviqmevze44.png alt="添加用户到 testcloud 组" title="Add user to testcloud group"></p><h3 id=像老手一样玩转云镜像>像老手一样玩转云镜像</h3><p>一旦你的用户获得了所需的组权限，创建一个实例：</p><pre tabindex=0><code>$ testcloud instance create &lt;instance name&gt; -u &lt;url for qcow2 image&gt;
+</code></pre><p>或者，你可以使用 <code>fedora:latest/fedora:XX</code>（<code>XX</code> 是你的 Fedora 发行版本）来代替 完整的 URL 地址：</p><pre tabindex=0><code>$ testcloud instance create &lt;instance name&gt; -u fedora:latest
+</code></pre><p>这将返回你的虚拟机的 IP 地址：</p><pre tabindex=0><code>$ testcloud instance create testcloud272593 -u https://download.fedoraproject.org/pub/fedora/linux/releases/33/Cloud/x86_64/images/Fedora-Cloud-Base-33-1.2.x86_64.qcow2  
+[...]
+INFO:Successfully booted instance testcloud272593
+The IP of vm testcloud272593:  192.168.122.202
+------------------------------------------------------------
+To connect to the VM, use the following command (password is &#39;passw0rd&#39;):
+ssh fedora@192.168.122.202
+</code></pre><p>你可以用默认用户 <code>fedora</code> 登录，密码是 <code>passw0rd</code>（注意是零）。你可以使用 <code>ssh</code>、<code>virt-manager</code> 或者支持连接到 libvirt 虚拟机方式来连接到它。</p><p>另一种创建 Fedora 云的方式是：</p><pre tabindex=0><code>$ testcloud instance create testcloud193 -u fedora:33
+ 
+WARNING:Not proceeding with backingstore cleanup because there are some testcloud instances running.
+You can fix this by following command(s):
+testcloud instance stop testcloud272593
+
+DEBUG:Local downloads will be stored in /var/lib/testcloud/backingstores.
+DEBUG:successfully changed SELinux context for image /var/lib/testcloud/backingstores/Fedora-Cloud-Base-33-1.2.x86_64.qcow2
+DEBUG:Creating instance directories
+DEBUG:creating seed image /var/lib/testcloud/instances/testcloud193/testcloud193-seed.img
+INFO:Seed image generated successfully
+INFO:Successfully booted instance testcloud193
+The IP of vm testcloud193:  192.168.122.225
+------------------------------------------------------------
+To connect to the VM, use the following command (password is &#39;passw0rd&#39;):
+ssh fedora@192.168.122.225
+------------------------------------------------------------
+</code></pre><h3 id=玩转实例>玩转实例</h3><p>Testcloud 可以用来管理实例。这包括像列出镜像或者停止和启动一个实例等活动。</p><p>要列出实例，使用 <code>list</code> 子命令：</p><pre tabindex=0><code>$ testcloud instance list                
+Name                            IP                      State    
+------------------------------------------------------------
+testcloud272593                 192.168.122.202         running    
+testcloud193                    192.168.122.225         running    
+testcloud252793                 192.168.122.146         shutoff    
+testcloud93                     192.168.122.152         shutoff
+</code></pre><p>要停止一个运行的实例：</p><pre tabindex=0><code>$ testcloud instance stop testcloud193  
+DEBUG:stop instance: testcloud193
+DEBUG:stopping instance testcloud193.
+</code></pre><p>要删除一个实例：</p><pre tabindex=0><code>$ testcloud instance destroy testcloud193  
+DEBUG:remove instance: testcloud193
+DEBUG:removing instance testcloud193 from libvirt.
+DEBUG:Unregistering instance from libvirt.
+DEBUG:removing instance /var/lib/testcloud/instances/testcloud193 from disk
+</code></pre><p>要重启一个运行中的实例：</p><pre tabindex=0><code>$ testcloud instance reboot testcloud93                                                                                        
+DEBUG:stop instance: testcloud93
+[...]
+INFO:Successfully booted instance testcloud93
+The IP of vm testcloud93:  192.168.122.152
+usage: testcloud [-h] {instance,image} ...
+</code></pre><p>尝试一下 Testcloud ，在评论中让我知道你的想法。</p><hr><p>via: <a href=https://opensource.com/article/21/1/testcloud-virtual-machines>https://opensource.com/article/21/1/testcloud-virtual-machines</a></p><p>作者：<a href=https://opensource.com/users/sumantro>Sumantro Mukherjee</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/hwlife>hwlife</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/ rel=tag>虚拟机</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

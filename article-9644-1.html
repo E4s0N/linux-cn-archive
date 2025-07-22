@@ -1,0 +1,95 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>基于命令行的任务管理器 Taskwarrior - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="基于命令行的任务管理器 Taskwarrior"><meta property="og:description" content="Taskwarrior 在命令行里管理你的 TODO 列表。它灵活，快速，高效，不显眼，它默默做自己的事情让你避免自己管理。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9644-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-05-15T10:46:03+00:00"><meta property="article:modified_time" content="2018-05-15T10:46:03+00:00"><meta itemprop=name content="基于命令行的任务管理器 Taskwarrior"><meta itemprop=description content="Taskwarrior 在命令行里管理你的 TODO 列表。它灵活，快速，高效，不显眼，它默默做自己的事情让你避免自己管理。"><meta itemprop=datePublished content="2018-05-15T10:46:03+00:00"><meta itemprop=dateModified content="2018-05-15T10:46:03+00:00"><meta itemprop=wordCount content="533"><meta itemprop=keywords content="todo,Taskwarrior,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>基于命令行的任务管理器 Taskwarrior</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-05-15T10:46:03Z>May 15, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201805/15/104609d5en8uesea8gepn8.jpg alt></p><p>Taskwarrior 是一个灵活的<a href=https://taskwarrior.org/>命令行任务管理程序</a>，用他们<a href=https://taskwarrior.org/docs/start.html>自己的话说</a>：</p><blockquote><p>Taskwarrior 在命令行里管理你的 TODO 列表。它灵活，快速，高效，不显眼，它默默做自己的事情让你避免自己管理。</p></blockquote><p>Taskwarrior 是高度可定制的，但也可以“立即使用”。在本文中，我们将向你展示添加和完成任务的基本命令，然后我们将介绍几个更高级的命令。最后，我们将向你展示一些基本的配置设置，以开始自定义你的设置。</p><h3 id=安装-taskwarrior>安装 Taskwarrior</h3><p>Taskwarrior 在 Fedora 仓库中是可用的，所有安装它很容易：</p><pre tabindex=0><code>sudo dnf install task
+</code></pre><p>一旦完成安装，运行 <code>task</code> 命令。第一次运行将会创建一个 <code>~/.taskrc</code> 文件。</p><pre tabindex=0><code>$ task
+A configuration file could not be found in ~
+
+Would you like a sample /home/link/.taskrc created, so Taskwarrior can proceed? (yes/no) yes
+[task next]
+No matches.
+</code></pre><h3 id=添加任务>添加任务</h3><p>添加任务快速而不显眼。</p><pre tabindex=0><code>$ task add Plant the wheat
+Created task 1.
+</code></pre><p>运行 <code>task</code> 或者 <code>task list</code> 来显示即将来临的任务。</p><pre tabindex=0><code>$ task list
+
+ID Age Description Urg
+ 1 8s Plant the wheat 0
+
+1 task
+</code></pre><p>让我们添加一些任务来完成这个示例。</p><pre tabindex=0><code>$ task add Tend the wheat
+Created task 2.
+$ task add Cut the wheat
+Created task 3.
+$ task add Take the wheat to the mill to be ground into flour
+Created task 4.
+$ task add Bake a cake
+Created task 5.
+</code></pre><p>再次运行 <code>task</code> 来查看列表。</p><pre tabindex=0><code>[task next]
+
+ID Age Description Urg
+ 1 3min Plant the wheat 0
+ 2 22s Tend the wheat 0
+ 3 16s Cut the wheat 0
+ 4 8s Take the wheat to the mill to be ground into flour 0
+ 5 2s Bake a cake 0
+
+5 tasks
+</code></pre><h3 id=完成任务>完成任务</h3><p>将一个任务标记为完成， 查找其 ID 并运行：</p><pre tabindex=0><code>$ task 1 done
+Completed task 1 &#39;Plant the wheat&#39;.
+Completed 1 task.
+</code></pre><p>你也可以用它的描述来标记一个任务已完成。</p><pre tabindex=0><code>$ task &#39;Tend the wheat&#39; done
+Completed task 1 &#39;Tend the wheat&#39;.
+Completed 1 task.
+</code></pre><p>通过使用 <code>add</code>、<code>list</code> 和 <code>done</code>，你可以说已经入门了。</p><h3 id=设定截止日期>设定截止日期</h3><p>很多任务不需要一个截止日期：</p><pre tabindex=0><code>task add Finish the article on Taskwarrior
+</code></pre><p>但是有时候，设定一个截止日期正是你需要提高效率的动力。在添加任务时使用 <code>due</code> 修饰符来设置特定的截止日期。</p><pre tabindex=0><code>task add Finish the article on Taskwarrior due:tomorrow
+</code></pre><p><code>due</code> 非常灵活。它接受特定日期 (<code>2017-02-02</code>) 或 ISO-8601 (<code>2017-02-02T20:53:00Z</code>)，甚至相对时间 (<code>8hrs</code>)。可以查看所有示例的 <a href=https://taskwarrior.org/docs/dates.html>Date & Time</a> 文档。</p><p>日期也不只有截止日期，Taskwarrior 有 <code>scheduled</code>, <code>wait</code> 和 <code>until</code> 选项。</p><pre tabindex=0><code>task add Proof the article on Taskwarrior scheduled:thurs
+</code></pre><p>一旦日期（本例中的星期四）通过，该任务就会被标记为 <code>READY</code> 虚拟标记。它会显示在 <code>ready</code> 报告中。</p><pre tabindex=0><code>$ task ready
+
+ID Age S Description Urg
+ 1 2s 1d Proof the article on Taskwarrior 5
+</code></pre><p>要移除一个日期，使用空白值来 <code>modify</code> 任务：</p><pre tabindex=0><code>$ task 1 modify scheduled:
+</code></pre><h3 id=查找任务>查找任务</h3><p>如果没有使用正则表达式搜索的能力，任务列表是不完整的，对吧？</p><pre tabindex=0><code>$ task &#39;/.* the wheat/&#39; list
+
+ID Age Project Description Urg
+ 2 42min Take the wheat to the mill to be ground into flour 0
+ 1 42min Home Cut the wheat 1
+
+2 tasks
+</code></pre><h3 id=自定义-taskwarrior>自定义 Taskwarrior</h3><p>记得我们在开头创建的文件 (<code>~/.taskrc</code>)吗？让我们来看看默认设置：</p><pre tabindex=0><code># [Created by task 2.5.1 2/9/2017 16:39:14]
+# Taskwarrior program configuration file.
+# For more documentation, see http://taskwarrior.org or try &#39;man task&#39;, &#39;man task-color&#39;,
+# &#39;man task-sync&#39; or &#39;man taskrc&#39;
+
+# Here is an example of entries that use the default, override and blank values
+# variable=foo -- By specifying a value, this overrides the default
+# variable= -- By specifying no value, this means no default
+# #variable=foo -- By commenting out the line, or deleting it, this uses the default
+
+# Use the command &#39;task show&#39; to see all defaults and overrides
+
+# Files
+data.location=~/.task
+
+# Color theme (uncomment one to use)
+#include /usr//usr/share/task/light-16.theme
+#include /usr//usr/share/task/light-256.theme
+#include /usr//usr/share/task/dark-16.theme
+#include /usr//usr/share/task/dark-256.theme
+#include /usr//usr/share/task/dark-red-256.theme
+#include /usr//usr/share/task/dark-green-256.theme
+#include /usr//usr/share/task/dark-blue-256.theme
+#include /usr//usr/share/task/dark-violets-256.theme
+#include /usr//usr/share/task/dark-yellow-green.theme
+#include /usr//usr/share/task/dark-gray-256.theme
+#include /usr//usr/share/task/dark-gray-blue-256.theme
+#include /usr//usr/share/task/solarized-dark-256.theme
+#include /usr//usr/share/task/solarized-light-256.theme
+#include /usr//usr/share/task/no-color.theme
+</code></pre><p>现在唯一生效的选项是 <code>data.location=~/.task</code>。要查看活动配置设置（包括内置的默认设置），运行 <code>show</code>。</p><pre tabindex=0><code>task show
+</code></pre><p>要改变设置，使用 <code>config</code>。</p><pre tabindex=0><code>$ task config displayweeknumber no
+Are you sure you want to add &#39;displayweeknumber&#39; with a value of &#39;no&#39;? (yes/no) yes
+Config file /home/link/.taskrc modified.
+</code></pre><h3 id=示例>示例</h3><p>这些只是你可以用 Taskwarrior 做的一部分事情。</p><p>将你的任务分配到一个项目：</p><pre tabindex=0><code>task &#39;Fix leak in the roof&#39; modify project:Home
+</code></pre><p>使用 <code>start</code> 来标记你正在做的事情，这可以帮助你回忆起你周末后在做什么：</p><pre tabindex=0><code>task &#39;Fix bug #141291&#39; start
+</code></pre><p>使用相关的标签：</p><pre tabindex=0><code>task add &#39;Clean gutters&#39; +weekend +house
+</code></pre><p>务必阅读<a href=https://taskwarrior.org/docs/>完整文档</a>以了解你可以编目和组织任务的所有方式。</p><hr><p>via: <a href=https://fedoramagazine.org/getting-started-taskwarrior/>https://fedoramagazine.org/getting-started-taskwarrior/</a></p><p>作者：<a href=https://fedoramagazine.org/author/linkdupont/>Link Dupont</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/todo/ rel=tag>todo</a></li><li class=tags__item><a class="tags__link btn" href=/tags/taskwarrior/ rel=tag>Taskwarrior</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

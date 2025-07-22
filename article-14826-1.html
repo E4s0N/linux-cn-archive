@@ -1,0 +1,81 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何从 Linux 终端发送桌面通知与提醒 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何从 Linux 终端发送桌面通知与提醒"><meta property="og:description" content="这篇教程演示如何使用脚本命令来发送自己的桌面通知与提醒。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14826-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-07-14T14:51:49+00:00"><meta property="article:modified_time" content="2022-07-14T14:51:49+00:00"><meta itemprop=name content="如何从 Linux 终端发送桌面通知与提醒"><meta itemprop=description content="这篇教程演示如何使用脚本命令来发送自己的桌面通知与提醒。"><meta itemprop=datePublished content="2022-07-14T14:51:49+00:00"><meta itemprop=dateModified content="2022-07-14T14:51:49+00:00"><meta itemprop=wordCount content="493"><meta itemprop=keywords content="通知,提醒,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何从 Linux 终端发送桌面通知与提醒</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-07-14T14:51:49Z>July 14, 2022</time></div></div></header><div class="content post__content clearfix"><blockquote><p>这篇教程演示如何使用脚本命令来发送自己的桌面通知与提醒。</p></blockquote><p><img src=/data/attachment/album/202207/14/145103vawkhy6w506thy6h.jpg alt title="Person using a laptop"></p><p>有时候，来自脚本的视觉回馈是很有用的。例如，当一个脚本或计划任务完成时，一个长期运行的构建任务失败时，或者当脚本执行中出现了紧急问题时。桌面应用程序可以通过弹出通知来做到这一点，但脚本也可以做到这一点！你可以使用脚本命令来给自己发送桌面通知与提醒。</p><p><img src=/data/attachment/album/202207/14/145149orngsvxddhdlgsd7.png alt="Example notification" title="Example notification"></p><p>下面的代码是在 Linux 上编写和测试的。它也可以在 macOS 上运行，只需花点功夫。请参见最后一节 <a href=https://opensource.com/article/22/1/linux-desktop-notifications/#script-notifications-on-macOS>提示与技巧</a>。</p><h3 id=从-linux-终端发送通知>从 Linux 终端发送通知</h3><p>要从 Linux 终端发送通知，请使用 <a href=https://manpages.ubuntu.com/manpages/xenial/man1/notify-send.1.html>notify-send</a> 命令。运行 <code>which notify-send</code> 命令来查看它是否在于你的系统中。如果没有，请使用包管理器来安装它。</p><p>在 Fedora 上，输入：</p><pre tabindex=0><code>$ sudo dnf install notify-send
+</code></pre><p>在基于 Debian 的发行版上，输入：</p><pre tabindex=0><code>$ sudo apt install notify-send
+</code></pre><p>几个简单的通知示例：</p><pre tabindex=0><code>$ notify-send &#34;Dinner ready!&#34;
+$ notify-send &#34;Tip of the Day&#34; &#34;How about a nap?&#34;
+</code></pre><p>你可以用紧急程度、自定义图标等选项来自定义通知。过 <code>man notify-send</code> 了解更多。你也可以在通知正文中使用一小组 HTML 标记，以使消息有一个棒的视觉感受。最重要的是，URL 被呈现为可点击的。例如：</p><pre tabindex=0><code>$ notify-send -u critical \
+  &#34;Build failed!&#34; \
+  &#34;There were &lt;b&gt;123&lt;/b&gt; errors. Click here to see the results: http://buildserver/latest&#34;
+</code></pre><p><img src=/data/attachment/album/202207/14/145150lgduxdez72us8hku.png alt="Build fail notification" title="Build fail notification"></p><p>发送的通知会被桌面环境接收，并像其他通知一样显示。它们将具有相同的外观、交互和行为。</p><h3 id=将-notify-send-与-at-结合使用>将 notify-send 与 at 结合使用</h3><p>计划任务通常被用来定期安排命令。<code>at</code> 命令安排在一个指定的时间执行一条命令。如果你像这样运行它，它会以交互模式启动，你可以在其中输入要在指定时间执行的命令：</p><pre tabindex=0><code>$ at 12:00
+</code></pre><p>这对脚本来说并不有用。幸运的是 <code>at</code> 接受来自标准输入的参数，所以我们可以这样使用它：</p><pre tabindex=0><code>$ echo &#34;npm run build&#34; | at now + 1 minute
+$ echo &#34;backup-db&#34; | at 13:00
+</code></pre><p>有许多指定时间的方法。 从绝对时间，如 <code>10:00</code>，到相对时间，如 <code>now + 2 hours</code> ，再特殊时间，如<code>noon</code> 或 <code>midnight</code>。我们可以把它和 <code>notify-send</code> 结合起来，在未来的某个时间向自己发送提醒。例如：</p><pre tabindex=0><code>$ echo &#34;notify-send &#39;Stop it and go home now?&#39; &#39;Enough work for today.&#39; -u critical&#34; | at now
+</code></pre><p><img src=/data/attachment/album/202207/14/145150o7i2q1ze70tzi08o.png alt="Stop for the day notification" title="Stop for the day notification"></p><h3 id=提醒的命令>提醒的命令</h3><p>现在，建立一个自定义的 Bash 命令来给自己发送提醒信息。像这样简单且人性化的命令：</p><pre tabindex=0><code>$ remind &#34;I&#39;m still here&#34; now
+$ remind &#34;Time to wake up!&#34; in 5 minutes
+$ remind &#34;Dinner&#34; in 1 hour
+$ remind &#34;Take a break&#34; at noon
+$ remind &#34;It&#39;s Friday pints time!&#34; at 17:00
+</code></pre><p>这比 Alexa 更好！该怎样做？</p><p>请看下面的代码。它定义了一个名为 <code>remind</code> 的函数，它支持上述语法。实际工作是在最后两行完成的。其余的部分负责显示帮助信息、参数校验等，这与任何大型应用程序中有用的代码与必要的白噪声的比例大致相同。</p><p>把代码保存在某个地方，例如，在 <code>~/bin/remind</code> 文件中，并在你的 <code>.bashrc</code> 配置文件写入该函数，以便在你登录时加载它：</p><pre tabindex=0><code>$ source ~/bin/remind
+</code></pre><p>重新打开终端，然后输入 <code>remind</code> 来查看语法。尽情享受吧！</p><pre tabindex=0><code>#!/usr/bin/env bash
+function remind () {
+  local COUNT=&#34;$#&#34;
+  local COMMAND=&#34;$1&#34;
+  local MESSAGE=&#34;$1&#34;
+  local OP=&#34;$2&#34;
+  shift 2
+  local WHEN=&#34;$@&#34;
+  # Display help if no parameters or help command
+  if [[ $COUNT -eq 0 || &#34;$COMMAND&#34; == &#34;help&#34; || &#34;$COMMAND&#34; == &#34;--help&#34; || &#34;$COMMAND&#34; == &#34;-h&#34; ]]; then
+    echo &#34;COMMAND&#34;
+    echo &#34;    remind &amp;lt;message&amp;gt; &amp;lt;time&amp;gt;&#34;
+    echo &#34;    remind &amp;lt;command&amp;gt;&#34;
+    echo
+    echo &#34;DESCRIPTION&#34;
+    echo &#34;    Displays notification at specified time&#34;
+    echo
+    echo &#34;EXAMPLES&#34;
+    echo &#39;    remind &#34;Hi there&#34; now&#39;
+    echo &#39;    remind &#34;Time to wake up&#34; in 5 minutes&#39;
+    echo &#39;    remind &#34;Dinner&#34; in 1 hour&#39;
+    echo &#39;    remind &#34;Take a break&#34; at noon&#39;
+    echo &#39;    remind &#34;Are you ready?&#34; at 13:00&#39;
+    echo &#39;    remind list&#39;
+    echo &#39;    remind clear&#39;
+    echo &#39;    remind help&#39;
+    echo
+    return
+  fi
+  # Check presence of AT command
+  if ! which at &amp;gt;/dev/null; then
+    echo &#34;remind: AT utility is required but not installed on your system. Install it with your package manager of choice, for example &#39;sudo apt install at&#39;.&#34;
+    return
+  fi
+  # Run commands: list, clear
+  if [[ $COUNT -eq 1 ]]; then
+    if [[ &#34;$COMMAND&#34; == &#34;list&#34; ]]; then
+      at -l
+    elif [[ &#34;$COMMAND&#34; == &#34;clear&#34; ]]; then
+      at -r $(atq | cut -f1)
+    else
+      echo &#34;remind: unknown command $COMMAND. Type &#39;remind&#39; without any parameters to see syntax.&#34;
+    fi
+    return
+  fi
+  # Determine time of notification
+  if [[ &#34;$OP&#34; == &#34;in&#34; ]]; then
+    local TIME=&#34;now + $WHEN&#34;
+  elif [[ &#34;$OP&#34; == &#34;at&#34; ]]; then
+    local TIME=&#34;$WHEN&#34;
+  elif [[ &#34;$OP&#34; == &#34;now&#34; ]]; then
+    local TIME=&#34;now&#34;
+  else
+    echo &#34;remind: invalid time operator $OP&#34;
+    return
+  fi
+  # Schedule the notification
+  echo &#34;notify-send &#39;$MESSAGE&#39; &#39;Reminder&#39; -u critical&#34; | at $TIME 2&amp;gt;/dev/null
+  echo &#34;Notification scheduled at $TIME&#34;
+}
+</code></pre><h3 id=简单的提醒>简单的提醒</h3><p>通过这几个简单的开源命令，你可以将你自己的脚本、应用程序和任务与你的桌面结合起来。试一试吧！</p><hr><p>（文内图片来自 Tomasz Waraksa, CC BY-SA 4.0）</p><p>本文经作者许可改编自 <a href=https://letsdebug.it/post/30-linux-desktop-notifications/>原文</a>。</p><hr><p>via: <a href=https://opensource.com/article/22/1/linux-desktop-notifications>https://opensource.com/article/22/1/linux-desktop-notifications</a></p><p>作者：<a href=https://opensource.com/users/tomasz>Tomasz Waraksa</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/mcfd>mcfd</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E9%80%9A%E7%9F%A5/ rel=tag>通知</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8F%90%E9%86%92/ rel=tag>提醒</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

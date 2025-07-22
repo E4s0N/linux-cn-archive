@@ -1,0 +1,37 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>三步上手 GDB - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="三步上手 GDB"><meta property="og:description" content="调试 C 程序，曾让我很困扰。然而当我之前在写我的操作系统时，我有很多的 Bug 需要调试。我很幸运的使用上了 qemu 模拟器，它允许我将调试器附加到我的操作系统。这个调试器就是 gdb。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9276-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-01-25T13:48:07+00:00"><meta property="article:modified_time" content="2018-01-25T13:48:07+00:00"><meta itemprop=name content="三步上手 GDB"><meta itemprop=description content="调试 C 程序，曾让我很困扰。然而当我之前在写我的操作系统时，我有很多的 Bug 需要调试。我很幸运的使用上了 qemu 模拟器，它允许我将调试器附加到我的操作系统。这个调试器就是 gdb。"><meta itemprop=datePublished content="2018-01-25T13:48:07+00:00"><meta itemprop=dateModified content="2018-01-25T13:48:07+00:00"><meta itemprop=wordCount content="214"><meta itemprop=keywords content="gdb,调试,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>三步上手 GDB</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-01-25T13:48:07Z>January 25, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201801/25/134655pdy41fvu7f6ln61k.jpg alt></p><p>调试 C 程序，曾让我很困扰。然而当我之前在写我的<a href=https://jvns.ca/blog/categories/kernel>操作系统</a>时，我有很多的 Bug 需要调试。我很幸运的使用上了 qemu 模拟器，它允许我将调试器附加到我的操作系统。这个调试器就是 <code>gdb</code>。</p><p>我得解释一下，你可以使用 <code>gdb</code> 先做一些小事情，因为我发现初学它的时候真的很混乱。我们接下来会在一个小程序中，设置断点，查看内存。</p><h3 id=1-设断点>1、 设断点</h3><p>如果你曾经使用过调试器，那你可能已经会设置断点了。</p><p>下面是一个我们要调试的程序（虽然没有任何 Bug）:</p><pre tabindex=0><code>#include &lt;stdio.h&gt;
+void do_thing() {
+    printf(&#34;Hi!\n&#34;);
+}
+int main() {
+    do_thing();
+}
+</code></pre><p>另存为 <code>hello.c</code>. 我们可以使用 <code>dbg</code> 调试它，像这样：</p><pre tabindex=0><code>bork@kiwi ~&gt; gcc -g hello.c -o hello
+bork@kiwi ~&gt; gdb ./hello
+</code></pre><p>以上是带调试信息编译 <code>hello.c</code>（为了 <code>gdb</code> 可以更好工作），并且它会给我们醒目的提示符，就像这样：</p><pre tabindex=0><code>(gdb)
+</code></pre><p>我们可以使用 <code>break</code> 命令设置断点，然后使用 <code>run</code> 开始调试程序。</p><pre tabindex=0><code>(gdb) break do_thing 
+Breakpoint 1 at 0x4004f8
+(gdb) run
+Starting program: /home/bork/hello 
+
+Breakpoint 1, 0x00000000004004f8 in do_thing ()
+</code></pre><p>程序暂停在了 <code>do_thing</code> 开始的地方。</p><p>我们可以通过 <code>where</code> 查看我们所在的调用栈。</p><pre tabindex=0><code>(gdb) where
+#0  do_thing () at hello.c:3
+#1  0x08050cdb in main () at hello.c:6
+(gdb) 
+</code></pre><h3 id=2-阅读汇编代码>2、 阅读汇编代码</h3><p>使用 <code>disassemble</code> 命令，我们可以看到这个函数的汇编代码。棒级了，这是 x86 汇编代码。虽然我不是很懂它，但是 <code>callq</code> 这一行是 <code>printf</code> 函数调用。</p><pre tabindex=0><code>(gdb) disassemble do_thing
+Dump of assembler code for function do_thing:
+   0x00000000004004f4 &lt;+0&gt;:     push   %rbp
+   0x00000000004004f5 &lt;+1&gt;:     mov    %rsp,%rbp
+=&gt; 0x00000000004004f8 &lt;+4&gt;:     mov    $0x40060c,%edi
+   0x00000000004004fd &lt;+9&gt;:     callq  0x4003f0 
+   0x0000000000400502 &lt;+14&gt;:    pop    %rbp
+   0x0000000000400503 &lt;+15&gt;:    retq 
+</code></pre><p>你也可以使用 <code>disassemble</code> 的缩写 <code>disas</code>。</p><h3 id=3-查看内存>3、 查看内存</h3><p>当调试我的内核时，我使用 <code>gdb</code> 的主要原因是，以确保内存布局是如我所想的那样。检查内存的命令是 <code>examine</code>，或者使用缩写 <code>x</code>。我们将使用<code>x</code>。</p><p>通过阅读上面的汇编代码，似乎 <code>0x40060c</code> 可能是我们所要打印的字符串地址。我们来试一下。</p><pre tabindex=0><code>(gdb) x/s 0x40060c
+0x40060c:        &#34;Hi!&#34;
+</code></pre><p>的确是这样。<code>x/s</code> 中 <code>/s</code> 部分，意思是“把它作为字符串展示”。我也可以“展示 10 个字符”，像这样：</p><pre tabindex=0><code>(gdb) x/10c 0x40060c
+0x40060c:       72 &#39;H&#39;  105 &#39;i&#39; 33 &#39;!&#39;  0 &#39;\000&#39;        1 &#39;\001&#39;        27 &#39;\033&#39;       3 &#39;\003&#39;        59 &#39;;&#39;
+0x400614:       52 &#39;4&#39;  0 &#39;\000&#39;
+</code></pre><p>你可以看到前四个字符是 <code>H</code>、<code>i</code>、<code>!</code> 和 <code>\0</code>，并且它们之后的是一些不相关的东西。</p><p>我知道 <code>gdb</code> 很多其他的东西，但是我仍然不是很了解它，其中 <code>x</code> 和 <code>break</code> 让我获得很多。你还可以阅读 <a href=https://ftp.gnu.org/old-gnu/Manuals/gdb-5.1.1/html_chapter/gdb_9.html#SEC56>do umentation for examining memory</a>。</p><hr><p>via: <a href=https://jvns.ca/blog/2014/02/10/three-steps-to-learning-gdb/>https://jvns.ca/blog/2014/02/10/three-steps-to-learning-gdb/</a></p><p>作者：<a href=https://jvns.ca>Julia Evans</a> 译者：<a href=https://github.com/Torival>Torival</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/gdb/ rel=tag>gdb</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E8%B0%83%E8%AF%95/ rel=tag>调试</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

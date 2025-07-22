@@ -1,0 +1,65 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>监控 Linux 服务器活动的几个命令 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="监控 Linux 服务器活动的几个命令"><meta property="og:description" content="watch、top 和 ac 命令为我们监视 Linux 服务器上的活动提供了一些十分高效的途径。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10498-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-02-01T19:33:02+00:00"><meta property="article:modified_time" content="2019-02-01T19:33:02+00:00"><meta itemprop=name content="监控 Linux 服务器活动的几个命令"><meta itemprop=description content="watch、top 和 ac 命令为我们监视 Linux 服务器上的活动提供了一些十分高效的途径。"><meta itemprop=datePublished content="2019-02-01T19:33:02+00:00"><meta itemprop=dateModified content="2019-02-01T19:33:02+00:00"><meta itemprop=wordCount content="409"><meta itemprop=keywords content="watch,top,监控,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>监控 Linux 服务器活动的几个命令</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-02-01T19:33:02Z>February 01, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p><code>watch</code>、<code>top</code> 和 <code>ac</code> 命令为我们监视 Linux 服务器上的活动提供了一些十分高效的途径。</p></blockquote><p><img src=/data/attachment/album/201902/01/193304wla2wpln60ljqfml.jpg alt></p><p>为了在获取系统活动时更加轻松，Linux 系统提供了一系列相关的命令。在这篇文章中，我们就一起来看看这些对我们很有帮助的命令吧。</p><h3 id=watch-命令>watch 命令</h3><p><code>watch</code> 是一个用来轻松地重复检测 Linux 系统中一系列数据命令，例如用户活动、正在运行进程、登录、内存使用等。这个命令实际上是重复地运行一个特定的命令，每次都会重写之前显示的输出，它提供了一个比较方便的方式用以监测在你的系统中发生的活动。</p><p>首先以一个基础且不是特别有用的命令开始，你可以运行 <code>watch -n 5 date</code>，然后你可以看到在终端中显示了当前的日期和时间，这些数据会每五秒更新一次。你可能已经猜到了，<code>-n 5</code> 选项指定了运行接下来一次命令需要等待的秒数。默认是 2 秒。这个命令将会一直运行并按照指定的时间更新显示，直到你使用 <code>^C</code> 停下它。</p><pre tabindex=0><code>Every 5.0s: date                             butterfly: Wed Jan 23 15:59:14 2019
+
+Wed Jan 23 15:59:14 EST 2019
+</code></pre><p>下面是一个更有趣的命令实例，你可以监控一个在服务器中登录用户的列表，该列表会按照指定的时间定时更新。就像下面写到的，这个命令会每 10 秒更新一次这个列表。登出的用户将会从当前显示的列表中消失，那些新登录的将会被添加到这个表格当中。如果没有用户再登录或者登出，这个表格跟之前显示的将不会有任何不同。</p><pre tabindex=0><code>$ watch -n 10 who
+
+Every 10.0s: who                             butterfly: Tue Jan 23 16:02:03 2019
+
+shs      :0           2019-01-23 09:45 (:0)
+dory     pts/0        2019-01-23 15:50 (192.168.0.5)
+nemo     pts/1        2019-01-23 16:01 (192.168.0.15)
+shark    pts/3        2019-01-23 11:11 (192.168.0.27)
+</code></pre><p>如果你只是想看有多少用户登录进来，可以通过 <code>watch</code> 调用 <code>uptime</code> 命令获取用户数和负载的平均水平，以及系统的工作状况。</p><pre tabindex=0><code>$ watch uptime
+
+Every 2.0s: uptime                           butterfly: Tue Jan 23 16:25:48 2019
+
+ 16:25:48 up 22 days,  4:38,  3 users,  load average: 1.15, 0.89, 1.02
+</code></pre><p>如果你想使用 <code>watch</code> 重复一个包含了管道的命令，就需要将该命令用引号括起来，就比如下面这个每五秒显示一次有多少进程正在运行的命令。</p><pre tabindex=0><code>$ watch -n 5 &#39;ps -ef | wc -l&#39;
+
+Every 5.0s: ps -ef | wc -l butterfly: Tue Jan 23 16:11:54 2019
+
+245
+</code></pre><p>要查看内存使用，你也许会想要试一下下面的这个命令组合：</p><pre tabindex=0><code>$ watch -n 5 free -m
+
+Every 5.0s: free -m butterfly: Tue Jan 23 16:34:09 2019
+
+Every 5.0s: free -m                          butterfly: Tue Jan 23 16:34:09 2019
+
+              total        used        free      shared  buff/cache   available
+Mem:           5959         776        3276          12        1906        4878
+Swap:          2047           0        2047
+</code></pre><p>你可以在 <code>watch</code> 后添加一些选项查看某个特定用户下运行的进程，不过 <code>top</code> 为此提供了更好的选择。</p><h3 id=top-命令>top 命令</h3><p>如果你想查看某个特定用户下的进程，<code>top</code> 命令的 <code>-u</code> 选项可以很轻松地帮你达到这个目的。</p><pre tabindex=0><code>$ top -u nemo
+top - 16:14:33 up 2 days,  4:27,  3 users,  load average: 0.00, 0.01, 0.02
+Tasks: 199 total,   1 running, 198 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.0 us,  0.2 sy,  0.0 ni, 99.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :   5959.4 total,   3277.3 free,    776.4 used,   1905.8 buff/cache
+MiB Swap:   2048.0 total,   2048.0 free,      0.0 used.   4878.4 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+23026 nemo      20   0   46340   7820   6504 S   0.0   0.1   0:00.05 systemd
+23033 nemo      20   0  149660   3140     72 S   0.0   0.1   0:00.00 (sd-pam)
+23125 nemo      20   0   63396   5100   4092 S   0.0   0.1   0:00.00 sshd
+23128 nemo      20   0   16836   5636   4284 S   0.0   0.1   0:00.03 zsh
+</code></pre><p>你可能不仅可以看到某个用户下的进程，还可以查看每个进程所占用的资源，以及系统总的工作状况。</p><h3 id=ac-命令>ac 命令</h3><p>如果你想查看系统中每个用户登录的时长，可以使用 <code>ac</code> 命令。运行该命令之前首先需要安装 <code>acct</code>（Debian 等）或者 <code>psacct</code>（RHEL、Centos 等）包。</p><p><code>ac</code> 命令有一系列的选项，该命令从 <code>wtmp</code> 文件中拉取数据。这个例子展示的是最近用户登录的总小时数。</p><pre tabindex=0><code>$ ac
+        total     1261.72
+</code></pre><p>这个命令显示了用户登录的总的小时数：</p><pre tabindex=0><code>$ ac -p
+        shark                                5.24
+        nemo                                 5.52
+        shs                               1251.00
+        total     1261.76
+</code></pre><p>这个命令显示了每天登录的用户小时数：</p><pre tabindex=0><code>$ ac -d | tail -10
+
+Jan 11  total        0.05
+Jan 12  total        1.36
+Jan 13  total       16.39
+Jan 15  total       55.33
+Jan 16  total       38.02
+Jan 17  total       28.51
+Jan 19  total       48.66
+Jan 20  total        1.37
+Jan 22  total       23.48
+Today   total        9.83
+</code></pre><h3 id=总结>总结</h3><p>Linux 系统上有很多命令可以用于检查系统活动。<code>watch</code> 命令允许你以重复的方式运行任何命令，并观察输出有何变化。<code>top</code> 命令是一个专注于用户进程的最佳选项，以及允许你以动态方式查看进程的变化，还可以使用 <code>ac</code> 命令检查用户连接到系统的时间。</p><hr><p>via: <a href=https://www.networkworld.com/article/3335200/linux/how-to-monitor-activity-on-your-linux-server.html>https://www.networkworld.com/article/3335200/linux/how-to-monitor-activity-on-your-linux-server.html</a></p><p>作者：<a href=https://www.networkworld.com/author/Sandra-Henry_Stocker/>Sandra Henry-Stocker</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/dianbanjiu>dianbanjiu</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/watch/ rel=tag>watch</a></li><li class=tags__item><a class="tags__link btn" href=/tags/top/ rel=tag>top</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E7%9B%91%E6%8E%A7/ rel=tag>监控</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

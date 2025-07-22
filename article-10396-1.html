@@ -1,0 +1,194 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何构建一台网络引导服务器（二） - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何构建一台网络引导服务器（二）"><meta property="og:description" content="我们将向你展示如何在第一部分的基础上，重新配置网络引导镜像，以便 活动目录 中的用户帐户可以进行登录，然后从一个 NFS 服务器上自动挂载他们的家目录。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10396-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-12-29T22:46:32+00:00"><meta property="article:modified_time" content="2018-12-29T22:46:32+00:00"><meta itemprop=name content="如何构建一台网络引导服务器（二）"><meta itemprop=description content="我们将向你展示如何在第一部分的基础上，重新配置网络引导镜像，以便 活动目录 中的用户帐户可以进行登录，然后从一个 NFS 服务器上自动挂载他们的家目录。"><meta itemprop=datePublished content="2018-12-29T22:46:32+00:00"><meta itemprop=dateModified content="2018-12-29T22:46:32+00:00"><meta itemprop=wordCount content="1169"><meta itemprop=keywords content="网络引导,NFS,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何构建一台网络引导服务器（二）</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-12-29T22:46:32Z>December 29, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201812/29/224635ia5a06njzjy00zsz.jpg alt></p><p>在 <a href=/article-10379-1.html>如何构建一台网络引导服务器（一）</a> 的文章中，我们展示了如何创建一个网络引导镜像，在那个镜像中使用了一个名为 <code>liveuser</code> 帐户，它的家目录位于内存中，重启后家目录中的内容将全部消失。然而很多用户都希望机器重启后保存他们的文件和设置。因此，在本系列的第二部分，我们将向你展示如何在第一部分的基础上，重新配置网络引导镜像，以便 <a href=https://en.wikipedia.org/wiki/Active_Directory>活动目录</a> 中的用户帐户可以进行登录，然后从一个 NFS 服务器上自动挂载他们的家目录。</p><p>本系列的第三部分，我们将向你展示网络引导客户端如何与中心化配置的 iPXE 引导菜单进行交互。</p><h3 id=设置使用-krb5-认证的-nfs4-home-目录>设置使用 KRB5 认证的 NFS4 Home 目录</h3><p>按以前的文章 “<a href=https://fedoramagazine.org/secure-nfs-home-directories-kerberos>使用 Kerberos 强化共享的 NFS Home 目录安全性</a>” 的指导来做这个设置。</p><h3 id=删除-liveuser-帐户>删除 Liveuser 帐户</h3><p>删除本系列文章第一部分中创建的 <code>liveuser</code> 帐户：</p><pre tabindex=0><code>$ sudo -i
+# sed -i &#39;/automaticlogin/Id&#39; /fc28/etc/gdm/custom.conf
+# rm -f /fc28/etc/sudoers.d/liveuser
+# for i in passwd shadow group gshadow; do sed -i &#39;/^liveuser:/d&#39; /fc28/etc/$i; done
+</code></pre><h3 id=配置-ntpkrb5-和-sssd>配置 NTP、KRB5 和 SSSD</h3><p>接下来，我们需要将 NTP、KRB5 和 SSSD 的配置文件复制进客户端使用的镜像中，以便于它们能够使用同一个帐户：</p><pre tabindex=0><code># MY_HOSTNAME=$(&lt;/etc/hostname)
+# MY_DOMAIN=${MY_HOSTNAME#*.}
+# dnf -y --installroot=/fc28 install ntp krb5-workstation sssd
+# cp /etc/ntp.conf /fc28/etc
+# chroot /fc28 systemctl enable ntpd.service
+# cp /etc/krb5.conf.d/${MY_DOMAIN%%.*} /fc28/etc/krb5.conf.d
+# cp /etc/sssd/sssd.conf /fc28/etc/sssd
+</code></pre><p>在已配置的识别服务的基础上，重新配置 sssd 提供认证服务：</p><pre tabindex=0><code># sed -i &#39;/services =/s/$/, pam/&#39; /fc28/etc/sssd/sssd.conf
+</code></pre><p>另外，配置成确保客户端不能更改这个帐户密码：</p><pre tabindex=0><code># sed -i &#39;/id_provider/a \ \ ad_maximum_machine_account_password_age = 0&#39; /fc28/etc/sssd/sssd.conf
+</code></pre><p>另外，复制 nfsnobody 的定义：</p><pre tabindex=0><code># for i in passwd shadow group gshadow; do grep &#34;^nfsnobody:&#34; /etc/$i &gt;&gt; /fc28/etc/$i; done
+</code></pre><h3 id=加入活动目录>加入活动目录</h3><p>接下来，你将执行一个 <code>chroot</code> 将客户端镜像加入到活动目录。从删除预置在网络引导镜像中同名的计算机帐户开始：</p><pre tabindex=0><code># MY_USERNAME=jsmith
+# MY_CLIENT_HOSTNAME=$(&lt;/fc28/etc/hostname)
+# adcli delete-computer &#34;${MY_CLIENT_HOSTNAME%%.*}&#34; -U &#34;$MY_USERNAME&#34;
+</code></pre><p>在网络引导镜像中如果有 <code>krb5.keytab</code> 文件，也删除它：</p><pre tabindex=0><code># rm -f /fc28/etc/krb5.keytab
+</code></pre><p><code>chroot</code> 到网络引导镜像中：</p><pre tabindex=0><code># for i in dev dev/pts dev/shm proc sys run; do mount -o bind /$i /fc28/$i; done
+# chroot /fc28 /usr/bin/bash --login
+</code></pre><p>执行一个加入操作：</p><pre tabindex=0><code># MY_USERNAME=jsmith
+# MY_HOSTNAME=$(&lt;/etc/hostname)
+# MY_DOMAIN=${MY_HOSTNAME#*.}
+# MY_REALM=${MY_DOMAIN^^}
+# MY_OU=&#34;cn=computers,dc=${MY_DOMAIN//./,dc=}&#34;
+# adcli join $MY_DOMAIN --login-user=&#34;$MY_USERNAME&#34; --computer-name=&#34;${MY_HOSTNAME%%.*}&#34; --host-fqdn=&#34;$MY_HOSTNAME&#34; --user-principal=&#34;host/$MY_HOSTNAME@$MY_REALM&#34; --domain-ou=&#34;$MY_OU&#34;
+</code></pre><p>现在登出 chroot，并清除 root 用户的命令历史：</p><pre tabindex=0><code># logout
+# for i in run sys proc dev/shm dev/pts dev; do umount /fc28/$i; done
+# &gt; /fc28/root/.bash_history
+</code></pre><h3 id=安装和配置-pam-挂载>安装和配置 PAM 挂载</h3><p>我们希望客户端登入后自动挂载用户家目录。为实现这个目的，我们将要使用 <code>pam_mount</code> 模块。安装和配置 <code>pam_mount</code>：</p><pre tabindex=0><code># dnf install -y --installroot=/fc28 pam_mount
+# cat &lt;&lt; END &gt; /fc28/etc/security/pam_mount.conf.xml
+&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&gt;
+&lt;!DOCTYPE pam_mount SYSTEM &#34;pam_mount.conf.xml.dtd&#34;&gt;
+&lt;pam_mount&gt;
+&lt;debug enable=&#34;0&#34; /&gt;
+&lt;volume uid=&#34;1400000000-1499999999&#34; fstype=&#34;nfs4&#34; server=&#34;$MY_HOSTNAME&#34; path=&#34;/home/%(USER)&#34; mountpoint=&#34;/home/%(USER)&#34; options=&#34;sec=krb5&#34; /&gt;
+&lt;mkmountpoint enable=&#34;1&#34; remove=&#34;0&#34; /&gt;
+&lt;msg-authpw&gt;Password:&lt;/msg-authpw&gt;
+&lt;/pam_mount&gt;
+END
+</code></pre><p>重新配置 PAM 去使用 <code>pam_mount</code>：</p><pre tabindex=0><code># dnf install -y patch
+# cp -r /fc28/usr/share/authselect/default/sssd /fc28/etc/authselect/custom
+# echo &#39;initgroups: files&#39; &gt;&gt; /fc28/etc/authselect/custom/sssd/nsswitch.conf
+# patch /fc28/etc/authselect/custom/sssd/system-auth &lt;&lt; END
+@@ -12 +12,2 @@
+-auth        sufficient                                   pam_sss.so forward_pass
++auth        requisite                                    pam_mount.so {include if &#34;with-pammount&#34;}
++auth        sufficient                                   pam_sss.so {if &#34;with-pammount&#34;:use_first_pass|forward_pass}
+@@ -35,2 +36,3 @@
+ session     required                                     pam_unix.so
++session     optional                                     pam_mount.so {include if &#34;with-pammount&#34;}
+ session     optional                                     pam_sss.so
+END
+# patch /fc28/etc/authselect/custom/sssd/password-auth &lt;&lt; END
+@@ -9 +9,2 @@
+-auth        sufficient                                   pam_sss.so forward_pass
++auth        requisite                                    pam_mount.so {include if &#34;with-pammount&#34;}
++auth        sufficient                                   pam_sss.so {if &#34;with-pammount&#34;:use_first_pass|forward_pass}
+@@ -32,2 +33,3 @@
+ session     required                                     pam_unix.so
++session     optional                                     pam_mount.so {include if &#34;with-pammount&#34;}
+ session     optional                                     pam_sss.so
+END
+# chroot /fc28 authselect select custom/sssd with-pammount --force
+</code></pre><p>另外，要确保从客户端上总是可解析 NFS 服务器的主机名：</p><pre tabindex=0><code># MY_IP=$(host -t A $MY_HOSTNAME | awk &#39;{print $4}&#39;)
+# echo &#34;$MY_IP $MY_HOSTNAME ${MY_HOSTNAME%%.*}&#34; &gt;&gt; /fc28/etc/hosts
+</code></pre><p>可选，允许所有用户可以使用 <code>sudo</code>：</p><pre tabindex=0><code># echo &#39;%users ALL=(ALL) NOPASSWD: ALL&#39; &gt; /fc28/etc/sudoers.d/users
+</code></pre><h3 id=转换-nfs-根目录到一个-iscsi-后备存储器>转换 NFS 根目录到一个 iSCSI 后备存储器</h3><p>在一个 nfsroot 连接建立之后，目前版本的 nfs-utils 可能很难为家目录建立一个从客户端到 NFS 服务器的第二个连接。当尝试去访问家目录时，客户端将被挂起。因此，为了共享网络引导镜像，我们将使用一个不同的协议（iSCSI）来规避这个问题。</p><p>首先 <code>chroot</code> 到镜像中，重新配置它的 <code>initramfs</code>，让它从一个 iSCSI 根目录中去引导：</p><pre tabindex=0><code># for i in dev dev/pts dev/shm proc sys run; do mount -o bind /$i /fc28/$i; done
+# chroot /fc28 /usr/bin/bash --login
+# dnf install -y iscsi-initiator-utils
+# sed -i &#39;s/nfs/iscsi/&#39; /etc/dracut.conf.d/netboot.conf
+# echo &#39;omit_drivers+=&#34; qedi &#34;&#39; &gt; /etc/dracut.conf.d/omit-qedi.conf
+# echo &#39;blacklist qedi&#39; &gt; /etc/modprobe.d/blacklist-qedi.conf
+# KERNEL=$(ls -c /lib/modules | head -n 1)
+# INITRD=$(find /boot -name &#39;init*&#39; | grep -m 1 $KERNEL)
+# dracut -f $INITRD $KERNEL
+# logout
+# for i in run sys proc dev/shm dev/pts dev; do umount /fc28/$i; done
+# &gt; /fc28/root/.bash_history
+</code></pre><p>在测试时，qedi 驱动会破坏 iSCSI，因此我们将它禁用。</p><p>接着，创建一个 <code>fc28.img</code> <a href=https://en.wikipedia.org/wiki/Sparse_file>稀疏文件</a>。这个稀疏文件代表 iSCSI 目标的后备存储器：</p><pre tabindex=0><code># FC28_SIZE=$(du -ms /fc28 | cut -f 1)
+# dd if=/dev/zero of=/fc28.img bs=1MiB count=0 seek=$(($FC28_SIZE*2))
+</code></pre><p>（如果你有一个可使用的独立分区或磁盘驱动器，也可以用它，而不用再去创建这个稀疏文件了。）</p><p>接着，使用一个文件系统去格式化镜像、挂载它、然后将网络引导镜像复制进去：</p><pre tabindex=0><code># mkfs -t xfs -L NETROOT /fc28.img
+# TEMP_MNT=$(mktemp -d)
+# mount /fc28.img $TEMP_MNT
+# cp -a /fc28/* $TEMP_MNT
+# umount $TEMP_MNT
+</code></pre><p>在使用 SquashFS 测试时，客户端偶尔会出现小状况。似乎是因为 SquashFS 在多处理器客户端上没法执行随机 I/O。（更多内容见 <a href=https://chrisdown.name/2018/04/17/kernel-adventures-the-curious-case-of-squashfs-stalls.html>squashfs 读取卡顿的奇怪案例</a>）。如果你希望使用文件系统压缩来提升吞吐性能，<a href=https://en.wikipedia.org/wiki/ZFS>ZFS</a> 或许是个很好的选择。</p><p>如果你对 iSCSI 服务器的吞吐性能要求非常高（比如，成百上千的客户端要连接它），可能需要使用带 <a href=https://en.wikipedia.org/wiki/Load_balancing_(computing)>负载均衡</a> 的 <a href=http://docs.ceph.com/docs/mimic/rbd/iscsi-overview/>Ceph</a> 集群了。更多相关内容，请查看 <a href=https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/load_balancer_administration/ceph_example>使用 HAProxy 和 Keepalived 负载均衡的 Ceph 对象网关</a>。</p><h3 id=安装和配置-iscsi>安装和配置 iSCSI</h3><p>为了给我们的客户端提供网络引导镜像，安装 <code>scsi-target-utils</code> 包：</p><pre tabindex=0><code># dnf install -y scsi-target-utils
+</code></pre><p>配置 iSCSI 守护程序去提供 <code>fc28.img</code> 文件：</p><pre tabindex=0><code># MY_REVERSE_HOSTNAME=$(echo $MY_HOSTNAME | tr &#39;.&#39; &#34;\n&#34; | tac | tr &#34;\n&#34; &#39;.&#39; | cut -b -${#MY_HOSTNAME})
+# cat &lt;&lt; END &gt; /etc/tgt/conf.d/fc28.conf
+&lt;target iqn.$MY_REVERSE_HOSTNAME:fc28&gt;
+  backing-store /fc28.img
+  readonly 1
+&lt;/target&gt;
+END
+</code></pre><p>开头的 <code>iqn.</code> 是 <code>/usr/lib/dracut/modules.d/40network/net-lib.sh</code> 所需要的。</p><p>添加一个防火墙例外，并启用和启动这个服务：</p><pre tabindex=0><code># firewall-cmd --add-service=iscsi-target
+# firewall-cmd --runtime-to-permanent
+# systemctl enable tgtd.service
+# systemctl start tgtd.service
+</code></pre><p>你现在应该能够使用 <code>tatadm</code> 命令看到这个镜像共享了：</p><pre tabindex=0><code># tgtadm --mode target --op show
+</code></pre><p>上述命令的输出应该类似如下的内容：</p><pre tabindex=0><code>Target 1: iqn.edu.example.server-01:fc28
+    System information:
+        Driver: iscsi
+        State: ready
+    I_T nexus information:
+    LUN information:
+        LUN: 0
+            Type: controller
+            SCSI ID: IET     00010000
+            SCSI SN: beaf10
+            Size: 0 MB, Block size: 1
+            Online: Yes
+            Removable media: No
+            Prevent removal: No
+            Readonly: No
+            SWP: No
+            Thin-provisioning: No
+            Backing store type: null
+            Backing store path: None
+            Backing store flags: 
+        LUN: 1
+            Type: disk
+            SCSI ID: IET     00010001
+            SCSI SN: beaf11
+            Size: 10488 MB, Block size: 512
+            Online: Yes
+            Removable media: No
+            Prevent removal: No
+            Readonly: Yes
+            SWP: No 
+            Thin-provisioning: No
+            Backing store type: rdwr
+            Backing store path: /fc28.img
+            Backing store flags:
+    Account information:
+    ACL information:
+        ALL
+</code></pre><p>现在，我们可以去删除本系列文章的第一部分中创建的 NFS 共享了：</p><pre tabindex=0><code># rm -f /etc/exports.d/fc28.exports
+# exportfs -rv
+# umount /export/fc28
+# rmdir /export/fc28
+# sed -i &#39;/^\/fc28 /d&#39; /etc/fstab
+</code></pre><p>你也可以删除 <code>/fc28</code> 文件系统，但为了以后进一步更新，你可能需要保留它。</p><h3 id=更新-esp-去使用-iscsi-内核>更新 ESP 去使用 iSCSI 内核</h3><p>更新 ESP 去包含启用了 iSCSI 的 <code>initramfs</code>：</p><pre tabindex=0><code>$ rm -vf $HOME/esp/linux/*.fc28.*
+$ MY_KRNL=$(ls -c /fc28/lib/modules | head -n 1)
+$ cp $(find /fc28/lib/modules -maxdepth 2 -name &#39;vmlinuz&#39; | grep -m 1 $MY_KRNL) $HOME/esp/linux/vmlinuz-$MY_KRNL
+$ cp $(find /fc28/boot -name &#39;init*&#39; | grep -m 1 $MY_KRNL) $HOME/esp/linux/initramfs-$MY_KRNL.img
+</code></pre><p>更新 <code>boot.cfg</code> 文件去传递新的 <code>root</code> 和 <code>netroot</code> 参数：</p><pre tabindex=0><code>$ MY_NAME=server-01.example.edu
+$ MY_EMAN=$(echo $MY_NAME | tr &#39;.&#39; &#34;\n&#34; | tac | tr &#34;\n&#34; &#39;.&#39; | cut -b -${#MY_NAME})
+$ MY_ADDR=$(host -t A $MY_NAME | awk &#39;{print $4}&#39;)
+$ sed -i &#34;s! root=[^ ]*! root=/dev/disk/by-path/ip-$MY_ADDR:3260-iscsi-iqn.$MY_EMAN:fc28-lun-1 netroot=iscsi:$MY_ADDR::::iqn.$MY_EMAN:fc28!&#34; $HOME/esp/linux/boot.cfg
+</code></pre><p>现在，你只需要从 <code>$HOME/esp/linux</code> 目录中复制更新后的文件到所有客户端系统的 ESP 中。你应该会看到类似下面屏幕截图的结果：</p><p><img src=/data/attachment/album/201812/29/224636y556nyrt5r6rw3n0.png alt></p><h3 id=更新镜像>更新镜像</h3><p>首先，复制出一个当前镜像的副本：</p><pre tabindex=0><code># cp -a /fc28 /fc29
+</code></pre><p><code>chroot</code> 进入到镜像的新副本：</p><pre tabindex=0><code># for i in dev dev/pts dev/shm proc sys run; do mount -o bind /$i /fc29/$i; done
+# chroot /fc29 /usr/bin/bash --login
+</code></pre><p>允许更新内核：</p><pre tabindex=0><code># sed -i &#39;s/^exclude=kernel-\*$/#exclude=kernel-*/&#39; /etc/dnf/dnf.conf
+</code></pre><p>执行升级：</p><pre tabindex=0><code># dnf distro-sync -y --releasever=29
+</code></pre><p>阻止更新过的内核被再次更新：</p><pre tabindex=0><code># sed -i &#39;s/^#exclude=kernel-\*$/exclude=kernel-*/&#39; /etc/dnf/dnf.conf
+</code></pre><p>上述命令是可选的，但是在以后，如果在镜像中添加和更新了几个包，在你的客户端之外保存有一个最新内核的副本，会在关键时刻对你非常有帮助。</p><p>清理 dnf 的包缓存：</p><pre tabindex=0><code># dnf clean all
+</code></pre><p>退出 chroot 并清理 root 的命令历史：</p><pre tabindex=0><code># logout
+# for i in run sys proc dev/shm dev/pts dev; do umount /fc29/$i; done
+# &gt; /fc29/root/.bash_history
+</code></pre><p>创建 iSCSI 镜像：</p><pre tabindex=0><code># FC29_SIZE=$(du -ms /fc29 | cut -f 1)
+# dd if=/dev/zero of=/fc29.img bs=1MiB count=0 seek=$(($FC29_SIZE*2))
+# mkfs -t xfs -L NETROOT /fc29.img
+# TEMP_MNT=$(mktemp -d)
+# mount /fc29.img $TEMP_MNT
+# cp -a /fc29/* $TEMP_MNT
+# umount $TEMP_MNT
+</code></pre><p>定义一个新的 iSCSI 目标，指向到新的镜像并导出它：</p><pre tabindex=0><code># MY_HOSTNAME=$(&lt;/etc/hostname)
+# MY_REVERSE_HOSTNAME=$(echo $MY_HOSTNAME | tr &#39;.&#39; &#34;\n&#34; | tac | tr &#34;\n&#34; &#39;.&#39; | cut -b -${#MY_HOSTNAME})
+# cat &lt;&lt; END &gt; /etc/tgt/conf.d/fc29.conf
+&lt;target iqn.$MY_REVERSE_HOSTNAME:fc29&gt;
+ backing-store /fc29.img
+ readonly 1
+&lt;/target&gt;
+END
+# tgt-admin --update ALL
+</code></pre><p>添加新内核和 <code>initramfs</code> 到 ESP：</p><pre tabindex=0><code>$ MY_KRNL=$(ls -c /fc29/lib/modules | head -n 1)
+$ cp $(find /fc29/lib/modules -maxdepth 2 -name &#39;vmlinuz&#39; | grep -m 1 $MY_KRNL) $HOME/esp/linux/vmlinuz-$MY_KRNL
+$ cp $(find /fc29/boot -name &#39;init*&#39; | grep -m 1 $MY_KRNL) $HOME/esp/linux/initramfs-$MY_KRNL.img
+</code></pre><p>更新 ESP 的 <code>boot.cfg</code>：</p><pre tabindex=0><code>$ MY_DNS1=192.0.2.91
+$ MY_DNS2=192.0.2.92
+$ MY_NAME=server-01.example.edu
+$ MY_EMAN=$(echo $MY_NAME | tr &#39;.&#39; &#34;\n&#34; | tac | tr &#34;\n&#34; &#39;.&#39; | cut -b -${#MY_NAME})
+$ MY_ADDR=$(host -t A $MY_NAME | awk &#39;{print $4}&#39;)
+$ cat &lt;&lt; END &gt; $HOME/esp/linux/boot.cfg
+#!ipxe
+
+kernel --name kernel.efi \${prefix}/vmlinuz-$MY_KRNL initrd=initrd.img ro ip=dhcp rd.peerdns=0 nameserver=$MY_DNS1 nameserver=$MY_DNS2 root=/dev/disk/by-path/ip-$MY_ADDR:3260-iscsi-iqn.$MY_EMAN:fc29-lun-1 netroot=iscsi:$MY_ADDR::::iqn.$MY_EMAN:fc29 console=tty0 console=ttyS0,115200n8 audit=0 selinux=0 quiet
+initrd --name initrd.img \${prefix}/initramfs-$MY_KRNL.img
+boot || exit
+END
+</code></pre><p>最后，从我的 <code>$HOME/esp/linux</code> 目录中复制文件到所有客户端系统的 ESP 中去使用它吧！</p><hr><p>via: <a href=https://fedoramagazine.org/how-to-build-a-netboot-server-part-2/>https://fedoramagazine.org/how-to-build-a-netboot-server-part-2/</a></p><p>作者：<a href=https://fedoramagazine.org/author/glb/>Gregory Bartholomew</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/qhwdw>qhwdw</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%BD%91%E7%BB%9C%E5%BC%95%E5%AF%BC/ rel=tag>网络引导</a></li><li class=tags__item><a class="tags__link btn" href=/tags/nfs/ rel=tag>NFS</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

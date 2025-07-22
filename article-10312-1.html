@@ -1,0 +1,56 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Emacs 系列（二）：Org 模式介绍 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Emacs 系列（二）：Org 模式介绍"><meta property="og:description" content="Org 模式的精简和高效真的震惊了我，它真的是个“杀手”应用。"><meta property="og:type" content="article"><meta property="og:url" content="/article-10312-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-12-04T22:30:00+00:00"><meta property="article:modified_time" content="2018-12-04T22:30:00+00:00"><meta itemprop=name content="Emacs 系列（二）：Org 模式介绍"><meta itemprop=description content="Org 模式的精简和高效真的震惊了我，它真的是个“杀手”应用。"><meta itemprop=datePublished content="2018-12-04T22:30:00+00:00"><meta itemprop=dateModified content="2018-12-04T22:30:00+00:00"><meta itemprop=wordCount content="295"><meta itemprop=keywords content="Emacs,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Emacs 系列（二）：Org 模式介绍</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-12-04T22:30:00Z>December 04, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201812/04/222917qmi4mc9o34euemqr.png alt></p><p>在我 Emacs 系列中的<a href=/article-10297-1.html>第一篇文章</a>里，我介绍了我在用了几十年的 vim 后转向了 Emacs，Org 模式就是我为什么这样做的原因。</p><p>Org 模式的精简和高效真的震惊了我，它真的是个“杀手”应用。</p><h3 id=所以org-模式到底是什么呢>所以，Org 模式到底是什么呢？</h3><p>这是我昨天写的：</p><blockquote><p>它是一个组织信息的平台，它的主页上这样写着：“一切都是纯文本：Org 模式用于记笔记、维护待办事项列表、计划项目和使用快速有效的纯文本系统编写文档。”</p></blockquote><p>这是事实，但并不是很准确。Org 模式是一个你用来组织事务的小工具。它有一些非常合理的默认设置，但也允许你自己定制。</p><p>主要突出在这几件事上：</p><ul><li><strong>维护待办事项列表</strong>：项目可以分散在 Org 文件中，包含附件，有标签、截止日期、时间表。有一个方便的“日程”视图，显示需要做什么。项目也可以重复。</li><li><strong>编写文档</strong>：Org 模式有个特殊的功能来生成 HTML、LaTeX、幻灯片（用 LaTeX beamer）和其他所有的格式。它也支持直接在缓冲区中运行和以 Emacs 所支持的的语言进行 文学编程 literate programming 。如果你想要深入了解这项功能的话，参阅<a href=http://www.howardism.org/Technical/Emacs/literate-devops.html>这篇文学式 DevOps 的文章</a>。而 <a href=https://orgmode.org/worg/>整个 Worg 网站</a> 是用 Org 模式开发的。</li><li><strong>记笔记</strong>：对，它也能做笔记。通过全文搜索，文件的交叉引用（类似 wiki），UUID，甚至可以与其他的系统进行交互（通过 Message-ID 与 mu4e 交互，通过 ERC 的日志等等……）。</li></ul><h3 id=入门>入门</h3><p>我强烈建议去阅读 <a href="https://www.youtube.com/watch?v=oJTwQvgfgMM">Carsten Dominik 关于 Org 模式的一篇很棒的 Google 讲话</a>。那篇文章真的很赞。</p><p>在 Emacs 中带有 Org 模式，但如果你想要个比较新的版本的话，Debian 用户可以使用命令 <code>apt-get install org-mode</code> 来更新，或者使用 Emacs 的包管理系统命令 <code>M-x package-install RET org-mode RET</code>。</p><p>现在，你可能需要阅读一下 Org 模式的精简版教程中的<a href=https://orgmode.org/guide/Introduction.html#Introduction>导读部分</a>，特别注意，你要设置下<a href=https://orgmode.org/guide/Activation.html#Activation>启动部分</a>中提到的那些键的绑定。</p><h3 id=一份好的教程>一份好的教程</h3><p>我会给出一些好的教程和介绍的链接，但这篇文章不会是一篇教程。特别是在本文末尾，有两个很不错的视频链接。</p><h3 id=我的一些配置>我的一些配置</h3><p>我将在这里记录下一些我的配置并介绍它的作用。你没有必要每行每句将它拷贝到你的配置中 —— 这只是一个参考，告诉你哪些可以配置，要怎么在手册中查找，或许只是一个“我现在该怎么做”的参考。</p><p>首先，我将 Emacs 的编码默认设置为 UTF-8。</p><pre tabindex=0><code>(prefer-coding-system &#39;utf-8) 
+(set-language-environment &#34;UTF-8&#34;)
+</code></pre><p>Org 模式中可以打开 URL。默认的，它会在 Firefox 中打开，但我喜欢用 Chromium。</p><pre tabindex=0><code>(setq browse-url-browser-function &#39;browse-url-chromium)
+</code></pre><p>我把基本的键的绑定和设为教程里的一样，再加上 <code>M-RET</code> 的操作的配置。</p><pre tabindex=0><code>(global-set-key &#34;\C-cl&#34; &#39;org-store-link)
+(global-set-key &#34;\C-ca&#34; &#39;org-agenda)
+(global-set-key &#34;\C-cc&#34; &#39;org-capture)
+(global-set-key &#34;\C-cb&#34; &#39;org-iswitchb)
+
+(setq org-M-RET-may-split-line nil)
+</code></pre><h3 id=捕获配置>捕获配置</h3><p>我可以在 Emacs 的任何模式中按 <code>C-c c</code>，按下后它就会<a href=https://orgmode.org/guide/Capture.html#Capture>帮我捕获某些事</a>，其中包括一个指向我正在处理事务的链接。</p><p>你可以通过定义<a href=https://orgmode.org/guide/Capture-templates.html#Capture-templates>捕获模板</a>来配置它。我将保存两个日志文件，作为会议、电话等的通用记录。一个是私人用的，一个是办公用的。如果我按下 <code>C-c c j</code>,它就会帮我捕获为私人项. 下面包含 <code>%a</code> 的配置是表示我当前的位置（或是我使用 <code>C-c l</code> 保存的链接）的链接。</p><pre tabindex=0><code>(setq org-default-notes-file &#34;~/org/tasks.org&#34;)
+(setq org-capture-templates
+      &#39;(
+        (&#34;t&#34; &#34;Todo&#34; entry (file+headline &#34;inbox.org&#34; &#34;Tasks&#34;)
+         &#34;* TODO %?\n  %i\n  %u\n  %a&#34;)
+        (&#34;n&#34; &#34;Note/Data&#34; entry (file+headline &#34;inbox.org&#34; &#34;Notes/Data&#34;)
+         &#34;* %?   \n  %i\n  %u\n  %a&#34;)
+        (&#34;j&#34; &#34;Journal&#34; entry (file+datetree &#34;~/org/journal.org&#34;)
+         &#34;* %?\nEntered on %U\n %i\n %a&#34;)
+        (&#34;J&#34; &#34;Work-Journal&#34; entry (file+datetree &#34;~/org/wjournal.org&#34;)
+         &#34;* %?\nEntered on %U\n %i\n %a&#34;)
+        ))
+(setq org-irc-link-to-logs t)
+</code></pre><p>我喜欢通过 UUID 来建立链接，这让我在文件之间移动而不会破坏位置。当我要 Org 存储一个链接目标以便将来插入时，以下配置有助于生成 UUID。</p><pre tabindex=0><code>(require &#39;org-id)
+(setq org-id-link-to-org-use-id &#39;create-if-interactive)
+</code></pre><h3 id=议程配置>议程配置</h3><p>我喜欢将星期天作为一周的开始，当我将某件事标记为完成时，我也喜欢记下时间。</p><pre tabindex=0><code>(setq org-log-done &#39;time)
+(setq org-agenda-start-on-weekday 0)
+</code></pre><h3 id=文件归档配置>文件归档配置</h3><p>在这我将配置它，让它知道在议程中该使用哪些文件，而且在纯文本的搜索中添加一点点小功能。我喜欢保留一个通用的文件夹（我可以从其中移动或“重新归档”内容），然后将个人和工作项的任务、日志和知识库分开。</p><pre tabindex=0><code>  (setq org-agenda-files (list &#34;~/org/inbox.org&#34;
+                               &#34;~/org/email.org&#34;
+                               &#34;~/org/tasks.org&#34;
+                               &#34;~/org/wtasks.org&#34;
+                               &#34;~/org/journal.org&#34;
+                               &#34;~/org/wjournal.org&#34;
+                               &#34;~/org/kb.org&#34;
+                               &#34;~/org/wkb.org&#34;
+  ))
+  (setq org-agenda-text-search-extra-files
+        (list &#34;~/org/someday.org&#34;
+              &#34;~/org/config.org&#34;
+  ))
+
+  (setq org-refile-targets &#39;((nil :maxlevel . 2)
+                             (org-agenda-files :maxlevel . 2)
+                             (&#34;~/org/someday.org&#34; :maxlevel . 2)
+                             (&#34;~/org/templates.org&#34; :maxlevel . 2)
+                             )
+        )
+(setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+(setq org-refile-use-outline-path &#39;file)
+</code></pre><h3 id=外观配置>外观配置</h3><p>我喜欢一个较漂亮的的屏幕。在你开始习惯 Org 模式之后，你可以试试这个。</p><pre tabindex=0><code>(add-hook &#39;org-mode-hook
+          (lambda ()
+            (org-bullets-mode t)))
+(setq org-ellipsis &#34;⤵&#34;)
+</code></pre><h3 id=下一篇>下一篇</h3><p>希望这篇文章展示了 Org 模式的一些功能。接下来，我将介绍如何定制 <code>TODO</code> 关键字和标记、归档旧任务、将电子邮件转发到 Org 模式，以及如何使用 <code>git</code> 在不同电脑之间进行同步。</p><p>你也可以查看<a href=https://changelog.complete.org/archives/tag/emacs2018>本系列的所有文章列表</a>。</p><hr><p>via: <a href=https://changelog.complete.org/archives/9865-emacs-2-introducing-org-mode>https://changelog.complete.org/archives/9865-emacs-2-introducing-org-mode</a></p><p>作者：<a href=http://changelog.complete.org/archives/author/jgoerzen>John Goerzen</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/oneforalone>oneforalone</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/emacs/ rel=tag>Emacs</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

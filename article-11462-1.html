@@ -1,0 +1,133 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>在 Linux 上以树状查看文件和进程 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="在 Linux 上以树状查看文件和进程"><meta property="og:description" content="介绍三个 Linux 命令：ps、pstree 和 tree 以类似树的格式查看文件和进程。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11462-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-10-15T09:32:22+00:00"><meta property="article:modified_time" content="2019-10-15T09:32:22+00:00"><meta itemprop=name content="在 Linux 上以树状查看文件和进程"><meta itemprop=description content="介绍三个 Linux 命令：ps、pstree 和 tree 以类似树的格式查看文件和进程。"><meta itemprop=datePublished content="2019-10-15T09:32:22+00:00"><meta itemprop=dateModified content="2019-10-15T09:32:22+00:00"><meta itemprop=wordCount content="566"><meta itemprop=keywords content="树状,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>在 Linux 上以树状查看文件和进程</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2019-10-15T09:32:22Z>October 15, 2019</time></div></div></header><div class="content post__content clearfix"><blockquote><p>介绍三个 Linux 命令：ps、pstree 和 tree 以类似树的格式查看文件和进程。</p></blockquote><p><img src=/data/attachment/album/201910/15/093202rwm5k9pnpntgbtpr.jpg alt></p><p><a href=https://www.networkworld.com/article/3215226/what-is-linux-uses-featres-products-operating-systems.html>Linux</a> 提供了一些方便的命令，用于以树状分支形式查看文件和进程，从而易于查看它们之间的关系。在本文中，我们将介绍 <code>ps</code>、<code>pstree</code> 和 <code>tree</code> 命令以及它们提供的一些选项，这些选项可帮助你将注意力集中在要查看的内容上。</p><h3 id=ps>ps</h3><p>我们用来列出进程的 <code>ps</code> 命令有一些有趣的选项，但是很多人从来没有利用过。虽然常用的 <code>ps -ef</code> 提供了正在运行的进程的完整列表，但是 <code>ps -ejH</code> 命令增加了一个不错的效果。它缩进了相关的进程以使这些进程之间的关系在视觉上更加清晰——就像这个片段：</p><pre tabindex=0><code>$ ps -ejH
+  PID  PGID   SID TTY          TIME CMD
+...
+ 1396  1396  1396 ?        00:00:00   sshd
+28281 28281 28281 ?        00:00:00     sshd
+28409 28281 28281 ?        00:00:00       sshd
+28410 28410 28410 pts/0    00:00:00         bash
+30968 30968 28410 pts/0    00:00:00           ps
+</code></pre><p>可以看到，正在运行的 <code>ps</code> 进程是在 <code>bash</code> 中运行的，而 <code>bash</code> 是在 ssh 会话中运行的。</p><p><code>-exjf</code> 选项字符串提供了类似的视图，但是带有一些其它细节和符号以突出显示进程的层次结构性质：</p><pre tabindex=0><code>$ ps -exjf
+PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+...
+    1  1396  1396  1396 ?           -1 Ss       0   0:00 /usr/sbin/sshd -D
+ 1396 28281 28281 28281 ?           -1 Ss       0   0:00  \_ sshd: shs [priv]
+28281 28409 28281 28281 ?           -1 S     1000   0:00      \_ sshd: shs@pts/0
+28409 28410 28410 28410 pts/0    31028 Ss    1000   0:00          \_ -bash
+28410 31028 31028 28410 pts/0    31028 R+    1000   0:00              \_ ps axjf
+</code></pre><p>命令中使用的这些选项表示：</p><pre tabindex=0><code>-e  选择所有进程
+-j  使用工作格式
+-f  提供完整格式列表
+-H  分层显示进程（如，树状格式）
+-x  取消“必须与 tty 相关联”的限制
+</code></pre><p>同时，该命令也有一个 <code>--forest</code> 选项提供了类似的视图。</p><pre tabindex=0><code>$ ps -ef --forest
+UID        PID  PPID  C STIME TTY          TIME CMD
+...
+root      1396     1  0 Oct08 ?        00:00:00 /usr/sbin/sshd -D
+root     28281  1396  0 12:55 ?        00:00:00  \_ sshd: shs [priv]
+shs      28409 28281  0 12:56 ?        00:00:00      \_ sshd: shs@pts/0
+shs      28410 28409  0 12:56 pts/0    00:00:00          \_ -bash
+shs      32351 28410  0 14:39 pts/0    00:00:00              \_ ps -ef --forest
+</code></pre><p>注意，这些示例只是这些命令如何使用的示例。你可以选择最适合你的进程视图的任何选项组合。</p><h3 id=pstree>pstree</h3><p>使用 <code>pstree</code> 命令可以获得类似的进程视图。尽管 <code>pstree</code> 具备了许多选项，但是该命令本身就提供了非常有用的显示。注意，许多父子进程关系显示在单行而不是后续行上。</p><pre tabindex=0><code>$ pstree
+...
+        ├─sshd───sshd───sshd───bash───pstree
+        ├─systemd─┬─(sd-pam)
+        │         ├─at-spi-bus-laun─┬─dbus-daemon
+        │         │                 └─3*[{at-spi-bus-laun}]
+        │         ├─at-spi2-registr───2*[{at-spi2-registr}]
+        │         ├─dbus-daemon
+        │         ├─ibus-portal───2*[{ibus-portal}]
+        │         ├─pulseaudio───2*[{pulseaudio}]
+        │         └─xdg-permission-───2*[{xdg-permission-}]
+</code></pre><p>通过 <code>-n</code> 选项，<code>pstree</code> 以数值（按进程 ID）顺序显示进程：</p><pre tabindex=0><code>$ pstree -n
+systemd─┬─systemd-journal
+        ├─systemd-udevd
+        ├─systemd-timesyn───{systemd-timesyn}
+        ├─systemd-resolve
+        ├─systemd-logind
+        ├─dbus-daemon
+        ├─atopacctd
+        ├─irqbalance───{irqbalance}
+        ├─accounts-daemon───2*[{accounts-daemon}]
+        ├─acpid
+        ├─rsyslogd───3*[{rsyslogd}]
+        ├─freshclam
+        ├─udisksd───4*[{udisksd}]
+        ├─networkd-dispat
+        ├─ModemManager───2*[{ModemManager}]
+        ├─snapd───10*[{snapd}]
+        ├─avahi-daemon───avahi-daemon
+        ├─NetworkManager───2*[{NetworkManager}]
+        ├─wpa_supplicant
+        ├─cron
+        ├─atd
+        ├─polkitd───2*[{polkitd}]
+        ├─colord───2*[{colord}]
+        ├─unattended-upgr───{unattended-upgr}
+        ├─sshd───sshd───sshd───bash───pstree
+</code></pre><p>使用 <code>pstree</code> 时可以考虑的一些选项包括 <code>-a</code>（包括命令行参数）和 <code>-g</code>（包括进程组）。</p><p>以下是一些简单的示例（片段）。</p><p>命令 <code>pstree -a</code> 的输出内容：</p><pre tabindex=0><code>└─wpa_supplicant -u -s -O /run/wpa_supplicant
+</code></pre><p>命令 <code>pstree -g</code> 的输出内容：</p><pre tabindex=0><code>├─sshd(1396)───sshd(28281)───sshd(28281)───bash(28410)───pstree(1115)
+</code></pre><h3 id=tree>tree</h3><p>虽然 <code>tree</code> 命令听起来与 <code>pstree</code> 非常相似，但这是用于查看文件而非进程的命令。它提供了一个漂亮的树状目录和文件视图。</p><p>如果你使用 <code>tree</code> 命令查看 <code>/proc</code> 目录，你显示的开头部分将类似于这个：</p><pre tabindex=0><code>$ tree /proc
+/proc
+├── 1
+│   ├── attr
+│   │   ├── apparmor
+│   │   │   ├── current
+│   │   │   ├── exec
+│   │   │   └── prev
+│   │   ├── current
+│   │   ├── display
+│   │   ├── exec
+│   │   ├── fscreate
+│   │   ├── keycreate
+│   │   ├── prev
+│   │   ├── smack
+│   │   │   └── current
+│   │   └── sockcreate
+│   ├── autogroup
+│   ├── auxv
+│   ├── cgroup
+│   ├── clear_refs
+│   ├── cmdline
+...
+</code></pre><p>如果以 root 权限运行这条命令（<code>sudo tree /proc</code>），你将会看到更多详细信息，因为 <code>/proc</code> 目录的许多内容对于普通用户而言是无法访问的。</p><p>命令 <code>tree -d</code> 将会限制仅显示目录。</p><pre tabindex=0><code>$ tree -d /proc
+/proc
+├── 1
+│   ├── attr
+│   │   ├── apparmor
+│   │   └── smack
+│   ├── fd [error opening dir]
+│   ├── fdinfo [error opening dir]
+│   ├── map_files [error opening dir]
+│   ├── net
+│   │   ├── dev_snmp6
+│   │   ├── netfilter
+│   │   └── stat
+│   ├── ns [error opening dir]
+│   └── task
+│       └── 1
+│           ├── attr
+│           │   ├── apparmor
+│           │   └── smack
+...
+</code></pre><p>使用 <code>-f</code> 选项，<code>tree</code> 命令会显示完整的路径。</p><pre tabindex=0><code>$ tree -f /proc
+/proc
+├── /proc/1
+│   ├── /proc/1/attr
+│   │   ├── /proc/1/attr/apparmor
+│   │   │   ├── /proc/1/attr/apparmor/current
+│   │   │   ├── /proc/1/attr/apparmor/exec
+│   │   │   └── /proc/1/attr/apparmor/prev
+│   │   ├── /proc/1/attr/current
+│   │   ├── /proc/1/attr/display
+│   │   ├── /proc/1/attr/exec
+│   │   ├── /proc/1/attr/fscreate
+│   │   ├── /proc/1/attr/keycreate
+│   │   ├── /proc/1/attr/prev
+│   │   ├── /proc/1/attr/smack
+│   │   │   └── /proc/1/attr/smack/current
+│   │   └── /proc/1/attr/sockcreate
+...
+</code></pre><p>分层显示通常可以使进程和文件之间的关系更容易理解。可用选项的数量很多，而你总可以找到一些视图，帮助你查看所需的内容。</p><hr><p>via: <a href=https://www.networkworld.com/article/3444589/viewing-files-and-processes-as-trees-on-linux.html>https://www.networkworld.com/article/3444589/viewing-files-and-processes-as-trees-on-linux.html</a></p><p>作者：<a href=https://www.networkworld.com/author/Sandra-Henry_Stocker/>Sandra Henry-Stocker</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/laingke>laingke</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%A0%91%E7%8A%B6/ rel=tag>树状</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

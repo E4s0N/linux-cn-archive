@@ -1,0 +1,98 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 dig 命令挖掘域名解析信息 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 dig 命令挖掘域名解析信息"><meta property="og:description" content="命令行工具 dig 是用于解析域名和故障排查的一个利器。"><meta property="og:type" content="article"><meta property="og:url" content="/article-11931-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-02-26T09:41:19+00:00"><meta property="article:modified_time" content="2020-02-26T09:41:19+00:00"><meta itemprop=name content="使用 dig 命令挖掘域名解析信息"><meta itemprop=description content="命令行工具 dig 是用于解析域名和故障排查的一个利器。"><meta itemprop=datePublished content="2020-02-26T09:41:19+00:00"><meta itemprop=dateModified content="2020-02-26T09:41:19+00:00"><meta itemprop=wordCount content="477"><meta itemprop=keywords content="dig,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 dig 命令挖掘域名解析信息</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-02-26T09:41:19Z>February 26, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>命令行工具 <code>dig</code> 是用于解析域名和故障排查的一个利器。</p></blockquote><p><img src=/data/attachment/album/202002/26/094028jgvzguau1pdgicpz.jpg alt></p><p>从主要功能上来说，<code>dig</code> 和 <code>nslookup</code> 之间差异不大，但 <code>dig</code> 更像一个加强版的 <code>nslookup</code>，可以查询到一些由域名服务器管理的信息，这在排查某些问题的时候非常有用。总的来说，<code>dig</code> 是一个既简单易用又功能强大的命令行工具。（LCTT 译注：<code>dig</code> 和 <code>nslookup</code> 行为的主要区别来自于 <code>dig</code> 使用是是操作系统本身的解析库，而 <code>nslookup</code> 使用的是该程序自带的解析库，这有时候会带来一些行为差异。此外，从表现形式上看，<code>dig</code> 返回是结果是以 BIND 配置信息的格式返回的，也带有更多的技术细节。）</p><p><code>dig</code> 最基本的功能就是查询域名信息，因此它的名称实际上是“ 域名信息查询工具 Domain Information Groper ”的缩写。<code>dig</code> 向用户返回的内容可以非常详尽，也可以非常简洁，展现内容的多少完全由用户在查询时使用的选项来决定。</p><h3 id=我只需要查询-ip-地址>我只需要查询 IP 地址</h3><p>如果只需要查询某个域名指向的 IP 地址，可以使用 <code>+short</code> 选项：</p><pre tabindex=0><code>$ dig facebook.com +short
+31.13.66.35
+</code></pre><p>在查询的时候发现有的域名会指向多个 IP 地址？这其实是网站提高其可用性的一种措施。</p><pre tabindex=0><code>$ dig networkworld.com +short
+151.101.2.165
+151.101.66.165
+151.101.130.165
+151.101.194.165
+</code></pre><p>也正是由于这些网站通过负载均衡实现高可用，在下一次查询的时候，或许会发现这几个 IP 地址的排序有所不同。（LCTT 译注：浏览器等应用默认会使用返回的第一个 IP 地址，因此这样实现了一种简单的负载均衡。）</p><pre tabindex=0><code>$ dig networkworld.com +short
+151.101.130.165
+151.101.194.165
+151.101.2.165
+151.101.66.165
+</code></pre><h3 id=标准返回>标准返回</h3><p><code>dig</code> 的标准返回内容则包括这个工具本身的一些信息，以及请求域名服务器时返回的响应内容：</p><pre tabindex=0><code>$ dig networkworld.com
+
+; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1ubuntu2.1-Ubuntu &lt;&lt;&gt;*gt; networkworld.com
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 39932
+;; flags: qr rd ra; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 65494
+;; QUESTION SECTION:
+;networkworld.com.              IN      A
+
+;; ANSWER SECTION:
+networkworld.com.       300     IN      A       151.101.194.165
+networkworld.com.       300     IN      A       151.101.130.165
+networkworld.com.       300     IN      A       151.101.66.165
+networkworld.com.       300     IN      A       151.101.2.165
+
+;; Query time: 108 msec
+;; SERVER: 127.0.0.53#53(127.0.0.53)
+;; WHEN: Thu Feb 13 13:49:53 EST 2020
+;; MSG SIZE  rcvd: 109
+</code></pre><p>由于域名服务器有缓存机制，返回的内容可能是之前缓存好的信息。在这种情况下，<code>dig</code> 最后显示的 查询时间 Query time 会是 0 毫秒（0 msec）：</p><pre tabindex=0><code>;; Query time: 0 msec        &lt;==
+;; SERVER: 127.0.0.53#53(127.0.0.53)
+;; WHEN: Thu Feb 13 15:30:09 EST 2020
+;; MSG SIZE  rcvd: 109
+</code></pre><h3 id=向谁查询>向谁查询？</h3><p>在默认情况下，<code>dig</code> 会根据 <code>/etc/resolv.conf</code> 这个文件的内容决定向哪个域名服务器获取查询结果。你也可以使用 <code>@</code> 来指定 <code>dig</code> 请求的域名服务器。</p><p>在下面的例子中，就指定了 <code>dig</code> 向 Google 的域名服务器 8.8.8.8 查询域名信息。</p><pre tabindex=0><code>$ dig @8.8.8.8 networkworld.com
+
+; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1ubuntu2.1-Ubuntu &lt;&lt;&gt;&gt; @8.8.8.8 networkworld.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 21163
+;; flags: qr rd ra; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;networkworld.com.              IN      A
+
+;; ANSWER SECTION:
+networkworld.com.       299     IN      A       151.101.130.165
+networkworld.com.       299     IN      A       151.101.66.165
+networkworld.com.       299     IN      A       151.101.194.165
+networkworld.com.       299     IN      A       151.101.2.165
+
+;; Query time: 48 msec
+;; SERVER: 8.8.8.8#53(8.8.8.8)
+;; WHEN: Thu Feb 13 14:26:14 EST 2020
+;; MSG SIZE  rcvd: 109
+</code></pre><p>想要知道正在使用的 <code>dig</code> 工具的版本，可以使用 <code>-v</code> 选项。你会看到类似这样：</p><pre tabindex=0><code>$ dig -v
+DiG 9.11.5-P4-5.1ubuntu2.1-Ubuntu
+</code></pre><p>或者这样的返回信息：</p><pre tabindex=0><code>$ dig -v
+DiG 9.11.4-P2-RedHat-9.11.4-22.P2.el8
+</code></pre><p>如果你觉得 <code>dig</code> 返回的内容过于详细，可以使用 <code>+noall</code>（不显示所有内容）和 <code>+answer</code>（仅显示域名服务器的响应内容）选项，域名服务器的详细信息就会被忽略，只保留域名解析结果。</p><pre tabindex=0><code>$ dig networkworld.com +noall +answer
+
+; &lt;&lt;&gt;&gt; DiG 9.11.5-P4-5.1ubuntu2.1-Ubuntu &lt;&lt;&gt;&gt; networkworld.com +noall +answer
+;; global options: +cmd
+networkworld.com.       300     IN      A       151.101.194.165
+networkworld.com.       300     IN      A       151.101.130.165
+networkworld.com.       300     IN      A       151.101.66.165
+networkworld.com.       300     IN      A       151.101.2.165
+</code></pre><h3 id=批量查询域名>批量查询域名</h3><p>如果你要查询多个域名，可以把这些域名写入到一个文件内（<code>domains</code>），然后使用下面的 <code>dig</code> 命令遍历整个文件并给出所有查询结果。</p><pre tabindex=0><code>$ dig +noall +answer -f domains
+networkworld.com.       300     IN      A       151.101.66.165
+networkworld.com.       300     IN      A       151.101.2.165
+networkworld.com.       300     IN      A       151.101.130.165
+networkworld.com.       300     IN      A       151.101.194.165
+world.std.com.          77972   IN      A       192.74.137.5
+uushenandoah.org.       1982    IN      A       162.241.24.209
+amazon.com.             18      IN      A       176.32.103.205
+amazon.com.             18      IN      A       176.32.98.166
+amazon.com.             18      IN      A       205.251.242.103
+</code></pre><p>你也可以在上面的命令中使用 <code>+short</code> 选项，但如果其中有些域名指向多个 IP 地址，就无法看出哪些 IP 地址对应哪个域名了。在这种情况下，更好地做法应该是让 <code>awk</code> 对返回内容进行处理，只留下第一列和最后一列：</p><pre tabindex=0><code>$ dig +noall +answer -f domains | awk &#39;{print $1,$NF}&#39;
+networkworld.com. 151.101.66.165
+networkworld.com. 151.101.130.165
+networkworld.com. 151.101.194.165
+networkworld.com. 151.101.2.165
+world.std.com. 192.74.137.5
+amazon.com. 176.32.98.166
+amazon.com. 205.251.242.103
+amazon.com. 176.32.103.205
+</code></pre><hr><p>via: <a href=https://www.networkworld.com/article/3527430/digging-up-ip-addresses-with-the-dig-command.html>https://www.networkworld.com/article/3527430/digging-up-ip-addresses-with-the-dig-command.html</a></p><p>作者：<a href=https://www.networkworld.com/author/Sandra-Henry_Stocker/>Sandra Henry-Stocker</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/HankChow>HankChow</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/dig/ rel=tag>dig</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

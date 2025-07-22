@@ -1,0 +1,58 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Linux 中查看系统硬件制造商、型号和序列号 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Linux 中查看系统硬件制造商、型号和序列号"><meta property="og:description" content="对于 Linux 图形界面用户和 Windows 用户来说获取系统硬件信息都不算问题，但是对命令行用户来说想要获取这些细节时有点儿麻烦。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9932-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-08-19T10:17:14+00:00"><meta property="article:modified_time" content="2018-08-19T10:17:14+00:00"><meta itemprop=name content="如何在 Linux 中查看系统硬件制造商、型号和序列号"><meta itemprop=description content="对于 Linux 图形界面用户和 Windows 用户来说获取系统硬件信息都不算问题，但是对命令行用户来说想要获取这些细节时有点儿麻烦。"><meta itemprop=datePublished content="2018-08-19T10:17:14+00:00"><meta itemprop=dateModified content="2018-08-19T10:17:14+00:00"><meta itemprop=wordCount content="356"><meta itemprop=keywords content="硬件,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Linux 中查看系统硬件制造商、型号和序列号</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-08-19T10:17:14Z>August 19, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201808/19/101700kyth5iil4d4huhaz.jpg alt></p><p>对于 Linux 图形界面用户和 Windows 用户来说获取系统硬件信息都不算问题，但是对命令行用户来说想要获取这些细节时有点儿麻烦。</p><p>甚至我们中的大多数都不知道获取这些信息最好的命令是什么。Linux 中有许多可用的工具集来获取诸如制造商、型号和序列号等硬件信息。</p><p>在这里我尝试写下获取这些细节的可能的方式，你可以挑选一种最好用的。</p><p>你必须知道所有这些信息，因为当你向硬件制造商提交任何硬件问题时，你会需要它们。</p><p>这可以通过 6 种方法来实现，下面我来演示一下怎么做。</p><h3 id=方法一使用-dmidecode-命令>方法一：使用 dmidecode 命令</h3><p><code>dmidecode</code> 是一个读取电脑 DMI（ 桌面管理接口 Desktop Management Interface ）表内容并且以人类可读的格式显示系统硬件信息的工具。（也有人说是读取 SMBIOS —— 系统管理 BIOS System Management BIOS ）</p><p>这个表包含系统硬件组件的说明，也包含如序列号、制造商、发布日期以及 BIOS 修订版本号等其它有用的信息。</p><p>DMI 表不仅描述了当前的系统构成，还可以报告可能的升级信息（比如可以支持的最快的 CPU 或者最大的内存容量）。</p><p>这将有助于分析你的硬件兼容性，比如是否支持最新版本的程序。</p><pre tabindex=0><code># dmidecode -t system
+
+# dmidecode 2.12
+# SMBIOS entry point at 0x7e7bf000
+SMBIOS 2.7 present.
+
+Handle 0x0024, DMI type 1, 27 bytes
+System Information
+ Manufacturer: IBM
+ Product Name: System x2530 M4: -[1214AC1]-
+ Version: 0B
+ Serial Number: MK2RL11
+ UUID: 762A99BF-6916-450F-80A6-B2E9E78FC9A1
+ Wake-up Type: Power Switch
+ SKU Number: Not Specified
+ Family: System X
+
+Handle 0x004B, DMI type 12, 5 bytes
+System Configuration Options
+ Option 1: JP20 pin1-2: TPM PP Disable, pin2-3: TPM PP Enable
+
+Handle 0x004D, DMI type 32, 20 bytes
+System Boot Information
+ Status: No errors detected
+</code></pre><p><strong>推荐阅读：</strong> <a href=https://www.2daygeek.com/dmidecode-get-print-display-check-linux-system-hardware-information/>Dmidecode –– 获取 Linux 系统硬件信息的简单方式</a></p><h3 id=方法二使用-inxi-命令>方法二：使用 inxi 命令</h3><p><code>inxi</code> 是 Linux 上查看硬件信息的一个灵巧的小工具，它提供了大量的选项来获取所有硬件信息，这是我在现有的其它 Linux 工具集里所没见到过的。它是从 locsmif 编写的古老的但至今看来都异常灵活的 <code>infobash</code> fork 出来的。</p><p><code>inxi</code> 是一个可以快速显示系统硬件、CPU、驱动、Xorg、桌面、内核、GCC 版本、进程、内存使用以及大量其它有用信息的脚本，也可以用来做技术支持和调试工具。</p><pre tabindex=0><code># inxi -M
+Machine: Device: server System: IBM product: N/A v: 0B serial: MK2RL11
+ Mobo: IBM model: 00Y8494 serial: 37M17D UEFI: IBM v: -[VVE134MUS-1.50]- date: 08/30/2013
+</code></pre><p><strong>推荐阅读：</strong> <a href=https://www.2daygeek.com/inxi-system-hardware-information-on-linux/>inxi —— 一个很棒的查看 Linux 硬件信息的工具</a></p><h3 id=方法三使用-lshw-命令>方法三：使用 lshw 命令</h3><p><code>lshw</code>（指 硬件监听器 Hardware Lister ）是一个小巧灵活的工具，可以生成如内存配置、固件版本、主板配置、CPU 版本和速度、缓存配置、USB、网卡、显卡、多媒体、打印机以及总线速度等机器中各种硬件组件的详细报告。</p><p>它通过读取 <code>/proc</code> 目录下各种文件的内容和 DMI 表来生成硬件信息。</p><p><code>lshw</code> 必须以超级用户的权限运行来检测完整的硬件信息，否则它只汇报部分信息。<code>lshw</code> 里有一个叫做 <code>class</code> 的特殊选项，它可以以详细的模式显示特定的硬件信息。</p><pre tabindex=0><code># lshw -C system
+enal-dbo01t
+ description: Blade
+ product: System x2530 M4: -[1214AC1]-
+ vendor: IBM
+ version: 0B
+ serial: MK2RL11
+ width: 64 bits
+ capabilities: smbios-2.7 dmi-2.7 vsyscall32
+ configuration: boot=normal chassis=enclosure family=System X uuid=762A99BF-6916-450F-80A6-B2E9E78FC9A1
+</code></pre><p><strong>推荐阅读：</strong> <a href=https://www.2daygeek.com/lshw-find-check-system-hardware-information-details-linux/>LSHW (Hardware Lister) –– 获取 Linux 硬件信息的灵巧的小工具</a></p><h3 id=方法四使用-sys-文件系统>方法四：使用 /sys 文件系统</h3><p>内核在 <code>/sys</code> 目录下的文件中公开了一些 DMI 信息。因此，我们可以通过如下方式运行 <code>grep</code> 命令来轻易地获取机器类型。</p><pre tabindex=0><code># grep &#34;&#34; /sys/class/dmi/id/[pbs]*
+</code></pre><p>或者，可以使用 <code>cat</code> 命令仅打印出特定的详细信息。</p><pre tabindex=0><code># cat /sys/class/dmi/id/board_vendor
+IBM
+
+# cat /sys/class/dmi/id/product_name
+System x2530 M4: -[1214AC1]-
+
+# cat /sys/class/dmi/id/product_serial
+MK2RL11
+
+# cat /sys/class/dmi/id/bios_version
+-[VVE134MUS-1.50]-
+</code></pre><h3 id=方法五使用-dmesg-命令>方法五：使用 dmesg 命令</h3><p><code>dmesg</code> 命令是在 Linux 上 <code>syslogd</code> 或 <code>klogd</code> 启动前用来记录内核消息（启动阶段的消息）的。它通过读取内核的环形缓冲区来获取数据。在排查问题或只是尝试获取系统硬件信息时，<code>dmesg</code> 非常有用。</p><pre tabindex=0><code># dmesg | grep -i DMI
+DMI: System x2530 M4: -[1214AC1]-/00Y8494, BIOS -[VVE134MUS-1.50]- 08/30/2013
+</code></pre><h3 id=方法六使用-hwinfo-命令>方法六：使用 hwinfo 命令</h3><p><code>hwinfo</code>（ 硬件信息 hardware information ）是另一个很棒的工具，用于检测当前系统存的硬件，并以人类可读的方式显示各种硬件模块的详细信息。</p><p>它报告关于 CPU、内存、键盘、鼠标、显卡、声卡、存储、网络接口、磁盘、分区、BIOS 以及桥接器等信息。它可以比其它像 <code>lshw</code>、<code>dmidecode</code> 或 <code>inxi</code> 等工具显示更为详细的信息。</p><p><code>hwinfo</code> 使用 libhd 库 <code>libhd.so</code> 来收集系统上的硬件信息。该工具是为 openSuse 特别设计的，后来其它发行版也将它包含在其官方仓库中。</p><pre tabindex=0><code># hwinfo | egrep &#34;system.hardware.vendor|system.hardware.product&#34;
+ system.hardware.vendor = &#39;IBM&#39;
+ system.hardware.product = &#39;System x2530 M4: -[1214AC1]-&#39;
+</code></pre><p><strong>推荐阅读：</strong> <a href=https://www.2daygeek.com/hwinfo-check-display-detect-system-hardware-information-linux/>hwinfo (Hardware Info) –– 一款灵活的检测 Linux 系统硬件信息的工具</a></p><hr><p>via: <a href=https://www.2daygeek.com/how-to-check-system-hardware-manufacturer-model-and-serial-number-in-linux/>https://www.2daygeek.com/how-to-check-system-hardware-manufacturer-model-and-serial-number-in-linux/</a></p><p>作者：<a href=https://www.2daygeek.com/author/vinoth/>VINOTH KUMAR</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/icecoobe>icecoobe</a> 校对：<a href=https://github.com/pityonline>pityonline</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E7%A1%AC%E4%BB%B6/ rel=tag>硬件</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,137 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>2022 Rust 入门指南 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="2022 Rust 入门指南"><meta property="og:description" content="如果你打算在今年探索 Rust，请下载我们的免费 Rust 速查表，以供快速参考基础知识。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14563-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-05-08T16:16:32+00:00"><meta property="article:modified_time" content="2022-05-08T16:16:32+00:00"><meta itemprop=name content="2022 Rust 入门指南"><meta itemprop=description content="如果你打算在今年探索 Rust，请下载我们的免费 Rust 速查表，以供快速参考基础知识。"><meta itemprop=datePublished content="2022-05-08T16:16:32+00:00"><meta itemprop=dateModified content="2022-05-08T16:16:32+00:00"><meta itemprop=wordCount content="566"><meta itemprop=keywords content="Rust,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>2022 Rust 入门指南</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-05-08T16:16:32Z>May 08, 2022</time></div></div></header><div class="content post__content clearfix"><blockquote><p>如果你打算在今年探索 Rust，请下载我们的免费 Rust 速查表，以供快速参考基础知识。</p></blockquote><p><img src=/data/attachment/album/202205/08/161625lvo8v82ell9l3xmm.jpg alt title="Cheat Sheet cover image"></p><p>Rust 是一门相对较新的编程语言，受到各个企业的 <a href=https://opensource.com/article/20/5/rust-java>程序员的欢迎</a>。尽管如此，它仍是一门建立在之前所有事物之上的语言。毕竟，Rust 不是一天做出来的，所以即便 Rust 中的一些概念看起来与你从 Python、Java、C++ 等编程语言学到的东西大不相同，但它们都是基于同一个基础，那就是你一直与之交互（无论你是否知道）的 CPU 和 NUMA（ 非统一内存访问 Non Uniform Memory Access ）架构，因此 Rust 中的一些新功能让人感觉有些熟悉。</p><p>现在，我的职业不是程序员。我没耐心但我又有点儿强迫症。当我需要完成某件事时，如果一门语言不能帮助我相对较快地获得想要的结果，那么我很少会受到鼓舞而使用它。Rust 试图平衡两个矛盾：现代计算机对安全和结构化代码的需求，和现代程序员对编码工作事半功倍的渴望。</p><h3 id=安装-rust>安装 Rust</h3><p><a href=http://rust-lang.org>rust-lang.org</a> 网站有丰富的的文档指导如何安装 Rust，但通常，它就像下载 <code>sh.rustup.rs</code> 脚本并运行它一样简单。</p><pre tabindex=0><code>$ curl --proto &#39;=https&#39; --tlsv1.2 -sSf https://sh.rustup.rs
+$ less sh.rustup.sh
+$ sh ./sh.rustup.rs
+</code></pre><h3 id=没有类>没有类</h3><p>Rust 没有类，也不使用 <code>class</code> 关键字。Rust 确实有 <code>struct</code> 数据类型，但它的作用是充当数据集合的一种模板。因此，你可以使用 结构体 struct ，而不是创建一个类来表示虚拟对象：</p><pre tabindex=0><code>struct Penguin {
+  genus: String,
+  species: String,
+  extinct: bool,
+  classified: u64,
+}
+</code></pre><p>你可以像使用类一样使用它。例如，当定义完 <code>Penguin</code> 结构，你就可以创建它的实例，并与该实例进行交互：</p><pre tabindex=0><code>struct Penguin {
+  genus: String,
+  species: String,
+  extinct: bool,
+  classified: u64,
+}
+
+fn main() {
+  let p = Penguin { genus: &#34;Pygoscelis&#34;.to_owned(),
+    species: &#34;R adeliæ&#34;.to_owned(), 
+    extinct: false, 
+    classified: 1841 };
+
+  println!(&#34;Species: {}&#34;, p.species);    
+  println!(&#34;Genus: {}&#34;, p.genus);
+  println!(&#34;Classified in {}&#34;, p.classified);
+  if p.extinct == true {
+    println!(&#34;Sadly this penguin has been made extinct.&#34;);
+  }
+}
+</code></pre><p>将 <code>impl</code> 数据类型与 <code>struct</code> 数据类型结合使用，你可以实现一个包含函数的结构体，并且可以添加继承和其他与类相似的特性。</p><h3 id=函数>函数</h3><p>Rust 中的函数很像其他语言中的函数。每个函数都代表一组严谨的任务，你可以在需要时调用它们。主函数名必须是 <code>main</code>。</p><p>用 <code>fn</code> 关键字声明函数，后跟函数名称和函数接受的所有参数。</p><pre tabindex=0><code>fn foo() {
+  let n = 8;
+  println!(&#34;Eight is written as {}&#34;, n);
+}
+</code></pre><p>通过参数，将信息从一个函数传递到另一个函数。例如，我已经创建了一个 <code>Penguin</code> 类（结构），并且我有一个 <code>Penguin</code> 的实例为 <code>p</code>，将目标函数的参数指定为 <code>Penguin</code> 类型，就可把 <code>p</code> 的属性从一个函数传递到另一个函数。</p><pre tabindex=0><code>fn main() {
+  let p = Penguin { genus: &#34;Pygoscelis&#34;.to_owned(), 
+    species: &#34;R adeliæ&#34;.to_owned(), 
+    extinct: false, classified: 1841 };
+  printer(p);
+}
+
+fn printer(p: Penguin) {
+  println!(&#34;Species: {}&#34;, p.species);    
+  println!(&#34;Genus: {}&#34;, p.genus);
+  println!(&#34;Classified in {}&#34;, p.classified);
+  if p.extinct == true {
+    println!(&#34;Sadly this penguin has been made extinct.&#34;);
+  }
+}
+</code></pre><h3 id=变量>变量</h3><p>Rust 默认创建的为 不可变 immutable 变量。这意味着你创建的变量以后无法更改。这段代码虽然看起来没问题，但无法编译：</p><pre tabindex=0><code>fn main() {
+  let n = 6;
+  let n = 5;
+}
+</code></pre><p>但你可以使用关键字 <code>mut</code> 声明一个 可变 mutable 变量，因此下面这段代码可以编译成功：</p><pre tabindex=0><code>fn main() {
+  let mut n = 6;
+  println!(&#34;Value is {}&#34;, n);
+  n = 5;
+  println!(&#34;Value is {}&#34;, n);
+}
+</code></pre><h3 id=编译>编译</h3><p>Rust 编译器，至少就其报错信息而言，是可用的最好的编译器之一。当你在 Rust 中出错时，编译器会真诚地告诉你做错了什么。实际上，仅通过从编译器错误消息中学习，我就了解了 Rust 的许多细微差别（就我理解到的 Rust 的任何细微差别而言）。即便有时错误消息太过于模糊，而不知所以然，互联网搜索几乎总能得到解释。</p><p>启动 Rust 程序的最简单方法是使用 <code>cargo</code>，它是 Rust 的包管理和构建系统。</p><pre tabindex=0><code>$ mkdir myproject
+$ cd myproject
+$ cargo init 
+</code></pre><p>以上命令为项目创建了基本的基础架构，最值得注意的是 <code>src</code> 子目录中的 <code>main.rs</code> 文件。打开此文件，把我为本文生成的示例代码粘贴进去：</p><pre tabindex=0><code>struct Penguin {
+  genus: String,
+  species: String,
+  extinct: bool,
+  classified: u64,
+}
+
+fn main() {
+  let p = Penguin { genus: &#34;Pygoscelis&#34;.to_owned(), species: &#34;R adeliæ&#34;.to_owned(), extinct: false, classified: 1841 };
+  printer(p);
+  foo();
+}
+
+fn printer(p: Penguin) {
+  println!(&#34;Species: {}&#34;, p.species);    
+  println!(&#34;Genus: {}&#34;, p.genus);
+  println!(&#34;Classified in {}&#34;, p.classified);
+  if p.extinct == true {
+    println!(&#34;Sadly this penguin has been made extinct.&#34;);
+  }
+}
+
+fn foo() {
+  let mut n = 6;
+  println!(&#34;Value is {}&#34;, n);
+  n = 8;
+  println!(&#34;Eight is written as {}&#34;, n);
+}
+</code></pre><p>使用 <code>cargo build</code> 命令进行编译：</p><pre tabindex=0><code>$ cargo build
+</code></pre><p>执行 <code>target</code> 子目录下的二进制程序，或者直接运行 <code>cargo run</code> 命令来运行你的项目：</p><pre tabindex=0><code>$ cargo run
+Species: R adeliæ
+Genus: Pygoscelis
+Classified in 1841
+Value is 6
+Eight is written as 8
+</code></pre><h3 id=crates>Crates</h3><p>任何语言的大部分便利都来自于它的库或模块。在 Rust 中，进行分发和跟踪的库称为 “crate”（箱子）。<a href=https://crates.io/>crates.io</a> 是一个很好的社区 crate 注册网站。</p><p>把一个 crate 添加到你的 Rust 项目，首先要在 <code>Cargo.toml</code> 文件中添加这个 crate。例如，要安装随机数函数，我使用名为 <code>rand</code> 的 crate，使用 <code>*</code> 作为通配符，以确保在编译时获得最新版本：</p><pre tabindex=0><code>[package]
+name = &#34;myproject&#34;
+version = &#34;0.1.0&#34;
+authors = [&#34;Seth &lt;seth@opensource.com&gt;&#34;]
+edition = &#34;2022&#34;
+
+[dependencies]
+rand = &#34;*&#34;
+</code></pre><p>在 Rust 代码中使用它需要在最顶行使用 <code>use</code> 语句：</p><pre tabindex=0><code>use rand::Rng;
+</code></pre><p>以下是一些创建随机种子和随机范围的示例代码：</p><pre tabindex=0><code>fn foo() {
+  let mut rng = rand::thread_rng();
+  let mut n = rng.gen_range(1..99);
+
+  println!(&#34;Value is {}&#34;, n);
+  n = rng.gen_range(1..99);
+  println!(&#34;Value is {}&#34;, n);
+}
+</code></pre><p>你可以使用 <code>cargo run</code> 来运行它，它会检测代码是否被更改并触发一个新的构建。构建过程中下载名为 <code>rand</code> 的 <code>crete</code> 和它依赖的所有 <code>crate</code>，编译代码，然后运行它：</p><pre tabindex=0><code>$ cargo run
+Updating crates.io index
+Downloaded ppv-lite86 v0.2.16
+Downloaded 1 crate (22.2 KB) in 1.40s
+ Compiling libc v0.2.112
+ Compiling cfg-if v1.0.0
+ Compiling ppv-lite86 v0.2.16
+ Compiling getrandom v0.2.3
+ Compiling rand_core v0.6.3
+ Compiling rand_chacha v0.3.1
+ Compiling rand v0.8.4
+ Compiling rustpenguin v0.1.0 (/home/sek/Demo/rustpenguin)
+ Finished dev [unoptimized + debuginfo] target(s) in 13.97s
+ Running `target/debug/rustpenguin`
+
+Species: R adeliæ
+Genus: Pygoscelis
+Classified in 1841
+Value is 70
+Value is 35
+</code></pre><h3 id=rust-速查表>Rust 速查表</h3><p>Rust 是一门令人非常愉快的语言。集成了在线注册网站、有用的编译器和几乎直观的语法，它给人的适当的现代感。</p><p>但请不要误会，Rust 仍是一门复杂的语言，它具有严格的数据类型、强作用域变量和许多内置方法。Rust 值得一看，如果你要探索它，那么你应该下载我们的免费 <a href=https://opensource.com/downloads/rust-cheat-sheet>Rust 速查表</a>，以便快速了解基础知识。越早开始，就越早了解 Rust。当然，你应该经常练习以避免生疏。</p><blockquote><p><strong><a href=https://opensource.com/downloads/rust-cheat-sheet>Rust 速查表</a></strong></p></blockquote><hr><p>via: <a href=https://opensource.com/article/22/1/rust-cheat-sheet>https://opensource.com/article/22/1/rust-cheat-sheet</a></p><p>作者：<a href=https://opensource.com/users/seth>Seth Kenlon</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/hanszhao80>hanszhao80</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/rust/ rel=tag>Rust</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

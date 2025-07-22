@@ -1,0 +1,147 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>使用 Kafka 和 MongoDB 进行 Go 异步处理 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="使用 Kafka 和 MongoDB 进行 Go 异步处理"><meta property="og:description" content="在这个示例中，我将数据的保存和 MongoDB 分离，并创建另一个微服务去处理它。我还添加了 Kafka 为消息层服务，这样微服务就可以异步处理它自己关心的东西了。"><meta property="og:type" content="article"><meta property="og:url" content="/article-9927-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-08-17T00:30:24+00:00"><meta property="article:modified_time" content="2018-08-17T00:30:24+00:00"><meta itemprop=name content="使用 Kafka 和 MongoDB 进行 Go 异步处理"><meta itemprop=description content="在这个示例中，我将数据的保存和 MongoDB 分离，并创建另一个微服务去处理它。我还添加了 Kafka 为消息层服务，这样微服务就可以异步处理它自己关心的东西了。"><meta itemprop=datePublished content="2018-08-17T00:30:24+00:00"><meta itemprop=dateModified content="2018-08-17T00:30:24+00:00"><meta itemprop=wordCount content="475"><meta itemprop=keywords content="Kafka,异步,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>使用 Kafka 和 MongoDB 进行 Go 异步处理</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2018-08-17T00:30:24Z>August 17, 2018</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/201808/17/003015f11bgzwcfcbmb1i9.png alt></p><p>在我前面的博客文章 “<a href=https://www.melvinvivas.com/my-first-go-microservice/>我的第一个 Go 微服务：使用 MongoDB 和 Docker 多阶段构建</a>” 中，我创建了一个 Go 微服务示例，它发布一个 REST 式的 http 端点，并将从 HTTP POST 中接收到的数据保存到 MongoDB 数据库。</p><p>在这个示例中，我将数据的保存和 MongoDB 分离，并创建另一个微服务去处理它。我还添加了 Kafka 为消息层服务，这样微服务就可以异步处理它自己关心的东西了。</p><blockquote><p>如果你有时间去看，我将这个博客文章的整个过程录制到 <a href=https://youtu.be/xa0Yia1jdu8>这个视频中了</a> :)</p></blockquote><p>下面是这个使用了两个微服务的简单的异步处理示例的上层架构图。</p><p><img src=/data/attachment/album/201808/17/003027x0suw8drsu8mefoa.jpg alt=rest-kafka-mongo-microservice-draw-io></p><p>微服务 1 —— 是一个 REST 式微服务，它从一个 /POST http 调用中接收数据。接收到请求之后，它从 http 请求中检索数据，并将它保存到 Kafka。保存之后，它通过 /POST 发送相同的数据去响应调用者。</p><p>微服务 2 —— 是一个订阅了 Kafka 中的一个主题的微服务，微服务 1 的数据保存在该主题。一旦消息被微服务消费之后，它接着保存数据到 MongoDB 中。</p><p>在你继续之前，我们需要能够去运行这些微服务的几件东西：</p><ol><li><a href=https://kafka.apache.org/downloads>下载 Kafka</a> —— 我使用的版本是 kafka_2.11-1.1.0</li><li>安装 <a href=https://github.com/confluentinc/confluent-kafka-go>librdkafka</a> —— 不幸的是，这个库应该在目标系统中</li><li>安装 <a href=https://github.com/confluentinc/confluent-kafka-go>Kafka Go 客户端</a></li><li>运行 MongoDB。你可以去看我的 <a href=https://www.melvinvivas.com/my-first-go-microservice/>以前的文章</a> 中关于这一块的内容，那篇文章中我使用了一个 MongoDB docker 镜像。</li></ol><p>我们开始吧！</p><p>首先，启动 Kafka，在你运行 Kafka 服务器之前，你需要运行 Zookeeper。下面是示例：</p><pre tabindex=0><code>$ cd /&lt;download path&gt;/kafka_2.11-1.1.0
+$ bin/zookeeper-server-start.sh config/zookeeper.properties
+</code></pre><p>接着运行 Kafka —— 我使用 9092 端口连接到 Kafka。如果你需要改变端口，只需要在 <code>config/server.properties</code> 中配置即可。如果你像我一样是个新手，我建议你现在还是使用默认端口。</p><pre tabindex=0><code>$ bin/kafka-server-start.sh config/server.properties
+</code></pre><p>Kafka 跑起来之后，我们需要 MongoDB。它很简单，只需要使用这个 <code>docker-compose.yml</code> 即可。</p><pre tabindex=0><code>version: &#39;3&#39;
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - &#34;27017:27017&#34;
+    volumes:
+      - &#34;mongodata:/data/db&#34;
+    networks:
+      - network1
+
+volumes:
+   mongodata:
+
+networks:
+   network1:
+</code></pre><p>使用 Docker Compose 去运行 MongoDB docker 容器。</p><pre tabindex=0><code>docker-compose up
+</code></pre><p>这里是微服务 1 的相关代码。我只是修改了我前面的示例去保存到 Kafka 而不是 MongoDB：</p><p><a href=https://github.com/donvito/learngo/tree/master/rest-kafka-mongo-microservice/rest-to-kafka>rest-to-kafka/rest-kafka-sample.go</a></p><pre tabindex=0><code>func jobsPostHandler(w http.ResponseWriter, r *http.Request) {
+
+    //Retrieve body from http request
+    b, err := ioutil.ReadAll(r.Body)
+    defer r.Body.Close()
+    if err != nil {
+        panic(err)
+    }
+
+    //Save data into Job struct
+    var _job Job
+    err = json.Unmarshal(b, &amp;_job)
+    if err != nil {
+        http.Error(w, err.Error(), 500)
+        return
+    }
+
+    saveJobToKafka(_job)
+
+    //Convert job struct into json
+    jsonString, err := json.Marshal(_job)
+    if err != nil {
+        http.Error(w, err.Error(), 500)
+        return
+    }
+
+    //Set content-type http header
+    w.Header().Set(&#34;content-type&#34;, &#34;application/json&#34;)
+
+    //Send back data as response
+    w.Write(jsonString)
+
+}
+
+func saveJobToKafka(job Job) {
+
+    fmt.Println(&#34;save to kafka&#34;)
+
+    jsonString, err := json.Marshal(job)
+
+    jobString := string(jsonString)
+    fmt.Print(jobString)
+
+    p, err := kafka.NewProducer(&amp;kafka.ConfigMap{&#34;bootstrap.servers&#34;: &#34;localhost:9092&#34;})
+    if err != nil {
+        panic(err)
+    }
+
+    // Produce messages to topic (asynchronously)
+    topic := &#34;jobs-topic1&#34;
+    for _, word := range []string{string(jobString)} {
+        p.Produce(&amp;kafka.Message{
+            TopicPartition: kafka.TopicPartition{Topic: &amp;topic, Partition: kafka.PartitionAny},
+            Value:          []byte(word),
+        }, nil)
+    }
+}
+</code></pre><p>这里是微服务 2 的代码。在这个代码中最重要的东西是从 Kafka 中消费数据，保存部分我已经在前面的博客文章中讨论过了。这里代码的重点部分是从 Kafka 中消费数据：</p><p><a href=https://github.com/donvito/learngo/tree/master/rest-kafka-mongo-microservice/kafka-to-mongo>kafka-to-mongo/kafka-mongo-sample.go</a></p><pre tabindex=0><code>func main() {
+
+    //Create MongoDB session
+    session := initialiseMongo()
+    mongoStore.session = session
+
+    receiveFromKafka()
+
+}
+
+func receiveFromKafka() {
+
+    fmt.Println(&#34;Start receiving from Kafka&#34;)
+    c, err := kafka.NewConsumer(&amp;kafka.ConfigMap{
+        &#34;bootstrap.servers&#34;: &#34;localhost:9092&#34;,
+        &#34;group.id&#34;:          &#34;group-id-1&#34;,
+        &#34;auto.offset.reset&#34;: &#34;earliest&#34;,
+    })
+
+    if err != nil {
+        panic(err)
+    }
+
+    c.SubscribeTopics([]string{&#34;jobs-topic1&#34;}, nil)
+
+    for {
+        msg, err := c.ReadMessage(-1)
+
+        if err == nil {
+            fmt.Printf(&#34;Received from Kafka %s: %s\n&#34;, msg.TopicPartition, string(msg.Value))
+            job := string(msg.Value)
+            saveJobToMongo(job)
+        } else {
+            fmt.Printf(&#34;Consumer error: %v (%v)\n&#34;, err, msg)
+            break
+        }
+    }
+
+    c.Close()
+
+}
+
+func saveJobToMongo(jobString string) {
+
+    fmt.Println(&#34;Save to MongoDB&#34;)
+    col := mongoStore.session.DB(database).C(collection)
+
+    //Save data into Job struct
+    var _job Job
+    b := []byte(jobString)
+    err := json.Unmarshal(b, &amp;_job)
+    if err != nil {
+        panic(err)
+    }
+
+    //Insert job into MongoDB
+    errMongo := col.Insert(_job)
+    if errMongo != nil {
+        panic(errMongo)
+    }
+
+    fmt.Printf(&#34;Saved to MongoDB : %s&#34;, jobString)
+
+}
+</code></pre><p>我们来演示一下，运行微服务 1。确保 Kafka 已经运行了。</p><pre tabindex=0><code>$ go run rest-kafka-sample.go
+</code></pre><p>我使用 Postman 向微服务 1 发送数据。</p><p><img src=/data/attachment/album/201808/17/003028mn1rtexr0rwer1z1.png alt=Screenshot-2018-04-29-22.20.33></p><p>这里是日志，你可以在微服务 1 中看到。当你看到这些的时候，说明已经接收到了来自 Postman 发送的数据，并且已经保存到了 Kafka。</p><p><img src=/data/attachment/album/201808/17/003029yl56iivizi5v5toy.png alt=Screenshot-2018-04-29-22.22.00></p><p>因为我们尚未运行微服务 2，数据被微服务 1 只保存在了 Kafka。我们来消费它并通过运行的微服务 2 来将它保存到 MongoDB。</p><pre tabindex=0><code>$ go run kafka-mongo-sample.go
+</code></pre><p>现在，你将在微服务 2 上看到消费的数据，并将它保存到了 MongoDB。</p><p><img src=/data/attachment/album/201808/17/003030irn5ddzkk2rd05d1.png alt=Screenshot-2018-04-29-22.24.15></p><p>检查一下数据是否保存到了 MongoDB。如果有数据，我们成功了！</p><p><img src=/data/attachment/album/201808/17/003030xuajm6iijt9jtuja.png alt=Screenshot-2018-04-29-22.26.39></p><p>完整的源代码可以在这里找到：</p><p><a href=https://github.com/donvito/learngo/tree/master/rest-kafka-mongo-microservice>https://github.com/donvito/learngo/tree/master/rest-kafka-mongo-microservice</a></p><p>现在是广告时间：如果你喜欢这篇文章，请在 Twitter <a href=https://twitter.com/donvito>@donvito</a> 上关注我。我的 Twitter 上有关于 Docker、Kubernetes、GoLang、Cloud、DevOps、Agile 和 Startups 的内容。欢迎你们在 <a href=https://github.com/donvito>GitHub</a> 和 <a href=https://www.linkedin.com/in/melvinvivas/>LinkedIn</a> 关注我。</p><p>开心地玩吧！</p><hr><p>via: <a href=https://www.melvinvivas.com/developing-microservices-using-kafka-and-mongodb/>https://www.melvinvivas.com/developing-microservices-using-kafka-and-mongodb/</a></p><p>作者：<a href=https://www.melvinvivas.com/author/melvin/>Melvin Vivas</a> 译者：<a href=https://github.com/qhwdw>qhwdw</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/kafka/ rel=tag>Kafka</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%BC%82%E6%AD%A5/ rel=tag>异步</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

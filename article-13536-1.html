@@ -1,0 +1,47 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Fedora Linux 中的 Python 3.10 测试版 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Fedora Linux 中的 Python 3.10 测试版"><meta property="og:description" content="Python 开发者已经发布了 Python 3.10.0 的三个测试版本。"><meta property="og:type" content="article"><meta property="og:url" content="/article-13536-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-06-29T22:16:01+00:00"><meta property="article:modified_time" content="2021-06-29T22:16:01+00:00"><meta itemprop=name content="Fedora Linux 中的 Python 3.10 测试版"><meta itemprop=description content="Python 开发者已经发布了 Python 3.10.0 的三个测试版本。"><meta itemprop=datePublished content="2021-06-29T22:16:01+00:00"><meta itemprop=dateModified content="2021-06-29T22:16:01+00:00"><meta itemprop=wordCount content="268"><meta itemprop=keywords content="Python,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Fedora Linux 中的 Python 3.10 测试版</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2021-06-29T22:16:01Z>June 29, 2021</time></div></div></header><div class="content post__content clearfix"><p><img src=https://img.linux.net.cn/data/attachment/album/202106/29/221603gdqc9cq9cjcjjuxg.jpg alt></p><p>Python 开发者已经发布了 Python 3.10.0 的三个测试版本。现在，你可以在 Fedora Linux 中试用最新的版本尽早用 3.10 测试你的 Python 代码，为 10 月份的 3.10.0 最终版本做好准备。</p><h3 id=在-fedora-linux-上安装-python-310>在 Fedora Linux 上安装 Python 3.10</h3><p>如果你运行 Fedora Linux，你可以用 <code>dnf</code> 从官方仓库安装 Python 3.10：</p><pre tabindex=0><code>$ sudo dnf install python3.10
+</code></pre><p>你可能需要启用 <code>updates-testing</code> 仓库来获得最新的预发布版本：</p><pre tabindex=0><code>$ sudo dnf install --enablerepo=updates-testing python3.10
+</code></pre><p>随着更多的测试版和候选版 <a href=https://www.python.org/dev/peps/pep-0619/>发布</a>，Fedora 包将得到更新。不需要编译你自己的 Python 开发版本，只要安装它就可以获得最新。从第一个测试版开始，Python 开发者不会再增加新的功能了。你已经可以享受所有的新东西了。</p><h3 id=用-python-310-测试你的项目>用 Python 3.10 测试你的项目</h3><p>运行 <code>python3.10</code> 命令来使用 Python 3.10，或者用 <a href=https://developer.fedoraproject.org/tech/languages/python/multiple-pythons.html>内置的 venv 模块 tox</a> 或用 <a href=https://fedoramagazine.org/install-pipenv-fedora/>pipenv</a> 和 <a href=https://python-poetry.org/>poetry</a> 创建虚拟环境。下面是一个使用 <code>tox</code> 的例子：</p><pre tabindex=0><code>$ git clone https://github.com/benjaminp/six.git
+Cloning into &#39;six&#39;...
+$ cd six/
+$ tox -e py310
+py310 run-test: commands[0] | python -m pytest -rfsxX
+================== test session starts ===================
+platform linux -- Python 3.10.0b3, pytest-6.2.4, py-1.10.0, pluggy-0.13.1
+collected 200 items
+
+test_six.py ...................................... [ 19%]
+.................................................. [ 44%]
+.................................................. [ 69%]
+.................................................. [ 94%]
+............                                       [100%]
+
+================== 200 passed in 0.43s ===================
+________________________ summary _________________________
+  py310: commands succeeded
+  congratulations :)
+</code></pre><p>如果你在 Fedora Linux 上发现了 Python 3.10 的问题，请 <a href="https://bugzilla.redhat.com/buglist.cgi?component=python3.10&amp;product=Fedora">在 Fedora 的 bugzilla 上提交 bug 报告</a> 或在 <a href=https://bugs.python.org/>Python 的问题追踪</a> 上提交。如果你不确定这是否是 Python 的问题，你可以 <a href=https://fedoraproject.org/wiki/SIGs/Python#Communicate>通过电子邮件或 IRC 直接联系 Fedora 的 Python 维护者</a> 。</p><h3 id=python-310-中的新内容>Python 3.10 中的新内容</h3><p>参见 <a href=https://docs.python.org/3.10/whatsnew/3.10.html>Python 3.10 的全部新闻列表</a>。例如，你可以尝试一下 <a href=https://www.python.org/dev/peps/pep-0634/>结构模式匹配</a>：</p><pre tabindex=0><code>$ python3.10
+Python 3.10.0b3 (default, Jun 17 2021, 00:00:00)
+[GCC 10.3.1 20210422 (Red Hat 10.3.1-1)] on linux
+Type &#34;help&#34;, &#34;copyright&#34;, &#34;credits&#34; or &#34;license&#34; for more information.
+&gt;&gt;&gt; point = (3, 10)
+&gt;&gt;&gt; match point:
+...     case (0, 0):
+...         print(&#34;Origin&#34;)
+...     case (0, y):
+...         print(f&#34;Y={y}&#34;)
+...     case (x, 0):
+...         print(f&#34;X={x}&#34;)
+...     case (x, y):
+...         print(f&#34;X={x}, Y={y}&#34;)
+...     case _:
+...         raise ValueError(&#34;Not a point&#34;)
+...
+X=3, Y=10
+&gt;&gt;&gt; x
+3
+&gt;&gt;&gt; y
+10
+</code></pre><p>敬请期待 <a href=https://fedoraproject.org/wiki/Changes/Python3.10>Fedora Linux 35 中的 python3 —— Python 3.10</a>！</p><hr><p>via: <a href=https://fedoramagazine.org/python-3-10-beta-in-fedora-linux/>https://fedoramagazine.org/python-3-10-beta-in-fedora-linux/</a></p><p>作者：<a href=https://fedoramagazine.org/author/churchyard/>Miro Hrončok</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/python/ rel=tag>Python</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

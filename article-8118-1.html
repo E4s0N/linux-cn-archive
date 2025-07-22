@@ -1,0 +1,87 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Powerline：给 Vim 和 Bash 提供更棒的状态行和提示信息 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="Powerline：给 Vim 和 Bash 提供更棒的状态行和提示信息"><meta property="og:description" content="Powerline 是一个极棒的 Vim 编辑器的状态行插件，这个插件是使用 Python 开发的，主要用于显示状态行和提示信息，适用于很多软件，比如 bash、zsh、tmux 等等。"><meta property="og:type" content="article"><meta property="og:url" content="/article-8118-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2017-01-16T08:14:00+00:00"><meta property="article:modified_time" content="2017-01-16T08:14:00+00:00"><meta itemprop=name content="Powerline：给 Vim 和 Bash 提供更棒的状态行和提示信息"><meta itemprop=description content="Powerline 是一个极棒的 Vim 编辑器的状态行插件，这个插件是使用 Python 开发的，主要用于显示状态行和提示信息，适用于很多软件，比如 bash、zsh、tmux 等等。"><meta itemprop=datePublished content="2017-01-16T08:14:00+00:00"><meta itemprop=dateModified content="2017-01-16T08:14:00+00:00"><meta itemprop=wordCount content="569"><meta itemprop=keywords content="Powerline,命令行,提示符,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>Powerline：给 Vim 和 Bash 提供更棒的状态行和提示信息</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2017-01-16T08:14:00Z>January 16, 2017</time></div></div></header><div class="content post__content clearfix"><p>Powerline 是一个极棒的 <a href=http://www.tecmint.com/vi-editor-usage/>Vim 编辑器</a>的状态行插件，这个插件是使用 Python 开发的，主要用于显示状态行和提示信息，适用于很多软件，比如 bash、zsh、tmux 等等。</p><p><img src=/data/attachment/album/201701/15/002409gmqjx0kzekmfjjpf.jpg alt></p><h3 id=特色>特色</h3><ol><li>使用 python 编写，使其更具扩展性且功能丰富</li><li>稳定易测的代码库，兼容 python 2.6+ 和 python 3</li><li>支持多种 Linux 功能及工具的提示和状态栏</li><li>通过 JSON 保存配置和颜色方案</li><li>快速、轻量级，具有后台守护进程支持，提供更佳的性能</li></ol><h3 id=powerline-效果截图>Powerline 效果截图</h3><p><img src=/data/attachment/album/201701/15/002422lpo9p0a5t0ca9az0.png alt="Powerline Vim Statuslines"></p><p><em>Vim 中 Powerline 状态行效果</em></p><p>在本文中，我会介绍如何安装 Powerline 及其字体，以及如何在 RedHat 和 Debian 类的系统中使 Bash 和 Vim 支持 Powerline。</p><h3 id=第一步准备好安装-powerline-所需的软件>第一步：准备好安装 Powerline 所需的软件</h3><p>由于和其它无关项目之间存在命名冲突，因此 powerline 只能放在 PyPI（Python Package Index）中的 <code>powerline-status</code> 包下.</p><p>为了从 PyPI 中安装该包，需要先准备好 <code>pip</code>（该工具专门用于 Python 包的管理）工具。所以首先要在 Linux 系统下安装好 <code>pip</code> 工具。</p><h4 id=在-debianubuntu-和-linux-mint-中安装-pip>在 Debian、Ubuntu 和 Linux Mint 中安装 pip</h4><pre tabindex=0><code># apt-get install python-pip
+</code></pre><p><strong>示例输出：</strong></p><pre tabindex=0><code>Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Recommended packages:
+python-dev-all python-wheel
+The following NEW packages will be installed:
+python-pip
+0 upgraded, 1 newly installed, 0 to remove and 533 not upgraded.
+Need to get 97.2 kB of archives.
+After this operation, 477 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu/ trusty-updates/universe python-pip all 1.5.4-1ubuntu3 [97.2 kB]
+Fetched 97.2 kB in 1s (73.0 kB/s)     
+Selecting previously unselected package python-pip.
+(Reading database ... 216258 files and directories currently installed.)
+Preparing to unpack .../python-pip_1.5.4-1ubuntu3_all.deb ...
+Unpacking python-pip (1.5.4-1ubuntu3) ...
+Processing triggers for man-db (2.6.7.1-1ubuntu1) ...
+Setting up python-pip (1.5.4-1ubuntu3) ...
+</code></pre><h4 id=在-centosrhel-和-fedora-中安装-pip>在 CentOS、RHEL 和 Fedora 中安装 pip</h4><p>在 Fedora 类系统中，需要先打开 <a href=/article-2324-1.html>epel 仓库</a>，然后按照如下方法安装 pip 包。</p><pre tabindex=0><code># yum install python-pip          
+# dnf install python-pip                     [Fedora 22+ 以上]           
+</code></pre><p><strong>示例输出：</strong></p><pre tabindex=0><code>Installing:
+python-pip          noarch          7.1.0-1.el7             epel          1.5 M
+Transaction Summary
+=================================================================================
+Install  1 Package
+Total download size: 1.5 M
+Installed size: 6.6 M
+Is this ok [y/d/N]: y
+Downloading packages:
+python-pip-7.1.0-1.el7.noarch.rpm                         | 1.5 MB  00:00:01     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+Installing : python-pip-7.1.0-1.el7.noarch                                 1/1 
+Verifying  : python-pip-7.1.0-1.el7.noarch                                 1/1 
+Installed:
+python-pip.noarch 0:7.1.0-1.el7                                                
+Complete!
+</code></pre><h3 id=第二步在-linux-中安装-powerline>第二步：在 Linux 中安装 Powerline</h3><p>现在可以从 Git 仓库中安装 Powerline 的最新开发版。在此之前系统需要安装好 Git 工具以便可以从仓库拉下代码。</p><pre tabindex=0><code># apt-get install git
+# yum install git
+# dnf install git
+</code></pre><p>然后你可以通过 <code>pip</code> 命令安装 Powerline。</p><pre tabindex=0><code># pip install git+git://github.com/powerline/powerline
+</code></pre><p><strong>示例输出：</strong></p><pre tabindex=0><code>Cloning git://github.com/powerline/powerline to /tmp/pip-WAlznH-build
+Running setup.py (path:/tmp/pip-WAlznH-build/setup.py) egg_info for package from git+git://github.com/Lokaltog/powerline
+warning: no previously-included files matching &#39;*.pyc&#39; found under directory &#39;powerline/bindings&#39;
+warning: no previously-included files matching &#39;*.pyo&#39; found under directory &#39;powerline/bindings&#39;
+Installing collected packages: powerline-status
+Found existing installation: powerline-status 2.2
+Uninstalling powerline-status:
+Successfully uninstalled powerline-status
+Running setup.py install for powerline-status
+warning: no previously-included files matching &#39;*.pyc&#39; found under directory &#39;powerline/bindings&#39;
+warning: no previously-included files matching &#39;*.pyo&#39; found under directory &#39;powerline/bindings&#39;
+changing mode of build/scripts-2.7/powerline-lint from 644 to 755
+changing mode of build/scripts-2.7/powerline-daemon from 644 to 755
+changing mode of build/scripts-2.7/powerline-render from 644 to 755
+changing mode of build/scripts-2.7/powerline-config from 644 to 755
+changing mode of /usr/local/bin/powerline-config to 755
+changing mode of /usr/local/bin/powerline-lint to 755
+changing mode of /usr/local/bin/powerline-render to 755
+changing mode of /usr/local/bin/powerline-daemon to 755
+Successfully installed powerline-status
+Cleaning up...
+</code></pre><h3 id=第三步在-linux-中安装-powerline-的字体>第三步：在 Linux 中安装 Powerline 的字体</h3><p>Powerline 使用特殊的符号来为开发者显示特殊的箭头效果和符号内容。因此你的系统中必须要有符号字体或者补丁过的字体。</p><p>通过下面的 <a href=http://www.tecmint.com/10-wget-command-examples-in-linux/>wget</a> 命令下载最新的系统字体及字体配置文件。</p><pre tabindex=0><code># wget https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf
+# wget https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf
+</code></pre><p>然后你将下载的字体放到字体目录下 <code>/usr/share/fonts</code> 或者 <code>/usr/local/share/fonts</code>，或者你可以通过 <code>xset q</code> 命令找到一个有效的字体目录。</p><pre tabindex=0><code># mv PowerlineSymbols.otf /usr/share/fonts/
+</code></pre><p>接下来你需要通过如下命令更新你系统的字体缓存。</p><pre tabindex=0><code># fc-cache -vf /usr/share/fonts/
+</code></pre><p>其次安装字体配置文件。</p><pre tabindex=0><code># mv 10-powerline-symbols.conf /etc/fonts/conf.d/
+</code></pre><p>注意：如果相应的符号没有出现，可以尝试关闭终端会话并重启 X window，这样就会生效了。</p><h3 id=第四步给-bash-shell-和-vim-状态行设置-powerline>第四步：给 Bash Shell 和 Vim 状态行设置 Powerline</h3><p>在这一节将介绍 bash shell 和 vim 编辑器中关于 Powerline 的配置。首先通过在 <code>~/.bashrc</code> 中添加如下内容以便设置终端为 256 色。</p><pre tabindex=0><code>export TERM=&#34;screen-256color&#34;
+</code></pre><h4 id=打开-bash-shell-中的-powerline>打开 Bash Shell 中的 Powerline</h4><p>如果希望在 bash shell 中默认打开 Powerline，可以在 <code>~/.bashrc</code> 中添加如下内容。</p><p>首先通过如下命令获取 powerline 的安装位置。</p><pre tabindex=0><code># pip show powerline-status
+Name: powerline-status
+Version: 2.2.dev9999-git.aa33599e3fb363ab7f2744ce95b7c6465eef7f08
+Location: /usr/local/lib/python2.7/dist-packages
+Requires: 
+</code></pre><p>一旦找到 powerline 的具体位置后，根据你系统的情况替换到下列行中的 <code>/usr/local/lib/python2.7/dist-packages</code> 对应的位置。</p><pre tabindex=0><code>powerline-daemon -q
+POWERLINE_BASH_CONTINUATION=1
+POWERLINE_BASH_SELECT=1
+. /usr/local/lib/python2.7/dist-packages/powerline/bindings/bash/powerline.sh
+</code></pre><p>然后退出后重新登录，现在 powerline 的状态行应该如下显示了。</p><p><a href=http://www.tecmint.com/wp-content/uploads/2015/10/Bash-Powerline-Statuslines.gif><img src=/data/attachment/album/201701/15/002427eykbcekesc1r1hza.gif alt="Bash Powerline Statuslines"></a></p><p>现在切换目录并注意显示你当前路径的面包屑导航提示的变化。</p><p>如果远程 Linux 服务器上安装了 powerline，你能看到后台挂起的任务，当你用 ssh 登录上去时，会看到该提示增加了主机名。</p><h4 id=在-vim-中打开-powerline>在 Vim 中打开 Powerline</h4><p>如果你喜欢使用 vim，正好有一个 vim 的强力插件。可以在 <code>~/.vimrc</code> 中添加如下内容打开该插件（LCTT 译注：注意同样需要根据你的系统情况修改路径）。</p><pre tabindex=0><code>set rtp+=/usr/local/lib/python2.7/dist-packages/powerline/bindings/vim/
+set laststatus=2
+set t_Co=256
+</code></pre><p>然后你打开 vim 后会看到一个新的状态行:</p><p><a href=http://www.tecmint.com/wp-content/uploads/2015/10/Vim-Powerline-Statuslines.gif><img src=/data/attachment/album/201701/15/002430j7syeqfjjnyq9sxy.gif alt="Vim Powerline Statuslines"></a></p><h3 id=总结>总结</h3><p>Powerline 可以在某些软件中提供颜色鲜艳、很优美的状态行及提示内容，这对编程环境有利。希望这篇指南对您有帮助，如果您需要帮助或者有任何好的想法，请留言给我。</p><hr><p>作者简介：</p><p><img src=/data/attachment/album/201701/15/002431mdi40insi6j4o48o.png alt> 我是Ravi Saive，TecMint的作者。一个喜欢分享诀窍和想法的电脑极客及Linux专家。我的大部分服务都运行在开源平台Linux中。关注我的Twitter，Facebook和Google+。</p><hr><p>via: <a href=http://www.tecmint.com/powerline-adds-powerful-statuslines-and-prompts-to-vim-and-bash/>http://www.tecmint.com/powerline-adds-powerful-statuslines-and-prompts-to-vim-and-bash/</a></p><p>作者：<a href=http://www.tecmint.com/author/admin/>Ravi Saive</a> 译者：<a href=https://github.com/beyondworld>beyondworld</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/powerline/ rel=tag>Powerline</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/ rel=tag>命令行</a></li><li class=tags__item><a class="tags__link btn" href=/tags/%E6%8F%90%E7%A4%BA%E7%AC%A6/ rel=tag>提示符</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

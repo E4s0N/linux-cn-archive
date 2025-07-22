@@ -1,0 +1,143 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何编写 C 程序在 Linux 上创建音乐播放列表 - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何编写 C 程序在 Linux 上创建音乐播放列表"><meta property="og:description" content="使用我在 Linux 上制作的这个 C 程序在旅途中聆听你喜爱的歌曲。"><meta property="og:type" content="article"><meta property="og:url" content="/article-14868-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-07-26T22:34:08+00:00"><meta property="article:modified_time" content="2022-07-26T22:34:08+00:00"><meta itemprop=name content="如何编写 C 程序在 Linux 上创建音乐播放列表"><meta itemprop=description content="使用我在 Linux 上制作的这个 C 程序在旅途中聆听你喜爱的歌曲。"><meta itemprop=datePublished content="2022-07-26T22:34:08+00:00"><meta itemprop=dateModified content="2022-07-26T22:34:08+00:00"><meta itemprop=wordCount content="527"><meta itemprop=keywords content="歌曲,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何编写 C 程序在 Linux 上创建音乐播放列表</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2022-07-26T22:34:08Z>July 26, 2022</time></div></div></header><div class="content post__content clearfix"><p><img src=/data/attachment/album/202207/26/223349t4yiqd1yikb9k117.jpg alt></p><blockquote><p>使用我在 Linux 上制作的这个 C 程序在旅途中聆听你喜爱的歌曲。</p></blockquote><p>我最近在 Linux 中编写了一个 C 程序，从我广泛的 MP3 库中创建一个较小的随机 MP3 文件选集。该程序会遍历一个包含我的 MP3 库的目录，然后创建一个包含随机的、较小的歌曲选集的目录。然后我将这些 MP3 文件复制到我的智能手机上，以便随时随地收听。</p><p>瑞典是一个人口稀少的国家，有许多农村地区没有完整的手机覆盖。这就是在智能手机上拥有 MP3 文件的原因之一。另一个原因是我并不总是有钱购买流媒体服务，所以我喜欢拥有自己喜欢的歌曲的副本。</p><p>你可以从它的 <a href=https://github.com/rikardgn/learnC/blob/main/randMp3Copy.c>Git 仓库</a> 下载我的应用。我专门为 Linux 编写了它，部分原因是在 Linux 上很容易找到经过良好测试的文件 I/O 例程。多年前，我尝试使用专有的 C 库在 Windows 上编写相同的程序，但在尝试文件复制时遇到了困难。Linux 使用户可以轻松直接地访问文件系统。</p><p>本着开源的精神，我没费多少力气就找到了 Linux 的文件 I/O 代码来激发我的灵感。我还发现了一些启发了我的分配内存的代码。我编写了随机数生成的代码。</p><p>该程序的工作方式如下所述：</p><ol><li>询问源目录和目标目录。</li><li>询问存放 MP3 文件的目录下的文件个数。</li><li>搜索你希望复制的收藏的百分比（从 1.0% 到 88.0%）。如果你有 1000 个文件的集合，并希望从你的集合中复制 125 个文件而不是 120 个文件，你也可以输入 12.5% 之类的数字。我将上限设置为 88%，因为复制超过 88% 的库将基本生成与你的基础库相似的库。当然，代码是开源的，因此你可以根据自己的喜好自由修改。</li><li>使用指针和 <code>malloc</code> 分配内存。一些操作需要内存，包括代表音乐收藏中文件的字符串列表。还有一个列表来保存随机生成的数字。</li><li>生成所有文件范围内的随机数列表（例如，如果集合有 1000 个文件，则为 1 到 1000）。</li><li>复制文件。</li></ol><p>其中一些部分比其他部分更简单，但代码只有大约 100 行：</p><pre tabindex=0><code>#include &lt;dirent.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt; /* include necessary header files */
+#include &lt;fcntl.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;time.h&gt;
+
+#define BUF_SIZE 4096 /* use buffer of 4096 bytes */
+#define OUTPUT_MODE 0700 /*protect output file */
+#define MAX_STR_LEN 256
+
+int main(void) {
+  DIR *d;
+  struct dirent *dir;
+  char strTemp[256], srcFile[256],
+  dstFile[256], srcDir[256], dstDir[256];
+  char **ptrFileLst;
+
+  char buffer[BUF_SIZE];
+  int nrOfStrs=-1, srcFileDesc,
+  dstFileDesc, readByteCount,
+  writeByteCount, numFiles;
+  int indPtrFileAcc, q;
+
+  float nrFilesCopy;
+  // vars for generatingRandNumList
+  int i, k, curRanNum, curLstInd,
+  numFound, numsToGen, largNumRange;
+  int *numLst;
+
+  float procFilesCopy;
+  printf(&#34;Enter name of source Directory\n&#34;);
+  scanf(&#34;%s&#34;, srcDir);
+  printf(&#34;Enter name of destionation Directory\n&#34;);
+  scanf(&#34;%s&#34;, dstDir);
+  printf(&#34;How many files does the directory with mp3 files contain?\n&#34;);
+  scanf(&#34;%d&#34;, &amp;numFiles);
+  printf(&#34;What percent of the files do you wish to make a random selection of\n&#34;);
+  printf(&#34;enter a number between 1 and 88\n&#34;);
+  scanf(&#34;%f&#34;, &amp;procFilesCopy);
+
+  // allocate memory for filesList, list of random numbers
+  ptrFileLst= (char**) malloc(numFiles * sizeof(char*));
+
+  for (i = 0; i &lt; numFiles; i++) {
+    ptrFileLst[i] = (char*)malloc(MAX_STR_LEN * sizeof(char));
+  }
+  
+  largNumRange = numFiles;
+  nrFilesCopy = (procFilesCopy / 100) * numFiles;
+
+  numsToGen = (int)((procFilesCopy / 100) * numFiles);
+  printf(&#34;nrFilesCopy=%f&#34;, nrFilesCopy);
+  printf(&#34;NumsToGen=%d&#34;, numsToGen);
+  numLst = malloc(numsToGen * sizeof(int));
+  srand(time(0));
+
+  numLst[0] = rand() % largNumRange + 1;
+  numFound=0;
+  do { 
+    curRanNum = (int)rand() % largNumRange + 1;
+    if (numLst[0] == curRanNum) {
+      numFound=1; 
+    }
+  } while(numFound == 1);
+
+  numLst[1] = curRanNum;
+  getchar();
+  curLstInd = 1;
+  i = 0;
+  while(1) {
+    do {
+      numFound = 0;
+      curRanNum = (int)rand() % largNumRange + 1;
+      for (int k = 0; k &lt;= curLstInd; k++){
+        if (numLst[k] == curRanNum)
+        numFound = 1;
+      }
+    } while(numFound == 1);
+    numLst[curLstInd+1] = curRanNum;
+    curLstInd++;
+    i++;
+    // numsToGen=Total numbers to generate minus two
+    // already generated by the code above this loop
+    if (i == (numsToGen-2))
+      break;
+    }
+
+    d = opendir(srcDir);
+    if (d) {
+      while ( (dir = readdir(d)) != NULL ) {
+      strcpy(strTemp, dir-&gt;d_name);
+
+      if (strTemp[0] != &#39;.&#39;) {
+        nrOfStrs++;
+        strcpy(ptrFileLst[nrOfStrs], strTemp);
+      } 
+    }
+    closedir(d); 
+  }
+
+  for (q = 0; q &lt;= curLstInd; q++) {
+    indPtrFileAcc = numLst[q];
+    strcpy(srcFile, srcDir);
+    strcat(srcFile, &#34;/&#34;);
+    strcat(srcFile, ptrFileLst[indPtrFileAcc]);
+    strcpy(dstFile, dstDir);
+    strcat(dstFile, &#34;/&#34;);
+    strcat(dstFile, ptrFileLst[indPtrFileAcc]);
+    
+    srcFileDesc = open(srcFile, O_RDONLY);
+    dstFileDesc = creat(dstFile, OUTPUT_MODE);
+
+    while(1) {
+      readByteCount = read(srcFileDesc, buffer, BUF_SIZE);
+      if (readByteCount &lt;= 0) 
+        break;
+      
+      writeByteCount = write(dstFileDesc, buffer, readByteCount);
+      if(writeByteCount &lt;= 0)
+        exit(4);
+    }
+
+    //close the files 
+    close(srcFileDesc);
+    close(dstFileDesc); 
+  }
+}
+</code></pre><p>这段代码可能是最复杂的：</p><pre tabindex=0><code>while(1) {
+  readByteCount = read(srcFileDesc, buffer, BUF_SIZE);
+  if (readByteCount &lt;= 0) 
+    break;
+
+  writeByteCount = write(dstFileDesc, buffer, readByteCount);
+  if (writeByteCount &lt;= 0)
+      exit(4); 
+}
+</code></pre><p>这将从指定的文件中读取多个字节（<code>readByteCount</code>）到字符缓冲区中。该函数的第一个参数是文件名（<code>srcFileDesc</code>）。第二个参数是一个指向字符缓冲区的指针，这之前在程序中声明过。该函数的最后一个参数是缓冲区的大小。</p><p>程序返回读取的字节数（在本例中为 4 个字节）。如果返回的数字为 0 或更少，则第一个 <code>if</code> 子句会跳出循环。</p><p>如果读取字节数为 0，则所有写入完成，循环中断以写入下一个文件。如果读取的字节数小于 0，则发生错误并退出程序。</p><p>当读取 4 个字节时，它会写入它们。<code>write</code> 函数接受三个参数。第一个是要写入的文件，第二个是字符缓冲区，第三个是要写入的字节数（4 个字节） .该函数返回写入的字节数。</p><p>如果写入了 0 个字节，则发生了写入错误，因此第二个 <code>if</code> 子句退出程序。</p><p><code>while</code> 循环读取并复制文件，一次 4 个字节，直到文件被复制。复制完成后，你可以将随机生成的 mp3 文件的目录复制到你的智能手机。</p><p>复制和写入例程相当有效，因为它们使用 Linux 中的文件系统调用。</p><h3 id=改进代码>改进代码</h3><p>该程序很简单，可以在用户界面和灵活性方面进行改进。例如，你可以实现一个计算源目录中文件数量的函数，这样你就不必手动输入它。你可以添加选项，这样你就可以非交互地传递百分比和路径。但是代码做了我需要它做的事情，它是 C 编程语言简单效率的演示。</p><hr><p>via: <a href=https://opensource.com/article/22/7/c-linux-mp3>https://opensource.com/article/22/7/c-linux-mp3</a></p><p>作者：<a href=https://opensource.com/users/rikardgn>Rikard Grossman-Nielsen</a> 选题：<a href=https://github.com/lkxed>lkxed</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/%E6%AD%8C%E6%9B%B2/ rel=tag>歌曲</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>

@@ -1,0 +1,59 @@
+<!doctype html><html class=no-js lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><title>如何在 Linux 终端中连接 WiFi？ - Linux.cn Archive</title>
+<script>(function(e,t){e[t]=e[t].replace("no-js","js")})(document.documentElement,"className")</script><meta name=description content><meta property="og:title" content="如何在 Linux 终端中连接 WiFi？"><meta property="og:description" content="在本教程中，你将学习如何在 Ubuntu 中从终端连接到无线网络。如果你在使用 Ubuntu 服务器时，无法访问常规的桌面环境，这将对你非常有帮助。"><meta property="og:type" content="article"><meta property="og:url" content="/article-12628-1.html"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-09-18T17:13:47+00:00"><meta property="article:modified_time" content="2020-09-18T17:13:47+00:00"><meta itemprop=name content="如何在 Linux 终端中连接 WiFi？"><meta itemprop=description content="在本教程中，你将学习如何在 Ubuntu 中从终端连接到无线网络。如果你在使用 Ubuntu 服务器时，无法访问常规的桌面环境，这将对你非常有帮助。"><meta itemprop=datePublished content="2020-09-18T17:13:47+00:00"><meta itemprop=dateModified content="2020-09-18T17:13:47+00:00"><meta itemprop=wordCount content="377"><meta itemprop=keywords content="WiFi,"><link rel=preconnect href=https://fonts.bunny.net crossorigin><link rel=dns-prefetch href=//fonts.bunny.net><link rel=dns-prefetch href=//fonts.bunny.net><link rel=stylesheet href="https://fonts.bunny.net/css?family=Open+Sans:400,400i,700"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/favicon.ico></head><body class=body><div class="container container--outer"><header class=header><div class="container header__container"><div class=logo><a class=logo__link href=/ title="Linux.cn Archive" rel=home><div class="logo__item logo__text"><div class=logo__title>Linux.cn Archive</div></div></a></div><nav class=menu><button class=menu__btn aria-haspopup=true aria-expanded=false tabindex=0>
+<span class=menu__btn-title tabindex=-1>Menu</span></button><ul class=menu__list><li class=menu__item><a class=menu__link href=/><span class=menu__text>Home</span></a></li><li class=menu__item><a class=menu__link href=/categories/><span class=menu__text>Categories</span></a></li><li class=menu__item><a class=menu__link href=/tags/><span class=menu__text>Tags</span></a></li><li class=menu__item><a class=menu__link href><span class=menu__text>RSS</span></a></li></ul></nav></div></header><div class="wrapper flex"><div class=primary><main class=main role=main><article class=post><header class=post__header><h1 class=post__title>如何在 Linux 终端中连接 WiFi？</h1><div class="post__meta meta"><div class="meta__item-datetime meta__item"><svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class=meta__text datetime=2020-09-18T17:13:47Z>September 18, 2020</time></div></div></header><div class="content post__content clearfix"><blockquote><p>在本教程中，你将学习如何在 Ubuntu 中从终端连接到无线网络。如果你在使用 Ubuntu 服务器时，无法访问常规的<a href=https://itsfoss.com/what-is-desktop-environment/>桌面环境</a>，这将对你非常有帮助。</p></blockquote><p>我的家用电脑主要使用桌面 Linux。我也有多台 Linux 服务器用于托管网站以及开源软件，如 <a href=https://itsfoss.com/nextcloud/>Nextcloud</a>、<a href=https://www.discourse.org/>Discourse</a>、Ghost、Rocket Chat 等。</p><p>我可以使用 <a href=https://itsfoss.com/recommends/linode/>Linode</a> 在云端几分钟内快速部署 Linux 服务器。但最近，我在我的树莓派上安装了 <a href=https://itsfoss.com/install-ubuntu-server-raspberry-pi/>Ubuntu 服务器</a>。这是我第一次在物理设备上安装服务器，我不得不做一些额外的事情来通过命令行将 Ubuntu 服务器连接到 WiFi。</p><p>在本教程中，我将展示在 Ubuntu Linux 中使用终端连接到 WiFi 的步骤。你应该：</p><ul><li>不要害怕使用终端编辑文件。</li><li>知道 wifi 接入点名称 （SSID） 和密码。</li></ul><h3 id=在-ubuntu-中从终端连接到-wifi>在 Ubuntu 中从终端连接到 WiFi</h3><p><img src=/data/attachment/album/202009/18/171355yebrb67bl68ala0a.png alt></p><p>当你使用 Ubuntu 桌面时，连接到 WiFi 是很容易的，因为你有图形用户界面，可以很容易地做到这一点。但当你使用 Ubuntu 服务器时就不一样了，因为你只能使用命令行。</p><p>Ubuntu 使用 <a href=https://netplan.io/>Netplan</a> 工具来轻松配置网络。在 Netplan 中，你可以创建一个包含网络接口描述的 YAML 文件，然后在 <code>netplan</code> 命令行工具的帮助下，生成所有需要的配置。</p><p>让我们看看如何使用 Netplan 从终端连接到无线网络。</p><h4 id=步骤-1确定你的无线网络接口名称>步骤 1：确定你的无线网络接口名称</h4><p>有几种方法可以识别你的网络接口名称。你可以使用 <code>ip</code> 命令、过时的 <code>ipconfig</code> 命令或查看这个文件：</p><pre tabindex=0><code>ls /sys/class/net
+</code></pre><p>这应该会展示所有可用的网络接口（以太网、WiFi 和环回）。无线网络接口名称以 <code>w</code> 开头，通常命名类似 <code>wlanX</code>、<code>wlpxyz</code>。</p><pre tabindex=0><code>[email protected]:~$ ls /sys/class/net
+eth0 lo wlan0
+</code></pre><p>记下这个接口名。你将在下一步使用它。</p><h4 id=步骤-2编辑-netplan-配置文件中的-wifi-接口详细信息>步骤 2：编辑 Netplan 配置文件中的 wifi 接口详细信息</h4><p>Netplan 配置文件在 <code>/etc/netplan</code> 目录下。如果你查看这个目录的内容，你应该看到类似 <code>01-network-manager-all.yml</code> 或 <code>50-cloud-init.yaml</code> 等文件。</p><p>如果是 Ubuntu 服务器，你应该有 <code>50-cloud-init.yaml</code> 文件。如果是桌面计算机，应该是 <code>01-network-manager-all.yml</code> 文件。</p><p>Linux 桌面计算机的 Network Manager 允许你选择一个无线网络。你可以在它的配置中硬编码写入 WiFi 接入点。这可以在自动掉线的情况下（比如挂起）时帮助到你。</p><p>不管是哪个文件，都可以打开编辑。我希望你对 Nano 编辑器有一点<a href=https://itsfoss.com/nano-editor-guide/>熟悉</a>，因为 Ubuntu 预装了它。</p><pre tabindex=0><code>sudo nano /etc/netplan/50-cloud-init.yaml
+</code></pre><p>YAML 文件对空格、缩进和对齐方式非常敏感。不要使用制表符，在看到缩进的地方使用 4 个空格（或 2 个，以 YAML 文件中已经使用的为准）代替。</p><p>基本上，你需要添加以下几行，引号中是接入点名称（SSID） 和密码（通常）：</p><pre tabindex=0><code>wifis:
+    wlan0:
+        dhcp4: true
+        optional: true
+        access-points:
+            &#34;SSID_name&#34;:
+                password: &#34;WiFi_password&#34;
+</code></pre><p>再说一次，保持我所展示的对齐方式，否则 YAML 文件不能被解析，它会抛出一个错误。</p><p>你的完整配置文件可能是这样的：</p><pre tabindex=0><code># This file is generated from information provided by the datasource. Changes
+# to it will not persist across an instance reboot. To disable cloud-init&#39;s
+# network configuration capabilities, write a file
+# /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+# network: {config: disabled}
+network:
+    ethernets:
+        eth0:
+            dhcp4: true
+            optional: true
+    version: 2
+    wifis:
+        wlan0:
+            dhcp4: true
+            optional: true
+            access-points:
+                &#34;SSID_name&#34;:
+                    password: &#34;WiFi_password&#34;
+</code></pre><p>我觉得很奇怪，尽管有消息说更改不会在实例重启后保留，但它仍然可以工作。</p><p>不管怎样，用这个命令生成配置：</p><pre tabindex=0><code>sudo netplan generate
+</code></pre><p>现在应用它：</p><pre tabindex=0><code>sudo netplan apply
+</code></pre><p>如果你幸运的话，你应该连上网络。尝试 <code>ping</code> 一个网站或运行 <code>apt</code> 更新命令。</p><p>然而，事情可能不会那么顺利，你可能会看到一些错误。如果是这种情况，请尝试一些额外的步骤。</p><h4 id=可能的故障排除>可能的故障排除</h4><p>当你使用 <code>netplan apply</code> 命令时，你有可能在输出中看到类似这样的错误。</p><pre tabindex=0><code>Failed to start netplan-wpa-wlan0.service: Unit netplan-wpa-wlan0.service not found.
+Traceback (most recent call last):
+  File &#34;/usr/sbin/netplan&#34;, line 23, in &lt;module&gt;
+    netplan.main()
+  File &#34;/usr/share/netplan/netplan/cli/core.py&#34;, line 50, in main
+    self.run_command()
+  File &#34;/usr/share/netplan/netplan/cli/utils.py&#34;, line 179, in run_command
+    self.func()
+  File &#34;/usr/share/netplan/netplan/cli/commands/apply.py&#34;, line 46, in run
+    self.run_command()
+  File &#34;/usr/share/netplan/netplan/cli/utils.py&#34;, line 179, in run_command
+    self.func()
+  File &#34;/usr/share/netplan/netplan/cli/commands/apply.py&#34;, line 173, in command_apply
+    utils.systemctl_networkd(&#39;start&#39;, sync=sync, extra_services=netplan_wpa)
+  File &#34;/usr/share/netplan/netplan/cli/utils.py&#34;, line 86, in systemctl_networkd
+    subprocess.check_call(command)
+  File &#34;/usr/lib/python3.8/subprocess.py&#34;, line 364, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command &#39;[&#39;systemctl&#39;, &#39;start&#39;, &#39;--no-block&#39;, &#39;systemd-networkd.service&#39;, &#39;netplan-wpa-wlan0.service&#39;]&#39; returned non-zero exit status 5.
+</code></pre><p>可能是 <code>wpa_supplicant</code> 服务没有运行。运行这个命令：</p><pre tabindex=0><code>sudo systemctl start wpa_supplicant
+</code></pre><p>再次运行 <code>netplan apply</code>。如果它能解决这个问题，那就太好了。否则，使用下面的命令<a href=https://itsfoss.com/schedule-shutdown-ubuntu/>关闭 Ubuntu 系统</a>：</p><pre tabindex=0><code>shutdown now
+</code></pre><p>重新启动 Ubuntu 系统，登录并再次生成和运行 <code>netplan apply</code>：</p><pre tabindex=0><code>sudo netplan generate
+sudo netplan apply
+</code></pre><p>现在可能会显示警告（而不是错误）。这是警告而不是错误。我检查了<a href=https://linuxhandbook.com/systemd-list-services/>正在运行的 systemd 服务</a>，发现 <code>netplan-wpa-wlan0.service</code> 已经在运行了。可能是因为它已经在运行了，而且 <code>netplan apply</code> 更新了配置文件（即使没有任何改变），所以显示了警告。</p><pre tabindex=0><code>Warning: The unit file, source configuration file or drop-ins of netplan-wpa-wlan0.service changed on disk. Run &#39;systemctl daemon-reload&#39; to reload units.
+</code></pre><p>这并不重要，你可以通过运行 <code>apt update</code> 来检查网络是否已经正常工作。</p><p>我希望你能够在本教程的帮助下，在 Ubuntu 中使用命令行连接到 WiFi。如果你仍然遇到困难，请在评论区告诉我。</p><hr><p>via: <a href=https://itsfoss.com/connect-wifi-terminal-ubuntu/>https://itsfoss.com/connect-wifi-terminal-ubuntu/</a></p><p>作者：<a href=https://itsfoss.com/author/abhishek/>Abhishek Prakash</a> 选题：<a href=https://github.com/lujun9972>lujun9972</a> 译者：<a href=https://github.com/geekpi>geekpi</a> 校对：<a href=https://github.com/wxy>wxy</a></p><p>本文由 <a href=https://github.com/LCTT/TranslateProject>LCTT</a> 原创编译，<a href=https://linux.cn/>Linux中国</a> 荣誉推出</p></div><footer class=post__footer><div class="post__tags tags clearfix"><svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5.0 11V3C0 1.5.8.8.8.8S1.5.0 3 0h8c1.5.0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 100-6 3 3 0 000 6z"/></svg><ul class=tags__list><li class=tags__item><a class="tags__link btn" href=/tags/wifi/ rel=tag>WiFi</a></li></ul></div></footer></article></main></div></div><footer class=footer><div class="container footer__container flex"><div class=footer__copyright>&copy; 2025 Linux.cn Archive.
+<span class=footer__copyright-credits>Generated with <a href=https://gohugo.io/ rel="nofollow noopener" target=_blank>Hugo</a> and <a href=https://github.com/Vimux/Mainroad/ rel="nofollow noopener" target=_blank>Mainroad</a> theme.</span></div></div></footer></div><script async defer src=/js/menu.js></script></body></html>
