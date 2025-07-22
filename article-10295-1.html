@@ -112,18 +112,7 @@ Running migrations:
   Applying sessions.0001_initial... OK
   Applying todo.0001_initial... OK
 </code></pre><p>当我们应用这些迁移时，Django 首先检查其他 <code>INSTALLED_APPS</code> 是否有需要应用的迁移，它大致按照列出的顺序检查它们。我们希望我们的应用程序最后列出，因为我们希望确保，如果我们的模型依赖于任何 Django 的内置模型，我们所做的数据库更新不会受到依赖性问题的影响。</p><p>我们还有另一个要构建的模型：<code>User</code> 模型。但是，因为我们正在使用 Django，事情有一些变化。许多应用程序需要某种类型的用户模型，Django 的 <code>django.contrib.auth</code> 包构建了自己的用户模型供我们使用。如果无需用户所需要的身份验证令牌，我们可以继续使用它而不是重新发明轮子。</p><p>但是，我们需要那个令牌。我们可以通过两种方式来处理这个问题。</p><ul><li>继承 Django 的 <code>User</code> 对象，我们自己的对象通过添加 <code>token</code> 字段来扩展它</li><li>创建一个与 Django 的 <code>User</code> 对象一对一关系的新对象，其唯一目的是持有一个令牌</li></ul><p>我习惯于建立对象关系，所以让我们选择第二种选择。我们称之为 <code>Owner</code>，因为它基本上具有与 <code>User</code> 类似的内涵，这就是我们想要的。</p><p>出于纯粹的懒惰，我们可以在 <code>todo/models.py</code> 中包含这个新的 <code>Owner</code> 对象，但是不要这样做。<code>Owner</code> 没有明确地与任务列表上的项目的创建或维护有关。从概念上讲，<code>Owner</code> 只是任务的所有者。甚至有时候我们想要扩展这个 <code>Owner</code> 以包含与任务完全无关的其他数据。</p><p>为了安全起见，让我们创建一个 <code>owner</code> 应用程序，其工作是容纳和处理这个 <code>Owner</code> 对象。</p><pre tabindex=0><code>(django-someHash) $ ./manage.py startapp owner
-</code></pre><p>不要忘记在 <code>settings.py</code> 文件中的 <code>INSTALLED_APPS</code> 中添加它。 <code>INSTALLED_APPS = [
-'django.contrib.admin',
-'django.contrib.auth',
-'django.contrib.contenttypes',
-'django.contrib.sessions',
-'django.contrib.messages',
-'django.contrib.staticfiles',
-'rest_framework',
-'django_todo',
-'todo',
-'owner'
-]</code></p><p>如果我们查看 Django 项目的根目录，我们现在有两个 Django 应用程序：</p><pre tabindex=0><code>(django-someHash) $ ls
+</code></pre><p>不要忘记在 <code>settings.py</code> 文件中的 <code>INSTALLED_APPS</code> 中添加它。 <code>INSTALLED_APPS = [ 'django.contrib.admin', 'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.messages', 'django.contrib.staticfiles', 'rest_framework', 'django_todo', 'todo', 'owner' ]</code></p><p>如果我们查看 Django 项目的根目录，我们现在有两个 Django 应用程序：</p><pre tabindex=0><code>(django-someHash) $ ls
 Pipfile      Pipfile.lock django_todo  manage.py    owner        todo
 </code></pre><p>在 <code>owner/models.py</code> 中，让我们构建这个 <code>Owner</code> 模型。如前所述，它与 Django 的内置 <code>User</code> 对象有一对一的关系。我们可以用 Django 的 <code>models.OneToOneField</code> 强制实现这种关系。</p><pre tabindex=0><code># owner/models.py
 from django.db import models
