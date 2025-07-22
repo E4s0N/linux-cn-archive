@@ -1,4 +1,4 @@
-baseURL = 'https://www.linux.cn/'
+baseURL = 'https://www.aicodev.cn/'
 languageCode = 'zh-Hans'
 title = 'Linux.cn Archive'
 theme = "mainroad"
@@ -12,7 +12,7 @@ post_meta = ["author", "date"]
 [Params.logo]
   title = "Linux.cn Archive"
 [Params.thumbnail]
-  visibility = ["list", "post"] # Control thumbnail visibility
+  visibility = ["list"] # Control thumbnail visibility
 [outputs]
   home = ['html', 'rss']
   section = ['html', 'rss']
