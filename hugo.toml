@@ -3,7 +3,7 @@ languageCode = 'zh-Hans'
 title = 'Linux.cn Archive'
 theme = "mainroad"
 uglyURLs = false
-paginate = 50
+paginate = 200
 [Params]
 opengraph = true # Enable OpenGraph if true
 schema = true # Enable Schema
