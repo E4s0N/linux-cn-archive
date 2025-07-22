@@ -21,11 +21,11 @@ jobs:
     env:
       HUGO_VERSION: 0.122.0
     steps:
-      - name: Clean up disk space (before build)
-        run: |
-          echo "清理缓存文件..."
-          sudo rm -rf /home/runner/actions-runner/cached/_diag/* || true
-          df -h
+      # - name: Clean up disk space (before build)
+      #   run: |
+      #     echo "清理缓存文件..."
+      #     sudo rm -rf /home/runner/actions-runner/cached/_diag/* || true
+      #     df -h
 
       - name: Install Hugo CLI
         run: |
